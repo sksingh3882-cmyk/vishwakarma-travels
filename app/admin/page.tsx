@@ -52,7 +52,7 @@ export default function AdminPage() {
             const form = new FormData(e.currentTarget);
 
             const customerPhone = form.get("customerPhone");
-            const message = `✅ Booking Confirmed
+            const message = `✅ Booking Confirmation.
 
 ${form.get("gender") } ${form.get("customerName")}
 
