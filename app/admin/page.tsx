@@ -69,6 +69,7 @@ Service: ${form.get("service")}
   minute: "2-digit",
   hour12: true,
 })}
+
 🚕 Vehicle Details:
 Vehicle Type: ${form.get("vehicleType")}
 Vehicle Model: ${form.get("vehicleModel")}
