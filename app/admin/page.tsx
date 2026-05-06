@@ -52,7 +52,7 @@ export default function AdminPage() {
             const form = new FormData(e.currentTarget);
 
             const customerPhone = form.get("customerPhone");
-            const message = `✅ Booking Confirmed - Vishwakarma Travels
+            const message = `✅ Booking Confirmed
 
 ${form.get("gender") } ${form.get("customerName")}
 
@@ -81,10 +81,10 @@ Fare: ₹${form.get("fare")}
 Advance Paid: ₹${form.get("advance")}
 Net Payable Amount: ₹${Number(form.get("fare")) - Number(form.get("advance") || 0)}
 
-Thank You For Choosing Vishwakarma Travels
+Thank You For Choosing Vishwakarma Travels 
 Wish You A Very Happy Journey
-Vishwakarma Travels
-Bagbera, Jamshedpur
+
+For Queries Please Call or Whatsapp 
 +91 7667989203`;
 
             window.open(
