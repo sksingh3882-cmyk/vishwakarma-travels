@@ -1,3 +1,4 @@
+"use client";
 export default function Home() {
   const phone = "917667989203";
   const whatsappText =
@@ -105,48 +106,108 @@ export default function Home() {
       </section>
 
       <section
-        style={{
-          background: "white",
-          padding: "25px 18px",
-          maxWidth: "700px",
-          margin: "20px auto",
-          borderRadius: "16px",
-          boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
-        }}
-      >
-        <h2 style={{ textAlign: "center", fontSize: "28px" }}>
-          Book Your Cab
-        </h2>
+  style={{
+    background: "white",
+    padding: "25px 18px",
+    maxWidth: "700px",
+    margin: "20px auto",
+    borderRadius: "16px",
+    boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+  }}
+>
+  <h2 style={{ textAlign: "center", fontSize: "28px" }}>
+    Book Your Cab
+  </h2>
 
-        <form
-          action={`https://wa.me/${phone}`}
-          method="get"
-          style={{ display: "grid", gap: "12px" }}
-        >
-          <input name="text" type="hidden" value="Namaste Vishwakarma Travels, mujhe cab booking karni hai." />
+  <form
+    onSubmit={(e) => {
+      e.preventDefault();
+const form = new FormData(e.currentTarget);
 
-          <input placeholder="Your Name" style={inputStyle} />
-          <input placeholder="Mobile Number" style={inputStyle} />
-          <input placeholder="Pickup Location" style={inputStyle} />
-          <input placeholder="Drop Location" style={inputStyle} />
-          <input placeholder="Date & Time" style={inputStyle} />
+const name = form.get("customerName");
+const mobile = form.get("mobile");
+const pickup = form.get("pickup");
+const drop = form.get("drop");
+const dateTime = form.get("dateTime");
+const service = form.get("service");
 
-          <button
-            type="submit"
-            style={{
-              background: "#2563eb",
-              color: "white",
-              padding: "15px",
-              border: "none",
-              borderRadius: "10px",
-              fontSize: "18px",
-              fontWeight: "bold",
-            }}
-          >
-            Send Booking On WhatsApp
-          </button>
-        </form>
-      </section>
+      const message = `Namaste Vishwakarma Travels,
+
+Name: ${name}
+Mobile: ${mobile}
+Service: ${service}
+Pickup: ${pickup}
+Drop: ${drop}
+Date & Time: ${dateTime}`;
+
+      window.open(
+        `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+        "_blank"
+      );
+    }}
+    style={{ display: "grid", gap: "12px" }}
+  >
+    <input
+      name="customerName"
+      placeholder="Your Name"
+      style={inputStyle}
+      required
+    />
+
+    <input
+      name="mobile"
+      placeholder="Mobile Number"
+      style={inputStyle}
+      required
+    />
+
+    <select name="service" style={inputStyle} required>
+      <option value="">Select Service</option>
+      <option>Airport Drop & Pickup</option>
+      <option>Local Cab Service</option>
+      <option>Outstation Booking</option>
+      <option>Short Order Cab Service</option>
+      <option>Marriage Function Booking</option>
+      <option>Tour Package Service</option>
+    </select>
+
+    <input
+      name="pickup"
+      placeholder="Pickup Location"
+      style={inputStyle}
+      required
+    />
+
+    <input
+      name="drop"
+      placeholder="Drop Location"
+      style={inputStyle}
+      required
+    />
+
+    <input
+      name="dateTime"
+      placeholder="Date & Time"
+      style={inputStyle}
+      required
+    />
+
+    <button
+      type="submit"
+      style={{
+        background: "#2563eb",
+        color: "white",
+        padding: "15px",
+        border: "none",
+        borderRadius: "10px",
+        fontSize: "18px",
+        fontWeight: "bold",
+      }}
+    >
+      Send Booking On WhatsApp
+    </button>
+  </form>
+</section>
 
       <section style={{ textAlign: "center", padding: "25px 18px" }}>
         <h2>Contact Us</h2>
