@@ -61,20 +61,25 @@ Namaste, Your Booking is Confirmed.
 Booking ID: VT-${Date.now()}
 
 Service: ${form.get("service")}
-Pickup: ${form.get("pickup")}
-Drop: ${form.get("drop")}
+📍 Pickup: ${form.get("pickup")}
+📍 Drop: ${form.get("drop")}
 Date: ${form.get("dateTime")?.toString().split("T")[0]}
 Time: ${form.get("dateTime")?.toString().split("T")[1]}
+
+Vehicle Details:
 Vehicle Type: ${form.get("vehicleType")}
 Vehicle Model: ${form.get("vehicleModel")}
 Vehicle No: ${form.get("vehicleNumber")}
-Fare: ₹${form.get("fare")}
-Advance Paid: ₹${form.get("advance")}
-Net Payable Amount: ₹${Number(form.get("fare")) - Number(form.get("advance") || 0)}
 Driver Name: ${form.get("driverName")}
 Driver Mobile: ${form.get("driverMobile")}
 
-Thank you,
+Fare Charges:
+Fare: ₹${form.get("fare")}
+Advance Paid: ₹${form.get("advance")}
+Net Payable Amount: ₹${Number(form.get("fare")) - Number(form.get("advance") || 0)}
+
+Thank You For Choosing Vishwakarma Travels
+Wish You A Very Happy Journey
 Vishwakarma Travels
 Bagbera, Jamshedpur
 +91 7667989203`;
