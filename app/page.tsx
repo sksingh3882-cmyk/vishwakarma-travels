@@ -24,13 +24,13 @@ export default function Home() {
         <h1 style={{ fontSize: "42px", margin: "0 0 10px" }}>
           Vishwakarma Travels
         </h1>
-        <p style={{ fontSize: "18px", margin: 0 }}>
+        <h2 style={{ fontSize: "20px", margin: "0 0 8px" }}>
   The Most Reliable And Affordable Cab Service Of Jamshedpur
-</p>
+</h2>
 
-<p style={{ fontSize: "18px", marginTop: "8px" }}>
+<h3 style={{ fontSize: "18px", margin: 0 }}>
   Airport Drop - Pickup • Local • Outstation
-</p>
+</h3>
 
         <div style={{ marginTop: "25px" }}>
           <a
@@ -136,18 +136,17 @@ const dateTime = form.get("dateTime");
 const service = form.get("service");
 
       const message = `Namaste Vishwakarma Travels,
-      I want to book a Cab.
+
+I want to book a cab.
 
 Name: ${name}
 Mobile: ${mobile}
 Service: ${service}
 Pickup: ${pickup}
 Drop: ${drop}
-Date & Time: ${dateTime}`;
+Date & Time: ${dateTime}
 
-      Please Send me the Booking Confirmation 
-      as soon as possible 
-
+Please send me the booking confirmation as soon.`;
       window.open(
         `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
         "_blank"
