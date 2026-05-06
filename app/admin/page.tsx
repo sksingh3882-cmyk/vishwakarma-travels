@@ -54,21 +54,26 @@ export default function AdminPage() {
             const customerPhone = form.get("customerPhone");
             const message = `✅ Booking Confirmed - Vishwakarma Travels
 
-Dear ${form.get("customerName")},
-Your cab booking is confirmed.
+Dear ${form.get("gender")} ${form.get("customerName")}
+
+Namaste, Your Booking is Confirmed.
 
 Booking ID: VT-${Date.now()}
 
 Service: ${form.get("service")}
 Pickup: ${form.get("pickup")}
 Drop: ${form.get("drop")}
-Date & Time: ${form.get("dateTime")}
+Date:
+${form.get("dateTime")?.toString().split("T")[0]}
+
+Time:
+${form.get("dateTime")?.toString().split("T")[1]}
 Vehicle Type: ${form.get("vehicleType")}
 Vehicle Model: ${form.get("vehicleModel")}
 Vehicle No: ${form.get("vehicleNumber")}
 Fare: ₹${form.get("fare")}
 Advance Paid: ₹${form.get("advance")}
-
+Net Payable Amount: ₹${Number(form.get("fare")) - Number(form.get("advance") || 0)}
 Driver Name: ${form.get("driverName")}
 Driver Mobile: ${form.get("driverMobile")}
 
