@@ -123,19 +123,58 @@ export default function Home() {
     Book Your Cab
   </h2>
 
-  <form
-    onSubmit={(e) => {
-      e.preventDefault();
-const form = new FormData(e.currentTarget);
+onSubmit={async (e) => {
+  e.preventDefault();
 
-const name = form.get("customerName");
-const mobile = form.get("mobile");
-const pickup = form.get("pickup");
-const drop = form.get("drop");
-const dateTime = form.get("dateTime");
-const service = form.get("service");
+  const form = new FormData(e.currentTarget);
 
-      const message = `Namaste Vishwakarma Travels,
+  const name = form.get("customerName");
+  const mobile = form.get("mobile");
+  const service = form.get("service");
+  const pickup = form.get("pickup");
+  const drop = form.get("drop");
+  const dateTime = form.get("dateTime");
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  await fetch(`${supabaseUrl}/rest/v1/customers`, {
+    method: "POST",
+    headers: {
+      apikey: supabaseKey || "",
+      Authorization: `Bearer ${supabaseKey}`,
+      "Content-Type": "application/json",
+      Prefer: "resolution=merge-duplicates",
+    },
+    body: JSON.stringify({
+      name: name,
+      mobile: mobile,
+      address: pickup,
+    }),
+  });
+
+  await fetch(`${supabaseUrl}/rest/v1/bookings`, {
+    method: "POST",
+    headers: {
+      apikey: supabaseKey || "",
+      Authorization: `Bearer ${supabaseKey}`,
+      "Content-Type": "application/json",
+      Prefer: "return=minimal",
+    },
+    body: JSON.stringify({
+      customer_name: name,
+      mobile: mobile,
+      service: service,
+      pickup: pickup,
+      drop_location: drop,
+      booking_date: dateTime,
+      address: pickup,
+      fare: "",
+      status: "Pending",
+    }),
+  });
+
+  const message = `Namaste Vishwakarma Travels,
 
 I want to book a cab.
 
@@ -146,13 +185,13 @@ Pickup: ${pickup}
 Drop: ${drop}
 Date & Time: ${dateTime}
 
-Please send me the booking confirmation as soon.`;
-      window.open(
-        `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
-        "_blank"
-      );
-    }}
-    style={{ display: "grid", gap: "12px" }}
+Please send me the booking confirmation as soon as possible.`;
+
+  window.open(
+    `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+    "_blank"
+  );
+}}
   >
     <input
       name="customerName"
