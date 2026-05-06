@@ -64,8 +64,11 @@ Service: ${form.get("service")}
 📍 Pickup: ${form.get("pickup")}
 📍 Drop: ${form.get("drop")}
 📆 Date: ${form.get("dateTime")?.toString().split("T")[0]}
-⌚ Time: ${form.get("dateTime")?.toString().split("T")[1]}
-
+⌚ Time: ${new Date(form.get("dateTime")).toLocaleTimeString("en-IN", {
+  hour: "numeric",
+  minute: "2-digit",
+  hour12: true,
+})}
 🚕 Vehicle Details:
 Vehicle Type: ${form.get("vehicleType")}
 Vehicle Model: ${form.get("vehicleModel")}
