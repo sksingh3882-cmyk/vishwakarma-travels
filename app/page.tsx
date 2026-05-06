@@ -24,8 +24,9 @@ export default function Home() {
         <h1 style={{ fontSize: "42px", margin: "0 0 10px" }}>
           Vishwakarma Travels
         </h1>
-        <p style={{ fontSize: "20px", margin: 0 }}>
-          24×7 Cab Service • Airport Drop • Marriage Luxury Cars
+        <p style={{ fontSize: "18px", margin: 0 }}>
+          The Most Reliable And Affordable Cab Service Of Jamshedpur 
+          24×7 Cab Service • Airport Drop Pickup • Local • Outstation 
         </p>
 
         <div style={{ marginTop: "25px" }}>
