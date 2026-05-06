@@ -54,7 +54,7 @@ export default function AdminPage() {
             const customerPhone = form.get("customerPhone");
             const message = `✅ Booking Confirmed - Vishwakarma Travels
 
-${form.get("gender")} ${form.get("customerName")}
+${form.get("gender") || ""} ${form.get("customerName")}
 
 Namaste, Your Booking is Confirmed.
 
@@ -89,7 +89,11 @@ Bagbera, Jamshedpur
         >
           <input name="customerName" placeholder="Customer Name" style={inputStyle} required />
           <input name="customerPhone" placeholder="Customer WhatsApp Number" style={inputStyle} required />
-
+<select name="gender" style={inputStyle} required>
+  <option value="">Select Gender</option>
+  <option value="Mr.">Male</option>
+  <option value="Ms.">Female</option>
+</select>
           <select name="service" style={inputStyle} required>
             <option value="">Select Service</option>
             <option>Airport Drop & Pickup</option>
