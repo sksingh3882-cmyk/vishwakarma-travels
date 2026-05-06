@@ -76,16 +76,17 @@ export default function Home() {
             marginTop: "20px",
           }}
         >
-          {[
-            "Tata to Ranchi Airport Drop Starting ₹1700",
-            "Jamshedpur to Kolkata Airport Drop Starting ₹4500",
-            "24×7 / 365 Days Cab Service",
-            "Luxury Cars Available For Marriage",
-            "Well Maintained New Cars",
-            "Experienced & Well Behaved Drivers",
-            "100% On Time Reporting",
-            "Local & Outstation Booking",
-          ].map((item) => (
+          { [
+  "Airport Drop & Pickup",
+  "Local Cab Service",
+  "Outstation Booking",
+  "Short Order Cab Service",
+  "Marriage Function Booking",
+  "All Types Of Vehicle Available",
+  "Tour Package Service",
+  "24×7 / 365 Days Service",
+]
+          .map((item) => (
             <div
               key={item}
               style={{
