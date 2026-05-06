@@ -132,6 +132,7 @@ const dateTime = form.get("dateTime");
 const service = form.get("service");
 
       const message = `Namaste Vishwakarma Travels,
+      I want to book a Cab.
 
 Name: ${name}
 Mobile: ${mobile}
@@ -139,6 +140,9 @@ Service: ${service}
 Pickup: ${pickup}
 Drop: ${drop}
 Date & Time: ${dateTime}`;
+
+      Please Send me the Booking Confirmation 
+      as soon as possible 
 
       window.open(
         `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
