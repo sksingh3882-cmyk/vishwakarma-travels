@@ -122,7 +122,7 @@ export default function Home() {
   <h2 style={{ textAlign: "center", fontSize: "28px" }}>
     Book Your Cab
   </h2>
-
+<form
 onSubmit={async (e) => {
   e.preventDefault();
 
@@ -191,8 +191,8 @@ Please send me the booking confirmation as soon as possible.`;
     `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
     "_blank"
   );
-}}
-style={{ display: "grid", gap: "12px" }}
+  }}
+  style={{ display: "grid", gap: "12px" }}
 >
   
     <input
