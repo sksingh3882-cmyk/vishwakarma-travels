@@ -185,12 +185,12 @@ Date & Time: ${dateTime}`;
       required
     />
 
-    <input
-      name="dateTime"
-      placeholder="Date & Time"
-      style={inputStyle}
-      required
-    />
+<input
+  type="datetime-local"
+  name="dateTime"
+  style={inputStyle}
+  required
+/>
 
     <button
       type="submit"
