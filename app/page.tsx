@@ -191,8 +191,8 @@ Please send me the booking confirmation as soon as possible.`;
     `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
     "_blank"
   );
-}}
-  >
+}>
+  
     <input
       name="customerName"
       placeholder="Your Name"
