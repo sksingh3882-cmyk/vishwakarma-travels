@@ -28,7 +28,7 @@ export default function Home() {
   The Most Reliable And Affordable Cab Service Of Jamshedpur
 </p>
 
-<p style={{ fontSize: "18px", margin: "8px 0 0" }}>
+<p style={{ fontSize: "18px", marginTop: "8px" }}>
   Airport Drop - Pickup • Local • Outstation
 </p>
 
