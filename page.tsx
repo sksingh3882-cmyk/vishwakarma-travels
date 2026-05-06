@@ -1,70 +1,51 @@
 export default function Home() {
-    return (
-        <main
-              style={{
-                      minHeight: "100vh",
-                              background: "#eef4ff",
-                                      padding: "20px",
-                                              fontFamily: "Arial",
-                                                    }}
-                                                        >
-                                                              <div
-                                                                      style={{
-                                                                                maxWidth: "450px",
-                                                                                          margin: "auto",
-                                                                                                    background: "white",
-                                                                                                              padding: "20px",
-                                                                                                                        borderRadius: "15px",
-                                                                                                                                  boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-                                                                                                                                          }}
-                                                                                                                                                >
-                                                                                                                                                        <h1
-                                                                                                                                                                  style={{
-                                                                                                                                                                              textAlign: "center",
-                                                                                                                                                                                          color: "#0066ff",
-                                                                                                                                                                                                      marginBottom: "20px",
-                                                                                                                                                                                                                }}
-                                                                                                                                                                                                                        >
-                                                                                                                                                                                                                                  🚖 Vishwakarma Travels
-                                                                                                                                                                                                                                          </h1>
+  return (
+    <main
+      style={{
+        minHeight: "100vh",
+        background: "#eef4ff",
+        padding: "20px",
+        fontFamily: "Arial",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "450px",
+          margin: "auto",
+          background: "white",
+          padding: "20px",
+          borderRadius: "12px",
+          boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+          textAlign: "center",
+        }}
+      >
+        <h1 style={{ color: "#0f172a" }}>
+          Vishwakarma Travels
+        </h1>
 
-                                                                                                                                                                                                                                                  <input placeholder="Customer Name" style={inputStyle} />
-                                                                                                                                                                                                                                                          <input placeholder="Mobile Number" style={inputStyle} />
-                                                                                                                                                                                                                                                                  <input placeholder="Pickup Location" style={inputStyle} />
-                                                                                                                                                                                                                                                                          <input placeholder="Drop Location" style={inputStyle} />
+        <p>24×7 Cab Service Available</p>
 
-                                                                                                                                                                                                                                                                                  <input type="date" style={inputStyle} />
+        <p>Ranchi Airport Drop Starting ₹1700</p>
 
-                                                                                                                                                                                                                                                                                          <select style={inputStyle}>
-                                                                                                                                                                                                                                                                                                    <option>Select Vehicle</option>
-                                                                                                                                                                                                                                                                                                              <option>Sedan</option>
-                                                                                                                                                                                                                                                                                                                        <option>SUV</option>
-                                                                                                                                                                                                                                                                                                                                  <option>Innova</option>
-                                                                                                                                                                                                                                                                                                                                          </select>
+        <p>Jamshedpur to Kolkata Airport ₹4500</p>
 
-                                                                                                                                                                                                                                                                                                                                                  <button style={buttonStyle}>
-                                                                                                                                                                                                                                                                                                                                                            Submit Booking
-                                                                                                                                                                                                                                                                                                                                                                    </button>
-                                                                                                                                                                                                                                                                                                                                                                          </div>
-                                                                                                                                                                                                                                                                                                                                                                              </main>
-                                                                                                                                                                                                                                                                                                                                                                                );
-                                                                                                                                                                                                                                                                                                                                                                                }
+        <p>Luxury Cars Available For Marriage</p>
 
-                                                                                                                                                                                                                                                                                                                                                                                const inputStyle = {
-                                                                                                                                                                                                                                                                                                                                                                                  width: "100%",
-                                                                                                                                                                                                                                                                                                                                                                                    padding: "12px",
-                                                                                                                                                                                                                                                                                                                                                                                      marginBottom: "12px",
-                                                                                                                                                                                                                                                                                                                                                                                        borderRadius: "8px",
-                                                                                                                                                                                                                                                                                                                                                                                          border: "1px solid #ccc",
-                                                                                                                                                                                                                                                                                                                                                                                          };
-
-                                                                                                                                                                                                                                                                                                                                                                                          const buttonStyle = {
-                                                                                                                                                                                                                                                                                                                                                                                            width: "100%",
-                                                                                                                                                                                                                                                                                                                                                                                              padding: "14px",
-                                                                                                                                                                                                                                                                                                                                                                                                background: "#0066ff",
-                                                                                                                                                                                                                                                                                                                                                                                                  color: "white",
-                                                                                                                                                                                                                                                                                                                                                                                                    border: "none",
-                                                                                                                                                                                                                                                                                                                                                                                                      borderRadius: "10px",
-                                                                                                                                                                                                                                                                                                                                                                                                        fontSize: "16px",
-                                                                                                                                                                                                                                                                                                                                                                                                        };
+        <a
+          href="tel:+917667989203"
+          style={{
+            display: "inline-block",
+            marginTop: "20px",
+            background: "#2563eb",
+            color: "white",
+            padding: "12px 20px",
+            borderRadius: "8px",
+            textDecoration: "none",
+          }}
+        >
+          Call Now
+        </a>
+      </div>
+    </main>
+  );
 }
