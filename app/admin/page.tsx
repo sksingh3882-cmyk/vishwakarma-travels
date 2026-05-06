@@ -63,8 +63,9 @@ Service: ${form.get("service")}
 Pickup: ${form.get("pickup")}
 Drop: ${form.get("drop")}
 Date & Time: ${form.get("dateTime")}
-
-Vehicle: ${form.get("vehicle")}
+Vehicle Type: ${form.get("vehicleType")}
+Vehicle Model: ${form.get("vehicleModel")}
+Vehicle No: ${form.get("vehicleNumber")}
 Fare: ₹${form.get("fare")}
 Advance Paid: ₹${form.get("advance")}
 
@@ -101,7 +102,31 @@ Bagbera, Jamshedpur
           <input name="drop" placeholder="Drop Location" style={inputStyle} required />
           <input type="datetime-local" name="dateTime" style={inputStyle} required />
 
-          <input name="vehicle" placeholder="Vehicle Name / Number" style={inputStyle} required />
+          <select name="vehicleType" style={inputStyle} required>
+  <option value="">Select Vehicle Type</option>
+  <option>Sedan</option>
+  <option>SUV</option>
+  <option>BUS</option>
+</select>
+
+<select name="vehicleModel" style={inputStyle} required>
+  <option value="">Select Vehicle Model</option>
+  <option>Dzire</option>
+  <option>Ertiga</option>
+  <option>Innova</option>
+  <option>Crysta</option>
+</select>
+
+<input
+  name="vehicleNumber"
+  placeholder="Vehicle Number"
+  style={inputStyle}
+  onInput={(e) => {
+    e.currentTarget.value =
+      e.currentTarget.value.toUpperCase();
+  }}
+  required
+/>
           <input name="fare" placeholder="Total Fare" style={inputStyle} required />
           <input name="advance" placeholder="Advance Paid" style={inputStyle} />
 
