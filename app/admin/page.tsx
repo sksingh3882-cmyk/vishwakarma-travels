@@ -615,7 +615,7 @@ For Queries Please Call or WhatsApp:
 
           <div class="payable">
             <div>TOTAL AMOUNT PAYABLE</div>
-            <div>Rupees ${netPay} Only</div>
+            <div>Rupees ${netPay.toFixed(2)} Only</div>
             <div>₹ ${netPay.toFixed(2)}</div>
           </div>
 
@@ -635,19 +635,66 @@ For Queries Please Call or WhatsApp:
 
           <div class="cut">✂</div>
           <div class="copyTitle">BOOKING CONFIRMATION COPY</div>
+<div class="twoCol">
+  <div class="leftCol">
+    <div class="sectionTitle">TRIP DETAILS</div>
 
-          <div class="twoCol">
-            <div class="leftCol">
-              <div class="sectionTitle">TRIP DETAILS</div>
-              <div class="row"><span class="label">Trip Detail</span><span>:</span><span>${form.pickup} to ${form.drop}</span></div>
-              <div class="row"><span class="label">Client Name</span><span>:</span><span>${form.gender} ${form.customerName}</span></div>
-              <div class="row"><span class="label">Contact No</span><span>:</span><span>+91${form.customerPhone}</span></div>
-              <div class="row"><span class="label">Booking Date</span><span>:</span><span>${form.journeyDate}</span></div>
-            </div>
-            <div class="rightCol">
-              <div class="sectionTitle">VEHICLE DETAILS</div>
-              <div class="row"><span class="label">Vehicle Type</span><span>:</span><span>${form.vehicleType}</span></div>
-              <div class="row"><span class="label">Vehicle No</span><span>:</span><span>${form.vehicleNumber}</span></div>
-              <div class="row"><span class="label">Model</span><span>:</span><span>${form.vehicleModel}</span></div>
-              <div class="row"><span class="label">Driver Name</span><span>:</span><span>${form.driverName}</span></div>
-              <div class="row"><span class="label">Contact No</span><
+    <div class="row">
+      <span class="label">Trip Detail</span>
+      <span>:</span>
+      <span>${form.pickup} to ${form.drop}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Client Name</span>
+      <span>:</span>
+      <span>${form.gender} ${form.customerName}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Contact No</span>
+      <span>:</span>
+      <span>+91${form.customerPhone}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Booking Date</span>
+      <span>:</span>
+      <span>${form.journeyDate}</span>
+    </div>
+  </div>
+
+  <div class="rightCol">
+    <div class="sectionTitle">VEHICLE DETAILS</div>
+
+    <div class="row">
+      <span class="label">Vehicle Type</span>
+      <span>:</span>
+      <span>${form.vehicleType}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Vehicle No</span>
+      <span>:</span>
+      <span>${form.vehicleNumber}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Model</span>
+      <span>:</span>
+      <span>${form.vehicleModel}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Driver Name</span>
+      <span>:</span>
+      <span>${form.driverName}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Contact No</span>
+      <span>:</span>
+      <span>+91${form.driverMobile}</span>
+    </div>
+  </div>
+</div>
