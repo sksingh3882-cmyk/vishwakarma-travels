@@ -1,12 +1,73 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function AdminPage() {
   const [isLogin, setIsLogin] = useState(false);
   const [password, setPassword] = useState("");
+  const [customers, setCustomers] = useState<any[]>([]);
+  const [vehicles, setVehicles] = useState<any[]>([]);
 
   const phone = "917667989203";
+
+  useEffect(() => {
+    async function loadData() {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      if (!supabaseUrl || !supabaseKey) return;
+
+      const customerRes = await fetch(`${supabaseUrl}/rest/v1/customers`, {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+        },
+      });
+
+      const vehicleRes = await fetch(`${supabaseUrl}/rest/v1/vehicles`, {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+        },
+      });
+
+      setCustomers(await customerRes.json());
+      setVehicles(await vehicleRes.json());
+    }
+
+    loadData();
+  }, []);
+
+  function setField(name: string, value: string) {
+    const input = document.querySelector(`[name="${name}"]`) as HTMLInputElement;
+    if (input) input.value = value;
+  }
+
+  function fillCustomer(value: string) {
+    const c = customers.find((x) =>
+      x.name?.toLowerCase().includes(value.toLowerCase())
+    );
+
+    if (c) {
+      setField("customerName", c.name || "");
+      setField("customerPhone", c.mobile || "");
+      setField("pickup", c.address || "");
+    }
+  }
+
+  function fillVehicle(value: string) {
+    const v = vehicles.find((x) =>
+      x.vehicleNumber?.toLowerCase().includes(value.toLowerCase())
+    );
+
+    if (v) {
+      setField("vehicleNumber", v.vehicleNumber || "");
+      setField("vehicleType", v.vehicleType || "");
+      setField("vehicleModel", v.vehicleModel || "");
+      setField("driverName", v.driverName || "");
+      setField("driverMobile", v.driverMobile || "");
+    }
+  }
 
   if (!isLogin) {
     return (
@@ -50,8 +111,8 @@ export default function AdminPage() {
             e.preventDefault();
 
             const form = new FormData(e.currentTarget);
-
             const customerPhone = form.get("customerPhone");
+
             const message = `✅ Booking Confirmed - Vishwakarma Travels
 
 Dear ${form.get("customerName")},
@@ -64,7 +125,10 @@ Pickup: ${form.get("pickup")}
 Drop: ${form.get("drop")}
 Date & Time: ${form.get("dateTime")}
 
-Vehicle: ${form.get("vehicle")}
+Vehicle No: ${form.get("vehicleNumber")}
+Vehicle Type: ${form.get("vehicleType")}
+Vehicle Model: ${form.get("vehicleModel")}
+
 Fare: ₹${form.get("fare")}
 Advance Paid: ₹${form.get("advance")}
 
@@ -84,8 +148,27 @@ Bagbera, Jamshedpur
             );
           }}
         >
-          <input name="customerName" placeholder="Customer Name" style={inputStyle} required />
-          <input name="customerPhone" placeholder="Customer WhatsApp Number" style={inputStyle} required />
+          <input
+            name="customerName"
+            placeholder="Customer Name"
+            style={inputStyle}
+            list="customerList"
+            onChange={(e) => fillCustomer(e.currentTarget.value)}
+            required
+          />
+
+          <datalist id="customerList">
+            {customers.map((c, i) => (
+              <option key={i} value={c.name} />
+            ))}
+          </datalist>
+
+          <input
+            name="customerPhone"
+            placeholder="Customer WhatsApp Number"
+            style={inputStyle}
+            required
+          />
 
           <select name="service" style={inputStyle} required>
             <option value="">Select Service</option>
@@ -101,7 +184,24 @@ Bagbera, Jamshedpur
           <input name="drop" placeholder="Drop Location" style={inputStyle} required />
           <input type="datetime-local" name="dateTime" style={inputStyle} required />
 
-          <input name="vehicle" placeholder="Vehicle Name / Number" style={inputStyle} required />
+          <input
+            name="vehicleNumber"
+            placeholder="Vehicle Number"
+            style={inputStyle}
+            list="vehicleList"
+            onChange={(e) => fillVehicle(e.currentTarget.value)}
+            required
+          />
+
+          <datalist id="vehicleList">
+            {vehicles.map((v, i) => (
+              <option key={i} value={v.vehicleNumber} />
+            ))}
+          </datalist>
+
+          <input name="vehicleType" placeholder="Vehicle Type" style={inputStyle} />
+          <input name="vehicleModel" placeholder="Vehicle Model" style={inputStyle} />
+
           <input name="fare" placeholder="Total Fare" style={inputStyle} required />
           <input name="advance" placeholder="Advance Paid" style={inputStyle} />
 
