@@ -121,7 +121,11 @@ Your cab booking is confirmed.
 Booking ID: VT-${Date.now()}
 
 Service: ${form.get("service")}
-Contact No: ${form.get("customerPhone")}
+
+Name: ${form.get("customerName")}
+Address: ${form.get("pickup")}
+Contact No: +91${form.get("customerPhone")}
+
 Pickup: ${form.get("pickup")}
 Drop: ${form.get("drop")}
 Date & Time: ${form.get("dateTime")}
