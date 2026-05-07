@@ -107,7 +107,7 @@ export default function AdminPage() {
 
         <form
           style={{ display: "grid", gap: "12px" }}
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
 
             const form = new FormData(e.currentTarget);
