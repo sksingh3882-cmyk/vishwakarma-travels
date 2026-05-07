@@ -7,6 +7,42 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
 
   const phone = "917667989203";
+  const [customers, setCustomers] = useState<any[]>([]);
+const [vehicles, setVehicles] = useState<any[]>([]);
+
+function setField(name: string, value: string) {
+  const input = document.querySelector(
+    `[name="${name}"]`
+  ) as HTMLInputElement;
+
+  if (input) input.value = value;
+}
+
+function loadCustomer(value: string) {
+  const c = customers.find((x) =>
+    x.name?.toLowerCase().includes(value.toLowerCase())
+  );
+
+  if (c) {
+    setField("customerName", c.name);
+    setField("customerPhone", c.mobile);
+    setField("pickup", c.address);
+  }
+}
+
+function loadVehicle(value: string) {
+  const v = vehicles.find((x) =>
+    x.vehicleNumber?.toLowerCase().includes(value.toLowerCase())
+  );
+
+  if (v) {
+    setField("vehicleType", v.vehicleType);
+    setField("vehicleModel", v.vehicleModel);
+    setField("vehicleNumber", v.vehicleNumber);
+    setField("driverName", v.driverName);
+    setField("driverMobile", v.driverMobile);
+  }
+}
 
   if (!isLogin) {
     return (
@@ -96,7 +132,20 @@ For Queries Please Call or Whatsapp
             );
           }}
         >
-          <input name="customerName" placeholder="Customer Name" style={inputStyle} required />
+          <input
+  name="customerName"
+  placeholder="Customer Name"
+  style={inputStyle}
+  list="customerList"
+  onChange={(e) => loadCustomer(e.currentTarget.value)}
+  required
+/>
+
+<datalist id="customerList">
+  {customers.map((c, i) => (
+    <option key={i} value={c.name} />
+  ))}
+</datalist>
           <input name="customerPhone" placeholder="Customer WhatsApp Number" style={inputStyle} required />
 <select name="gender" style={inputStyle} required>
   <option value="">Select Gender</option>
@@ -136,12 +185,19 @@ For Queries Please Call or Whatsapp
   name="vehicleNumber"
   placeholder="Vehicle Number"
   style={inputStyle}
+  list="vehicleList"
+onChange={(e) => loadVehicle(e.currentTarget.value)}
   onInput={(e) => {
     e.currentTarget.value =
       e.currentTarget.value.toUpperCase();
   }}
   required
 />
+         <datalist id="vehicleList">
+  {vehicles.map((v, i) => (
+    <option key={i} value={v.vehicleNumber} />
+  ))}
+</datalist>
           <input name="fare" placeholder="Total Fare" style={inputStyle} required />
           <input name="advance" placeholder="Advance Paid" style={inputStyle} />
 
