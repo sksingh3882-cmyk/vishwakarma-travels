@@ -102,17 +102,9 @@ export default function AdminPage() {
           }),
         ]);
 
-        if (customerRes.ok) {
-          setCustomers(await customerRes.json());
-        }
-
-        if (vehicleRes.ok) {
-          setVehicles(await vehicleRes.json());
-        }
-
-        if (bookingRes.ok) {
-          setBookings(await bookingRes.json());
-        }
+        if (customerRes.ok) setCustomers(await customerRes.json());
+        if (vehicleRes.ok) setVehicles(await vehicleRes.json());
+        if (bookingRes.ok) setBookings(await bookingRes.json());
       } catch (error) {
         console.log("Data loading error:", error);
       }
@@ -121,39 +113,57 @@ export default function AdminPage() {
     loadData();
   }, [supabaseUrl, supabaseKey, headers]);
 
-  function updateForm<K extends keyof BookingForm>(
-    key: K,
-    value: BookingForm[K]
-  ) {
+  function updateForm<K extends keyof BookingForm>(key: K, value: BookingForm[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
   function cleanPhone(value: string) {
     let phone = value.replace(/\D/g, "");
-    if (phone.startsWith("91") && phone.length === 12) {
-      phone = phone.slice(2);
-    }
+    if (phone.startsWith("91") && phone.length === 12) phone = phone.slice(2);
     return phone.slice(0, 10);
   }
+
+  function normalize(value: string) {
+    return value.toLowerCase().trim();
+  }
+
+  // -------- Customer Suggestion + Autofill --------
+  const customerSuggestions = useMemo(() => {
+    const q = normalize(form.customerName);
+    if (q.length < 1) return [];
+
+    return customers
+      .filter((c) => {
+        const name = normalize(c.name || "");
+        const mobile = cleanPhone(c.mobile || "");
+        const address = normalize(c.address || "");
+        return name.includes(q) || mobile.includes(q) || address.includes(q);
+      })
+      .slice(0, 10);
+  }, [customers, form.customerName]);
 
   function fillCustomer(value: string) {
     updateForm("customerName", value);
 
-    const search = value.toLowerCase().trim();
-    if (search.length < 2) return;
+    const q = normalize(value);
+    if (q.length < 2) return;
 
-    const customer = customers.find((item) => {
-      const name = item.name?.toLowerCase() || "";
-      const mobile = cleanPhone(item.mobile || "");
-      const address = item.address?.toLowerCase() || "";
+    const exactMobileMatch = customers.find(
+      (c) => cleanPhone(c.mobile || "") === cleanPhone(q)
+    );
 
-      return (
-        name.includes(search) ||
-        mobile.includes(search) ||
-        address.includes(search)
-      );
+    const nameStartsMatch = customers.find((c) =>
+      normalize(c.name || "").startsWith(q)
+    );
+
+    const genericMatch = customers.find((c) => {
+      const name = normalize(c.name || "");
+      const mobile = cleanPhone(c.mobile || "");
+      const address = normalize(c.address || "");
+      return name.includes(q) || mobile.includes(q) || address.includes(q);
     });
 
+    const customer = exactMobileMatch || nameStartsMatch || genericMatch;
     if (!customer) return;
 
     setForm((prev) => ({
@@ -164,17 +174,39 @@ export default function AdminPage() {
     }));
   }
 
+  // -------- Vehicle Suggestion + Autofill --------
+  const vehicleSuggestions = useMemo(() => {
+    const q = normalize(form.vehicleNumber).toUpperCase();
+    if (q.length < 1) return [];
+
+    return vehicles
+      .filter((v) => {
+        const fullNo = (v.vehicleNumber || "").toUpperCase();
+        return fullNo.includes(q) || fullNo.endsWith(q);
+      })
+      .slice(0, 10);
+  }, [vehicles, form.vehicleNumber]);
+
   function fillVehicle(value: string) {
     const vehicleNo = value.toUpperCase();
     updateForm("vehicleNumber", vehicleNo);
 
-    if (!vehicleNo.trim()) return;
+    const q = vehicleNo.trim();
+    if (q.length < 2) return;
 
-    const vehicle = vehicles.find((item) => {
-      const fullNo = item.vehicleNumber?.toUpperCase() || "";
-      return fullNo.includes(vehicleNo) || fullNo.endsWith(vehicleNo);
-    });
+    const exactMatch = vehicles.find(
+      (v) => (v.vehicleNumber || "").toUpperCase() === q
+    );
 
+    const endsWithMatch = vehicles.find((v) =>
+      (v.vehicleNumber || "").toUpperCase().endsWith(q)
+    );
+
+    const includesMatch = vehicles.find((v) =>
+      (v.vehicleNumber || "").toUpperCase().includes(q)
+    );
+
+    const vehicle = exactMatch || endsWithMatch || includesMatch;
     if (!vehicle) return;
 
     setForm((prev) => ({
@@ -188,41 +220,40 @@ export default function AdminPage() {
   }
 
   const addressPool = useMemo(() => {
-    const allAddresses = [
-      ...customers.map((item) => item.address || ""),
+    const all = [
+      ...customers.map((c) => c.address || ""),
       form.pickup,
       form.drop,
     ].filter(Boolean);
-
-    return Array.from(new Set(allAddresses));
+    return Array.from(new Set(all));
   }, [customers, form.pickup, form.drop]);
 
-  const pickupSuggestions = useMemo(() => {
-    return addressPool
-      .filter((item) => item.toLowerCase().includes(form.pickup.toLowerCase()))
-      .slice(0, 10);
-  }, [addressPool, form.pickup]);
+  const pickupSuggestions = useMemo(
+    () =>
+      addressPool
+        .filter((a) => a.toLowerCase().includes(form.pickup.toLowerCase()))
+        .slice(0, 10),
+    [addressPool, form.pickup]
+  );
 
-  const dropSuggestions = useMemo(() => {
-    return addressPool
-      .filter((item) => item.toLowerCase().includes(form.drop.toLowerCase()))
-      .slice(0, 10);
-  }, [addressPool, form.drop]);
+  const dropSuggestions = useMemo(
+    () =>
+      addressPool
+        .filter((a) => a.toLowerCase().includes(form.drop.toLowerCase()))
+        .slice(0, 10),
+    [addressPool, form.drop]
+  );
 
   const repeatCustomer = useMemo(() => {
     const phone = form.customerPhone.trim();
     if (phone.length !== 10) return null;
 
     const matches = bookings.filter(
-      (booking) => cleanPhone(booking.customer_phone || "") === phone
+      (b) => cleanPhone(b.customer_phone || "") === phone
     );
+    if (!matches.length) return null;
 
-    if (matches.length === 0) return null;
-
-    return {
-      totalBookings: matches.length,
-      lastBooking: matches[0],
-    };
+    return { totalBookings: matches.length, lastBooking: matches[0] };
   }, [bookings, form.customerPhone]);
 
   function buildMessage(bookingId: string) {
@@ -303,21 +334,16 @@ For Queries Please Call or WhatsApp:
       console.log("Supabase booking save error:", await response.text());
       return false;
     }
-
     return true;
   }
 
   async function saveCustomerIfNew() {
     const phone = cleanPhone(form.customerPhone);
-
     if (!supabaseUrl || !supabaseKey) return;
-    if (!phone || phone.length !== 10 || !form.customerName.trim()) return;
+    if (phone.length !== 10 || !form.customerName.trim()) return;
 
-    const alreadyExists = customers.some(
-      (item) => cleanPhone(item.mobile || "") === phone
-    );
-
-    if (alreadyExists) return;
+    const exists = customers.some((c) => cleanPhone(c.mobile || "") === phone);
+    if (exists) return;
 
     const payload: Customer = {
       name: form.customerName.trim(),
@@ -331,24 +357,18 @@ For Queries Please Call or WhatsApp:
       body: JSON.stringify(payload),
     });
 
-    if (response.ok) {
-      setCustomers((prev) => [payload, ...prev]);
-    } else {
-      console.log("Customer auto-save failed:", await response.text());
-    }
+    if (response.ok) setCustomers((prev) => [payload, ...prev]);
+    else console.log("Customer auto-save failed:", await response.text());
   }
 
   async function saveVehicleIfNew() {
     const vehicleNo = form.vehicleNumber.trim().toUpperCase();
+    if (!supabaseUrl || !supabaseKey || !vehicleNo) return;
 
-    if (!supabaseUrl || !supabaseKey) return;
-    if (!vehicleNo) return;
-
-    const alreadyExists = vehicles.some(
-      (item) => item.vehicleNumber?.toUpperCase() === vehicleNo
+    const exists = vehicles.some(
+      (v) => (v.vehicleNumber || "").toUpperCase() === vehicleNo
     );
-
-    if (alreadyExists) return;
+    if (exists) return;
 
     const payload: Vehicle = {
       vehicleNumber: vehicleNo,
@@ -364,20 +384,17 @@ For Queries Please Call or WhatsApp:
       body: JSON.stringify(payload),
     });
 
-    if (response.ok) {
-      setVehicles((prev) => [payload, ...prev]);
-    } else {
-      console.log("Vehicle auto-save failed:", await response.text());
-    }
+    if (response.ok) setVehicles((prev) => [payload, ...prev]);
+    else console.log("Vehicle auto-save failed:", await response.text());
   }
 
   function openBillPdf(bookingId: string) {
     const fare = Number(form.fare || 0);
     const advance = Number(form.advance || 0);
     const netPay = fare - advance;
+    const billDate = new Date().toLocaleDateString("en-GB");
 
     const win = window.open("", "_blank");
-
     if (!win) {
       alert("Popup blocked hai. Browser me popup allow karo.");
       return;
@@ -388,256 +405,55 @@ For Queries Please Call or WhatsApp:
 <head>
 <title>${bookingId} Invoice</title>
 <style>
-@page {
-  size: A4;
-  margin: 10mm;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  color: #071633;
-  margin: 0;
-  background: white;
-}
-
-.invoice {
-  border: 2px solid #071633;
-  padding: 14px;
-  max-width: 900px;
-  margin: auto;
-}
-
-.top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 2px solid #071633;
-  padding-bottom: 8px;
-}
-
-.brand {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.logoBox {
-  width: 130px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 18px;
-}
-
-.logoCar {
-  font-size: 42px;
-}
-
-.company h1 {
-  margin: 0;
-  font-size: 30px;
-  font-style: italic;
-}
-
-.company p {
-  margin: 4px 0;
-  font-size: 13px;
-  font-weight: bold;
-}
-
-.invoiceBox {
-  border: 1px solid #071633;
-  border-radius: 8px;
-  overflow: hidden;
-  min-width: 150px;
-  text-align: center;
-}
-
-.invoiceTitle {
-  background: #071633;
-  color: white;
-  font-size: 24px;
-  font-weight: bold;
-  padding: 8px;
-}
-
-.billNo {
-  padding: 10px;
-  font-weight: bold;
-}
-
-.section {
-  margin-top: 10px;
-  border: 1px solid #071633;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.sectionTitle {
-  background: #071633;
-  color: white;
-  font-weight: bold;
-  padding: 6px 10px;
-  font-size: 15px;
-}
-
-.twoCol {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-
-.leftCol,
-.rightCol {
-  padding: 10px;
-}
-
-.leftCol {
-  border-right: 1px solid #071633;
-}
-
-.row {
-  display: grid;
-  grid-template-columns: 130px 12px 1fr;
-  margin: 7px 0;
-  font-size: 14px;
-}
-
-.label {
-  font-weight: bold;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-th {
-  background: #071633;
-  color: white;
-  padding: 7px;
-  text-align: left;
-}
-
-td {
-  border: 1px solid #9ca3af;
-  padding: 7px;
-}
-
-.right {
-  text-align: right;
-}
-
-.totalRow td {
-  font-weight: bold;
-  font-size: 16px;
-}
-
-.payable {
-  display: grid;
-  grid-template-columns: 220px 1fr 220px;
-  border: 1px solid #071633;
-  margin-top: 10px;
-}
-
-.payable div {
-  padding: 10px;
-  font-weight: bold;
-  border-right: 1px solid #071633;
-}
-
-.payable div:last-child {
-  border-right: none;
-  background: #071633;
-  color: white;
-  text-align: right;
-  font-size: 22px;
-}
-
-.thanks {
-  display: grid;
-  grid-template-columns: 1fr 1fr 170px;
-  border: 1px solid #071633;
-  margin-top: 10px;
-  align-items: center;
-}
-
-.thanks div {
-  padding: 10px;
-}
-
-.qr {
-  width: 120px;
-  height: 120px;
-  border: 1px solid #cccccc;
-  display: grid;
-  place-items: center;
-  font-size: 13px;
-  text-align: center;
-}
-
-.cut {
-  text-align: center;
-  border-top: 2px dashed #071633;
-  margin: 12px 0;
-  font-size: 22px;
-}
-
-.copyTitle {
-  text-align: center;
-  background: #071633;
-  color: white;
-  width: fit-content;
-  margin: -2px auto 8px auto;
-  padding: 4px 12px;
-  font-weight: bold;
-  border-radius: 4px;
-}
-
-.declaration {
-  border: 1px dashed #071633;
-  padding: 10px;
-  margin-top: 8px;
-  font-size: 13px;
-}
-
-.footer {
-  margin-top: 10px;
-  background: #071633;
-  color: white;
-  text-align: center;
-  padding: 12px;
-  font-weight: bold;
-  font-size: 16px;
-}
+@page { size:A4; margin:8mm; }
+body { font-family: Arial, sans-serif; color:#0b1f4d; margin:0; }
+.invoice { border:2px solid #0b2d6b; border-radius:10px; overflow:hidden; }
+.header { display:flex; justify-content:space-between; align-items:center; padding:14px; border-bottom:2px solid #0b2d6b; }
+.brand h1 { margin:0; font-size:36px; color:#0b2d6b; }
+.brand p { margin:4px 0; font-weight:bold; }
+.invbox { border:2px solid #0b2d6b; border-radius:8px; overflow:hidden; min-width:180px; text-align:center; }
+.invbox .t { background:#0b2d6b; color:#fff; font-size:36px; font-weight:bold; padding:6px; }
+.invbox .b { padding:10px; font-size:24px; font-weight:bold; color:#c41212; }
+.sec { margin:10px; border:1px solid #0b2d6b; border-radius:8px; overflow:hidden; }
+.secTitle { background:#0b2d6b; color:#fff; font-weight:bold; padding:6px 10px; }
+.twocol { display:grid; grid-template-columns:1fr 1fr; }
+.col { padding:10px; }
+.col:first-child { border-right:1px solid #d1d5db; }
+.row { display:grid; grid-template-columns:130px 10px 1fr; margin:6px 0; font-size:14px; }
+.label { font-weight:bold; }
+table { width:100%; border-collapse:collapse; font-size:14px; }
+th { background:#0b2d6b; color:#fff; padding:8px; text-align:left; }
+td { border:1px solid #d1d5db; padding:8px; }
+.right { text-align:right; }
+.total { font-weight:bold; font-size:16px; }
+.pay { margin:10px; border:1px solid #0b2d6b; display:grid; grid-template-columns:250px 1fr 220px; }
+.pay div { padding:10px; font-weight:bold; border-right:1px solid #0b2d6b; }
+.pay div:last-child { border-right:none; background:#0b2d6b; color:#fff; text-align:right; font-size:28px; }
+.footer { margin-top:8px; text-align:center; background:#0b2d6b; color:#fff; font-weight:bold; padding:10px; }
+.copy { margin:10px; border-top:2px dashed #0b2d6b; padding-top:8px; text-align:center; font-weight:bold; color:#0b2d6b; }
+.declare { margin:10px; border:1px dashed #0b2d6b; border-radius:8px; padding:10px; font-size:13px; }
+.small { font-size:12px; color:#334155; }
 </style>
 </head>
-
 <body>
 <div class="invoice">
-  <div class="top">
+  <div class="header">
     <div class="brand">
-      <div class="logoBox">
-        <div class="logoCar">🚘</div>
-        VISHWAKARMA<br />TRAVELS
-      </div>
-
-      <div class="company">
-        <h1>Vishwakarma Travels</h1>
-        <p>H No 19 Bagbera Jugsalai Jamshedpur</p>
-        <p>+91 7667989203</p>
-      </div>
+      <h1>Vishwakarma Travels</h1>
+      <p>H No 19 Bagbera Jugsalai Jamshedpur</p>
+      <p>+91 7667989203</p>
     </div>
-
-    <div class="invoiceBox">
-      <div class="invoiceTitle">INVOICE</div>
-      <div class="billNo">Bill No.<br />${bookingId}</div>
+    <div class="invbox">
+      <div class="t">INVOICE</div>
+      <div class="b">${bookingId}</div>
+      <div class="small">Date: ${billDate}</div>
     </div>
   </div>
 
-  <div class="section">
-    <div class="twoCol">
-      <div class="leftCol">
-        <div class="sectionTitle">BOOKING DETAILS</div>
+  <div class="sec">
+    <div class="twocol">
+      <div class="col">
+        <div class="secTitle">BOOKING DETAILS</div>
         <div class="row"><span class="label">Trip Detail</span><span>:</span><span>${form.pickup} to ${form.drop}</span></div>
         <div class="row"><span class="label">Client Name</span><span>:</span><span>${form.gender} ${form.customerName}</span></div>
         <div class="row"><span class="label">Address</span><span>:</span><span>${form.pickup}</span></div>
@@ -645,9 +461,8 @@ td {
         <div class="row"><span class="label">Booking Date</span><span>:</span><span>${form.journeyDate}</span></div>
         <div class="row"><span class="label">Reporting Time</span><span>:</span><span>${form.journeyTime}</span></div>
       </div>
-
-      <div class="rightCol">
-        <div class="sectionTitle">VEHICLE DETAILS</div>
+      <div class="col">
+        <div class="secTitle">VEHICLE DETAILS</div>
         <div class="row"><span class="label">REG NO.</span><span>:</span><span>${form.vehicleNumber}</span></div>
         <div class="row"><span class="label">MODEL</span><span>:</span><span>${form.vehicleModel}</span></div>
         <div class="row"><span class="label">CAB TYPE</span><span>:</span><span>${form.vehicleType}</span></div>
@@ -657,96 +472,71 @@ td {
     </div>
   </div>
 
-  <div class="section">
+  <div class="sec">
     <table>
       <tr>
         <th>FARE CHARGES</th>
         <th>TYPE</th>
         <th class="right">AMOUNT ₹</th>
       </tr>
-
       <tr>
         <td>${form.pickup} to ${form.drop}</td>
         <td>Per Trip</td>
         <td class="right">${fare.toFixed(2)}</td>
       </tr>
-
       <tr>
         <td>Advance Paid</td>
         <td>-</td>
         <td class="right">${advance.toFixed(2)}</td>
       </tr>
-
       <tr>
         <td>Discount / Round Off</td>
         <td>-</td>
         <td class="right">0.00</td>
       </tr>
-
-      <tr class="totalRow">
+      <tr class="total">
         <td colspan="2" class="right">Total Amount</td>
         <td class="right">${netPay.toFixed(2)}</td>
       </tr>
     </table>
   </div>
 
-  <div class="payable">
+  <div class="pay">
     <div>TOTAL AMOUNT PAYABLE</div>
     <div>Rupees ${netPay.toFixed(2)} Only</div>
     <div>₹ ${netPay.toFixed(2)}</div>
   </div>
 
-  <div class="thanks">
-    <div>
-      Thank You Dear Sir/Madam<br />
-      For Giving Us Booking<br />
-      Thank You For Your<br />
-      Support & Booking
-    </div>
+  <div class="copy">BOOKING CONFIRMATION COPY</div>
 
-    <div style="text-align:center;font-weight:bold;">
-      PhonePe | GPay | BHIM UPI<br /><br />
-      Scan This QR Code To Pay Us
-    </div>
-
-    <div class="qr">QR Code<br />Here</div>
-  </div>
-
-  <div class="cut">✂</div>
-  <div class="copyTitle">BOOKING CONFIRMATION COPY</div>
-
-  <div class="twoCol">
-    <div class="leftCol">
-      <div class="sectionTitle">TRIP DETAILS</div>
-      <div class="row"><span class="label">Trip Detail</span><span>:</span><span>${form.pickup} to ${form.drop}</span></div>
-      <div class="row"><span class="label">Client Name</span><span>:</span><span>${form.gender} ${form.customerName}</span></div>
-      <div class="row"><span class="label">Contact No</span><span>:</span><span>+91${form.customerPhone}</span></div>
-      <div class="row"><span class="label">Booking Date</span><span>:</span><span>${form.journeyDate}</span></div>
-    </div>
-
-    <div class="rightCol">
-      <div class="sectionTitle">VEHICLE DETAILS</div>
-      <div class="row"><span class="label">Vehicle Type</span><span>:</span><span>${form.vehicleType}</span></div>
-      <div class="row"><span class="label">Vehicle No</span><span>:</span><span>${form.vehicleNumber}</span></div>
-      <div class="row"><span class="label">Model</span><span>:</span><span>${form.vehicleModel}</span></div>
-      <div class="row"><span class="label">Driver Name</span><span>:</span><span>${form.driverName}</span></div>
-      <div class="row"><span class="label">Contact No</span><span>:</span><span>+91${form.driverMobile}</span></div>
+  <div class="sec">
+    <div class="twocol">
+      <div class="col">
+        <div class="secTitle">TRIP DETAILS</div>
+        <div class="row"><span class="label">Trip</span><span>:</span><span>${form.pickup} to ${form.drop}</span></div>
+        <div class="row"><span class="label">Client</span><span>:</span><span>${form.gender} ${form.customerName}</span></div>
+        <div class="row"><span class="label">Contact</span><span>:</span><span>+91${form.customerPhone}</span></div>
+      </div>
+      <div class="col">
+        <div class="secTitle">VEHICLE DETAILS</div>
+        <div class="row"><span class="label">Type</span><span>:</span><span>${form.vehicleType}</span></div>
+        <div class="row"><span class="label">Vehicle</span><span>:</span><span>${form.vehicleNumber}</span></div>
+        <div class="row"><span class="label">Driver</span><span>:</span><span>${form.driverName} (+91${form.driverMobile})</span></div>
+      </div>
     </div>
   </div>
 
-  <div class="declaration">
-    <b>DECLARATION</b><br />
-    ➤ Book A Cab Atleast 24 Hour Before Travelling Otherwise Booking May Not Be Confirmed<br />
-    ➤ After the booking is Confirmed, Customer will have to make the Advance Payment<br />
-    ➤ Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumstances
+  <div class="declare">
+    <b>DECLARATION</b><br/>
+    ➤ Book A Cab Atleast 24 Hour Before Travelling Otherwise Booking May Not Be Confirmed<br/>
+    ➤ After booking is confirmed, customer will have to make advance payment<br/>
+    ➤ Rs.500 cancellation charge will apply
   </div>
 
   <div class="footer">THANK YOU & WISH YOU A VERY HAPPY JOURNEY</div>
 </div>
 
-<script>
-  window.print();
-</script>
+<script>window.print();</script>
 </body>
 </html>
 `;
@@ -759,8 +549,19 @@ td {
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
+    const fare = Number(form.fare || 0);
+    const advance = Number(form.advance || 0);
+
     if (form.customerPhone.length !== 10) {
       alert("Customer WhatsApp number 10 digit ka hona chahiye.");
+      return;
+    }
+    if (fare <= 0) {
+      alert("Total Fare valid enter karo.");
+      return;
+    }
+    if (advance > fare) {
+      alert("Advance Fare se zyada nahi ho sakta.");
       return;
     }
 
@@ -768,10 +569,8 @@ td {
     const message = buildMessage(bookingId);
 
     setLoading(true);
-
     try {
       const saved = await saveBooking(bookingId);
-
       if (!saved) {
         alert("Booking database me save nahi hua. Supabase table/column check karo.");
         return;
@@ -786,7 +585,7 @@ td {
           pickup: form.pickup,
           drop_location: form.drop,
           journey_date: form.journeyDate,
-          fare: Number(form.fare || 0),
+          fare,
         },
         ...prev,
       ]);
@@ -811,7 +610,6 @@ td {
       <main style={pageStyle}>
         <div style={cardStyle}>
           <h1 style={{ marginTop: 0 }}>Admin Login</h1>
-
           <input
             type="password"
             placeholder="Enter Admin Password"
@@ -819,6 +617,23 @@ td {
             onChange={(e) => setPassword(e.target.value)}
             style={inputStyle}
           />
-
           <button
-            
+            type="button"
+            style={buttonStyle}
+            onClick={() => (password === "1234" ? setIsLogin(true) : alert("Wrong password"))}
+          >
+            Login
+          </button>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main style={pageStyle}>
+      <div style={cardStyle}>
+        <h1 style={{ marginTop: 0 }}>Premium Admin Booking</h1>
+
+        <form style={{ display: "grid", gap: "12px" }} onSubmit={handleSubmit}>
+          <input
+            placeholder="Customer Name / Mobile / 
