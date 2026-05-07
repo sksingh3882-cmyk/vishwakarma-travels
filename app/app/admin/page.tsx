@@ -111,7 +111,11 @@ export default function AdminPage() {
             e.preventDefault();
 
             const form = new FormData(e.currentTarget);
-            const customerPhone = form.get("customerPhone");
+            const customerPhone = String(form.get("customerPhone") || "").replace(/\D/g, "");
+
+const whatsappPhone = customerPhone.startsWith("91")
+  ? customerPhone
+  : `91${customerPhone}`;
 
             const message = `✅ Booking Confirmed - Vishwakarma Travels
 
@@ -180,7 +184,7 @@ if (!saveRes.ok) {
 alert("Booking saved");
 
 window.open(
-  `https://wa.me/91${customerPhone}?text=${encodeURIComponent(message)}`,
+  `https://wa.me/${customerPhone}?text=${encodeURIComponent(message)}`,
   "_blank"
 );
           }}
