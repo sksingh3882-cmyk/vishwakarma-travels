@@ -162,6 +162,8 @@ const saveRes = await fetch(
       drop: form.get("drop"),
       date_time: form.get("dateTime"),
       vehicle_no: form.get("vehicleNumber"),
+      vehicle_type: form.get("vehicleType"),
+      vehicle_model: form.get("vehicleModel"),
       fare: form.get("fare"),
       advance: form.get("advance"),
       driver_name: form.get("driverName"),
@@ -176,12 +178,11 @@ if (!saveRes.ok) {
 }
 
 alert("Booking saved");
-            window.open(
-              `https://wa.me/91${customerPhone}?text=${encodeURIComponent(
-                message
-              )}`,
-              "_blank"
-            );
+
+window.open(
+  `https://wa.me/91${customerPhone}?text=${encodeURIComponent(message)}`,
+  "_blank"
+);
           }}
         >
           <input
