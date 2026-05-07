@@ -1,8 +1,3 @@
-diff --git a/app/admin/page.tsx b/app/admin/page.tsx
-index c660a15bd47e686592fc962a8c15c81ac159c9bb..fb1268d1833409d75bf19919ec9cccb6475c3413 100644
---- a/app/admin/page.tsx
-+++ b/app/admin/page.tsx
-@@ -1,247 +1,374 @@
  "use client";
  
 -import { useState } from "react";
