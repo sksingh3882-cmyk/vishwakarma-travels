@@ -144,7 +144,31 @@ Thank you,
 Vishwakarma Travels
 Bagbera, Jamshedpur
 +91 7667989203`;
-
+await fetch(
+  `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/bookings`,
+  {
+    method: "POST",
+    headers: {
+      apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+      "Content-Type": "application/json",
+      Prefer: "return=minimal",
+    },
+    body: JSON.stringify({
+      customer_name: form.get("customerName"),
+      mobile: form.get("customerPhone"),
+      service: form.get("service"),
+      pickup: form.get("pickup"),
+      drop: form.get("drop"),
+      date_time: form.get("dateTime"),
+      vehicle_no: form.get("vehicleNumber"),
+      fare: form.get("fare"),
+      advance: form.get("advance"),
+      driver_name: form.get("driverName"),
+      driver_mobile: form.get("driverMobile"),
+    }),
+  }
+);
             window.open(
               `https://wa.me/91${customerPhone}?text=${encodeURIComponent(
                 message
