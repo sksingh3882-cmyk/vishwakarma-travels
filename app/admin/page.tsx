@@ -640,9 +640,9 @@ td, th {
   const message = buildWhatsAppMessage(lastBookingId);
 
   window.open(
-    `https://wa.me/91${cleanPhone(form.customerPhone)}?text=${encodeURIComponent(message)}`,
-    "_blank"
-  );
+  `https://wa.me/91${cleanPhone(form.customerPhone || "")}?text=${encodeURIComponent(message)}`,
+  "_blank"
+);
   }
   
   if (!isLogin) {
