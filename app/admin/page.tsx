@@ -67,6 +67,15 @@ const initialForm: BookingForm = {
   driverMobile: "",
 };
 
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 export default function AdminPage() {
   const [isLogin, setIsLogin] = useState(false);
   const [password, setPassword] = useState("");
@@ -113,13 +122,18 @@ export default function AdminPage() {
     loadData();
   }, [supabaseUrl, supabaseKey, headers]);
 
-  function updateForm<K extends keyof BookingForm>(key: K, value: BookingForm[K]) {
+  function updateForm<K extends keyof BookingForm>(
+    key: K,
+    value: BookingForm[K]
+  ) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
   function cleanPhone(value: string) {
     let phone = value.replace(/\D/g, "");
-    if (phone.startsWith("91") && phone.length === 12) phone = phone.slice(2);
+    if (phone.startsWith("91") && phone.length === 12) {
+      phone = phone.slice(2);
+    }
     return phone.slice(0, 10);
   }
 
@@ -127,7 +141,6 @@ export default function AdminPage() {
     return value.toLowerCase().trim();
   }
 
-  // -------- Customer Suggestion + Autofill --------
   const customerSuggestions = useMemo(() => {
     const q = normalize(form.customerName);
     if (q.length < 1) return [];
@@ -174,7 +187,6 @@ export default function AdminPage() {
     }));
   }
 
-  // -------- Vehicle Suggestion + Autofill --------
   const vehicleSuggestions = useMemo(() => {
     const q = normalize(form.vehicleNumber).toUpperCase();
     if (q.length < 1) return [];
@@ -220,11 +232,9 @@ export default function AdminPage() {
   }
 
   const addressPool = useMemo(() => {
-    const all = [
-      ...customers.map((c) => c.address || ""),
-      form.pickup,
-      form.drop,
-    ].filter(Boolean);
+    const all = [...customers.map((c) => c.address || ""), form.pickup, form.drop].filter(
+      Boolean
+    );
     return Array.from(new Set(all));
   }, [customers, form.pickup, form.drop]);
 
@@ -251,8 +261,8 @@ export default function AdminPage() {
     const matches = bookings.filter(
       (b) => cleanPhone(b.customer_phone || "") === phone
     );
-    if (!matches.length) return null;
 
+    if (!matches.length) return null;
     return { totalBookings: matches.length, lastBooking: matches[0] };
   }, [bookings, form.customerPhone]);
 
@@ -334,11 +344,13 @@ For Queries Please Call or WhatsApp:
       console.log("Supabase booking save error:", await response.text());
       return false;
     }
+
     return true;
   }
 
   async function saveCustomerIfNew() {
     const phone = cleanPhone(form.customerPhone);
+
     if (!supabaseUrl || !supabaseKey) return;
     if (phone.length !== 10 || !form.customerName.trim()) return;
 
@@ -357,13 +369,18 @@ For Queries Please Call or WhatsApp:
       body: JSON.stringify(payload),
     });
 
-    if (response.ok) setCustomers((prev) => [payload, ...prev]);
-    else console.log("Customer auto-save failed:", await response.text());
+    if (response.ok) {
+      setCustomers((prev) => [payload, ...prev]);
+    } else {
+      console.log("Customer auto-save failed:", await response.text());
+    }
   }
 
   async function saveVehicleIfNew() {
     const vehicleNo = form.vehicleNumber.trim().toUpperCase();
-    if (!supabaseUrl || !supabaseKey || !vehicleNo) return;
+
+    if (!supabaseUrl || !supabaseKey) return;
+    if (!vehicleNo) return;
 
     const exists = vehicles.some(
       (v) => (v.vehicleNumber || "").toUpperCase() === vehicleNo
@@ -384,8 +401,11 @@ For Queries Please Call or WhatsApp:
       body: JSON.stringify(payload),
     });
 
-    if (response.ok) setVehicles((prev) => [payload, ...prev]);
-    else console.log("Vehicle auto-save failed:", await response.text());
+    if (response.ok) {
+      setVehicles((prev) => [payload, ...prev]);
+    } else {
+      console.log("Vehicle auto-save failed:", await response.text());
+    }
   }
 
   function openBillPdf(bookingId: string) {
@@ -393,6 +413,21 @@ For Queries Please Call or WhatsApp:
     const advance = Number(form.advance || 0);
     const netPay = fare - advance;
     const billDate = new Date().toLocaleDateString("en-GB");
+
+    const safe = {
+      customerName: escapeHtml(form.customerName),
+      customerPhone: escapeHtml(form.customerPhone),
+      gender: escapeHtml(form.gender),
+      pickup: escapeHtml(form.pickup),
+      drop: escapeHtml(form.drop),
+      journeyDate: escapeHtml(form.journeyDate),
+      journeyTime: escapeHtml(form.journeyTime),
+      vehicleType: escapeHtml(form.vehicleType),
+      vehicleModel: escapeHtml(form.vehicleModel),
+      vehicleNumber: escapeHtml(form.vehicleNumber),
+      driverName: escapeHtml(form.driverName),
+      driverMobile: escapeHtml(form.driverMobile),
+    };
 
     const win = window.open("", "_blank");
     if (!win) {
@@ -403,7 +438,7 @@ For Queries Please Call or WhatsApp:
     const html = `
 <html>
 <head>
-<title>${bookingId} Invoice</title>
+<title>${escapeHtml(bookingId)} Invoice</title>
 <style>
 @page { size:A4; margin:8mm; }
 body { font-family: Arial, sans-serif; color:#0b1f4d; margin:0; }
@@ -445,8 +480,8 @@ td { border:1px solid #d1d5db; padding:8px; }
     </div>
     <div class="invbox">
       <div class="t">INVOICE</div>
-      <div class="b">${bookingId}</div>
-      <div class="small">Date: ${billDate}</div>
+      <div class="b">${escapeHtml(bookingId)}</div>
+      <div class="small">Date: ${escapeHtml(billDate)}</div>
     </div>
   </div>
 
@@ -454,20 +489,20 @@ td { border:1px solid #d1d5db; padding:8px; }
     <div class="twocol">
       <div class="col">
         <div class="secTitle">BOOKING DETAILS</div>
-        <div class="row"><span class="label">Trip Detail</span><span>:</span><span>${form.pickup} to ${form.drop}</span></div>
-        <div class="row"><span class="label">Client Name</span><span>:</span><span>${form.gender} ${form.customerName}</span></div>
-        <div class="row"><span class="label">Address</span><span>:</span><span>${form.pickup}</span></div>
-        <div class="row"><span class="label">Contact No.</span><span>:</span><span>+91${form.customerPhone}</span></div>
-        <div class="row"><span class="label">Booking Date</span><span>:</span><span>${form.journeyDate}</span></div>
-        <div class="row"><span class="label">Reporting Time</span><span>:</span><span>${form.journeyTime}</span></div>
+        <div class="row"><span class="label">Trip Detail</span><span>:</span><span>${safe.pickup} to ${safe.drop}</span></div>
+        <div class="row"><span class="label">Client Name</span><span>:</span><span>${safe.gender} ${safe.customerName}</span></div>
+        <div class="row"><span class="label">Address</span><span>:</span><span>${safe.pickup}</span></div>
+        <div class="row"><span class="label">Contact No.</span><span>:</span><span>+91${safe.customerPhone}</span></div>
+        <div class="row"><span class="label">Booking Date</span><span>:</span><span>${safe.journeyDate}</span></div>
+        <div class="row"><span class="label">Reporting Time</span><span>:</span><span>${safe.journeyTime}</span></div>
       </div>
       <div class="col">
         <div class="secTitle">VEHICLE DETAILS</div>
-        <div class="row"><span class="label">REG NO.</span><span>:</span><span>${form.vehicleNumber}</span></div>
-        <div class="row"><span class="label">MODEL</span><span>:</span><span>${form.vehicleModel}</span></div>
-        <div class="row"><span class="label">CAB TYPE</span><span>:</span><span>${form.vehicleType}</span></div>
-        <div class="row"><span class="label">DRIVER NAME</span><span>:</span><span>${form.driverName}</span></div>
-        <div class="row"><span class="label">CONTACT NO.</span><span>:</span><span>+91${form.driverMobile}</span></div>
+        <div class="row"><span class="label">REG NO.</span><span>:</span><span>${safe.vehicleNumber}</span></div>
+        <div class="row"><span class="label">MODEL</span><span>:</span><span>${safe.vehicleModel}</span></div>
+        <div class="row"><span class="label">CAB TYPE</span><span>:</span><span>${safe.vehicleType}</span></div>
+        <div class="row"><span class="label">DRIVER NAME</span><span>:</span><span>${safe.driverName}</span></div>
+        <div class="row"><span class="label">CONTACT NO.</span><span>:</span><span>+91${safe.driverMobile}</span></div>
       </div>
     </div>
   </div>
@@ -480,7 +515,7 @@ td { border:1px solid #d1d5db; padding:8px; }
         <th class="right">AMOUNT ₹</th>
       </tr>
       <tr>
-        <td>${form.pickup} to ${form.drop}</td>
+        <td>${safe.pickup} to ${safe.drop}</td>
         <td>Per Trip</td>
         <td class="right">${fare.toFixed(2)}</td>
       </tr>
@@ -513,15 +548,15 @@ td { border:1px solid #d1d5db; padding:8px; }
     <div class="twocol">
       <div class="col">
         <div class="secTitle">TRIP DETAILS</div>
-        <div class="row"><span class="label">Trip</span><span>:</span><span>${form.pickup} to ${form.drop}</span></div>
-        <div class="row"><span class="label">Client</span><span>:</span><span>${form.gender} ${form.customerName}</span></div>
-        <div class="row"><span class="label">Contact</span><span>:</span><span>+91${form.customerPhone}</span></div>
+        <div class="row"><span class="label">Trip</span><span>:</span><span>${safe.pickup} to ${safe.drop}</span></div>
+        <div class="row"><span class="label">Client</span><span>:</span><span>${safe.gender} ${safe.customerName}</span></div>
+        <div class="row"><span class="label">Contact</span><span>:</span><span>+91${safe.customerPhone}</span></div>
       </div>
       <div class="col">
         <div class="secTitle">VEHICLE DETAILS</div>
-        <div class="row"><span class="label">Type</span><span>:</span><span>${form.vehicleType}</span></div>
-        <div class="row"><span class="label">Vehicle</span><span>:</span><span>${form.vehicleNumber}</span></div>
-        <div class="row"><span class="label">Driver</span><span>:</span><span>${form.driverName} (+91${form.driverMobile})</span></div>
+        <div class="row"><span class="label">Type</span><span>:</span><span>${safe.vehicleType}</span></div>
+        <div class="row"><span class="label">Vehicle</span><span>:</span><span>${safe.vehicleNumber}</span></div>
+        <div class="row"><span class="label">Driver</span><span>:</span><span>${safe.driverName} (+91${safe.driverMobile})</span></div>
       </div>
     </div>
   </div>
@@ -556,10 +591,12 @@ td { border:1px solid #d1d5db; padding:8px; }
       alert("Customer WhatsApp number 10 digit ka hona chahiye.");
       return;
     }
+
     if (fare <= 0) {
       alert("Total Fare valid enter karo.");
       return;
     }
+
     if (advance > fare) {
       alert("Advance Fare se zyada nahi ho sakta.");
       return;
@@ -571,6 +608,7 @@ td { border:1px solid #d1d5db; padding:8px; }
     setLoading(true);
     try {
       const saved = await saveBooking(bookingId);
+
       if (!saved) {
         alert("Booking database me save nahi hua. Supabase table/column check karo.");
         return;
@@ -609,37 +647,4 @@ td { border:1px solid #d1d5db; padding:8px; }
     return (
       <main style={pageStyle}>
         <div style={cardStyle}>
-          <h1 style={{ marginTop: 0 }}>Admin Login</h1>
-          <input
-            type="password"
-            placeholder="Enter Admin Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={inputStyle}
-          />
-          <button
-            type="button"
-            style={buttonStyle}
-            onClick={() => (password === "1234" ? setIsLogin(true) : alert("Wrong password"))}
-          >
-            Login
-          </button>
-        </div>
-      </main>
-    );
-  }
-
-  return (
-    <main style={pageStyle}>
-      <div style={cardStyle}>
-        <h1 style={{ marginTop: 0 }}>Premium Admin Booking</h1>
-
-        <form style={{ display: "grid", gap: "12px" }} onSubmit={handleSubmit}>
-          <input
-  placeholder="Customer Name / Mobile / Address"
-  style={inputStyle}
-  list="customerList"
-  value={form.customerName}
-  onChange={(e) => fillCustomer(e.currentTarget.value)}
-  required
-/>
+          <h1 
