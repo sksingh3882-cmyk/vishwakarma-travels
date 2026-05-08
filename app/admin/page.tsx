@@ -83,6 +83,7 @@ export default function AdminPage() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [bookings, setBookings] = useState<BookingRecord[]>([]);
   const [form, setForm] = useState<BookingForm>(initialForm);
+const [invoiceData, setInvoiceData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
