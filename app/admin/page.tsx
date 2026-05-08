@@ -672,52 +672,6 @@ setForm(initialForm);
   <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>
     Admin Dashboard
   </h1>
-       {invoiceData && (
-  <button
-    onClick={() => window.print()}
-    style={{
-      background: "#0b4da2",
-      color: "white",
-      padding: "12px 20px",
-      border: "none",
-      borderRadius: "10px",
-      fontWeight: "bold",
-      cursor: "pointer",
-      marginTop: "20px",
-    }}
-  >
-    Download Premium PDF Invoice
-  </button>
-)}   
-    {invoiceData && (
-  <div style={{ marginTop: "30px", padding: "20px", background: "#ffffff" }}>
-    <h2>Premium Invoice Preview</h2>
-
-    <p>
-      <strong>Customer:</strong> {invoiceData.customerName}
-    </p>
-
-    <p>
-      <strong>Mobile:</strong> {invoiceData.customerPhone}
-    </p>
-
-    <p>
-      <strong>Service:</strong> {invoiceData.service}
-    </p>
-
-    <p>
-      <strong>Route:</strong> {invoiceData.pickup} → {invoiceData.drop}
-    </p>
-
-    <p>
-      <strong>Vehicle:</strong> {invoiceData.vehicleModel}
-    </p>
-
-    <p>
-      <strong>Fare:</strong> ₹{invoiceData.fare}
-    </p>
-  </div>
-)}      
 </div>
 </main>
     );
