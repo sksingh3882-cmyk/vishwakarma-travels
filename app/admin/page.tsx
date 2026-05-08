@@ -665,15 +665,32 @@ setForm(initialForm);
     }
   }
 
-  if (!isLogin) {
-    return (
-      <main style={{ minHeight: "100vh", padding: "20px", background: "#f5f5f5" }}>
-        <div style={{ background: "white", padding: "20px", borderRadius: "12px" }}>
-  <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>
-    Admin Dashboard
-  </h1>
-</div>
-</main>
-    );
-  }
+return (
+  <main style={{ minHeight: "100vh", padding: "20px", background: "#f5f5f5" }}>
+    <div style={{ background: "white", padding: "20px", borderRadius: "12px" }}>
+      <h1 style={{ fontSize: "28px", fontWeight: "bold", color: "#0b2d6b" }}>
+        Vishwakarma Travels Admin Dashboard
+      </h1>
+
+      <p style={{ marginTop: "10px" }}>
+        Admin page working hai. Ab booking form yahin show hoga.
+      </p>
+
+      <form onSubmit={handleSubmit} style={{ marginTop: "20px", display: "grid", gap: "12px" }}>
+        <input placeholder="Customer Name" value={form.customerName} onChange={(e) => updateForm("customerName", e.target.value)} />
+        <input placeholder="Customer Phone" value={form.customerPhone} onChange={(e) => updateForm("customerPhone", cleanPhone(e.target.value))} />
+        <input placeholder="Pickup" value={form.pickup} onChange={(e) => updateForm("pickup", e.target.value)} />
+        <input placeholder="Drop" value={form.drop} onChange={(e) => updateForm("drop", e.target.value)} />
+        <input type="date" value={form.journeyDate} onChange={(e) => updateForm("journeyDate", e.target.value)} />
+        <input type="time" value={form.journeyTime} onChange={(e) => updateForm("journeyTime", e.target.value)} />
+        <input placeholder="Vehicle Number" value={form.vehicleNumber} onChange={(e) => updateForm("vehicleNumber", e.target.value)} />
+        <input placeholder="Fare" value={form.fare} onChange={(e) => updateForm("fare", e.target.value)} />
+
+        <button type="submit" style={{ padding: "12px", background: "#0b2d6b", color: "white", borderRadius: "8px" }}>
+          Save Booking
+        </button>
+      </form>
+    </div>
+  </main>
+);
 }
