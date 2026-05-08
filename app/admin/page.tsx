@@ -636,4 +636,10 @@ td { border:1px solid #d1d5db; padding:8px; }
 
         <form style={{ display: "grid", gap: "12px" }} onSubmit={handleSubmit}>
           <input
-            placeholder="Customer Name / Mobile / 
+  placeholder="Customer Name / Mobile / Address"
+  style={inputStyle}
+  list="customerList"
+  value={form.customerName}
+  onChange={(e) => fillCustomer(e.currentTarget.value)}
+  required
+/>
