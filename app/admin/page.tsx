@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useState,
-  type CSSProperties,
-  type FormEvent,
-} from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 
 type Customer = {
   name?: string;
@@ -22,13 +16,25 @@ type Vehicle = {
   driverMobile?: string;
 };
 
-type BookingRecord = {
+type Booking = {
+  booking_id?: string;
   customer_name?: string;
   customer_phone?: string;
+  gender?: string;
+  service?: string;
   pickup?: string;
   drop_location?: string;
   journey_date?: string;
+  journey_time?: string;
+  vehicle_type?: string;
+  vehicle_model?: string;
+  vehicle_number?: string;
   fare?: number;
+  advance?: number;
+  net_payable?: number;
+  driver_name?: string;
+  driver_mobile?: string;
+  created_at?: string;
 };
 
 type BookingForm = {
@@ -52,8 +58,8 @@ type BookingForm = {
 const initialForm: BookingForm = {
   customerName: "",
   customerPhone: "",
-  gender: "",
-  service: "",
+  gender: "Mr.",
+  service: "Cab Booking",
   pickup: "",
   drop: "",
   journeyDate: "",
@@ -62,13 +68,19 @@ const initialForm: BookingForm = {
   vehicleModel: "",
   vehicleNumber: "",
   fare: "",
-  advance: "",
+  advance: "0",
   driverName: "",
   driverMobile: "",
 };
 
+function cleanPhone(value: string) {
+  let phone = String(value || "").replace(/\D/g, "");
+  if (phone.startsWith("91") && phone.length === 12) phone = phone.slice(2);
+  return phone.slice(0, 10);
+}
+
 function escapeHtml(value: string) {
-  return value
+  return String(value || "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
@@ -79,15 +91,15 @@ function escapeHtml(value: string) {
 export default function AdminPage() {
   const [isLogin, setIsLogin] = useState(false);
   const [password, setPassword] = useState("");
+  const [form, setForm] = useState<BookingForm>(initialForm);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [bookings, setBookings] = useState<BookingRecord[]>([]);
-  const [form, setForm] = useState<BookingForm>(initialForm);
-const [invoiceData, setInvoiceData] = useState<any>(null);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(false);
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+  const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "admin";
 
   const headers = useMemo(
     () => ({
@@ -97,31 +109,39 @@ const [invoiceData, setInvoiceData] = useState<any>(null);
       Prefer: "return=representation",
     }),
     [supabaseKey]
-  );
+  );   useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      localStorage.getItem("vt_admin_login") === "yes"
+    ) {
+      setIsLogin(true);
+    }
+  }, []);
 
   useEffect(() => {
     async function loadData() {
-      if (!supabaseUrl || !supabaseKey) return;
+      if (!isLogin || !supabaseUrl || !supabaseKey) return;
 
       try {
         const [customerRes, vehicleRes, bookingRes] = await Promise.all([
           fetch(`${supabaseUrl}/rest/v1/customers?select=*`, { headers }),
           fetch(`${supabaseUrl}/rest/v1/vehicles?select=*`, { headers }),
-          fetch(`${supabaseUrl}/rest/v1/bookings?select=*&order=created_at.desc`, {
-            headers,
-          }),
+          fetch(
+            `${supabaseUrl}/rest/v1/bookings?select=*&order=created_at.desc&limit=50`,
+            { headers }
+          ),
         ]);
 
         if (customerRes.ok) setCustomers(await customerRes.json());
         if (vehicleRes.ok) setVehicles(await vehicleRes.json());
         if (bookingRes.ok) setBookings(await bookingRes.json());
       } catch (error) {
-        console.log("Data loading error:", error);
+        console.log("Data load error:", error);
       }
     }
 
     loadData();
-  }, [supabaseUrl, supabaseKey, headers]);
+  }, [isLogin, supabaseUrl, supabaseKey, headers]);
 
   function updateForm<K extends keyof BookingForm>(
     key: K,
@@ -130,147 +150,71 @@ const [invoiceData, setInvoiceData] = useState<any>(null);
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  function cleanPhone(value: string) {
-    let phone = value.replace(/\D/g, "");
-    if (phone.startsWith("91") && phone.length === 12) {
-      phone = phone.slice(2);
+  function handleLogin(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    if (password === adminPassword) {
+      localStorage.setItem("vt_admin_login", "yes");
+      setIsLogin(true);
+    } else {
+      alert("Wrong admin password");
     }
-    return phone.slice(0, 10);
   }
 
-  function normalize(value: string) {
-    return value.toLowerCase().trim();
+  function logout() {
+    localStorage.removeItem("vt_admin_login");
+    setIsLogin(false);
+    setPassword("");
   }
-
-  const customerSuggestions = useMemo(() => {
-    const q = normalize(form.customerName);
-    if (q.length < 1) return [];
-
-    return customers
-      .filter((c) => {
-        const name = normalize(c.name || "");
-        const mobile = cleanPhone(c.mobile || "");
-        const address = normalize(c.address || "");
-        return name.includes(q) || mobile.includes(q) || address.includes(q);
-      })
-      .slice(0, 10);
-  }, [customers, form.customerName]);
 
   function fillCustomer(value: string) {
     updateForm("customerName", value);
 
-    const q = normalize(value);
-    if (q.length < 2) return;
+    const query = value.toLowerCase().trim();
+    if (query.length < 2) return;
 
-    const exactMobileMatch = customers.find(
-      (c) => cleanPhone(c.mobile || "") === cleanPhone(q)
-    );
-
-    const nameStartsMatch = customers.find((c) =>
-      normalize(c.name || "").startsWith(q)
-    );
-
-    const genericMatch = customers.find((c) => {
-      const name = normalize(c.name || "");
+    const found = customers.find((c) => {
+      const name = (c.name || "").toLowerCase();
       const mobile = cleanPhone(c.mobile || "");
-      const address = normalize(c.address || "");
-      return name.includes(q) || mobile.includes(q) || address.includes(q);
+      return name.includes(query) || mobile.includes(cleanPhone(query));
     });
 
-    const customer = exactMobileMatch || nameStartsMatch || genericMatch;
-    if (!customer) return;
+    if (!found) return;
 
     setForm((prev) => ({
       ...prev,
-      customerName: customer.name || prev.customerName,
-      customerPhone: cleanPhone(customer.mobile || prev.customerPhone),
-      pickup: customer.address || prev.pickup,
+      customerName: found.name || prev.customerName,
+      customerPhone: cleanPhone(found.mobile || prev.customerPhone),
+      pickup: found.address || prev.pickup,
     }));
   }
-
-  const vehicleSuggestions = useMemo(() => {
-    const q = normalize(form.vehicleNumber).toUpperCase();
-    if (q.length < 1) return [];
-
-    return vehicles
-      .filter((v) => {
-        const fullNo = (v.vehicleNumber || "").toUpperCase();
-        return fullNo.includes(q) || fullNo.endsWith(q);
-      })
-      .slice(0, 10);
-  }, [vehicles, form.vehicleNumber]);
 
   function fillVehicle(value: string) {
     const vehicleNo = value.toUpperCase();
     updateForm("vehicleNumber", vehicleNo);
 
-    const q = vehicleNo.trim();
-    if (q.length < 2) return;
+    if (vehicleNo.length < 2) return;
 
-    const exactMatch = vehicles.find(
-      (v) => (v.vehicleNumber || "").toUpperCase() === q
+    const found = vehicles.find((v) =>
+      (v.vehicleNumber || "").toUpperCase().includes(vehicleNo)
     );
 
-    const endsWithMatch = vehicles.find((v) =>
-      (v.vehicleNumber || "").toUpperCase().endsWith(q)
-    );
-
-    const includesMatch = vehicles.find((v) =>
-      (v.vehicleNumber || "").toUpperCase().includes(q)
-    );
-
-    const vehicle = exactMatch || endsWithMatch || includesMatch;
-    if (!vehicle) return;
+    if (!found) return;
 
     setForm((prev) => ({
       ...prev,
-      vehicleNumber: vehicle.vehicleNumber || prev.vehicleNumber,
-      vehicleType: vehicle.vehicleType || prev.vehicleType,
-      vehicleModel: vehicle.vehicleModel || prev.vehicleModel,
-      driverName: vehicle.driverName || prev.driverName,
-      driverMobile: cleanPhone(vehicle.driverMobile || prev.driverMobile),
+      vehicleNumber: found.vehicleNumber || prev.vehicleNumber,
+      vehicleType: found.vehicleType || prev.vehicleType,
+      vehicleModel: found.vehicleModel || prev.vehicleModel,
+      driverName: found.driverName || prev.driverName,
+      driverMobile: cleanPhone(found.driverMobile || prev.driverMobile),
     }));
   }
 
-  const addressPool = useMemo(() => {
-    const all = [...customers.map((c) => c.address || ""), form.pickup, form.drop].filter(
-      Boolean
-    );
-    return Array.from(new Set(all));
-  }, [customers, form.pickup, form.drop]);
-
-  const pickupSuggestions = useMemo(
-    () =>
-      addressPool
-        .filter((a) => a.toLowerCase().includes(form.pickup.toLowerCase()))
-        .slice(0, 10),
-    [addressPool, form.pickup]
-  );
-
-  const dropSuggestions = useMemo(
-    () =>
-      addressPool
-        .filter((a) => a.toLowerCase().includes(form.drop.toLowerCase()))
-        .slice(0, 10),
-    [addressPool, form.drop]
-  );
-
-  const repeatCustomer = useMemo(() => {
-    const phone = form.customerPhone.trim();
-    if (phone.length !== 10) return null;
-
-    const matches = bookings.filter(
-      (b) => cleanPhone(b.customer_phone || "") === phone
-    );
-
-    if (!matches.length) return null;
-    return { totalBookings: matches.length, lastBooking: matches[0] };
-  }, [bookings, form.customerPhone]);
-
-  function buildMessage(bookingId: string) {
+  function buildWhatsAppMessage(bookingId: string) {
     const fare = Number(form.fare || 0);
     const advance = Number(form.advance || 0);
-    const netPay = fare - advance;
+    const netPayable = fare - advance;
 
     return `✅ Booking Confirmed - Vishwakarma Travels
 
@@ -295,30 +239,258 @@ Driver Name: ${form.driverName}
 Driver Mobile: ${form.driverMobile}
 
 💵 Fare Charges:
-Fare: ₹${form.fare}
-Advance Paid: ₹${form.advance || "0"}
-Net Payable Amount: ₹${netPay}
+Fare: ₹${fare}
+Advance Paid: ₹${advance}
+Net Payable Amount: ₹${netPayable}
 
 Thank You For Choosing Vishwakarma Travels
 Wish You A Very Happy Journey
 
 For Queries Please Call or WhatsApp:
 +91 7667989203`;
-  }
+  }   function openBillPdf(bookingId: string) {
+    const fare = Number(form.fare || 0);
+    const advance = Number(form.advance || 0);
+    const netPayable = fare - advance;
+    const billDate = new Date().toLocaleDateString("en-GB");
 
-  async function saveBooking(bookingId: string) {
-    if (!supabaseUrl || !supabaseKey) {
-      alert("Supabase URL ya ANON KEY missing hai.");
-      return false;
+    const win = window.open("", "_blank");
+
+    if (!win) {
+      alert("Popup blocked hai. Browser me popup allow karo.");
+      return;
     }
 
+    const html = `
+<!doctype html>
+<html>
+<head>
+<title>${escapeHtml(bookingId)} Invoice</title>
+<style>
+@page { size: A4; margin: 8mm; }
+body {
+  font-family: Arial, sans-serif;
+  color: #0b1f4d;
+  margin: 0;
+  padding: 12px;
+}
+.invoice {
+  border: 2px solid #0b2d6b;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border-bottom: 2px solid #0b2d6b;
+}
+.brand h1 {
+  margin: 0;
+  font-size: 34px;
+  color: #0b2d6b;
+}
+.brand p {
+  margin: 4px 0;
+  font-weight: bold;
+}
+.invbox {
+  border: 2px solid #0b2d6b;
+  border-radius: 8px;
+  min-width: 180px;
+  text-align: center;
+  overflow: hidden;
+}
+.invbox h2 {
+  margin: 0;
+  background: #0b2d6b;
+  color: white;
+  padding: 8px;
+}
+.invbox b {
+  display: block;
+  padding: 10px;
+  color: #c41212;
+  font-size: 22px;
+}
+.sec {
+  margin: 10px;
+  border: 1px solid #0b2d6b;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.secTitle {
+  background: #0b2d6b;
+  color: white;
+  padding: 8px 10px;
+  font-weight: bold;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.col {
+  padding: 10px;
+}
+.row {
+  display: grid;
+  grid-template-columns: 130px 10px 1fr;
+  margin: 7px 0;
+  font-size: 14px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th {
+  background: #0b2d6b;
+  color: white;
+}
+td, th {
+  border: 1px solid #d1d5db;
+  padding: 8px;
+}
+.right {
+  text-align: right;
+}
+.pay {
+  margin: 10px;
+  background: #0b2d6b;
+  color: white;
+  padding: 12px;
+  font-size: 26px;
+  font-weight: bold;
+  text-align: right;
+}
+.footer {
+  background: #0b2d6b;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  padding: 10px;
+}
+.note {
+  margin: 10px;
+  border: 1px dashed #0b2d6b;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+@media print {
+  body { padding: 0; }
+}
+</style>
+</head>
+<body>
+<div class="invoice">
+  <div class="header">
+    <div class="brand">
+      <h1>Vishwakarma Travels</h1>
+      <p>H No 19 Bagbera Jugsalai Jamshedpur</p>
+      <p>+91 7667989203</p>
+    </div>
+    <div class="invbox">
+      <h2>INVOICE</h2>
+      <b>${escapeHtml(bookingId)}</b>
+      <p>Date: ${escapeHtml(billDate)}</p>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="grid">
+      <div class="col">
+        <div class="secTitle">BOOKING DETAILS</div>
+        <div class="row"><b>Client</b><span>:</span><span>${escapeHtml(
+          form.gender
+        )} ${escapeHtml(form.customerName)}</span></div>
+        <div class="row"><b>Contact</b><span>:</span><span>+91${escapeHtml(
+          form.customerPhone
+        )}</span></div>
+        <div class="row"><b>Pickup</b><span>:</span><span>${escapeHtml(
+          form.pickup
+        )}</span></div>
+        <div class="row"><b>Drop</b><span>:</span><span>${escapeHtml(
+          form.drop
+        )}</span></div>
+        <div class="row"><b>Date/Time</b><span>:</span><span>${escapeHtml(
+          form.journeyDate
+        )} ${escapeHtml(form.journeyTime)}</span></div>
+      </div>
+
+      <div class="col">
+        <div class="secTitle">VEHICLE DETAILS</div>
+        <div class="row"><b>Type</b><span>:</span><span>${escapeHtml(
+          form.vehicleType
+        )}</span></div>
+        <div class="row"><b>Model</b><span>:</span><span>${escapeHtml(
+          form.vehicleModel
+        )}</span></div>
+        <div class="row"><b>Reg No.</b><span>:</span><span>${escapeHtml(
+          form.vehicleNumber
+        )}</span></div>
+        <div class="row"><b>Driver</b><span>:</span><span>${escapeHtml(
+          form.driverName
+        )}</span></div>
+        <div class="row"><b>Mobile</b><span>:</span><span>+91${escapeHtml(
+          form.driverMobile
+        )}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <table>
+      <tr>
+        <th>FARE CHARGES</th>
+        <th>TYPE</th>
+        <th class="right">AMOUNT ₹</th>
+      </tr>
+      <tr>
+        <td>${escapeHtml(form.pickup)} to ${escapeHtml(form.drop)}</td>
+        <td>Per Trip</td>
+        <td class="right">${fare.toFixed(2)}</td>
+      </tr>
+      <tr>
+        <td>Advance Paid</td>
+        <td>-</td>
+        <td class="right">${advance.toFixed(2)}</td>
+      </tr>
+      <tr>
+        <td colspan="2" class="right"><b>Total Payable</b></td>
+        <td class="right"><b>${netPayable.toFixed(2)}</b></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="pay">TOTAL AMOUNT PAYABLE ₹ ${netPayable.toFixed(2)}</div>
+
+  <div class="note">
+    <b>DECLARATION</b><br/>
+    Book A Cab Atleast 24 Hour Before Travelling Otherwise Booking May Not Be Confirmed.<br/>
+    After booking is confirmed, customer will have to make advance payment.<br/>
+    Cancellation charge may apply.
+  </div>
+
+  <div class="footer">THANK YOU & WISH YOU A VERY HAPPY JOURNEY</div>
+</div>
+
+<script>window.print();</script>
+</body>
+</html>
+`;
+
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+  }   async function saveBooking(bookingId: string) {
     const fare = Number(form.fare || 0);
     const advance = Number(form.advance || 0);
 
     const payload = {
       booking_id: bookingId,
       customer_name: form.customerName,
-      customer_phone: form.customerPhone,
+      customer_phone: cleanPhone(form.customerPhone),
       gender: form.gender,
       service: form.service,
       pickup: form.pickup,
@@ -332,7 +504,7 @@ For Queries Please Call or WhatsApp:
       advance,
       net_payable: fare - advance,
       driver_name: form.driverName,
-      driver_mobile: form.driverMobile,
+      driver_mobile: cleanPhone(form.driverMobile),
     };
 
     const response = await fetch(`${supabaseUrl}/rest/v1/bookings`, {
@@ -342,10 +514,11 @@ For Queries Please Call or WhatsApp:
     });
 
     if (!response.ok) {
-      console.log("Supabase booking save error:", await response.text());
+      console.log("Booking save error:", await response.text());
       return false;
     }
 
+    setBookings((prev) => [payload, ...prev]);
     return true;
   }
 
@@ -358,7 +531,7 @@ For Queries Please Call or WhatsApp:
     const exists = customers.some((c) => cleanPhone(c.mobile || "") === phone);
     if (exists) return;
 
-    const payload: Customer = {
+    const payload = {
       name: form.customerName.trim(),
       mobile: phone,
       address: form.pickup.trim(),
@@ -372,8 +545,6 @@ For Queries Please Call or WhatsApp:
 
     if (response.ok) {
       setCustomers((prev) => [payload, ...prev]);
-    } else {
-      console.log("Customer auto-save failed:", await response.text());
     }
   }
 
@@ -386,9 +557,10 @@ For Queries Please Call or WhatsApp:
     const exists = vehicles.some(
       (v) => (v.vehicleNumber || "").toUpperCase() === vehicleNo
     );
+
     if (exists) return;
 
-    const payload: Vehicle = {
+    const payload = {
       vehicleNumber: vehicleNo,
       vehicleType: form.vehicleType.trim(),
       vehicleModel: form.vehicleModel.trim(),
@@ -404,293 +576,202 @@ For Queries Please Call or WhatsApp:
 
     if (response.ok) {
       setVehicles((prev) => [payload, ...prev]);
-    } else {
-      console.log("Vehicle auto-save failed:", await response.text());
     }
-  }
-
-  function openBillPdf(bookingId: string) {
-    const fare = Number(form.fare || 0);
-    const advance = Number(form.advance || 0);
-    const netPay = fare - advance;
-    const billDate = new Date().toLocaleDateString("en-GB");
-
-    const safe = {
-      customerName: escapeHtml(form.customerName),
-      customerPhone: escapeHtml(form.customerPhone),
-      gender: escapeHtml(form.gender),
-      pickup: escapeHtml(form.pickup),
-      drop: escapeHtml(form.drop),
-      journeyDate: escapeHtml(form.journeyDate),
-      journeyTime: escapeHtml(form.journeyTime),
-      vehicleType: escapeHtml(form.vehicleType),
-      vehicleModel: escapeHtml(form.vehicleModel),
-      vehicleNumber: escapeHtml(form.vehicleNumber),
-      driverName: escapeHtml(form.driverName),
-      driverMobile: escapeHtml(form.driverMobile),
-    };
-
-    const win = window.open("", "_blank");
-    if (!win) {
-      alert("Popup blocked hai. Browser me popup allow karo.");
-      return;
-    }
-
-    const html = `
-<html>
-<head>
-<title>${escapeHtml(bookingId)} Invoice</title>
-<style>
-@page { size:A4; margin:8mm; }
-body { font-family: Arial, sans-serif; color:#0b1f4d; margin:0; }
-.invoice { border:2px solid #0b2d6b; border-radius:10px; overflow:hidden; }
-.header { display:flex; justify-content:space-between; align-items:center; padding:14px; border-bottom:2px solid #0b2d6b; }
-.brand h1 { margin:0; font-size:36px; color:#0b2d6b; }
-.brand p { margin:4px 0; font-weight:bold; }
-.invbox { border:2px solid #0b2d6b; border-radius:8px; overflow:hidden; min-width:180px; text-align:center; }
-.invbox .t { background:#0b2d6b; color:#fff; font-size:36px; font-weight:bold; padding:6px; }
-.invbox .b { padding:10px; font-size:24px; font-weight:bold; color:#c41212; }
-.sec { margin:10px; border:1px solid #0b2d6b; border-radius:8px; overflow:hidden; }
-.secTitle { background:#0b2d6b; color:#fff; font-weight:bold; padding:6px 10px; }
-.twocol { display:grid; grid-template-columns:1fr 1fr; }
-.col { padding:10px; }
-.col:first-child { border-right:1px solid #d1d5db; }
-.row { display:grid; grid-template-columns:130px 10px 1fr; margin:6px 0; font-size:14px; }
-.label { font-weight:bold; }
-table { width:100%; border-collapse:collapse; font-size:14px; }
-th { background:#0b2d6b; color:#fff; padding:8px; text-align:left; }
-td { border:1px solid #d1d5db; padding:8px; }
-.right { text-align:right; }
-.total { font-weight:bold; font-size:16px; }
-.pay { margin:10px; border:1px solid #0b2d6b; display:grid; grid-template-columns:250px 1fr 220px; }
-.pay div { padding:10px; font-weight:bold; border-right:1px solid #0b2d6b; }
-.pay div:last-child { border-right:none; background:#0b2d6b; color:#fff; text-align:right; font-size:28px; }
-.footer { margin-top:8px; text-align:center; background:#0b2d6b; color:#fff; font-weight:bold; padding:10px; }
-.copy { margin:10px; border-top:2px dashed #0b2d6b; padding-top:8px; text-align:center; font-weight:bold; color:#0b2d6b; }
-.declare { margin:10px; border:1px dashed #0b2d6b; border-radius:8px; padding:10px; font-size:13px; }
-.small { font-size:12px; color:#334155; }
-</style>
-</head>
-<body>
-<div class="invoice">
-  <div class="header">
-    <div class="brand">
-      <h1>Vishwakarma Travels</h1>
-      <p>H No 19 Bagbera Jugsalai Jamshedpur</p>
-      <p>+91 7667989203</p>
-    </div>
-    <div class="invbox">
-      <div class="t">INVOICE</div>
-      <div class="b">${escapeHtml(bookingId)}</div>
-      <div class="small">Date: ${escapeHtml(billDate)}</div>
-    </div>
-  </div>
-
-  <div class="sec">
-    <div class="twocol">
-      <div class="col">
-        <div class="secTitle">BOOKING DETAILS</div>
-        <div class="row"><span class="label">Trip Detail</span><span>:</span><span>${safe.pickup} to ${safe.drop}</span></div>
-        <div class="row"><span class="label">Client Name</span><span>:</span><span>${safe.gender} ${safe.customerName}</span></div>
-        <div class="row"><span class="label">Address</span><span>:</span><span>${safe.pickup}</span></div>
-        <div class="row"><span class="label">Contact No.</span><span>:</span><span>+91${safe.customerPhone}</span></div>
-        <div class="row"><span class="label">Booking Date</span><span>:</span><span>${safe.journeyDate}</span></div>
-        <div class="row"><span class="label">Reporting Time</span><span>:</span><span>${safe.journeyTime}</span></div>
-      </div>
-      <div class="col">
-        <div class="secTitle">VEHICLE DETAILS</div>
-        <div class="row"><span class="label">REG NO.</span><span>:</span><span>${safe.vehicleNumber}</span></div>
-        <div class="row"><span class="label">MODEL</span><span>:</span><span>${safe.vehicleModel}</span></div>
-        <div class="row"><span class="label">CAB TYPE</span><span>:</span><span>${safe.vehicleType}</span></div>
-        <div class="row"><span class="label">DRIVER NAME</span><span>:</span><span>${safe.driverName}</span></div>
-        <div class="row"><span class="label">CONTACT NO.</span><span>:</span><span>+91${safe.driverMobile}</span></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="sec">
-    <table>
-      <tr>
-        <th>FARE CHARGES</th>
-        <th>TYPE</th>
-        <th class="right">AMOUNT ₹</th>
-      </tr>
-      <tr>
-        <td>${safe.pickup} to ${safe.drop}</td>
-        <td>Per Trip</td>
-        <td class="right">${fare.toFixed(2)}</td>
-      </tr>
-      <tr>
-        <td>Advance Paid</td>
-        <td>-</td>
-        <td class="right">${advance.toFixed(2)}</td>
-      </tr>
-      <tr>
-        <td>Discount / Round Off</td>
-        <td>-</td>
-        <td class="right">0.00</td>
-      </tr>
-      <tr class="total">
-        <td colspan="2" class="right">Total Amount</td>
-        <td class="right">${netPay.toFixed(2)}</td>
-      </tr>
-    </table>
-  </div>
-
-  <div class="pay">
-    <div>TOTAL AMOUNT PAYABLE</div>
-    <div>Rupees ${netPay.toFixed(2)} Only</div>
-    <div>₹ ${netPay.toFixed(2)}</div>
-  </div>
-
-  <div class="copy">BOOKING CONFIRMATION COPY</div>
-
-  <div class="sec">
-    <div class="twocol">
-      <div class="col">
-        <div class="secTitle">TRIP DETAILS</div>
-        <div class="row"><span class="label">Trip</span><span>:</span><span>${safe.pickup} to ${safe.drop}</span></div>
-        <div class="row"><span class="label">Client</span><span>:</span><span>${safe.gender} ${safe.customerName}</span></div>
-        <div class="row"><span class="label">Contact</span><span>:</span><span>+91${safe.customerPhone}</span></div>
-      </div>
-      <div class="col">
-        <div class="secTitle">VEHICLE DETAILS</div>
-        <div class="row"><span class="label">Type</span><span>:</span><span>${safe.vehicleType}</span></div>
-        <div class="row"><span class="label">Vehicle</span><span>:</span><span>${safe.vehicleNumber}</span></div>
-        <div class="row"><span class="label">Driver</span><span>:</span><span>${safe.driverName} (+91${safe.driverMobile})</span></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="declare">
-    <b>DECLARATION</b><br/>
-    ➤ Book A Cab Atleast 24 Hour Before Travelling Otherwise Booking May Not Be Confirmed<br/>
-    ➤ After booking is confirmed, customer will have to make advance payment<br/>
-    ➤ Rs.500 cancellation charge will apply
-  </div>
-
-  <div class="footer">THANK YOU & WISH YOU A VERY HAPPY JOURNEY</div>
-</div>
-
-<script>window.print();</script>
-</body>
-</html>
-`;
-
-    win.document.open();
-    win.document.write(html);
-    win.document.close();
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const fare = Number(form.fare || 0);
-    const advance = Number(form.advance || 0);
+    if (!supabaseUrl || !supabaseKey) {
+      alert("Supabase URL/KEY missing hai. Vercel Environment Variables check karo.");
+      return;
+    }
 
-    if (form.customerPhone.length !== 10) {
+    if (cleanPhone(form.customerPhone).length !== 10) {
       alert("Customer WhatsApp number 10 digit ka hona chahiye.");
       return;
     }
 
-    if (fare <= 0) {
-      alert("Total Fare valid enter karo.");
+    if (Number(form.fare || 0) <= 0) {
+      alert("Total fare valid enter karo.");
       return;
     }
 
-    if (advance > fare) {
-      alert("Advance Fare se zyada nahi ho sakta.");
+    if (Number(form.advance || 0) > Number(form.fare || 0)) {
+      alert("Advance fare se zyada nahi ho sakta.");
       return;
     }
 
     const bookingId = `VT-${Date.now()}`;
-    const message = buildMessage(bookingId);
+    const message = buildWhatsAppMessage(bookingId);
 
     setLoading(true);
+
     try {
       const saved = await saveBooking(bookingId);
 
       if (!saved) {
-        alert("Booking database me save nahi hua. Supabase table/column check karo.");
+        alert("Booking database me save nahi hua. Supabase table/columns check karo.");
         return;
       }
 
       await Promise.all([saveCustomerIfNew(), saveVehicleIfNew()]);
 
-      setBookings((prev) => [
-        {
-          customer_name: form.customerName,
-          customer_phone: form.customerPhone,
-          pickup: form.pickup,
-          drop_location: form.drop,
-          journey_date: form.journeyDate,
-          fare,
-        },
-        ...prev,
-      ]);
+      openBillPdf(bookingId);
 
       window.open(
-        `https://wa.me/91${form.customerPhone}?text=${encodeURIComponent(message)}`,
+        `https://wa.me/91${cleanPhone(form.customerPhone)}?text=${encodeURIComponent(
+          message
+        )}`,
         "_blank"
       );
 
-      const finalInvoice = {
-  bookingId,
-  customerName: form.customerName,
-  customerPhone: form.customerPhone,
-  service: form.service,
-  pickup: form.pickup,
-  drop: form.drop,
-  journeyDate: form.journeyDate,
-  journeyTime: form.journeyTime,
-  vehicleType: form.vehicleType,
-  vehicleModel: form.vehicleModel,
-  vehicleNumber: form.vehicleNumber,
-  driverName: form.driverName,
-  driverMobile: form.driverMobile,
-  fare: form.fare,
-  advance: form.advance,
-  netPayable: Number(form.fare || 0) - Number(form.advance || 0),
-};
-
-setInvoiceData(finalInvoice);
-
-alert("Booking saved, customer/vehicle updated and WhatsApp opened.");
-setForm(initialForm);
+      alert("Booking saved. Bill aur WhatsApp open ho gaya.");
+      setForm(initialForm);
     } catch (error) {
-      console.log("Booking submit error:", error);
+      console.log("Submit error:", error);
       alert("Booking save karte time error aaya.");
     } finally {
       setLoading(false);
     }
+  }   if (!isLogin) {
+    return (
+      <main style={{ minHeight: "100vh", background: "#f1f5f9", padding: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <form onSubmit={handleLogin} style={{ width: "100%", maxWidth: 380, background: "white", padding: 24, borderRadius: 18, boxShadow: "0 8px 25px rgba(0,0,0,.12)" }}>
+          <h1 style={{ margin: 0, color: "#0b2d6b", fontSize: 28 }}>Vishwakarma Travels</h1>
+          <p style={{ color: "#64748b" }}>Admin Login</p>
+          <input
+            type="password"
+            placeholder="Admin password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={{ width: "100%", padding: 13, borderRadius: 12, border: "1px solid #cbd5e1", marginTop: 15 }}
+          />
+          <button type="submit" style={{ width: "100%", padding: 13, borderRadius: 12, border: 0, background: "#0b2d6b", color: "white", fontWeight: "bold", marginTop: 15 }}>
+            Login
+          </button>
+        </form>
+      </main>
+    );
   }
 
-return (
-  <main style={{ minHeight: "100vh", padding: "20px", background: "#f5f5f5" }}>
-    <div style={{ background: "white", padding: "20px", borderRadius: "12px" }}>
-      <h1 style={{ fontSize: "28px", fontWeight: "bold", color: "#0b2d6b" }}>
-        Vishwakarma Travels Admin Dashboard
-      </h1>
+  return (
+    <main style={{ minHeight: "100vh", background: "#f1f5f9", padding: 16 }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        <header style={{ background: "#0b2d6b", color: "white", padding: 20, borderRadius: 18, marginBottom: 16 }}>
+          <h1 style={{ margin: 0, fontSize: 28 }}>Vishwakarma Travels Admin Dashboard</h1>
+          <p style={{ margin: "6px 0 0" }}>Booking, Bill, WhatsApp aur Database Management</p>
+          <button onClick={logout} style={{ marginTop: 12, padding: "10px 16px", borderRadius: 10, border: 0, fontWeight: "bold" }}>
+            Logout
+          </button>
+        </header>
 
-      <p style={{ marginTop: "10px" }}>
-        Admin page working hai. Ab booking form yahin show hoga.
-      </p>
+        <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12, marginBottom: 16 }}>
+          <div style={{ background: "white", padding: 16, borderRadius: 16 }}>
+            <p>Customers</p>
+            <h2>{customers.length}</h2>
+          </div>
+          <div style={{ background: "white", padding: 16, borderRadius: 16 }}>
+            <p>Vehicles</p>
+            <h2>{vehicles.length}</h2>
+          </div>
+          <div style={{ background: "white", padding: 16, borderRadius: 16 }}>
+            <p>Bookings</p>
+            <h2>{bookings.length}</h2>
+          </div>
+        </section>
 
-      <form onSubmit={handleSubmit} style={{ marginTop: "20px", display: "grid", gap: "12px" }}>
-        <input placeholder="Customer Name" value={form.customerName} onChange={(e) => updateForm("customerName", e.target.value)} />
-        <input placeholder="Customer Phone" value={form.customerPhone} onChange={(e) => updateForm("customerPhone", cleanPhone(e.target.value))} />
-        <input placeholder="Pickup" value={form.pickup} onChange={(e) => updateForm("pickup", e.target.value)} />
-        <input placeholder="Drop" value={form.drop} onChange={(e) => updateForm("drop", e.target.value)} />
-        <input type="date" value={form.journeyDate} onChange={(e) => updateForm("journeyDate", e.target.value)} />
-        <input type="time" value={form.journeyTime} onChange={(e) => updateForm("journeyTime", e.target.value)} />
-        <input placeholder="Vehicle Number" value={form.vehicleNumber} onChange={(e) => updateForm("vehicleNumber", e.target.value)} />
-        <input placeholder="Fare" value={form.fare} onChange={(e) => updateForm("fare", e.target.value)} />
+        <form onSubmit={handleSubmit} style={{ background: "white", padding: 18, borderRadius: 18, marginBottom: 16 }}>
+          <h2 style={{ color: "#0b2d6b" }}>New Booking</h2>
 
-        <button type="submit" style={{ padding: "12px", background: "#0b2d6b", color: "white", borderRadius: "8px" }}>
-          Save Booking
-        </button>
-      </form>
-    </div>
-  </main>
-);
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 12 }}>
+            <select value={form.gender} onChange={(e) => updateForm("gender", e.target.value)} style={inputStyle}>
+              <option>Mr.</option>
+              <option>Mrs.</option>
+              <option>Ms.</option>
+            </select>
+
+            <input placeholder="Customer Name" value={form.customerName} onChange={(e) => fillCustomer(e.target.value)} style={inputStyle} required />
+            <input placeholder="Customer WhatsApp Number" value={form.customerPhone} onChange={(e) => updateForm("customerPhone", cleanPhone(e.target.value))} style={inputStyle} required />
+            <input placeholder="Service" value={form.service} onChange={(e) => updateForm("service", e.target.value)} style={inputStyle} />
+
+            <input placeholder="Pickup Location" value={form.pickup} onChange={(e) => updateForm("pickup", e.target.value)} style={inputStyle} required />
+            <input placeholder="Drop Location" value={form.drop} onChange={(e) => updateForm("drop", e.target.value)} style={inputStyle} required />
+
+            <input type="date" value={form.journeyDate} onChange={(e) => updateForm("journeyDate", e.target.value)} style={inputStyle} required />
+            <input type="time" value={form.journeyTime} onChange={(e) => updateForm("journeyTime", e.target.value)} style={inputStyle} required />
+
+            <input placeholder="Vehicle Number" value={form.vehicleNumber} onChange={(e) => fillVehicle(e.target.value)} style={inputStyle} />
+            <input placeholder="Vehicle Type" value={form.vehicleType} onChange={(e) => updateForm("vehicleType", e.target.value)} style={inputStyle} />
+            <input placeholder="Vehicle Model" value={form.vehicleModel} onChange={(e) => updateForm("vehicleModel", e.target.value)} style={inputStyle} />
+
+            <input placeholder="Driver Name" value={form.driverName} onChange={(e) => updateForm("driverName", e.target.value)} style={inputStyle} />
+            <input placeholder="Driver Mobile" value={form.driverMobile} onChange={(e) => updateForm("driverMobile", cleanPhone(e.target.value))} style={inputStyle} />
+
+            <input type="number" placeholder="Total Fare" value={form.fare} onChange={(e) => updateForm("fare", e.target.value)} style={inputStyle} required />
+            <input type="number" placeholder="Advance Paid" value={form.advance} onChange={(e) => updateForm("advance", e.target.value)} style={inputStyle} />
+          </div>
+
+          <button disabled={loading} type="submit" style={{ marginTop: 16, padding: "14px 20px", background: "#15803d", color: "white", border: 0, borderRadius: 12, fontWeight: "bold" }}>
+            {loading ? "Saving..." : "Save Booking + Bill + WhatsApp"}
+          </button>
+        </form>
+
+        <section style={{ background: "white", padding: 18, borderRadius: 18 }}>
+          <h2 style={{ color: "#0b2d6b" }}>Recent Bookings</h2>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 800 }}>
+              <thead>
+                <tr style={{ background: "#0b2d6b", color: "white" }}>
+                  <th style={thStyle}>Booking ID</th>
+                  <th style={thStyle}>Customer</th>
+                  <th style={thStyle}>Phone</th>
+                  <th style={thStyle}>Route</th>
+                  <th style={thStyle}>Date</th>
+                  <th style={thStyle}>Fare</th>
+                </tr>
+              </thead>
+              <tbody>
+                {bookings.map((b, i) => (
+                  <tr key={b.booking_id || i}>
+                    <td style={tdStyle}>{b.booking_id || "-"}</td>
+                    <td style={tdStyle}>{b.customer_name || "-"}</td>
+                    <td style={tdStyle}>{b.customer_phone || "-"}</td>
+                    <td style={tdStyle}>{b.pickup || "-"} → {b.drop_location || "-"}</td>
+                    <td style={tdStyle}>{b.journey_date || "-"}</td>
+                    <td style={tdStyle}>₹{b.fare || 0}</td>
+                  </tr>
+                ))}
+
+                {bookings.length === 0 && (
+                  <tr>
+                    <td colSpan={6} style={{ padding: 20, textAlign: "center", color: "#64748b" }}>
+                      No booking found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+  );
 }
+
+const inputStyle: React.CSSProperties = {
+  padding: 12,
+  borderRadius: 12,
+  border: "1px solid #cbd5e1",
+  width: "100%",
+};
+
+const thStyle: React.CSSProperties = {
+  padding: 10,
+  textAlign: "left",
+};
+
+const tdStyle: React.CSSProperties = {
+  padding: 10,
+  borderBottom: "1px solid #e2e8f0",
+};
