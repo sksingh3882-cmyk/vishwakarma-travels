@@ -647,4 +647,10 @@ td { border:1px solid #d1d5db; padding:8px; }
     return (
       <main style={pageStyle}>
         <div style={cardStyle}>
-          <h1 
+  <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>
+    Admin Dashboard
+  </h1>
+</div>
+</main>
+    );
+  }
