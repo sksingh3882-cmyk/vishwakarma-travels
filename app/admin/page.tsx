@@ -96,6 +96,7 @@ export default function AdminPage() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(false);
+  const [lastBookingId, setLastBookingId] = useState("");
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -620,13 +621,9 @@ td, th {
       openBillPdf(bookingId);
 
       window.open(
-        `https://wa.me/91${cleanPhone(form.customerPhone)}?text=${encodeURIComponent(
-          message
-        )}`,
-        "_blank"
-      );
+       setLastBookingId(bookingId);
 
-      alert("Booking saved. Bill aur WhatsApp open ho gaya.");
+      alert("Booking saved aur PDF bill open ho gaya.");
       setForm(initialForm);
     } catch (error) {
       console.log("Submit error:", error);
@@ -634,6 +631,19 @@ td, th {
     } finally {
       setLoading(false);
     }
+    function sendWhatsApp() {
+  if (!lastBookingId) {
+    alert("Pehle booking save karo.");
+    return;
+  }
+
+  const message = buildWhatsAppMessage(lastBookingId);
+
+  window.open(
+    `https://wa.me/91${cleanPhone(form.customerPhone)}?text=${encodeURIComponent(message)}`,
+    "_blank"
+  );
+}
   }   if (!isLogin) {
     return (
       <main style={{ minHeight: "100vh", background: "#f1f5f9", padding: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -724,9 +734,37 @@ td, th {
             <input type="number" placeholder="Advance Paid" value={form.advance} onChange={(e) => updateForm("advance", e.target.value)} style={inputStyle} />
           </div>
 
-          <button disabled={loading} type="submit" style={{ marginTop: 16, padding: "14px 20px", background: "#15803d", color: "white", border: 0, borderRadius: 12, fontWeight: "bold" }}>
-            {loading ? "Saving..." : "Save Booking + Bill + WhatsApp"}
-          </button>
+         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 16 }}>
+  <button
+    disabled={loading}
+    type="submit"
+    style={{
+      padding: "14px 20px",
+      background: "#15803d",
+      color: "white",
+      border: 0,
+      borderRadius: 12,
+      fontWeight: "bold",
+    }}
+  >
+    {loading ? "Saving..." : "Save Booking + PDF Bill"}
+  </button>
+
+  <button
+    type="button"
+    onClick={sendWhatsApp}
+    style={{
+      padding: "14px 20px",
+      background: "#25D366",
+      color: "white",
+      border: 0,
+      borderRadius: 12,
+      fontWeight: "bold",
+    }}
+  >
+    Send WhatsApp
+  </button>
+</div>
         </form>
 
         <section style={{ background: "white", padding: 18, borderRadius: 18 }}>
