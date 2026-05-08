@@ -643,8 +643,9 @@ td, th {
     `https://wa.me/91${cleanPhone(form.customerPhone)}?text=${encodeURIComponent(message)}`,
     "_blank"
   );
-}
-  }   if (!isLogin) {
+  }
+  
+  if (!isLogin) {
     return (
       <main style={{ minHeight: "100vh", background: "#f1f5f9", padding: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <form onSubmit={handleLogin} style={{ width: "100%", maxWidth: 380, background: "white", padding: 24, borderRadius: 18, boxShadow: "0 8px 25px rgba(0,0,0,.12)" }}>
