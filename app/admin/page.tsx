@@ -646,7 +646,7 @@ td { border:1px solid #d1d5db; padding:8px; }
   if (!isLogin) {
     return (
       <main style={{ minHeight: "100vh", padding: "20px", background: "#f5f5f5" }}>
-        <div style={cardStyle}>
+        <div style={{ background: "white", padding: "20px", borderRadius: "12px" }}>
   <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>
     Admin Dashboard
   </h1>
