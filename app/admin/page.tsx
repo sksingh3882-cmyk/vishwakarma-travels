@@ -634,8 +634,29 @@ td { border:1px solid #d1d5db; padding:8px; }
         "_blank"
       );
 
-      alert("Booking saved, customer/vehicle updated and WhatsApp opened.");
-      setForm(initialForm);
+      const finalInvoice = {
+  bookingId,
+  customerName: form.customerName,
+  customerPhone: form.customerPhone,
+  service: form.service,
+  pickup: form.pickup,
+  drop: form.drop,
+  journeyDate: form.journeyDate,
+  journeyTime: form.journeyTime,
+  vehicleType: form.vehicleType,
+  vehicleModel: form.vehicleModel,
+  vehicleNumber: form.vehicleNumber,
+  driverName: form.driverName,
+  driverMobile: form.driverMobile,
+  fare: form.fare,
+  advance: form.advance,
+  netPayable: Number(form.fare || 0) - Number(form.advance || 0),
+};
+
+setInvoiceData(finalInvoice);
+
+alert("Booking saved, customer/vehicle updated and WhatsApp opened.");
+setForm(initialForm);
     } catch (error) {
       console.log("Booking submit error:", error);
       alert("Booking save karte time error aaya.");
