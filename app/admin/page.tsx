@@ -620,7 +620,6 @@ td, th {
 
       openBillPdf(bookingId);
 
-      window.open(
        setLastBookingId(bookingId);
 
       alert("Booking saved aur PDF bill open ho gaya.");
@@ -631,6 +630,7 @@ td, th {
     } finally {
       setLoading(false);
     }
+  }
     function sendWhatsApp() {
   if (!lastBookingId) {
     alert("Pehle booking save karo.");
