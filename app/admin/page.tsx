@@ -691,8 +691,20 @@ td, th {
               <option>Ms.</option>
             </select>
 
-            <input placeholder="Customer Name" value={form.customerName} onChange={(e) => fillCustomer(e.target.value)} style={inputStyle} required />
-            <input placeholder="Customer WhatsApp Number" value={form.customerPhone} onChange={(e) => updateForm("customerPhone", cleanPhone(e.target.value))} style={inputStyle} required />
+            <input
+  placeholder="Customer Name"
+  value={form.customerName}
+  onChange={(e) => updateForm("customerName", e.target.value)}
+  style={inputStyle}
+  required
+/>
+            <input
+  placeholder="Customer WhatsApp Number"
+  value={form.customerPhone}
+  onChange={(e) => updateForm("customerPhone", cleanPhone(e.target.value))}
+  style={inputStyle}
+  required
+/>
             <input placeholder="Service" value={form.service} onChange={(e) => updateForm("service", e.target.value)} style={inputStyle} />
 
             <input placeholder="Pickup Location" value={form.pickup} onChange={(e) => updateForm("pickup", e.target.value)} style={inputStyle} required />
