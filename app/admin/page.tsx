@@ -787,7 +787,21 @@ td, th {
   <option>Sedan With Carrier</option>
   <option>Mini Passenger Bus</option>
 </select>
-            <input placeholder="Vehicle Model" value={form.vehicleModel} onChange={(e) => updateForm("vehicleModel", e.target.value)} style={inputStyle} />
+            <select
+  value={form.vehicleModel}
+  onChange={(e) => updateForm("vehicleModel", e.target.value)}
+  style={inputStyle}
+  required
+>
+  <option>Desire</option>
+  <option>Ertiga</option>
+  <option>Innova</option>
+  <option>Innova Crysta</option>
+  <option>Ertiga With Carrier</option>
+  <option>Innova With Carrier</option>
+  <option>Crysta With Carrier</option>
+  <option>Force Traveller</option>
+</select>
 <input placeholder="Driver Name" value={form.driverName} onChange={(e) => updateForm("driverName", e.target.value)} style={inputStyle} />
             <input placeholder="Driver Mobile" value={form.driverMobile} onChange={(e) => updateForm("driverMobile", cleanPhone(e.target.value))} style={inputStyle} />
             
