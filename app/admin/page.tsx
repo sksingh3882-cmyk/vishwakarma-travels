@@ -766,15 +766,8 @@ td, th {
               style={inputStyle}
               required
             />
-            <input
-              placeholder="Customer WhatsApp Number"
-              value={form.customerPhone}
-              onChange={(e) => updateForm("customerPhone", cleanPhone(e.target.value))}
-              style={inputStyle}
-              required
-            />
-            <input placeholder="Service" value={form.service} onChange={(e) => updateForm("service", e.target.value)} style={inputStyle} />
 
+            <input placeholder="Customer WhatsApp Number" value={form.customerPhone} onChange={(e) => updateForm("customerPhone", cleanPhone(e.target.value))} style={inputStyle} required />
             <input placeholder="Pickup Location" value={form.pickup} onChange={(e) => updateForm("pickup", e.target.value)} style={inputStyle} required />
             <input placeholder="Drop Location" value={form.drop} onChange={(e) => updateForm("drop", e.target.value)} style={inputStyle} required />
 
@@ -785,9 +778,20 @@ td, th {
             <input placeholder="Vehicle Type" value={form.vehicleType} onChange={(e) => updateForm("vehicleType", e.target.value)} style={inputStyle} />
             <input placeholder="Vehicle Model" value={form.vehicleModel} onChange={(e) => updateForm("vehicleModel", e.target.value)} style={inputStyle} />
 
-            <input placeholder="Driver Name" value={form.driverName} onChange={(e) => updateForm("driverName", e.target.value)} style={inputStyle} />
             <input placeholder="Driver Mobile" value={form.driverMobile} onChange={(e) => updateForm("driverMobile", cleanPhone(e.target.value))} style={inputStyle} />
-
+            
+<select
+  value={form.service}
+  onChange={(e) => updateForm("service", e.target.value)}
+  style={inputStyle}
+  required
+>
+  <option>Airport Drop Pickup</option>
+  <option>Local Movment</option>
+  <option>Outstation Movment</option>
+  <option>Short Time Booking</option>
+  <option>Marriage Function Booking</option>
+</select>
             <input type="number" placeholder="Total Fare" value={form.fare} onChange={(e) => updateForm("fare", e.target.value)} style={inputStyle} required />
             <input type="number" placeholder="Advance Paid" value={form.advance} onChange={(e) => updateForm("advance", e.target.value)} style={inputStyle} />
           </div>
