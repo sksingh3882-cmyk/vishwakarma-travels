@@ -37,7 +37,10 @@ function formatMoney(value: number) {
 }
 
 function getBookingDate(booking: Booking) {
-  const rawDate = booking.journey_date || booking.created_at || "";
+  const rawDate =
+  booking.created_at ||
+  booking.journey_date ||
+  "";
   if (!rawDate) return null;
   const date = new Date(rawDate);
   if (Number.isNaN(date.getTime())) return null;
