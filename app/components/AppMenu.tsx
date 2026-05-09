@@ -14,6 +14,7 @@ export default function AppMenu() {
   const links = isAdmin
     ? [
         { href: "/reports", label: "Sales Report" },
+      { href: "/vehicle-reports", label: "Vehicle Reports" },
         { href: "/", label: "Customer Page" },
       ]
     : isReports
