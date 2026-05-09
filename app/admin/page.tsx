@@ -775,7 +775,18 @@ td, th {
             <input type="time" value={form.journeyTime} onChange={(e) => updateForm("journeyTime", e.target.value)} style={inputStyle} required />
 
             <input placeholder="Vehicle Number" value={form.vehicleNumber} onChange={(e) => fillVehicle(e.target.value)} style={inputStyle} />
-            <input placeholder="Vehicle Type" value={form.vehicleType} onChange={(e) => updateForm("vehicleType", e.target.value)} style={inputStyle} />
+            <select
+  value={form.vehicleType}
+  onChange={(e) => updateForm("vehicleType", e.target.value)}
+  style={inputStyle}
+  required
+>
+  <option>Sedan</option>
+  <option>SUV</option>
+  <option>SUV With Carrier</option>
+  <option>Sedan With Carrier</option>
+  <option>Mini Passenger Bus</option>
+</select>
             <input placeholder="Vehicle Model" value={form.vehicleModel} onChange={(e) => updateForm("vehicleModel", e.target.value)} style={inputStyle} />
 
             <input placeholder="Driver Mobile" value={form.driverMobile} onChange={(e) => updateForm("driverMobile", cleanPhone(e.target.value))} style={inputStyle} />
