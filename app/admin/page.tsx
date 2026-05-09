@@ -214,6 +214,23 @@ export default function AdminPage() {
       driverMobile: cleanPhone(found.driverMobile || prev.driverMobile),
     }));
   }
+  function getCustomerDropSuggestions() {
+  const phone = cleanPhone(form.customerPhone);
+  const name = form.customerName.toLowerCase().trim();
+
+  if (!phone && name.length < 2) return [];
+
+  const drops = bookings
+    .filter((b) => {
+      const bookingPhone = cleanPhone(b.customer_phone || "");
+      const bookingName = (b.customer_name || "").toLowerCase();
+      return bookingPhone === phone || bookingName.includes(name);
+    })
+    .map((b) => b.drop_location || "")
+    .filter(Boolean);
+
+  return Array.from(new Set(drops)).slice(0, 6);
+  }
 
   function buildWhatsAppMessage(bookingId: string) {
     const fare = Number(form.fare || 0);
@@ -770,6 +787,27 @@ td, th {
             <input placeholder="Customer WhatsApp Number" value={form.customerPhone} onChange={(e) => updateForm("customerPhone", cleanPhone(e.target.value))} style={inputStyle} required />
             <input placeholder="Pickup Location" value={form.pickup} onChange={(e) => updateForm("pickup", e.target.value)} style={inputStyle} required />
             <input placeholder="Drop Location" value={form.drop} onChange={(e) => updateForm("drop", e.target.value)} style={inputStyle} required />
+            {getCustomerDropSuggestions().length > 0 && (
+  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+    {getCustomerDropSuggestions().map((drop) => (
+      <button
+        key={drop}
+        type="button"
+        onClick={() => updateForm("drop", drop)}
+        style={{
+          padding: "8px 10px",
+          borderRadius: 10,
+          border: "1px solid #0b2d6b",
+          background: "white",
+          color: "#0b2d6b",
+          fontWeight: "bold",
+        }}
+      >
+        {drop}
+      </button>
+    ))}
+  </div>
+)}
 
             <input type="date" value={form.journeyDate} onChange={(e) => updateForm("journeyDate", e.target.value)} style={inputStyle} required />
             <input type="time" value={form.journeyTime} onChange={(e) => updateForm("journeyTime", e.target.value)} style={inputStyle} required />
