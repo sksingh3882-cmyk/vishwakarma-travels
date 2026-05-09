@@ -632,18 +632,20 @@ td, th {
     }
   }
     function sendWhatsApp() {
-  if (!lastBookingId) {
-    alert("Pehle booking save karo.");
+  const phone = cleanPhone(form.customerPhone || "");
+
+  if (phone.length !== 10) {
+    alert("Customer WhatsApp number 10 digit ka hona chahiye.");
     return;
   }
 
-  const message = buildWhatsAppMessage(lastBookingId);
+  const message = buildWhatsAppMessage(lastBookingId || `VT-${Date.now()}`);
 
-  window.open(
-  `https://wa.me/91${cleanPhone(form.customerPhone || "")}?text=${encodeURIComponent(message)}`,
-  "_blank"
-);
-  }
+  const whatsappUrl =
+    `https://api.whatsapp.com/send?phone=91${phone}&text=${encodeURIComponent(message)}`;
+
+  window.location.href = whatsappUrl;
+    }
   
   if (!isLogin) {
     return (
