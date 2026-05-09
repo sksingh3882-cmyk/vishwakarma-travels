@@ -180,7 +180,7 @@ export default function AdminPage() {
     const found = customers.find((c) => {
       const name = (c.name || "").toLowerCase();
       const mobile = cleanPhone(c.mobile || "");
-      return name.includes(query) || mobile.includes(cleanPhone(query));
+      return name === query || mobile === cleanPhone(query);
     });
 
     if (!found) return;
