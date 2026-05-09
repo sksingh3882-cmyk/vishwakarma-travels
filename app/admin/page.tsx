@@ -762,7 +762,7 @@ td, th {
             <input
               placeholder="Customer Name"
               value={form.customerName}
-              onChange={(e) => updateForm("customerName", e.target.value)}
+              onChange={(e) => fillCustomer(e.target.value)}
               style={inputStyle}
               required
             />
