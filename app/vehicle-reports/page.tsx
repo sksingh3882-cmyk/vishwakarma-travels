@@ -26,7 +26,10 @@ function num(value: unknown) {
 }
 
 function getDate(booking: Booking) {
-  const raw = booking.journey_date || booking.created_at || "";
+  const raw =
+  booking.created_at ||
+  booking.journey_date ||
+  "";
   const date = new Date(raw);
   return Number.isNaN(date.getTime()) ? null : date;
 }
