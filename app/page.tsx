@@ -185,7 +185,7 @@ Pickup: ${pickup}
 Drop: ${drop}
 Date & Time: ${dateTime}
 
-Please send me the booking confirmation as soon as possible.`;
+Please send me the booking confirmation.`;
 
   window.open(
     `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
@@ -259,7 +259,7 @@ Please send me the booking confirmation as soon as possible.`;
 
       <section style={{ textAlign: "center", padding: "25px 18px" }}>
         <h2>Contact Us</h2>
-        <p>Bagbera, Jamshedpur</p>
+        <p>Jugsalai, Jamshedpur</p>
         <p>
           <b>Phone:</b> +91 7667989203
         </p>
