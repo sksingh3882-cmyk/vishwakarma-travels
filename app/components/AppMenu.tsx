@@ -15,6 +15,7 @@ export default function AppMenu() {
     ? [
         { href: "/reports", label: "Sales Report" },
       { href: "/vehicle-reports", label: "Vehicle Reports" },
+      { href: "/total-bookings", label: "Total Bookings" },
         { href: "/", label: "Customer Page" },
       ]
     : isReports
