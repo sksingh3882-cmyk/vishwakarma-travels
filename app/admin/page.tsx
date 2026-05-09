@@ -97,6 +97,7 @@ export default function AdminPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(false);
   const [lastBookingId, setLastBookingId] = useState("");
+  const [deletingBookingId, setDeletingBookingId] = useState("");
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -110,7 +111,9 @@ export default function AdminPage() {
       Prefer: "return=representation",
     }),
     [supabaseKey]
-  );   useEffect(() => {
+  );
+
+  useEffect(() => {
     if (
       typeof window !== "undefined" &&
       localStorage.getItem("vt_admin_login") === "yes"
@@ -249,7 +252,9 @@ Wish You A Very Happy Journey
 
 For Queries Please Call or WhatsApp:
 +91 7667989203`;
-  }   function openBillPdf(bookingId: string) {
+  }
+
+  function openBillPdf(bookingId: string) {
     const fare = Number(form.fare || 0);
     const advance = Number(form.advance || 0);
     const netPayable = fare - advance;
@@ -484,7 +489,9 @@ td, th {
     win.document.open();
     win.document.write(html);
     win.document.close();
-  }   async function saveBooking(bookingId: string) {
+  }
+
+  async function saveBooking(bookingId: string) {
     const fare = Number(form.fare || 0);
     const advance = Number(form.advance || 0);
 
@@ -521,6 +528,52 @@ td, th {
 
     setBookings((prev) => [payload, ...prev]);
     return true;
+  }
+
+  async function deleteBooking(bookingId?: string) {
+    if (!bookingId) {
+      alert("Booking ID missing hai, delete nahi ho sakta.");
+      return;
+    }
+
+    if (!supabaseUrl || !supabaseKey) {
+      alert("Supabase URL/KEY missing hai. Vercel Environment Variables check karo.");
+      return;
+    }
+
+    const confirmDelete = window.confirm(
+      `Kya aap booking ${bookingId} ko permanently delete karna chahte hain?`
+    );
+
+    if (!confirmDelete) return;
+
+    setDeletingBookingId(bookingId);
+
+    try {
+      const response = await fetch(
+        `${supabaseUrl}/rest/v1/bookings?booking_id=eq.${encodeURIComponent(
+          bookingId
+        )}`,
+        {
+          method: "DELETE",
+          headers,
+        }
+      );
+
+      if (!response.ok) {
+        console.log("Booking delete error:", await response.text());
+        alert("Booking delete nahi hua. Supabase policy/table check karo.");
+        return;
+      }
+
+      setBookings((prev) => prev.filter((b) => b.booking_id !== bookingId));
+      alert("Booking delete ho gaya.");
+    } catch (error) {
+      console.log("Delete error:", error);
+      alert("Booking delete karte time error aaya.");
+    } finally {
+      setDeletingBookingId("");
+    }
   }
 
   async function saveCustomerIfNew() {
@@ -620,7 +673,7 @@ td, th {
 
       openBillPdf(bookingId);
 
-       setLastBookingId(bookingId);
+      setLastBookingId(bookingId);
 
       alert("Booking saved aur PDF bill open ho gaya.");
       setForm(initialForm);
@@ -631,22 +684,24 @@ td, th {
       setLoading(false);
     }
   }
-    function sendWhatsApp() {
-  const phone = cleanPhone(form.customerPhone || "");
 
-  if (phone.length !== 10) {
-    alert("Customer WhatsApp number 10 digit ka hona chahiye.");
-    return;
+  function sendWhatsApp() {
+    const phone = cleanPhone(form.customerPhone || "");
+
+    if (phone.length !== 10) {
+      alert("Customer WhatsApp number 10 digit ka hona chahiye.");
+      return;
+    }
+
+    const message = buildWhatsAppMessage(lastBookingId || `VT-${Date.now()}`);
+
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=91${phone}&text=${encodeURIComponent(
+      message
+    )}`;
+
+    window.location.href = whatsappUrl;
   }
 
-  const message = buildWhatsAppMessage(lastBookingId || `VT-${Date.now()}`);
-
-  const whatsappUrl =
-    `https://api.whatsapp.com/send?phone=91${phone}&text=${encodeURIComponent(message)}`;
-
-  window.location.href = whatsappUrl;
-    }
-  
   if (!isLogin) {
     return (
       <main style={{ minHeight: "100vh", background: "#f1f5f9", padding: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -705,19 +760,19 @@ td, th {
             </select>
 
             <input
-  placeholder="Customer Name"
-  value={form.customerName}
-  onChange={(e) => updateForm("customerName", e.target.value)}
-  style={inputStyle}
-  required
-/>
+              placeholder="Customer Name"
+              value={form.customerName}
+              onChange={(e) => updateForm("customerName", e.target.value)}
+              style={inputStyle}
+              required
+            />
             <input
-  placeholder="Customer WhatsApp Number"
-  value={form.customerPhone}
-  onChange={(e) => updateForm("customerPhone", cleanPhone(e.target.value))}
-  style={inputStyle}
-  required
-/>
+              placeholder="Customer WhatsApp Number"
+              value={form.customerPhone}
+              onChange={(e) => updateForm("customerPhone", cleanPhone(e.target.value))}
+              style={inputStyle}
+              required
+            />
             <input placeholder="Service" value={form.service} onChange={(e) => updateForm("service", e.target.value)} style={inputStyle} />
 
             <input placeholder="Pickup Location" value={form.pickup} onChange={(e) => updateForm("pickup", e.target.value)} style={inputStyle} required />
@@ -737,43 +792,43 @@ td, th {
             <input type="number" placeholder="Advance Paid" value={form.advance} onChange={(e) => updateForm("advance", e.target.value)} style={inputStyle} />
           </div>
 
-         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 16 }}>
-  <button
-    disabled={loading}
-    type="submit"
-    style={{
-      padding: "14px 20px",
-      background: "#15803d",
-      color: "white",
-      border: 0,
-      borderRadius: 12,
-      fontWeight: "bold",
-    }}
-  >
-    {loading ? "Saving..." : "Save Booking + PDF Bill"}
-  </button>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 16 }}>
+            <button
+              disabled={loading}
+              type="submit"
+              style={{
+                padding: "14px 20px",
+                background: "#15803d",
+                color: "white",
+                border: 0,
+                borderRadius: 12,
+                fontWeight: "bold",
+              }}
+            >
+              {loading ? "Saving..." : "Save Booking + PDF Bill"}
+            </button>
 
-  <button
-    type="button"
-    onClick={sendWhatsApp}
-    style={{
-      padding: "14px 20px",
-      background: "#25D366",
-      color: "white",
-      border: 0,
-      borderRadius: 12,
-      fontWeight: "bold",
-    }}
-  >
-    Send WhatsApp
-  </button>
-</div>
+            <button
+              type="button"
+              onClick={sendWhatsApp}
+              style={{
+                padding: "14px 20px",
+                background: "#25D366",
+                color: "white",
+                border: 0,
+                borderRadius: 12,
+                fontWeight: "bold",
+              }}
+            >
+              Send WhatsApp
+            </button>
+          </div>
         </form>
 
         <section style={{ background: "white", padding: 18, borderRadius: 18 }}>
           <h2 style={{ color: "#0b2d6b" }}>Recent Bookings</h2>
           <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 800 }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
               <thead>
                 <tr style={{ background: "#0b2d6b", color: "white" }}>
                   <th style={thStyle}>Booking ID</th>
@@ -782,6 +837,7 @@ td, th {
                   <th style={thStyle}>Route</th>
                   <th style={thStyle}>Date</th>
                   <th style={thStyle}>Fare</th>
+                  <th style={thStyle}>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -793,12 +849,30 @@ td, th {
                     <td style={tdStyle}>{b.pickup || "-"} → {b.drop_location || "-"}</td>
                     <td style={tdStyle}>{b.journey_date || "-"}</td>
                     <td style={tdStyle}>₹{b.fare || 0}</td>
+                    <td style={tdStyle}>
+                      <button
+                        type="button"
+                        disabled={deletingBookingId === b.booking_id}
+                        onClick={() => deleteBooking(b.booking_id)}
+                        style={{
+                          padding: "8px 12px",
+                          borderRadius: 10,
+                          border: 0,
+                          background: "#dc2626",
+                          color: "white",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {deletingBookingId === b.booking_id ? "Deleting..." : "Delete"}
+                      </button>
+                    </td>
                   </tr>
                 ))}
 
                 {bookings.length === 0 && (
                   <tr>
-                    <td colSpan={6} style={{ padding: 20, textAlign: "center", color: "#64748b" }}>
+                    <td colSpan={7} style={{ padding: 20, textAlign: "center", color: "#64748b" }}>
                       No booking found
                     </td>
                   </tr>
