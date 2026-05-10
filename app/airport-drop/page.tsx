@@ -13,7 +13,7 @@ const routes = [
   {
     title: "Jamshedpur ⇄ Ranchi Airport / City",
     subtitle: "Airport pickup and drop service",
-    time: "3.5 - 4.5 hrs",
+    time: "3.5 - 4.5 Hours",
     cars: [
       { name: "Dzire", price: "₹1700", seats: "4 Seats", image: carImages.Dzire },
       { name: "Ertiga", price: "₹2000", seats: "6 Seats", image: carImages.Ertiga },
@@ -24,7 +24,7 @@ const routes = [
   {
     title: "Jamshedpur ⇄ Kolkata Airport / City",
     subtitle: "Long route airport cab service",
-    time: "5.5 - 7 hrs",
+    time: "5.5 - 7 Hours",
     cars: [
       { name: "Dzire", price: "₹4300", seats: "4 Seats", image: carImages.Dzire },
       { name: "Ertiga", price: "₹5700", seats: "6 Seats", image: carImages.Ertiga },
@@ -35,7 +35,7 @@ const routes = [
 ];
 
 export default function AirportDropPage() {
-  const quickMessage = "Namaste Vishwakarma Travels, mujhe airport drop/pickup cab book karni hai.";
+  const quickMessage = "Hello Vishwakarma Travels, I would like to book an airport pickup/drop cab.";
 
   return (
     <main style={pageStyle}>
@@ -48,9 +48,9 @@ export default function AirportDropPage() {
         </nav>
 
         <div style={heroContent}>
-          <p style={badgeStyle}>Airport Drop / Pickup</p>
-          <h1 style={heroTitle}>Airport Cab From Jamshedpur</h1>
-          <p style={heroText}>Ranchi Airport aur Kolkata Airport ke liye direct WhatsApp booking.</p>
+          <p style={badgeStyle}>Airport Drop & Pickup</p>
+          <h1 style={heroTitle}>Airport Cab Service From Jamshedpur</h1>
+          <p style={heroText}>Book comfortable and reliable cab service for Ranchi and Kolkata Airport with direct WhatsApp support.</p>
 
           <div style={heroActions}>
             <a href={`tel:+${phone}`} style={primaryButton}>Call</a>
@@ -60,9 +60,9 @@ export default function AirportDropPage() {
       </header>
 
       <section style={infoStrip}>
-        <div style={infoItem}><b>Fixed Rates</b><span>Booking se pehle clear fare</span></div>
-        <div style={infoItem}><b>On-time Pickup</b><span>Airport timing ke hisab se</span></div>
-        <div style={infoItem}><b>WhatsApp Booking</b><span>One tap direct message</span></div>
+        <div style={infoItem}><b>Fixed Rates</b><span>Transparent pricing before booking</span></div>
+        <div style={infoItem}><b>On-time Pickup</b><span>Perfect for airport schedules</span></div>
+        <div style={infoItem}><b>Easy Booking</b><span>Quick booking through WhatsApp</span></div>
       </section>
 
       {routes.map((route) => (
@@ -78,7 +78,7 @@ export default function AirportDropPage() {
 
           <div style={vehicleGrid}>
             {route.cars.map((car) => {
-              const message = `Namaste Vishwakarma Travels,\n\nMujhe airport cab book karni hai.\n\nRoute: ${route.title}\nCar: ${car.name}\nStarting Fare: ${car.price}\n\nPlease booking confirmation bhej dijiye.\n\nVisit vishwakarma-travels-nine.vercel.app for next booking`;
+              const message = `Hello Vishwakarma Travels,\n\nI would like to book an airport cab.\n\nRoute: ${route.title}\nVehicle: ${car.name}\nStarting Fare: ${car.price}\n\nPlease share the booking confirmation details.\n\nVisit vishwakarma-travels-nine.vercel.app for future bookings.`;
 
               return (
                 <article key={`${route.title}-${car.name}`} style={cardStyle}>
@@ -104,7 +104,7 @@ export default function AirportDropPage() {
 
       <section style={noteCard}>
         <b>Booking Note: </b>
-        <span>Fare pickup location, night timing, toll/parking aur waiting ke hisab se change ho sakta hai.</span>
+        <span>Final fare may vary depending on pickup location, waiting time, tolls, parking charges, and late-night travel timing.</span>
       </section>
 
       <footer style={footerStyle}>
