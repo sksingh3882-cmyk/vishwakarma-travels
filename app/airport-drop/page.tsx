@@ -2,24 +2,11 @@
 
 const phone = "917667989203";
 
-function whiteCarImage(name: string, type: "sedan" | "mpv" | "suv" = "sedan") {
-  const isSedan = type === "sedan";
-  const bodyPath = isSedan
-    ? "M80 185 C105 150 136 130 178 126 L330 126 C382 128 422 150 452 184 L514 194 C538 198 554 215 554 238 L554 252 C554 266 543 276 528 276 L84 276 C66 276 52 264 52 247 L52 230 C52 207 61 193 80 185 Z"
-    : "M73 188 C94 146 128 122 178 118 L375 118 C425 120 470 150 505 191 L536 198 C555 203 566 218 566 240 L566 253 C566 267 555 276 540 276 L76 276 C59 276 46 264 46 248 L46 229 C46 207 55 194 73 188 Z";
-  const windowPath = isSedan
-    ? "M164 143 L222 143 L208 185 L116 185 C127 166 142 151 164 143 Z M236 143 L321 143 C352 145 380 160 404 184 L224 184 Z"
-    : "M150 137 L225 137 L210 184 L98 184 C111 160 128 145 150 137 Z M238 137 L365 137 C397 140 426 158 451 184 L222 184 Z";
-
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="700" height="390" viewBox="0 0 700 390"><rect width="700" height="390" fill="white"/><ellipse cx="350" cy="302" rx="250" ry="28" fill="#e5e7eb" opacity=".75"/><path d="${bodyPath}" fill="#ffffff" stroke="#cbd5e1" stroke-width="7"/><path d="${windowPath}" fill="#dbeafe" stroke="#94a3b8" stroke-width="4"/><path d="M86 204 L528 204" stroke="#e2e8f0" stroke-width="4"/><path d="M132 214 L163 214" stroke="#f97316" stroke-width="8" stroke-linecap="round"/><path d="M486 214 L523 214" stroke="#f97316" stroke-width="8" stroke-linecap="round"/><circle cx="166" cy="278" r="42" fill="#0b2d6b"/><circle cx="482" cy="278" r="42" fill="#0b2d6b"/><circle cx="166" cy="278" r="20" fill="white"/><circle cx="482" cy="278" r="20" fill="white"/><circle cx="166" cy="278" r="9" fill="#94a3b8"/><circle cx="482" cy="278" r="9" fill="#94a3b8"/><rect x="285" y="230" width="130" height="32" rx="8" fill="#0b2d6b"/><text x="350" y="253" text-anchor="middle" font-family="Arial" font-size="21" font-weight="900" fill="white">${name.toUpperCase()}</text></svg>`;
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
-}
-
 const carImages = {
-  Dzire: whiteCarImage("Dzire", "sedan"),
-  Ertiga: whiteCarImage("Ertiga", "mpv"),
-  Innova: whiteCarImage("Innova", "mpv"),
-  Crysta: whiteCarImage("Crysta", "suv"),
+  Dzire: "/public/cars/dzire.png",
+  Ertiga: "/public/cars/ertiga.jpg",
+  Innova: "/public/cars/innova.png",
+  Crysta: "/public/cars/crysta.png",
 };
 
 const routes = [
