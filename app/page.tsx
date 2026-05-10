@@ -50,7 +50,7 @@ export default function Home() {
 
           <div style={{ maxWidth: 720, margin: "30px auto 0", textAlign: "center" }}>
             <h2 style={heroTitle}>Travel Made Easy</h2>
-            <p style={heroSub}>Airport Drop Pickup, Local, Outstation aur Family Booking ke liye reliable cab service.</p>
+            <p style={heroSub}>Reliable cab service for Airport Drop Pickup, Local rides, Outstation travel, and Family bookings.</p>
 
             <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 22 }}>
               <a href={`tel:+${phone}`} style={callButton}>Call Now</a>
