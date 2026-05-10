@@ -5,11 +5,11 @@ export default function Home() {
   const whatsappText = "Namaste Vishwakarma Travels, mujhe cab booking karni hai.";
 
   const services = [
-    { icon: "✈️", title: "Airport Drop Pickup", text: "On-time airport cab service" },
-    { icon: "🚕", title: "Local Movement", text: "City ride and daily travel" },
-    { icon: "🛣️", title: "Outstation Movement", text: "Long route comfortable ride" },
-    { icon: "⏱️", title: "Short Time Booking", text: "Quick cab for short work" },
-    { icon: "🎉", title: "Marriage Function", text: "Event and family travel" },
+    { icon: "✈️", title: "Airport Drop Pickup", text: "Ranchi/Kolkata airport rate page dekhein", link: "/airport-drop" },
+    { icon: "🚕", title: "Local Movement", text: "City ride and daily travel", link: "#booking" },
+    { icon: "🛣️", title: "Outstation Movement", text: "Long route comfortable ride", link: "#booking" },
+    { icon: "⏱️", title: "Short Time Booking", text: "Quick cab for short work", link: "#booking" },
+    { icon: "🎉", title: "Marriage Function", text: "Event and family travel", link: "#booking" },
   ];
 
   const vehicles = [
@@ -94,13 +94,14 @@ export default function Home() {
 
             <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 22 }}>
               <a href={`tel:+${phone}`} style={callButton}>Call Now</a>
+              <a href="/airport-drop" style={airportButton}>Airport Rates</a>
               <a href={`https://wa.me/${phone}?text=${encodeURIComponent(whatsappText)}`} style={whatsButton}>Book on WhatsApp</a>
             </div>
           </div>
         </div>
       </section>
 
-      <section style={bookingWrap}>
+      <section id="booking" style={bookingWrap}>
         <form onSubmit={handleSubmit} style={bookingCard}>
           <h2 style={sectionTitle}>Book Your Ride</h2>
           <p style={mutedText}>Fill details and send booking request directly on WhatsApp.</p>
@@ -130,11 +131,12 @@ export default function Home() {
         <h2 style={sectionTitle}>Our Services</h2>
         <div style={gridStyle}>
           {services.map((item) => (
-            <div key={item.title} style={serviceCard}>
+            <a key={item.title} href={item.link} style={serviceCard}>
               <div style={serviceIcon}>{item.icon}</div>
               <h3 style={{ margin: "10px 0 6px", color: "#0b2d6b" }}>{item.title}</h3>
               <p style={mutedText}>{item.text}</p>
-            </div>
+              {item.link === "/airport-drop" && <b style={openText}>Open Airport Page →</b>}
+            </a>
           ))}
         </div>
       </section>
@@ -180,6 +182,7 @@ const badgeStyle: React.CSSProperties = { display: "inline-block", background: "
 const heroTitle: React.CSSProperties = { fontSize: "clamp(36px,8vw,62px)", lineHeight: 1, margin: "18px 0 12px", fontWeight: 900 };
 const heroSub: React.CSSProperties = { fontSize: 17, lineHeight: 1.5, margin: "0 auto", maxWidth: 650, opacity: .95 };
 const callButton: React.CSSProperties = { background: "white", color: "#0b2d6b", padding: "14px 20px", borderRadius: 14, textDecoration: "none", fontWeight: "bold" };
+const airportButton: React.CSSProperties = { background: "#0b2d6b", color: "white", padding: "14px 20px", borderRadius: 14, textDecoration: "none", fontWeight: "bold", border: "1px solid rgba(255,255,255,.35)" };
 const whatsButton: React.CSSProperties = { background: "#22c55e", color: "white", padding: "14px 20px", borderRadius: 14, textDecoration: "none", fontWeight: "bold" };
 const bookingWrap: React.CSSProperties = { maxWidth: 760, margin: "-72px auto 18px", padding: "0 16px" };
 const bookingCard: React.CSSProperties = { display: "grid", gap: 13, background: "rgba(255,255,255,.96)", backdropFilter: "blur(10px)", padding: 20, borderRadius: 26, boxShadow: "0 18px 45px rgba(15,23,42,.18)", border: "1px solid #e2e8f0" };
@@ -189,8 +192,9 @@ const contentSection: React.CSSProperties = { maxWidth: 1050, margin: "0 auto", 
 const sectionTitle: React.CSSProperties = { textAlign: "center", fontSize: 28, margin: "5px 0 6px", color: "#0b2d6b" };
 const mutedText: React.CSSProperties = { color: "#64748b", margin: 0, lineHeight: 1.45 };
 const gridStyle: React.CSSProperties = { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 14, marginTop: 18 };
-const serviceCard: React.CSSProperties = { background: "white", padding: 16, borderRadius: 20, boxShadow: "0 8px 20px rgba(15,23,42,.08)", border: "1px solid #e2e8f0" };
+const serviceCard: React.CSSProperties = { display: "block", background: "white", padding: 16, borderRadius: 20, boxShadow: "0 8px 20px rgba(15,23,42,.08)", border: "1px solid #e2e8f0", textDecoration: "none", color: "inherit", cursor: "pointer" };
 const serviceIcon: React.CSSProperties = { width: 48, height: 48, borderRadius: 16, background: "#fff7ed", display: "grid", placeItems: "center", fontSize: 24 };
+const openText: React.CSSProperties = { display: "inline-block", marginTop: 10, color: "#f97316", fontSize: 14 };
 const vehicleCard: React.CSSProperties = { display: "flex", alignItems: "center", gap: 13, background: "white", padding: 15, borderRadius: 20, boxShadow: "0 8px 20px rgba(15,23,42,.08)", border: "1px solid #e2e8f0" };
 const carIcon: React.CSSProperties = { width: 58, height: 58, borderRadius: 18, display: "grid", placeItems: "center", background: "#eff6ff", fontSize: 28 };
 const smallBookButton: React.CSSProperties = { background: "#0b2d6b", color: "white", padding: "10px 14px", borderRadius: 14, textDecoration: "none", fontWeight: "bold" };
