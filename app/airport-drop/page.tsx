@@ -2,11 +2,16 @@
 
 const phone = "917667989203";
 
+function fallbackCarImage(name: string) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="330" viewBox="0 0 600 330"><rect width="600" height="330" fill="#eef4fb"/><rect x="72" y="150" width="455" height="82" rx="36" fill="#ffffff" stroke="#d8e2ee" stroke-width="5"/><path d="M160 150 L218 94 H376 L446 150 Z" fill="#ffffff" stroke="#d8e2ee" stroke-width="5"/><circle cx="178" cy="233" r="31" fill="#0b2d6b"/><circle cx="420" cy="233" r="31" fill="#0b2d6b"/><circle cx="178" cy="233" r="14" fill="#eef4fb"/><circle cx="420" cy="233" r="14" fill="#eef4fb"/><rect x="236" y="105" width="72" height="42" rx="8" fill="#dbeafe"/><rect x="321" y="105" width="72" height="42" rx="8" fill="#dbeafe"/><text x="300" y="286" text-anchor="middle" font-family="Arial" font-size="34" font-weight="800" fill="#0b2d6b">${name}</text></svg>`;
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+
 const carImages = {
-  Dzire: "https://imgd.aeplcdn.com/664x374/n/cw/ec/159099/dzire-exterior-right-front-three-quarter.jpeg",
-  Ertiga: "https://imgd.aeplcdn.com/664x374/n/cw/ec/115777/ertiga-exterior-right-front-three-quarter-5.jpeg",
-  Innova: "https://imgd.aeplcdn.com/664x374/n/cw/ec/51435/innova-crysta-exterior-right-front-three-quarter-2.jpeg",
-  Crysta: "https://imgd.aeplcdn.com/664x374/n/cw/ec/51435/innova-crysta-exterior-right-front-three-quarter-2.jpeg",
+  Dzire: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Suzuki%20Dzire%201.2%20GL%2B%202024.jpg?width=700",
+  Ertiga: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Maruti%20Suzuki%20Ertiga%283%29.jpg?width=700",
+  Innova: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Toyota%20Innova%20Crysta%202.4%20Z%20front%20right.jpg?width=700",
+  Crysta: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Toyota%20Innova%20Crysta.jpg?width=700",
 };
 
 const routes = [
@@ -82,7 +87,17 @@ export default function AirportDropPage() {
 
               return (
                 <article key={`${route.title}-${car.name}`} style={cardStyle}>
-                  <img src={car.image} alt={`${car.name} cab`} style={carPhoto} />
+                  <img
+                    src={car.image}
+                    alt={`${car.name} cab`}
+                    style={carPhoto}
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                    onError={(event) => {
+                      event.currentTarget.onerror = null;
+                      event.currentTarget.src = fallbackCarImage(car.name);
+                    }}
+                  />
 
                   <div style={cardBody}>
                     <div style={nameRow}>
@@ -137,7 +152,7 @@ const routeSub: React.CSSProperties = { margin: 0, color: "#64748b", fontSize: 1
 const timePill: React.CSSProperties = { background: "#fff7ed", color: "#c2410c", border: "1px solid #fed7aa", padding: "8px 10px", borderRadius: 999, fontWeight: 900, fontSize: 12 };
 const vehicleGrid: React.CSSProperties = { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(165px,1fr))", gap: 10 };
 const cardStyle: React.CSSProperties = { background: "white", borderRadius: 18, overflow: "hidden", boxShadow: "0 8px 20px rgba(15,23,42,.08)", border: "1px solid #e2e8f0" };
-const carPhoto: React.CSSProperties = { width: "100%", height: 105, objectFit: "cover", display: "block", background: "#e2e8f0" };
+const carPhoto: React.CSSProperties = { width: "100%", height: 105, objectFit: "cover", objectPosition: "center", display: "block", background: "#e2e8f0" };
 const cardBody: React.CSSProperties = { padding: 12 };
 const nameRow: React.CSSProperties = { display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 };
 const seatTag: React.CSSProperties = { background: "#eff6ff", color: "#0b2d6b", padding: "5px 7px", borderRadius: 999, fontWeight: 900, fontSize: 11, whiteSpace: "nowrap" };
