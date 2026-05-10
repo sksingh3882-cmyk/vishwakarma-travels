@@ -267,8 +267,8 @@ Net Payable Amount: ₹${netPayable}
 Thank You For Choosing Vishwakarma Travels
 Wish You A Very Happy Journey
 
-For Queries Please Call or WhatsApp:
-+91 7667989203`;
+Visit - vishwakarma-travels-nine.vercel.app
+           for next booking`;
   }
 
   function openBillPdf(bookingId: string) {
