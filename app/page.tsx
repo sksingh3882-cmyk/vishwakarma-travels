@@ -27,9 +27,10 @@ export default function Home() {
     const service = String(form.get("service") || "");
     const pickup = String(form.get("pickup") || "");
     const drop = String(form.get("drop") || "");
-    const dateTime = String(form.get("dateTime") || "");
+    const bookingDate = String(form.get("bookingDate") || "");
+    const bookingTime = String(form.get("bookingTime") || "");
 
-    const message = `Hello Vishwakarma Travels,\n\nI would like to book a cab.\n\nName: ${name}\nMobile: ${mobile}\nService: ${service}\nPickup: ${pickup}\nDrop: ${drop}\nDate & Time: ${dateTime}`;
+    const message = `Hello Vishwakarma Travels,\n\nI would like to book a cab.\n\nName: ${name}\nMobile: ${mobile}\nService: ${service}\nPickup: ${pickup}\nDrop: ${drop}\nDate: ${bookingDate}\nTime: ${bookingTime}`;
 
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
   }
@@ -80,7 +81,24 @@ export default function Home() {
 
           <input name="pickup" placeholder="Pickup Location" style={inputStyle} required />
           <input name="drop" placeholder="Drop Location" style={inputStyle} required />
-          <input type="datetime-local" name="dateTime" style={inputStyle} required />
+
+          <div style={dateTimeGrid}>
+            <label style={dateTimeBox}>
+              <span style={dateTimeIcon}>📅</span>
+              <span style={dateTimeContent}>
+                <b style={dateTimeLabel}>Pickup Date</b>
+                <input type="date" name="bookingDate" style={dateTimeInput} required />
+              </span>
+            </label>
+
+            <label style={dateTimeBox}>
+              <span style={dateTimeIcon}>⏰</span>
+              <span style={dateTimeContent}>
+                <b style={dateTimeLabel}>Pickup Time</b>
+                <input type="time" name="bookingTime" style={dateTimeInput} required />
+              </span>
+            </label>
+          </div>
 
           <button type="submit" style={searchButton}>Send Booking On WhatsApp</button>
         </form>
@@ -146,6 +164,12 @@ const whatsButton: React.CSSProperties = { background: "#22c55e", color: "white"
 const bookingWrap: React.CSSProperties = { maxWidth: 760, margin: "-72px auto 18px", padding: "0 16px" };
 const bookingCard: React.CSSProperties = { display: "grid", gap: 13, background: "rgba(255,255,255,.96)", backdropFilter: "blur(10px)", padding: 20, borderRadius: 26, boxShadow: "0 18px 45px rgba(15,23,42,.18)", border: "1px solid #e2e8f0" };
 const inputStyle: React.CSSProperties = { padding: "15px", borderRadius: 15, border: "1px solid #cbd5e1", fontSize: 16, width: "100%", boxSizing: "border-box", background: "white" };
+const dateTimeGrid: React.CSSProperties = { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(190px,1fr))", gap: 12 };
+const dateTimeBox: React.CSSProperties = { display: "flex", alignItems: "center", gap: 12, padding: "12px 13px", borderRadius: 18, border: "1px solid #fed7aa", background: "linear-gradient(135deg,#fff7ed,#ffffff)", boxShadow: "0 8px 18px rgba(249,115,22,.12)" };
+const dateTimeIcon: React.CSSProperties = { width: 44, height: 44, borderRadius: 14, display: "grid", placeItems: "center", background: "#f97316", color: "white", fontSize: 22, flexShrink: 0 };
+const dateTimeContent: React.CSSProperties = { display: "grid", gap: 4, flex: 1 };
+const dateTimeLabel: React.CSSProperties = { color: "#0b2d6b", fontSize: 13 };
+const dateTimeInput: React.CSSProperties = { border: 0, outline: 0, background: "transparent", color: "#0f172a", fontSize: 16, fontWeight: 700, width: "100%" };
 const searchButton: React.CSSProperties = { background: "linear-gradient(135deg,#f97316,#ea580c)", color: "white", padding: 16, border: 0, borderRadius: 16, fontSize: 18, fontWeight: "bold" };
 const contentSection: React.CSSProperties = { maxWidth: 1050, margin: "0 auto", padding: "20px 16px" };
 const sectionTitle: React.CSSProperties = { textAlign: "center", fontSize: 28, margin: "5px 0 6px", color: "#0b2d6b" };
