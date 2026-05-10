@@ -78,7 +78,7 @@ export default function AirportDropPage() {
 
           <div style={vehicleGrid}>
             {route.cars.map((car) => {
-              const message = `Hello Vishwakarma Travels,\n\nI would like to book an airport cab.\n\nRoute: ${route.title}\nVehicle: ${car.name}\nStarting Fare: ${car.price}\n\nPlease share the booking confirmation details.\n\nVisit vishwakarma-travels-nine.vercel.app for future bookings.`;
+              const message = `Hello Vishwakarma Travels,\n\nI would like to book an airport cab.\n\nRoute: ${route.title}\nVehicle: ${car.name}\n\nPlease share the booking confirmation details.\n\nThank you.`;
 
               return (
                 <article key={`${route.title}-${car.name}`} style={cardStyle}>
