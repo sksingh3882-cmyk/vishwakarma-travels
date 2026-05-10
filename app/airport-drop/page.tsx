@@ -53,7 +53,6 @@ export default function AirportDropPage() {
 
       <section style={heroStyle}>
         <div style={heroContent}>
-          <p style={badgeStyle}>One Way Drop Service</p>
           <h2 style={heroTitle}>One Way Drop Service</h2>
           <p style={heroSub}>Safe • Reliable • On Time</p>
 
