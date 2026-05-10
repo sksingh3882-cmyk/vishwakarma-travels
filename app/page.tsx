@@ -2,10 +2,10 @@
 
 export default function Home() {
   const phone = "917667989203";
-  const whatsappText = "Namaste Vishwakarma Travels, mujhe cab booking karni hai.";
+  const whatsappText = "Hello Vishwakarma Travels, I would like to book a cab.";
 
   const services = [
-    { icon: "✈️", title: "Airport Drop Pickup", text: "Ranchi/Kolkata airport rate page dekhein", link: "/airport-drop" },
+    { icon: "✈️", title: "Airport Drop Pickup", text: "View Ranchi/Kolkata airport fare page", link: "/airport-drop" },
     { icon: "🚕", title: "Local Movement", text: "City ride and daily travel", link: "#booking" },
     { icon: "🛣️", title: "Outstation Movement", text: "Long route comfortable ride", link: "#booking" },
     { icon: "⏱️", title: "Short Time Booking", text: "Quick cab for short work", link: "#booking" },
@@ -29,7 +29,7 @@ export default function Home() {
     const drop = String(form.get("drop") || "");
     const dateTime = String(form.get("dateTime") || "");
 
-    const message = `Namaste Vishwakarma Travels,\n\nI want to book a cab.\n\nName: ${name}\nMobile: ${mobile}\nService: ${service}\nPickup: ${pickup}\nDrop: ${drop}\nDate & Time: ${dateTime}`;
+    const message = `Hello Vishwakarma Travels,\n\nI would like to book a cab.\n\nName: ${name}\nMobile: ${mobile}\nService: ${service}\nPickup: ${pickup}\nDrop: ${drop}\nDate & Time: ${dateTime}`;
 
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
   }
@@ -111,7 +111,7 @@ export default function Home() {
                 <p style={{ margin: "4px 0", color: "#64748b" }}>{vehicle.detail}</p>
                 <b style={{ color: "#f97316" }}>{vehicle.price}</b>
               </div>
-              <a href={`https://wa.me/${phone}?text=${encodeURIComponent("Namaste Vishwakarma Travels, mujhe " + vehicle.name + " cab book karni hai.")}`} style={smallBookButton}>Book</a>
+              <a href={`https://wa.me/${phone}?text=${encodeURIComponent("Hello Vishwakarma Travels, I would like to book a " + vehicle.name + " cab.")}`} style={smallBookButton}>Book</a>
             </div>
           ))}
         </div>
