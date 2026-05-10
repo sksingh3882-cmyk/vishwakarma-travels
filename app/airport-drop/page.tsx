@@ -40,7 +40,7 @@ const routes = [
 ];
 
 export default function AirportDropPage() {
-  const quickMessage = "Hello Vishwakarma Travels, I would like to book an airport pickup/drop cab.";
+  const quickMessage = "Hello Vishwakarma Travels, I would like to book a one way drop cab.";
 
   return (
     <main style={pageStyle}>
@@ -54,13 +54,12 @@ export default function AirportDropPage() {
             <p style={logoSub}>TRAVELS</p>
           </div>
         </a>
-        <a href="/" style={menuButton}>☰</a>
       </header>
 
       <section style={heroStyle}>
         <div style={heroContent}>
-          <p style={badgeStyle}>Airport Drop & Pickup</p>
-          <h2 style={heroTitle}>Airport Drop & Pickup</h2>
+          <p style={badgeStyle}>One Way Drop Service</p>
+          <h2 style={heroTitle}>One Way Drop Service</h2>
           <p style={heroSub}>Safe • Reliable • On Time</p>
 
           <div style={featureBar}>
@@ -138,7 +137,6 @@ const logoBox: React.CSSProperties = { display: "flex", alignItems: "center", ga
 const logoMark: React.CSSProperties = { width: 52, height: 52, borderRadius: "14px 6px 14px 6px", display: "grid", placeItems: "center", background: "linear-gradient(135deg,#ff6b00,#ff7a1a)", color: "white", fontSize: 34, fontWeight: 950, transform: "skew(-10deg)", boxShadow: "0 10px 22px rgba(249,115,22,.22)" };
 const logoTitle: React.CSSProperties = { margin: 0, color: "#f97316", fontSize: "clamp(21px,4vw,32px)", lineHeight: .95, fontWeight: 950, letterSpacing: .5 };
 const logoSub: React.CSSProperties = { margin: 0, color: "#0b2d6b", fontSize: "clamp(17px,3vw,25px)", fontWeight: 950, lineHeight: 1 };
-const menuButton: React.CSSProperties = { width: 58, height: 58, display: "grid", placeItems: "center", borderRadius: 17, background: "#0b2d6b", color: "white", textDecoration: "none", fontSize: 32, boxShadow: "0 10px 22px rgba(11,45,107,.22)" };
 const heroStyle: React.CSSProperties = { maxWidth: 1180, margin: "0 auto", padding: "16px" };
 const heroContent: React.CSSProperties = { background: "linear-gradient(135deg,#eaf5ff,#ffffff)", borderRadius: 28, padding: "clamp(24px,5vw,56px)", boxShadow: "0 14px 36px rgba(15,23,42,.10)", border: "1px solid #dbeafe" };
 const badgeStyle: React.CSSProperties = { display: "inline-block", margin: 0, padding: "8px 12px", borderRadius: 999, background: "#fff7ed", color: "#f97316", border: "1px solid #fed7aa", fontWeight: 900, fontSize: 13 };
