@@ -1,276 +1,198 @@
 "use client";
+
 export default function Home() {
   const phone = "917667989203";
-  const whatsappText =
-    "Namaste Vishwakarma Travels, mujhe cab booking karni hai.";
+  const whatsappText = "Namaste Vishwakarma Travels, mujhe cab booking karni hai.";
+
+  const services = [
+    { icon: "✈️", title: "Airport Drop Pickup", text: "On-time airport cab service" },
+    { icon: "🚕", title: "Local Movement", text: "City ride and daily travel" },
+    { icon: "🛣️", title: "Outstation Movement", text: "Long route comfortable ride" },
+    { icon: "⏱️", title: "Short Time Booking", text: "Quick cab for short work" },
+    { icon: "🎉", title: "Marriage Function", text: "Event and family travel" },
+  ];
+
+  const vehicles = [
+    { name: "Sedan", detail: "Dzire, Etios, Amaze", price: "Best Price" },
+    { name: "SUV", detail: "Ertiga, Innova", price: "Comfort Ride" },
+    { name: "Premium", detail: "Crysta, Traveller", price: "Family Trip" },
+  ];
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    const form = new FormData(e.currentTarget);
+    const name = String(form.get("customerName") || "");
+    const mobile = String(form.get("mobile") || "");
+    const service = String(form.get("service") || "");
+    const pickup = String(form.get("pickup") || "");
+    const drop = String(form.get("drop") || "");
+    const dateTime = String(form.get("dateTime") || "");
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (supabaseUrl && supabaseKey) {
+      await fetch(`${supabaseUrl}/rest/v1/customers`, {
+        method: "POST",
+        headers: {
+          apikey: supabaseKey || "",
+          Authorization: `Bearer ${supabaseKey}`,
+          "Content-Type": "application/json",
+          Prefer: "resolution=merge-duplicates",
+        },
+        body: JSON.stringify({ name, mobile, address: pickup }),
+      });
+
+      await fetch(`${supabaseUrl}/rest/v1/bookings`, {
+        method: "POST",
+        headers: {
+          apikey: supabaseKey || "",
+          Authorization: `Bearer ${supabaseKey}`,
+          "Content-Type": "application/json",
+          Prefer: "return=minimal",
+        },
+        body: JSON.stringify({
+          customer_name: name,
+          mobile,
+          service,
+          pickup,
+          drop_location: drop,
+          booking_date: dateTime,
+          address: pickup,
+          fare: "",
+          status: "Pending",
+        }),
+      });
+    }
+
+    const message = `Namaste Vishwakarma Travels,\n\nI want to book a cab.\n\nName: ${name}\nMobile: ${mobile}\nService: ${service}\nPickup: ${pickup}\nDrop: ${drop}\nDate & Time: ${dateTime}\n\nPlease send me the booking confirmation.\n\nVisit vishwakarma-travels-nine.vercel.app\nfor next booking`;
+
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
+  }
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        background: "#f3f7ff",
-        fontFamily: "Arial",
-        color: "#0f172a",
-      }}
-    >
-      <section
-        style={{
-          background: "linear-gradient(135deg, #0f172a, #2563eb)",
-          color: "white",
-          padding: "35px 20px",
-          textAlign: "center",
-        }}
-      >
-        <h1 style={{ fontSize: "42px", margin: "0 0 10px" }}>
-          Vishwakarma Travels
-        </h1>
-        <h2 style={{ fontSize: "20px", margin: "0 0 8px" }}>
-  The Most Reliable And Affordable Cab Service Of Jamshedpur
-</h2>
+    <main style={pageStyle}>
+      <a href={`https://wa.me/${phone}?text=${encodeURIComponent(whatsappText)}`} style={floatingWhatsApp}>WhatsApp</a>
 
-<h3 style={{ fontSize: "18px", margin: 0 }}>
-  Airport Drop - Pickup • Local • Outstation
-</h3>
+      <section style={heroStyle}>
+        <div style={heroOverlay}>
+          <div style={topBar}>
+            <div style={logoBox}>
+              <div style={logoIcon}>🚖</div>
+              <div>
+                <h1 style={{ margin: 0, fontSize: 25 }}>Vishwakarma Travels</h1>
+                <p style={{ margin: 0, fontSize: 12, opacity: 0.9 }}>Safe Journey, Happy Journey</p>
+              </div>
+            </div>
+          </div>
 
-        <div style={{ marginTop: "25px" }}>
-          <a
-            href={`tel:+${phone}`}
-            style={{
-              background: "#22c55e",
-              color: "white",
-              padding: "14px 22px",
-              borderRadius: "10px",
-              textDecoration: "none",
-              marginRight: "10px",
-              display: "inline-block",
-              fontWeight: "bold",
-            }}
-          >
-            Call Now
-          </a>
+          <div style={{ maxWidth: 720, margin: "22px auto 0", textAlign: "center" }}>
+            <p style={badgeStyle}>Cab Booking Service • Jamshedpur</p>
+            <h2 style={heroTitle}>Travel Made Easy</h2>
+            <p style={heroSub}>Airport Drop Pickup, Local, Outstation aur Family Booking ke liye reliable cab service.</p>
 
-          <a
-            href={`https://wa.me/${phone}?text=${encodeURIComponent(
-              whatsappText
-            )}`}
-            style={{
-              background: "#25D366",
-              color: "white",
-              padding: "14px 22px",
-              borderRadius: "10px",
-              textDecoration: "none",
-              display: "inline-block",
-              fontWeight: "bold",
-            }}
-          >
-            WhatsApp
-          </a>
+            <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 22 }}>
+              <a href={`tel:+${phone}`} style={callButton}>Call Now</a>
+              <a href={`https://wa.me/${phone}?text=${encodeURIComponent(whatsappText)}`} style={whatsButton}>Book on WhatsApp</a>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section style={{ padding: "25px 18px", maxWidth: "1000px", margin: "auto" }}>
-        <h2 style={{ textAlign: "center", fontSize: "30px" }}>
-          Our Services
-        </h2>
+      <section style={bookingWrap}>
+        <form onSubmit={handleSubmit} style={bookingCard}>
+          <h2 style={sectionTitle}>Book Your Ride</h2>
+          <p style={mutedText}>Fill details and send booking request directly on WhatsApp.</p>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
-            gap: "16px",
-            marginTop: "20px",
-          }}
-        >
-          { [
-  "Airport Drop & Pickup",
-  "Local Cab Service",
-  "Outstation Booking",
-  "Short Order Cab Service",
-  "Marriage Function Booking",
-  "All Types Of Vehicle Available",
-  "Tour Package Service",
-  "24×7 / 365 Days Service",
-]
-          .map((item) => (
-            <div
-              key={item}
-              style={{
-                background: "white",
-                padding: "20px",
-                borderRadius: "14px",
-                boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
-                fontSize: "17px",
-                fontWeight: "600",
-              }}
-            >
-              {item}
+          <input name="customerName" placeholder="Your Name" style={inputStyle} required />
+          <input name="mobile" placeholder="Mobile Number" style={inputStyle} required />
+
+          <select name="service" style={inputStyle} required>
+            <option value="">Select Service</option>
+            <option>Airport Drop Pickup</option>
+            <option>Local Movement</option>
+            <option>Outstation Movement</option>
+            <option>Short Time Booking</option>
+            <option>Marriage Function Booking</option>
+            <option>Tour Package Service</option>
+          </select>
+
+          <input name="pickup" placeholder="Pickup Location" style={inputStyle} required />
+          <input name="drop" placeholder="Drop Location" style={inputStyle} required />
+          <input type="datetime-local" name="dateTime" style={inputStyle} required />
+
+          <button type="submit" style={searchButton}>Send Booking On WhatsApp</button>
+        </form>
+      </section>
+
+      <section style={contentSection}>
+        <h2 style={sectionTitle}>Our Services</h2>
+        <div style={gridStyle}>
+          {services.map((item) => (
+            <div key={item.title} style={serviceCard}>
+              <div style={serviceIcon}>{item.icon}</div>
+              <h3 style={{ margin: "10px 0 6px", color: "#0b2d6b" }}>{item.title}</h3>
+              <p style={mutedText}>{item.text}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section
-  style={{
-    background: "white",
-    padding: "25px 18px",
-    maxWidth: "700px",
-    margin: "20px auto",
-    borderRadius: "16px",
-    boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
-  }}
->
-  <h2 style={{ textAlign: "center", fontSize: "28px" }}>
-    Book Your Cab
-  </h2>
-<form
-onSubmit={async (e) => {
-  e.preventDefault();
-
-  const form = new FormData(e.currentTarget);
-
-  const name = form.get("customerName");
-  const mobile = form.get("mobile");
-  const service = form.get("service");
-  const pickup = form.get("pickup");
-  const drop = form.get("drop");
-  const dateTime = form.get("dateTime");
-
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  await fetch(`${supabaseUrl}/rest/v1/customers`, {
-    method: "POST",
-    headers: {
-      apikey: supabaseKey || "",
-      Authorization: `Bearer ${supabaseKey}`,
-      "Content-Type": "application/json",
-      Prefer: "resolution=merge-duplicates",
-    },
-    body: JSON.stringify({
-      name: name,
-      mobile: mobile,
-      address: pickup,
-    }),
-  });
-
-  await fetch(`${supabaseUrl}/rest/v1/bookings`, {
-    method: "POST",
-    headers: {
-      apikey: supabaseKey || "",
-      Authorization: `Bearer ${supabaseKey}`,
-      "Content-Type": "application/json",
-      Prefer: "return=minimal",
-    },
-    body: JSON.stringify({
-      customer_name: name,
-      mobile: mobile,
-      service: service,
-      pickup: pickup,
-      drop_location: drop,
-      booking_date: dateTime,
-      address: pickup,
-      fare: "",
-      status: "Pending",
-    }),
-  });
-
-  const message = `Namaste Vishwakarma Travels,
-
-I want to book a cab.
-
-Name: ${name}
-Mobile: ${mobile}
-Service: ${service}
-Pickup: ${pickup}
-Drop: ${drop}
-Date & Time: ${dateTime}
-
-Please send me the booking confirmation.`;
-
-  window.open(
-    `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
-    "_blank"
-  );
-  }}
-  style={{ display: "grid", gap: "12px" }}
->
-  
-    <input
-      name="customerName"
-      placeholder="Your Name"
-      style={inputStyle}
-      required
-    />
-
-    <input
-      name="mobile"
-      placeholder="Mobile Number"
-      style={inputStyle}
-      required
-    />
-
-    <select name="service" style={inputStyle} required>
-      <option value="">Select Service</option>
-      <option>Airport Drop & Pickup</option>
-      <option>Local Cab Service</option>
-      <option>Outstation Booking</option>
-      <option>Short Order Cab Service</option>
-      <option>Marriage Function Booking</option>
-      <option>Tour Package Service</option>
-    </select>
-
-    <input
-      name="pickup"
-      placeholder="Pickup Location"
-      style={inputStyle}
-      required
-    />
-
-    <input
-      name="drop"
-      placeholder="Drop Location"
-      style={inputStyle}
-      required
-    />
-
-<input
-  type="datetime-local"
-  name="dateTime"
-  style={inputStyle}
-  required
-/>
-
-    <button
-      type="submit"
-      style={{
-        background: "#2563eb",
-        color: "white",
-        padding: "15px",
-        border: "none",
-        borderRadius: "10px",
-        fontSize: "18px",
-        fontWeight: "bold",
-      }}
-    >
-      Send Booking On WhatsApp
-    </button>
-  </form>
-</section>
-
-      <section style={{ textAlign: "center", padding: "25px 18px" }}>
-        <h2>Contact Us</h2>
-        <p>Jugsalai, Jamshedpur</p>
-        <p>
-          <b>Phone:</b> +91 7667989203
-        </p>
+      <section style={contentSection}>
+        <h2 style={sectionTitle}>Available Vehicles</h2>
+        <div style={{ display: "grid", gap: 14 }}>
+          {vehicles.map((vehicle) => (
+            <div key={vehicle.name} style={vehicleCard}>
+              <div style={carIcon}>🚘</div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ margin: 0, color: "#0f172a" }}>{vehicle.name}</h3>
+                <p style={{ margin: "4px 0", color: "#64748b" }}>{vehicle.detail}</p>
+                <b style={{ color: "#f97316" }}>{vehicle.price}</b>
+              </div>
+              <a href={`https://wa.me/${phone}?text=${encodeURIComponent("Namaste Vishwakarma Travels, mujhe " + vehicle.name + " cab book karni hai.")}`} style={smallBookButton}>Book</a>
+            </div>
+          ))}
+        </div>
       </section>
+
+      <section style={helpCard}>
+        <h2 style={{ margin: 0 }}>Need Help?</h2>
+        <p>Call or WhatsApp anytime for cab booking.</p>
+        <a href={`tel:+${phone}`} style={{ color: "white", fontWeight: "bold", fontSize: 20, textDecoration: "none" }}>+91 7667989203</a>
+      </section>
+
+      <footer style={{ textAlign: "center", padding: "25px 18px 90px", color: "#475569" }}>
+        <b>Vishwakarma Travels</b>
+        <p>Jugsalai, Jamshedpur</p>
+      </footer>
     </main>
   );
 }
 
-const inputStyle = {
-  padding: "14px",
-  borderRadius: "10px",
-  border: "1px solid #cbd5e1",
-  fontSize: "16px",
-};
+const pageStyle: React.CSSProperties = { minHeight: "100vh", background: "#f4f7fb", fontFamily: "Arial", color: "#0f172a" };
+const heroStyle: React.CSSProperties = { background: "linear-gradient(135deg,#dbeafe,#fff7ed)", padding: "18px 14px 90px" };
+const heroOverlay: React.CSSProperties = { maxWidth: 1050, margin: "0 auto", background: "linear-gradient(135deg,rgba(11,45,107,.94),rgba(249,115,22,.82))", color: "white", borderRadius: 28, padding: "20px 16px 70px", boxShadow: "0 18px 45px rgba(15,23,42,.25)" };
+const topBar: React.CSSProperties = { display: "flex", justifyContent: "space-between", alignItems: "center" };
+const logoBox: React.CSSProperties = { display: "flex", alignItems: "center", gap: 12 };
+const logoIcon: React.CSSProperties = { width: 52, height: 52, borderRadius: 18, display: "grid", placeItems: "center", background: "white", color: "#0b2d6b", fontSize: 25 };
+const badgeStyle: React.CSSProperties = { display: "inline-block", background: "rgba(255,255,255,.18)", border: "1px solid rgba(255,255,255,.35)", padding: "8px 13px", borderRadius: 999, fontWeight: "bold" };
+const heroTitle: React.CSSProperties = { fontSize: "clamp(36px,8vw,62px)", lineHeight: 1, margin: "18px 0 12px", fontWeight: 900 };
+const heroSub: React.CSSProperties = { fontSize: 17, lineHeight: 1.5, margin: "0 auto", maxWidth: 650, opacity: .95 };
+const callButton: React.CSSProperties = { background: "white", color: "#0b2d6b", padding: "14px 20px", borderRadius: 14, textDecoration: "none", fontWeight: "bold" };
+const whatsButton: React.CSSProperties = { background: "#22c55e", color: "white", padding: "14px 20px", borderRadius: 14, textDecoration: "none", fontWeight: "bold" };
+const bookingWrap: React.CSSProperties = { maxWidth: 760, margin: "-72px auto 18px", padding: "0 16px" };
+const bookingCard: React.CSSProperties = { display: "grid", gap: 13, background: "rgba(255,255,255,.96)", backdropFilter: "blur(10px)", padding: 20, borderRadius: 26, boxShadow: "0 18px 45px rgba(15,23,42,.18)", border: "1px solid #e2e8f0" };
+const inputStyle: React.CSSProperties = { padding: "15px", borderRadius: 15, border: "1px solid #cbd5e1", fontSize: 16, width: "100%", boxSizing: "border-box", background: "white" };
+const searchButton: React.CSSProperties = { background: "linear-gradient(135deg,#f97316,#ea580c)", color: "white", padding: 16, border: 0, borderRadius: 16, fontSize: 18, fontWeight: "bold", boxShadow: "0 10px 20px rgba(249,115,22,.25)" };
+const contentSection: React.CSSProperties = { maxWidth: 1050, margin: "0 auto", padding: "20px 16px" };
+const sectionTitle: React.CSSProperties = { textAlign: "center", fontSize: 28, margin: "5px 0 6px", color: "#0b2d6b" };
+const mutedText: React.CSSProperties = { color: "#64748b", margin: 0, lineHeight: 1.45 };
+const gridStyle: React.CSSProperties = { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 14, marginTop: 18 };
+const serviceCard: React.CSSProperties = { background: "white", padding: 16, borderRadius: 20, boxShadow: "0 8px 20px rgba(15,23,42,.08)", border: "1px solid #e2e8f0" };
+const serviceIcon: React.CSSProperties = { width: 48, height: 48, borderRadius: 16, background: "#fff7ed", display: "grid", placeItems: "center", fontSize: 24 };
+const vehicleCard: React.CSSProperties = { display: "flex", alignItems: "center", gap: 13, background: "white", padding: 15, borderRadius: 20, boxShadow: "0 8px 20px rgba(15,23,42,.08)", border: "1px solid #e2e8f0" };
+const carIcon: React.CSSProperties = { width: 58, height: 58, borderRadius: 18, display: "grid", placeItems: "center", background: "#eff6ff", fontSize: 28 };
+const smallBookButton: React.CSSProperties = { background: "#0b2d6b", color: "white", padding: "10px 14px", borderRadius: 14, textDecoration: "none", fontWeight: "bold" };
+const helpCard: React.CSSProperties = { maxWidth: 1000, margin: "18px auto", padding: 22, borderRadius: 24, background: "linear-gradient(135deg,#0b2d6b,#1d4ed8)", color: "white", boxShadow: "0 12px 30px rgba(15,23,42,.22)" };
+const floatingWhatsApp: React.CSSProperties = { position: "fixed", right: 16, bottom: 18, zIndex: 9998, background: "#25D366", color: "white", padding: "13px 16px", borderRadius: 999, textDecoration: "none", fontWeight: "bold", boxShadow: "0 12px 28px rgba(15,23,42,.25)" };
