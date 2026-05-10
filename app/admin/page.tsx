@@ -410,7 +410,7 @@ td, th {
   <div class="header">
     <div class="brand">
       <h1>Vishwakarma Travels</h1>
-      <p>H No 19 Bagbera Jugsalai Jamshedpur</p>
+      <p>Jugsalai Jamshedpur</p>
       <p>+91 7667989203</p>
     </div>
     <div class="invbox">
@@ -559,7 +559,7 @@ td, th {
     }
 
     const confirmDelete = window.confirm(
-      `Kya aap booking ${bookingId} ko permanently delete karna chahte hain?`
+      `Do you want ${bookingId} delete permanently ?`
     );
 
     if (!confirmDelete) return;
@@ -584,7 +584,7 @@ td, th {
       }
 
       setBookings((prev) => prev.filter((b) => b.booking_id !== bookingId));
-      alert("Booking delete ho gaya.");
+      alert("Booking deleted.");
     } catch (error) {
       console.log("Delete error:", error);
       alert("Booking delete karte time error aaya.");
@@ -692,7 +692,7 @@ td, th {
 
       setLastBookingId(bookingId);
 
-      alert("Booking saved aur PDF bill open ho gaya.");
+      alert("Booking saved pdf bill opening.");
       setForm(initialForm);
     } catch (error) {
       console.log("Submit error:", error);
