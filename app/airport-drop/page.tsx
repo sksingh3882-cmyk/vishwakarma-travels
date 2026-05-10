@@ -2,45 +2,52 @@
 
 const phone = "917667989203";
 
-const carImages = {
-  Dzire: "/cars/dzire.png",
-  Ertiga: "/cars/ertiga.jpg",
-  Innova: "/cars/innova.png",
-  Crysta: "/cars/crysta.png",
-};
-
-const routes = [
+const vehicles = [
   {
-    title: "Jamshedpur ⇄ Ranchi Airport / City",
-    subtitle: "Airport pickup and drop service",
-    time: "3.5 - 4.5 Hours",
-    cars: [
-      { name: "Dzire", price: "₹1700", seats: "4 Seats", image: carImages.Dzire },
-      { name: "Ertiga", price: "₹2000", seats: "6 Seats", image: carImages.Ertiga },
-      { name: "Innova", price: "₹2400", seats: "6 Seats", image: carImages.Innova },
-      { name: "Crysta", price: "₹2700", seats: "6 Seats", image: carImages.Crysta },
-    ],
+    name: "Dzire / Etios / Similar",
+    shortName: "Dzire",
+    price: "₹2,999",
+    seats: "4 Seats",
+    bags: "2 Bags",
+    fuel: "Petrol / Diesel",
+    tags: ["AC", "Comfortable", "Budget Friendly"],
+    image: "/cars/dzire.png",
   },
   {
-    title: "Jamshedpur ⇄ Kolkata Airport / City",
-    subtitle: "Long route airport cab service",
-    time: "5.5 - 7 Hours",
-    cars: [
-      { name: "Dzire", price: "₹4300", seats: "4 Seats", image: carImages.Dzire },
-      { name: "Ertiga", price: "₹5700", seats: "6 Seats", image: carImages.Ertiga },
-      { name: "Innova", price: "₹7000", seats: "6 Seats", image: carImages.Innova },
-      { name: "Crysta", price: "₹7500", seats: "6 Seats", image: carImages.Crysta },
-    ],
+    name: "Ertiga / Similar",
+    shortName: "Ertiga",
+    price: "₹4,499",
+    seats: "6 Seats",
+    bags: "4 Bags",
+    fuel: "Petrol / Diesel",
+    tags: ["AC", "Spacious", "Family Car"],
+    image: "/cars/ertiga.jpg",
+  },
+  {
+    name: "Innova Crysta / Similar",
+    shortName: "Crysta",
+    price: "₹6,499",
+    seats: "6 Seats",
+    bags: "4 Bags",
+    fuel: "Diesel",
+    tags: ["AC", "Spacious", "Premium"],
+    image: "/cars/crysta.png",
+  },
+  {
+    name: "Innova / Similar",
+    shortName: "Innova",
+    price: "₹5,999",
+    seats: "6 Seats",
+    bags: "4 Bags",
+    fuel: "Diesel",
+    tags: ["AC", "Comfort", "Outstation"],
+    image: "/cars/innova.png",
   },
 ];
 
 export default function AirportDropPage() {
-  const quickMessage = "Hello Vishwakarma Travels, I would like to book a one way drop cab.";
-
   return (
     <main style={pageStyle}>
-      <a href={`https://wa.me/${phone}?text=${encodeURIComponent(quickMessage)}`} style={floatingWhatsApp}>WhatsApp</a>
-
       <header style={headerStyle}>
         <a href="/" style={logoBox}>
           <div style={logoMark}>V</div>
@@ -49,61 +56,120 @@ export default function AirportDropPage() {
             <p style={logoSub}>TRAVELS</p>
           </div>
         </a>
+
+        <nav style={navStyle}>
+          <a href="/" style={navLink}>Home</a>
+          <a href="#vehicles" style={navLink}>Fleet</a>
+          <a href={`tel:+${phone}`} style={trackButton}>Call Now</a>
+        </nav>
       </header>
 
       <section style={heroStyle}>
-        <div style={heroContent}>
-          <h2 style={heroTitle}>One Way Drop Service</h2>
-          <p style={heroSub}>Safe • Reliable • On Time</p>
-
-          <div style={featureBar}>
-            <div style={featureItem}><span style={featureIcon}>✈️</span><b>24x7 Service</b><small>Always Available</small></div>
-            <div style={featureItem}><span style={featureIcon}>🛡️</span><b>Safe & Secure</b><small>Your Safety Our Priority</small></div>
-            <div style={featureItem}><span style={featureIcon}>🟢</span><b>Quick Booking</b><small>Through WhatsApp</small></div>
+        <div style={heroShade}>
+          <div style={heroInner}>
+            <h2 style={heroTitle}>One Way Drop</h2>
+            <div style={redLine} />
+            <p style={heroText}>Book your one way drop taxi at affordable rates.</p>
+            <p style={heroText}>Comfortable rides to your destination.</p>
           </div>
         </div>
       </section>
 
-      {routes.map((route) => (
-        <section key={route.title} style={routeCard}>
-          <div style={routeHead}>
-            <div>
-              <p style={routeLabel}>ONE WAY ROUTE</p>
-              <h2 style={routeTitle}>{route.title}</h2>
-              <p style={routeSub}>{route.subtitle}</p>
-            </div>
-            <div style={timePill}>○ {route.time}</div>
+      <section style={featureWrap}>
+        <div style={featureItem}><span style={featureIcon}>↗</span><b>One Way Trip</b></div>
+        <div style={featureItem}><span style={featureIcon}>🛡</span><b>Professional Drivers</b></div>
+        <div style={featureItem}><span style={featureIcon}>🏷</span><b>No Hidden Charges</b></div>
+        <div style={featureItem}><span style={featureIcon}>♨</span><b>Safe & Comfortable</b></div>
+      </section>
+
+      <section style={mainGrid}>
+        <aside style={leftColumn}>
+          <div style={searchCard}>
+            <h3 style={sideTitle}>Search One Way Drop</h3>
+            <label style={fieldLabel}>From</label>
+            <div style={inputBox}><span>⌖</span><input style={inputStyle} placeholder="Enter pickup location" /></div>
+            <label style={fieldLabel}>To</label>
+            <div style={inputBox}><span>⌖</span><input style={inputStyle} placeholder="Enter drop location" /></div>
+            <label style={fieldLabel}>Travel Date</label>
+            <div style={inputBox}><span>▣</span><input style={inputStyle} type="date" /></div>
+            <a href={`https://wa.me/${phone}?text=${encodeURIComponent("Hello Vishwakarma Travels, I want to search one way drop vehicles.")}`} style={searchButton}>Search Vehicles</a>
           </div>
 
-          <div style={vehicleGrid}>
-            {route.cars.map((car) => {
-              const message = `Hello Vishwakarma Travels,\n\nI would like to book a one way drop cab.\n\nRoute: ${route.title}\nVehicle: ${car.name}\n\nPlease share the booking confirmation details.\n\nThank you.`;
+          <div style={noteBox}>
+            <h3 style={noteTitle}>ⓘ Important Note</h3>
+            <ul style={noteList}>
+              <li>This is a one way drop service.</li>
+              <li>Return journey is not included.</li>
+              <li>Toll, Parking, State Tax as applicable.</li>
+            </ul>
+          </div>
 
+          <div style={helpBox}>
+            <div style={helpIcon}>☎</div>
+            <div>
+              <b>Need Help?</b>
+              <p style={{ margin: "6px 0", color: "#4b5563" }}>Call us anytime</p>
+              <a href={`tel:+${phone}`} style={helpPhone}>+91 76679 89203</a>
+            </div>
+          </div>
+        </aside>
+
+        <section id="vehicles" style={vehiclePanel}>
+          <div style={panelHead}>
+            <div>
+              <h3 style={panelTitle}>Available Vehicles</h3>
+              <p style={panelSub}>Showing best options for your one way trip</p>
+            </div>
+            <select style={sortBox} defaultValue="low">
+              <option value="low">Sort by: Price (Low to High)</option>
+              <option value="high">Sort by: Price (High to Low)</option>
+            </select>
+          </div>
+
+          <div style={vehicleList}>
+            {vehicles.map((vehicle) => {
+              const message = `Hello Vishwakarma Travels,\n\nI would like to book a one way drop cab.\nVehicle: ${vehicle.name}\nFare shown: ${vehicle.price}\n\nPlease share confirmation details.\n\nThank you.`;
               return (
-                <article key={`${route.title}-${car.name}`} style={cardStyle}>
-                  <div style={carImageWrap}>
-                    <img src={car.image} alt={`${car.name} white cab`} style={carPhoto} loading="eager" decoding="async" />
+                <article key={vehicle.name} style={vehicleCard}>
+                  <div style={imageWrap}>
+                    <img
+                      src={vehicle.image}
+                      alt={vehicle.name}
+                      style={carImage}
+                      loading="eager"
+                      decoding="async"
+                      onError={(event) => {
+                        const img = event.currentTarget;
+                        img.style.display = "none";
+                        const fallback = img.nextElementSibling as HTMLElement | null;
+                        if (fallback) fallback.style.display = "grid";
+                      }}
+                    />
+                    <div style={{ ...fallbackCar, display: "none" }}>🚘 {vehicle.shortName}</div>
                   </div>
 
-                  <div style={cardBody}>
-                    <div style={nameRow}>
-                      <h3 style={carName}>{car.name}</h3>
-                      <span style={seatTag}>{car.seats}</span>
+                  <div style={vehicleInfo}>
+                    <h3 style={vehicleName}>{vehicle.name}</h3>
+                    <div style={metaRow}>
+                      <span>👤 {vehicle.seats}</span>
+                      <span>🧳 {vehicle.bags}</span>
+                      <span>⛽ {vehicle.fuel}</span>
                     </div>
-                    <p style={muted}>Starting From</p>
-                    <div style={priceStyle}>{car.price}</div>
-                    <a href={`https://wa.me/${phone}?text=${encodeURIComponent(message)}`} style={bookButton}>☏ Book Now</a>
+                    <div style={tagRow}>
+                      {vehicle.tags.map((tag) => <span key={tag} style={tagStyle}>{tag}</span>)}
+                    </div>
+                  </div>
+
+                  <div style={priceCol}>
+                    <div style={priceText}>{vehicle.price}</div>
+                    <p style={priceSub}>One Way<br />All Inclusive</p>
+                    <a href={`https://wa.me/${phone}?text=${encodeURIComponent(message)}`} style={bookButton}>Book Now</a>
                   </div>
                 </article>
               );
             })}
           </div>
         </section>
-      ))}
-
-      <section style={noteCard}>
-        <b>Booking Note: </b>
-        <span>Final fare may vary depending on pickup location, waiting time, tolls, parking charges, and late-night travel timing.</span>
       </section>
 
       <footer style={footerStyle}>
@@ -114,37 +180,55 @@ export default function AirportDropPage() {
   );
 }
 
-const pageStyle: React.CSSProperties = { minHeight: "100vh", background: "linear-gradient(180deg,#f7fbff,#eef5fb)", fontFamily: "Arial, sans-serif", color: "#0f172a", paddingBottom: 86 };
-const headerStyle: React.CSSProperties = { maxWidth: 1180, margin: "0 auto", padding: "18px 16px 10px", display: "flex", justifyContent: "space-between", alignItems: "center" };
+const pageStyle: React.CSSProperties = { minHeight: "100vh", background: "#f8fafc", fontFamily: "Arial, sans-serif", color: "#111827" };
+const headerStyle: React.CSSProperties = { height: 76, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 42px", background: "white", boxShadow: "0 2px 12px rgba(15,23,42,.08)", position: "sticky", top: 0, zIndex: 50 };
 const logoBox: React.CSSProperties = { display: "flex", alignItems: "center", gap: 10, textDecoration: "none" };
-const logoMark: React.CSSProperties = { width: 52, height: 52, borderRadius: "14px 6px 14px 6px", display: "grid", placeItems: "center", background: "linear-gradient(135deg,#ff6b00,#ff7a1a)", color: "white", fontSize: 34, fontWeight: 950, transform: "skew(-10deg)", boxShadow: "0 10px 22px rgba(249,115,22,.22)" };
-const logoTitle: React.CSSProperties = { margin: 0, color: "#f97316", fontSize: "clamp(21px,4vw,32px)", lineHeight: .95, fontWeight: 950, letterSpacing: .5 };
-const logoSub: React.CSSProperties = { margin: 0, color: "#0b2d6b", fontSize: "clamp(17px,3vw,25px)", fontWeight: 950, lineHeight: 1 };
-const heroStyle: React.CSSProperties = { maxWidth: 1180, margin: "0 auto", padding: "16px" };
-const heroContent: React.CSSProperties = { background: "linear-gradient(135deg,#eaf5ff,#ffffff)", borderRadius: 28, padding: "clamp(24px,5vw,56px)", boxShadow: "0 14px 36px rgba(15,23,42,.10)", border: "1px solid #dbeafe" };
-const badgeStyle: React.CSSProperties = { display: "inline-block", margin: 0, padding: "8px 12px", borderRadius: 999, background: "#fff7ed", color: "#f97316", border: "1px solid #fed7aa", fontWeight: 900, fontSize: 13 };
-const heroTitle: React.CSSProperties = { color: "#0b2d6b", fontSize: "clamp(38px,8vw,76px)", lineHeight: 1, margin: "18px 0 10px", fontWeight: 950 };
-const heroSub: React.CSSProperties = { color: "#0b2d6b", fontSize: "clamp(18px,3vw,30px)", margin: 0, fontWeight: 700 };
-const featureBar: React.CSSProperties = { marginTop: 28, display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(190px,1fr))", gap: 12, background: "rgba(255,255,255,.86)", border: "1px solid #dbeafe", borderRadius: 22, padding: 14, boxShadow: "0 10px 28px rgba(15,23,42,.08)" };
-const featureItem: React.CSSProperties = { display: "grid", gridTemplateColumns: "48px 1fr", columnGap: 10, alignItems: "center", color: "#0b2d6b" };
-const featureIcon: React.CSSProperties = { gridRow: "span 2", width: 48, height: 48, borderRadius: 999, background: "#0b2d6b", color: "white", display: "grid", placeItems: "center", fontSize: 22 };
-const routeCard: React.CSSProperties = { maxWidth: 1180, margin: "0 auto 20px", padding: "clamp(16px,3vw,28px)", background: "white", borderRadius: 26, boxShadow: "0 12px 32px rgba(15,23,42,.10)", border: "1px solid #dbeafe" };
-const routeHead: React.CSSProperties = { display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 12, flexWrap: "wrap", marginBottom: 18 };
-const routeLabel: React.CSSProperties = { margin: 0, color: "#f97316", fontWeight: 950, fontSize: 14 };
-const routeTitle: React.CSSProperties = { margin: "5px 0", color: "#0b2d6b", fontSize: "clamp(26px,4.8vw,44px)", lineHeight: 1.1, fontWeight: 950 };
-const routeSub: React.CSSProperties = { margin: 0, color: "#64748b", fontSize: "clamp(15px,2.5vw,22px)" };
-const timePill: React.CSSProperties = { background: "#fff7ed", color: "#c2410c", border: "1px solid #fed7aa", padding: "9px 13px", borderRadius: 999, fontWeight: 950, fontSize: 14 };
-const vehicleGrid: React.CSSProperties = { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 18 };
-const cardStyle: React.CSSProperties = { background: "white", borderRadius: 22, overflow: "hidden", boxShadow: "0 8px 24px rgba(15,23,42,.10)", border: "1px solid #e2e8f0" };
-const carImageWrap: React.CSSProperties = { height: 165, display: "grid", placeItems: "center", background: "white", padding: "10px 10px 0" };
-const carPhoto: React.CSSProperties = { width: "100%", height: "100%", objectFit: "contain", display: "block" };
-const cardBody: React.CSSProperties = { padding: 16 };
-const nameRow: React.CSSProperties = { display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 };
-const seatTag: React.CSSProperties = { background: "#eff6ff", color: "#0b2d6b", padding: "7px 10px", borderRadius: 999, fontWeight: 950, fontSize: 13, whiteSpace: "nowrap" };
-const carName: React.CSSProperties = { margin: 0, fontSize: 26, color: "#0b2d6b", fontWeight: 950 };
-const muted: React.CSSProperties = { margin: "10px 0 0", color: "#64748b", fontSize: 16 };
-const priceStyle: React.CSSProperties = { color: "#f97316", fontSize: 34, fontWeight: 950, margin: "2px 0 12px" };
-const bookButton: React.CSSProperties = { display: "block", textAlign: "center", background: "linear-gradient(135deg,#f97316,#ea580c)", color: "white", textDecoration: "none", padding: "13px 14px", borderRadius: 16, fontWeight: 950, fontSize: 17, boxShadow: "0 8px 18px rgba(249,115,22,.24)" };
-const noteCard: React.CSSProperties = { maxWidth: 1148, margin: "18px auto", padding: 18, borderRadius: 20, background: "#0b2d6b", color: "white", fontSize: 15, lineHeight: 1.5 };
-const footerStyle: React.CSSProperties = { textAlign: "center", padding: "20px 16px 90px", color: "#475569", fontSize: 14 };
-const floatingWhatsApp: React.CSSProperties = { position: "fixed", right: 16, bottom: 18, zIndex: 9999, background: "#25D366", color: "white", textDecoration: "none", padding: "13px 16px", borderRadius: 999, fontWeight: 950, boxShadow: "0 12px 28px rgba(15,23,42,.25)" };
+const logoMark: React.CSSProperties = { width: 50, height: 50, borderRadius: "14px 6px 14px 6px", display: "grid", placeItems: "center", background: "linear-gradient(135deg,#111827,#dc0000)", color: "white", fontSize: 32, fontWeight: 950, transform: "skew(-10deg)" };
+const logoTitle: React.CSSProperties = { margin: 0, color: "#d40000", fontSize: "clamp(20px,3vw,30px)", lineHeight: .95, fontWeight: 950, letterSpacing: .4 };
+const logoSub: React.CSSProperties = { margin: 0, color: "#111827", fontSize: "clamp(15px,2.5vw,20px)", letterSpacing: 4, fontWeight: 950 };
+const navStyle: React.CSSProperties = { display: "flex", alignItems: "center", gap: 30 };
+const navLink: React.CSSProperties = { color: "#111827", textDecoration: "none", fontWeight: 800 };
+const trackButton: React.CSSProperties = { background: "#d40000", color: "white", textDecoration: "none", padding: "13px 22px", borderRadius: 7, fontWeight: 950, boxShadow: "0 8px 18px rgba(212,0,0,.22)" };
+const heroStyle: React.CSSProperties = { minHeight: 250, backgroundImage: "linear-gradient(90deg,rgba(0,0,0,.84),rgba(0,0,0,.58),rgba(0,0,0,.7)), url('/cars/dzire.png')", backgroundSize: "cover", backgroundPosition: "center", color: "white" };
+const heroShade: React.CSSProperties = { minHeight: 250, display: "flex", alignItems: "center" };
+const heroInner: React.CSSProperties = { width: "100%", maxWidth: 1240, margin: "0 auto", padding: "35px 22px" };
+const heroTitle: React.CSSProperties = { fontSize: "clamp(42px,7vw,68px)", lineHeight: 1, margin: 0, fontWeight: 950 };
+const redLine: React.CSSProperties = { width: 58, height: 5, background: "#e00000", margin: "18px 0" };
+const heroText: React.CSSProperties = { margin: "3px 0", fontSize: "clamp(16px,2.5vw,22px)", fontWeight: 600 };
+const featureWrap: React.CSSProperties = { maxWidth: 1240, margin: "-34px auto 26px", background: "linear-gradient(135deg,#111827,#172234)", color: "white", borderRadius: 12, display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(210px,1fr))", gap: 0, padding: "18px 18px", boxShadow: "0 16px 34px rgba(15,23,42,.25)", position: "relative", zIndex: 10 };
+const featureItem: React.CSSProperties = { display: "flex", alignItems: "center", gap: 14, padding: "0 12px", fontSize: 16 };
+const featureIcon: React.CSSProperties = { width: 28, height: 28, borderRadius: 999, background: "#d40000", color: "white", display: "grid", placeItems: "center", fontWeight: 950 };
+const mainGrid: React.CSSProperties = { maxWidth: 1240, margin: "0 auto", padding: "0 18px 30px", display: "grid", gridTemplateColumns: "340px 1fr", gap: 24, alignItems: "start" };
+const leftColumn: React.CSSProperties = { display: "grid", gap: 18 };
+const searchCard: React.CSSProperties = { background: "white", borderRadius: 14, padding: 20, boxShadow: "0 8px 28px rgba(15,23,42,.10)", border: "1px solid #e5e7eb" };
+const sideTitle: React.CSSProperties = { margin: "0 0 18px", fontSize: 21, fontWeight: 950 };
+const fieldLabel: React.CSSProperties = { display: "block", margin: "13px 0 7px", fontWeight: 850 };
+const inputBox: React.CSSProperties = { display: "flex", alignItems: "center", gap: 10, border: "1px solid #d6dbe3", borderRadius: 8, padding: "0 12px", height: 46, color: "#64748b" };
+const inputStyle: React.CSSProperties = { border: 0, outline: 0, width: "100%", fontSize: 14, background: "transparent", color: "#111827" };
+const searchButton: React.CSSProperties = { display: "block", marginTop: 20, textAlign: "center", background: "linear-gradient(135deg,#df0000,#c40000)", color: "white", textDecoration: "none", borderRadius: 8, padding: "14px", fontWeight: 950 };
+const noteBox: React.CSSProperties = { background: "linear-gradient(135deg,#fff,#fff0f0)", borderRadius: 14, padding: 20, boxShadow: "0 8px 26px rgba(15,23,42,.08)", border: "1px solid #fee2e2" };
+const noteTitle: React.CSSProperties = { margin: "0 0 12px", color: "#111827", fontSize: 17 };
+const noteList: React.CSSProperties = { margin: 0, paddingLeft: 18, color: "#334155", lineHeight: 1.9 };
+const helpBox: React.CSSProperties = { background: "white", borderRadius: 14, padding: 20, boxShadow: "0 8px 26px rgba(15,23,42,.09)", display: "flex", alignItems: "center", gap: 17, border: "1px solid #e5e7eb" };
+const helpIcon: React.CSSProperties = { width: 56, height: 56, borderRadius: 999, display: "grid", placeItems: "center", background: "#fee2e2", color: "#d40000", fontSize: 24, fontWeight: 950 };
+const helpPhone: React.CSSProperties = { color: "#d40000", fontWeight: 950, textDecoration: "none", fontSize: 20 };
+const vehiclePanel: React.CSSProperties = { display: "grid", gap: 0 };
+const panelHead: React.CSSProperties = { background: "white", borderRadius: 14, padding: "20px 24px", display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center", boxShadow: "0 6px 22px rgba(15,23,42,.08)", border: "1px solid #e5e7eb", marginBottom: 0 };
+const panelTitle: React.CSSProperties = { margin: 0, fontSize: 23, fontWeight: 950 };
+const panelSub: React.CSSProperties = { margin: "8px 0 0", color: "#64748b" };
+const sortBox: React.CSSProperties = { border: "1px solid #d6dbe3", borderRadius: 8, padding: "12px 15px", background: "white", color: "#111827", fontWeight: 650 };
+const vehicleList: React.CSSProperties = { display: "grid", gap: 12 };
+const vehicleCard: React.CSSProperties = { display: "grid", gridTemplateColumns: "210px 1fr 150px", alignItems: "center", gap: 24, background: "white", border: "1px solid #e5e7eb", borderRadius: 12, padding: "18px 20px", boxShadow: "0 6px 20px rgba(15,23,42,.06)" };
+const imageWrap: React.CSSProperties = { height: 118, display: "grid", placeItems: "center", background: "#fff", borderRadius: 12, overflow: "hidden" };
+const carImage: React.CSSProperties = { width: "100%", height: "100%", objectFit: "contain", display: "block" };
+const fallbackCar: React.CSSProperties = { width: "100%", height: "100%", placeItems: "center", background: "#f1f5f9", color: "#111827", fontWeight: 950, fontSize: 18 };
+const vehicleInfo: React.CSSProperties = { minWidth: 0 };
+const vehicleName: React.CSSProperties = { margin: "0 0 14px", fontSize: 21, fontWeight: 950, color: "#111827" };
+const metaRow: React.CSSProperties = { display: "flex", flexWrap: "wrap", gap: 22, color: "#334155", fontSize: 14, marginBottom: 14 };
+const tagRow: React.CSSProperties = { display: "flex", flexWrap: "wrap", gap: 10 };
+const tagStyle: React.CSSProperties = { background: "#fee2e2", color: "#d40000", borderRadius: 7, padding: "7px 10px", fontSize: 13, fontWeight: 800 };
+const priceCol: React.CSSProperties = { display: "grid", justifyItems: "center", gap: 8, textAlign: "center" };
+const priceText: React.CSSProperties = { color: "#d40000", fontSize: 27, fontWeight: 950 };
+const priceSub: React.CSSProperties = { margin: 0, color: "#334155", lineHeight: 1.45 };
+const bookButton: React.CSSProperties = { background: "linear-gradient(135deg,#df0000,#c40000)", color: "white", textDecoration: "none", padding: "12px 27px", borderRadius: 6, fontWeight: 950, minWidth: 116 };
+const footerStyle: React.CSSProperties = { textAlign: "center", padding: "18px 16px 36px", color: "#64748b" };
