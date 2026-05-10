@@ -1,142 +1,136 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-type VehicleDocument = {
+type Vehicle = {
   id: number;
-  vehicleNumber: string;
-  vehicleName: string;
-  insuranceExpiry: string;
-  pollutionExpiry: string;
-  fitnessExpiry: string;
-  permitExpiry: string;
-  notes: string;
+  number: string;
+  name: string;
+  insurance: string;
+  pollution: string;
 };
 
-type VehicleDocumentForm = Omit<VehicleDocument, "id">;
-
-const STORAGE_KEY = "vishwakarma-vehicle-documents";
-
-const demoVehicles: VehicleDocument[] = [
-  {
-    id: 1,
-    vehicleNumber: "JH05AB1234",
-    vehicleName: "Dzire",
-    insuranceExpiry: "2026-08-20",
-    pollutionExpiry: "2026-06-12",
-    fitnessExpiry: "2026-12-30",
-    permitExpiry: "2026-11-10",
-    notes: "Demo vehicle record",
-  },
-];
-
-const initialForm: VehicleDocumentForm = {
-  vehicleNumber: "",
-  vehicleName: "",
-  insuranceExpiry: "",
-  pollutionExpiry: "",
-  fitnessExpiry: "",
-  permitExpiry: "",
-  notes: "",
-};
-
-function daysLeft(dateValue: string) {
-  if (!dateValue) return 99999;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const expiry = new Date(dateValue);
-  expiry.setHours(0, 0, 0, 0);
-  return Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-}
-
-function getStatus(dateValue: string) {
-  const days = daysLeft(dateValue);
-  if (!dateValue) return { label: "Missing", color: "#64748b", bg: "#f1f5f9" };
-  if (days < 0) return { label: "Expired", color: "#b91c1c", bg: "#fee2e2" };
-  if (days <= 30) return { label: `Expiring in ${days} days`, color: "#c2410c", bg: "#ffedd5" };
-  return { label: "Valid", color: "#15803d", bg: "#dcfce7" };
-}
-
-function getWorstStatus(vehicle: VehicleDocument) {
-  const values = [vehicle.insuranceExpiry, vehicle.pollutionExpiry, vehicle.fitnessExpiry, vehicle.permitExpiry].map(daysLeft);
-  const min = Math.min(...values);
-  if (min < 0) return { label: "Expired Document", color: "#b91c1c", bg: "#fee2e2" };
-  if (min <= 30) return { label: "Action Needed", color: "#c2410c", bg: "#ffedd5" };
-  return { label: "All Valid", color: "#15803d", bg: "#dcfce7" };
-}
+const STORAGE_KEY = "vehicle-documents-data";
 
 export default function VehicleDocumentsPage() {
-  const [documents, setDocuments] = useState<VehicleDocument[]>(demoVehicles);
-  const [form, setForm] = useState<VehicleDocumentForm>(initialForm);
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [number, setNumber] = useState("");
+  const [name, setName] = useState("");
+  const [insurance, setInsurance] = useState("");
+  const [pollution, setPollution] = useState("");
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-
     if (saved) {
-      try {
-        const parsed = JSON.parse(saved) as VehicleDocument[];
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setDocuments(parsed);
-          return;
-        }
-      } catch {}
+      setVehicles(JSON.parse(saved));
     }
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(demoVehicles));
   }, []);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(documents));
-  }, [documents]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(vehicles));
+  }, [vehicles]);
 
-  const alerts = useMemo(
-    () =>
-      documents.filter((vehicle) =>
-        [vehicle.insuranceExpiry, vehicle.pollutionExpiry, vehicle.fitnessExpiry, vehicle.permitExpiry].some((date) => daysLeft(date) <= 30)
-      ),
-    [documents]
-  );
-
-  function updateForm(key: keyof VehicleDocumentForm, value: string) {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  }
-
-  function resetForm() {
-    setForm(initialForm);
-    setEditingId(null);
-  }
-
-  function submitVehicle(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    if (editingId) {
-      setDocuments((prev) => prev.map((item) => (item.id === editingId ? { ...form, id: editingId } : item)));
-    } else {
-      setDocuments((prev) => [{ ...form, id: Date.now() }, ...prev]);
-    }
-
-    resetForm();
-  }
-
-  function editVehicle(vehicle: VehicleDocument) {
-    setEditingId(vehicle.id);
-    setForm({
-      vehicleNumber: vehicle.vehicleNumber,
-      vehicleName: vehicle.vehicleName,
-      insuranceExpiry: vehicle.insuranceExpiry,
-      pollutionExpiry: vehicle.pollutionExpiry,
-      fitnessExpiry: vehicle.fitnessExpiry,
-      permitExpiry: vehicle.permitExpiry,
-      notes: vehicle.notes,
+  const alerts = useMemo(() => {
+    return vehicles.filter((v) => {
+      const insuranceDays = Math.ceil((new Date(v.insurance).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+      const pollutionDays = Math.ceil((new Date(v.pollution).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+      return insuranceDays <= 30 || pollutionDays <= 30;
     });
+  }, [vehicles]);
+
+  function addVehicle() {
+    if (!number || !name) return;
+
+    setVehicles([
+      {
+        id: Date.now(),
+        number,
+        name,
+        insurance,
+        pollution,
+      },
+      ...vehicles,
+    ]);
+
+    setNumber("");
+    setName("");
+    setInsurance("");
+    setPollution("");
   }
 
   function deleteVehicle(id: number) {
-    const confirmDelete = window.confirm("Delete this vehicle document record?");
-    if (!confirmDelete) return;
-    setDocuments((prev) => prev.filter((item) => item.id !== id));
+    setVehicles(vehicles.filter((v) => v.id !== id));
   }
 
-  return <main />;
+  return (
+    <main style={{ minHeight: "100vh", background: "#f1f5f9", padding: 16, fontFamily: "Arial" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+        <div style={{ background: "linear-gradient(135deg,#0b2d6b,#1d4ed8)", color: "white", padding: 24, borderRadius: 24 }}>
+          <a href="/admin" style={{ color: "white", textDecoration: "none", fontWeight: 700 }}>← Back to Admin</a>
+          <h1 style={{ margin: "12px 0 6px", fontSize: 42 }}>Vehicle Documents</h1>
+          <p style={{ margin: 0 }}>Track insurance and pollution expiry dates.</p>
+        </div>
+
+        {alerts.length > 0 && (
+          <div style={{ marginTop: 16, background: "#fff7ed", border: "1px solid #fdba74", padding: 16, borderRadius: 18 }}>
+            <h2 style={{ marginTop: 0, color: "#c2410c" }}>Expiry Alerts</h2>
+            {alerts.map((v) => (
+              <p key={v.id}><b>{v.number}</b> - {v.name} documents are expiring soon.</p>
+            ))}
+          </div>
+        )}
+
+        <div style={{ background: "white", marginTop: 16, padding: 18, borderRadius: 20 }}>
+          <h2>Add Vehicle</h2>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 12 }}>
+            <input value={number} onChange={(e) => setNumber(e.target.value)} placeholder="Vehicle Number" style={inputStyle} />
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Vehicle Name" style={inputStyle} />
+            <input type="date" value={insurance} onChange={(e) => setInsurance(e.target.value)} style={inputStyle} />
+            <input type="date" value={pollution} onChange={(e) => setPollution(e.target.value)} style={inputStyle} />
+          </div>
+
+          <button onClick={addVehicle} style={buttonStyle}>Save Vehicle</button>
+        </div>
+
+        <div style={{ background: "white", marginTop: 16, padding: 18, borderRadius: 20 }}>
+          <h2>Saved Vehicles</h2>
+
+          <div style={{ display: "grid", gap: 12 }}>
+            {vehicles.map((v) => (
+              <div key={v.id} style={{ border: "1px solid #e2e8f0", borderRadius: 18, padding: 16, display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+                <div>
+                  <h3 style={{ margin: "0 0 6px" }}>{v.number}</h3>
+                  <p style={{ margin: 0 }}>{v.name}</p>
+                  <p style={{ margin: "6px 0 0" }}>Insurance: {v.insurance || "Not Added"}</p>
+                  <p style={{ margin: "4px 0 0" }}>Pollution: {v.pollution || "Not Added"}</p>
+                </div>
+
+                <button onClick={() => deleteVehicle(v.id)} style={{ ...buttonStyle, background: "#dc2626" }}>Delete</button>
+              </div>
+            ))}
+
+            {vehicles.length === 0 && <p>No vehicles added yet.</p>}
+          </div>
+        </div>
+      </div>
+    </main>
+  );
 }
+
+const inputStyle: React.CSSProperties = {
+  padding: 14,
+  borderRadius: 14,
+  border: "1px solid #cbd5e1",
+  fontSize: 16,
+};
+
+const buttonStyle: React.CSSProperties = {
+  marginTop: 14,
+  background: "#0b2d6b",
+  color: "white",
+  border: 0,
+  padding: "13px 16px",
+  borderRadius: 14,
+  fontWeight: 800,
+};
