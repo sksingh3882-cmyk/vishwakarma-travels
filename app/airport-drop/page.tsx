@@ -3,10 +3,10 @@
 const phone = "917667989203";
 
 const carImages = {
-  Dzire: "/public/cars/dzire.png",
-  Ertiga: "/public/cars/ertiga.jpg",
-  Innova: "/public/cars/innova.png",
-  Crysta: "/public/cars/crysta.png",
+  Dzire: "/cars/dzire.png",
+  Ertiga: "/cars/ertiga.jpg",
+  Innova: "/cars/innova.png",
+  Crysta: "/cars/crysta.png",
 };
 
 const routes = [
