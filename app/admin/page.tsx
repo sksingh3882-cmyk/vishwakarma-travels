@@ -811,40 +811,14 @@ td, th {
 )}
 
             <input type="date" value={form.journeyDate} onChange={(e) => updateForm("journeyDate", e.target.value)} style={inputStyle} required />
-            <select
+            <input
+  type="text"
+  placeholder="Time e.g. 5:30 PM / 5.40 AM"
   value={form.journeyTime}
   onChange={(e) => updateForm("journeyTime", e.target.value)}
   style={inputStyle}
   required
->
-  <option value="">Select Time</option>
-
-  <option>12:00 AM</option>
-  <option>01:00 AM</option>
-  <option>02:00 AM</option>
-  <option>03:00 AM</option>
-  <option>04:00 AM</option>
-  <option>05:00 AM</option>
-  <option>06:00 AM</option>
-  <option>07:00 AM</option>
-  <option>08:00 AM</option>
-  <option>09:00 AM</option>
-  <option>10:00 AM</option>
-  <option>11:00 AM</option>
-
-  <option>12:00 PM</option>
-  <option>01:00 PM</option>
-  <option>02:00 PM</option>
-  <option>03:00 PM</option>
-  <option>04:00 PM</option>
-  <option>05:00 PM</option>
-  <option>06:00 PM</option>
-  <option>07:00 PM</option>
-  <option>08:00 PM</option>
-  <option>09:00 PM</option>
-  <option>10:00 PM</option>
-  <option>11:00 PM</option>
-</select>
+/>
 
             <input placeholder="Vehicle Number" value={form.vehicleNumber} onChange={(e) => fillVehicle(e.target.value)} style={inputStyle} />
             <select
