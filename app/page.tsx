@@ -2,16 +2,6 @@
 
 const phone = "917667989203";
 
-const logo = (
-  <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-    <div style={logoMark}>V</div>
-    <div>
-      <h1 style={logoTitle}>VISHWAKARMA</h1>
-      <p style={logoSub}>TRAVELS</p>
-    </div>
-  </a>
-);
-
 export default function Home() {
   const services = [
     { icon: "✈️", title: "One Way Drop Pickup", text: "Ranchi / Kolkata airport and city drop", link: "/airport-drop" },
@@ -82,7 +72,15 @@ export default function Home() {
 
   return (
     <main style={pageStyle}>
-      <header style={headerStyle}>{logo}</header>
+      <header style={headerStyle}>
+        <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+          <div style={logoMark}>V</div>
+          <div>
+            <h1 style={logoTitle}>VISHWAKARMA</h1>
+            <p style={logoSub}>TRAVELS</p>
+          </div>
+        </a>
+      </header>
 
       <section style={heroStyle}>
         <div style={heroCard}>
