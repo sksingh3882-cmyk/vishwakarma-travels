@@ -868,6 +868,10 @@ td, th {
   required
 >
   <option>One Way Drop Pickup</option>
+  <option>Jamshedpur to Ranchi Airport Drop</option>
+  <option>Ranchi Airport to Jamshedpur Drop</option>
+  <option>Jamshedpur to Kolkata Airport Drop</option>
+  <option>Kolkata Airport to Jamshedpur Drop</option>
   <option>Local Movment</option>
   <option>Outstation Movment</option>
   <option>Short Time Booking</option>
