@@ -178,10 +178,16 @@ export default function AdminPage() {
     if (query.length < 2) return;
 
     const found = customers.find((c) => {
-      const name = (c.name || "").toLowerCase();
-      const mobile = cleanPhone(c.mobile || "");
-      return name === query || mobile === cleanPhone(query);
-    });
+  const name = (c.name || "").toLowerCase().trim();
+  const mobile = cleanPhone(c.mobile || "");
+  const searchPhone = cleanPhone(query);
+
+  return (
+    name === query ||
+    name.includes(query) ||
+    mobile === searchPhone
+  );
+});
 
     if (!found) return;
 
