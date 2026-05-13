@@ -987,3 +987,5 @@ const tdStyle: React.CSSProperties = {
   padding: 10,
   borderBottom: "1px solid #e2e8f0",
 };
+
+// Stable backup version
