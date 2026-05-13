@@ -1,0 +1,17 @@
+BOOKING MESSAGE UPDATE
+
+1. Heading:
+Booking Confirmation
+
+2. Service:
+Use selected service name instead of Cab Booking.
+Example:
+One Way Drop Pickup
+
+3. Time Format:
+Convert to 12-hour format with AM/PM.
+Example:
+06:30 AM
+
+4. Vehicle Details:
+Vehicle Type and Vehicle Model must always be included in WhatsApp confirmation message.
