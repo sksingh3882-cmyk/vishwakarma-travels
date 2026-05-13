@@ -255,7 +255,7 @@ Contact No: +91${form.customerPhone}
 
 📍 Pickup: ${form.pickup}
 📍 Drop: ${form.drop}
-📆 Date: ${form.journeyDate}
+📅 Date: ${form.journeyDate.split("-").reverse().join("-")}
 ⌚ Time: ${formattedTime}
 
 🚕 Vehicle Details:
@@ -443,9 +443,8 @@ td, th {
         <div class="row"><b>Drop</b><span>:</span><span>${escapeHtml(
           form.drop
         )}</span></div>
-        <div class="row"><b>Date/Time</b><span>:</span><span>${escapeHtml(
-          form.journeyDate
-        )} ${escapeHtml(form.journeyTime)}</span></div>
+        <div class="row"><b>Date/Time</b><span>:</span> ${escapeHtml(form.journeyDate.split("-").reverse().join("-"))}
+} ${escapeHtml(form.journeyTime)} </span></div>
       </div>
 
       <div class="col">
