@@ -238,11 +238,14 @@ export default function AdminPage() {
 const vehicleModel = form.vehicleModel || "Innova";
     const advance = Number(form.advance || 0);
     const netPayable = fare - advance;
-    const formattedTime = new Date(`2000-01-01T${form.journeyTime}`).toLocaleTimeString("en-US", {
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: true,
-});
+    const formattedTime = form.journeyTime
+  ? new Date(`2000-01-01T${form.journeyTime.replace(".", ":")}`).toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    }).toUpperCase()
+  : "";
+    
 
     return `✅ Booking Confirmation 
 
