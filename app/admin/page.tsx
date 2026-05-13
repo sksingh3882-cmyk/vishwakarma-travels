@@ -64,8 +64,8 @@ const initialForm: BookingForm = {
   drop: "",
   journeyDate: "",
   journeyTime: "",
-  vehicleType: "",
-  vehicleModel: "",
+  vehicleType: "Sedan",
+vehicleModel: "Desire",
   vehicleNumber: "",
   fare: "",
   advance: "0",
@@ -234,8 +234,8 @@ export default function AdminPage() {
 
   function buildWhatsAppMessage(bookingId: string) {
     const fare = Number(form.fare || 0);
-    const vehicleType = form.vehicleType;
-const vehicleModel = form.vehicleModel;
+    const vehicleType = form.vehicleType?.trim() || "Sedan";
+const vehicleModel = form.vehicleModel?.trim() || "Desire";
     const advance = Number(form.advance || 0);
     const netPayable = fare - advance;
     const formattedTime = form.journeyTime
