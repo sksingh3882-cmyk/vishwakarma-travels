@@ -59,7 +59,7 @@ const initialForm: BookingForm = {
   customerName: "",
   customerPhone: "",
   gender: "Mr.",
-  service: "Cab Booking",
+  service: "One Way Drop Pickup",
   pickup: "",
   drop: "",
   journeyDate: "",
@@ -234,16 +234,12 @@ export default function AdminPage() {
 
   function buildWhatsAppMessage(bookingId: string) {
     const fare = Number(form.fare || 0);
-    const vehicleType = form.vehicleType || "SUV";
-const vehicleModel = form.vehicleModel || "Innova";
+    const vehicleType = form.vehicleType;
+const vehicleModel = form.vehicleModel;
     const advance = Number(form.advance || 0);
     const netPayable = fare - advance;
     const formattedTime = form.journeyTime
-  ? new Date(`2000-01-01T${form.journeyTime.replace(".", ":")}`).toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    }).toUpperCase()
+  ? form.journeyTime.trim().toUpperCase().replace(".", ":")
   : "";
     
 
@@ -704,7 +700,7 @@ td, th {
       setLastBookingId(bookingId);
 
       alert("Booking saved pdf bill opening.");
-      setForm(initialForm);
+      // setForm(initialForm);
     } catch (error) {
       console.log("Submit error:", error);
       alert("Booking save karte time error aaya.");
