@@ -184,7 +184,6 @@ export default function AdminPage() {
 
   return (
     name === query ||
-    name.includes(query) ||
     mobile === searchPhone
   );
 });
