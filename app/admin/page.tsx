@@ -234,10 +234,17 @@ export default function AdminPage() {
 
   function buildWhatsAppMessage(bookingId: string) {
     const fare = Number(form.fare || 0);
+    const vehicleType = form.vehicleType || "SUV";
+const vehicleModel = form.vehicleModel || "Innova";
     const advance = Number(form.advance || 0);
     const netPayable = fare - advance;
+    const formattedTime = new Date(`2000-01-01T${form.journeyTime}`).toLocaleTimeString("en-US", {
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: true,
+});
 
-    return `✅ Booking Confirmed - Vishwakarma Travels
+    return `✅ Booking Confirmation 
 
 ${form.gender} ${form.customerName},
 Namaste, Your Booking is Confirmed.
@@ -250,11 +257,11 @@ Contact No: +91${form.customerPhone}
 📍 Pickup: ${form.pickup}
 📍 Drop: ${form.drop}
 📆 Date: ${form.journeyDate}
-⌚ Time: ${form.journeyTime}
+⌚ Time: ${formattedTime}
 
 🚕 Vehicle Details:
-Vehicle Type: ${form.vehicleType}
-Vehicle Model: ${form.vehicleModel}
+Vehicle Type: ${vehicleType}
+Vehicle Model: ${vehicleModel}
 Vehicle No: ${form.vehicleNumber}
 Driver Name: ${form.driverName}
 Driver Mobile: ${form.driverMobile}
