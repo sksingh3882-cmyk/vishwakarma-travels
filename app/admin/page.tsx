@@ -98,6 +98,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [lastBookingId, setLastBookingId] = useState("");
   const [deletingBookingId, setDeletingBookingId] = useState("");
+  const [activeView, setActiveView] = useState<"customers" | "vehicles" | "bookings" | "">("");
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -763,20 +764,62 @@ td, th {
         </header>
 
         <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12, marginBottom: 16 }}>
-          <div style={{ background: "white", padding: 16, borderRadius: 16 }}>
-            <p>Customers</p>
-            <h2>{customers.length}</h2>
-          </div>
-          <div style={{ background: "white", padding: 16, borderRadius: 16 }}>
-            <p>Vehicles</p>
-            <h2>{vehicles.length}</h2>
-          </div>
-          <div style={{ background: "white", padding: 16, borderRadius: 16 }}>
-            <p>Bookings</p>
-            <h2>{bookings.length}</h2>
-          </div>
-        </section>
+  <div onClick={() => setActiveView("customers")} style={{ background: "white", padding: 16, borderRadius: 16, cursor: "pointer" }}>
+    <p>Customers</p>
+    <h2>{customers.length}</h2>
+    <b style={{ color: "#0b2d6b" }}>View all</b>
+  </div>
 
+  <div onClick={() => setActiveView("vehicles")} style={{ background: "white", padding: 16, borderRadius: 16, cursor: "pointer" }}>
+    <p>Vehicles</p>
+    <h2>{vehicles.length}</h2>
+    <b style={{ color: "#0b2d6b" }}>View all</b>
+  </div>
+
+  <div onClick={() => setActiveView("bookings")} style={{ background: "white", padding: 16, borderRadius: 16, cursor: "pointer" }}>
+    <p>Bookings</p>
+    <h2>{bookings.length}</h2>
+    <b style={{ color: "#0b2d6b" }}>View all</b>
+  </div>
+</section>
+
+        {activeView && (
+  <section style={{ background: "white", padding: 18, borderRadius: 18, marginBottom: 16 }}>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <h2 style={{ color: "#0b2d6b" }}>
+        {activeView === "customers" && "Customers"}
+        {activeView === "vehicles" && "Vehicles"}
+        {activeView === "bookings" && "Bookings"}
+      </h2>
+
+      <button type="button" onClick={() => setActiveView("")}>
+        Close
+      </button>
+    </div>
+
+    {activeView === "customers" &&
+      customers.map((c, i) => (
+        <p key={i}>
+          <b>{c.name || "-"}</b> — {c.mobile || "-"} — {c.address || "-"}
+        </p>
+      ))}
+
+    {activeView === "vehicles" &&
+      vehicles.map((v, i) => (
+        <p key={i}>
+          <b>{v.vehicleNumber || "-"}</b> — {v.vehicleModel || "-"} — {v.driverName || "-"}
+        </p>
+      ))}
+
+    {activeView === "bookings" &&
+      bookings.map((b, i) => (
+        <p key={i}>
+          <b>{b.booking_id || "-"}</b> — {b.customer_name || "-"} — ₹{b.fare || 0}
+        </p>
+      ))}
+  </section>
+)}
+        
         <form onSubmit={handleSubmit} style={{ background: "white", padding: 18, borderRadius: 18, marginBottom: 16 }}>
           <h2 style={{ color: "#0b2d6b" }}>New Booking</h2>
 
