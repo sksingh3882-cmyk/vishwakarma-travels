@@ -647,12 +647,12 @@ td, th {
 
     if (exists) return;
 
-    const payload = {
+const payload = {
   vehicle_number: vehicleNo,
-  vehicle_type: form.vehicleType.trim(),
-  vehicle_model: form.vehicleModel.trim(),
   driver_name: form.driverName.trim(),
-  driver_mobile: cleanPhone(form.driverMobile),
+  phone: cleanPhone(form.driverMobile),
+  route: `${form.pickup.trim()} to ${form.drop.trim()}`,
+  status: "Active",
 };
 
     const response = await fetch(`${supabaseUrl}/rest/v1/vehicles`, {
