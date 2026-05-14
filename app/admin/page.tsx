@@ -14,6 +14,10 @@ type Vehicle = {
   vehicleModel?: string;
   driverName?: string;
   driverMobile?: string;
+  
+ vehicle_number?: string;
+vehicle_model?: string;
+driver_name?: string; 
 };
 
 type Booking = {
