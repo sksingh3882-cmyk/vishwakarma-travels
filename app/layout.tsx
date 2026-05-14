@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import AppMenu from "./components/AppMenu";
 
 const siteUrl = "https://vishwakarma-travels-nine.vercel.app";
-const previewImage = `${siteUrl}/banner.jpg`;
+const previewImage = `${siteUrl}/Vishwakarma.jpg`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
