@@ -811,8 +811,12 @@ td, th {
     {activeView === "vehicles" &&
       vehicles.map((v, i) => (
         <p key={i}>
-          <b>{v.vehicleNumber || "-"}</b> — {v.vehicleModel || "-"} — {v.driverName || "-"}
-        </p>
+  <b>{v.vehicleNumber || v.vehicle_number || "-"}</b>
+  {" — "}
+  {v.vehicleModel || v.vehicle_model || "-"}
+  {" — "}
+  {v.driverName || v.driver_name || "-"}
+</p>
       ))}
 
     {activeView === "bookings" &&
