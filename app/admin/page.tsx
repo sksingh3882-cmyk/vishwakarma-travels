@@ -642,18 +642,18 @@ td, th {
     if (!vehicleNo) return;
 
     const exists = vehicles.some(
-      (v) => (v.vehicleNumber || "").toUpperCase() === vehicleNo
+      (v) => ((v.vehicle_number || v.vehicleNumber || "")).toUpperCase() === vehicleNo
     );
 
     if (exists) return;
 
     const payload = {
-      vehicleNumber: vehicleNo,
-      vehicleType: form.vehicleType.trim(),
-      vehicleModel: form.vehicleModel.trim(),
-      driverName: form.driverName.trim(),
-      driverMobile: cleanPhone(form.driverMobile),
-    };
+  vehicle_number: vehicleNo,
+  vehicle_type: form.vehicleType.trim(),
+  vehicle_model: form.vehicleModel.trim(),
+  driver_name: form.driverName.trim(),
+  driver_mobile: cleanPhone(form.driverMobile),
+};
 
     const response = await fetch(`${supabaseUrl}/rest/v1/vehicles`, {
       method: "POST",
