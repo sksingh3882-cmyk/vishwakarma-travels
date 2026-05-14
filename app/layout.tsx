@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import AppMenu from "./components/AppMenu";
 
 const siteUrl = "https://vishwakarma-travels-nine.vercel.app";
+const previewImage = `${siteUrl}/banner.jpg`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
     siteName: "Vishwakarma Travels",
     images: [
       {
-        url: "/opengraph-image",
+        url: previewImage,
         width: 1200,
         height: 630,
         alt: "Vishwakarma Travels - Travel Made Easy",
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Vishwakarma Travels",
     description: "Travel Made Easy | Cab Booking Service in Jamshedpur",
-    images: ["/opengraph-image"],
+    images: [previewImage],
   },
 };
 
