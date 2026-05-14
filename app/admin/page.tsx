@@ -14,6 +14,7 @@ type Vehicle = {
   vehicleModel?: string;
   driverName?: string;
   driverMobile?: string;
+  phone?: string;
   
  vehicle_number?: string;
 vehicle_model?: string;
@@ -221,7 +222,7 @@ export default function AdminPage() {
       vehicleType: found.vehicleType || prev.vehicleType,
       vehicleModel: found.vehicleModel || prev.vehicleModel,
       driverName: found.driverName || prev.driverName,
-      driverMobile: cleanPhone(found.driverMobile || prev.driverMobile),
+      driverMobile: cleanPhone(found.phone || found.driver_mobile || found.driverMobile || prev.driverMobile),
     }));
   }
   function getCustomerDropSuggestions() {
