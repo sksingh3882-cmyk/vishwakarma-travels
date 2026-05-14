@@ -217,13 +217,19 @@ export default function AdminPage() {
     if (!found) return;
 
     setForm((prev) => ({
-      ...prev,
-      vehicleNumber: found.vehicleNumber || prev.vehicleNumber,
-      vehicleType: found.vehicleType || prev.vehicleType,
-      vehicleModel: found.vehicleModel || prev.vehicleModel,
-      driverName: found.driverName || prev.driverName,
-      driverMobile: cleanPhone(found.phone || found.driver_mobile || found.driverMobile || prev.driverMobile),
-    }));
+  ...prev,
+  vehicleNumber: found.vehicle_number || prev.vehicleNumber,
+  vehicleType: found.vehicle_type || prev.vehicleType,
+  vehicleModel: found.vehicle_model || prev.vehicleModel,
+  driverName: found.driver_name || prev.driverName,
+  driverMobile: cleanPhone(
+    found.phone ||
+    found.driver_mobile ||
+    found.driverMobile ||
+    ""
+  ),
+}));
+    
   }
   function getCustomerDropSuggestions() {
   const phone = cleanPhone(form.customerPhone);
