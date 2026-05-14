@@ -997,6 +997,60 @@ const payload = {
                     <td style={tdStyle}>{b.journey_date || "-"}</td>
                     <td style={tdStyle}>₹{b.fare || 0}</td>
                     <td style={tdStyle}>
+
+<button
+  type="button"
+  onClick={() => {
+    setForm({
+      customerName: b.customer_name || "",
+      customerPhone: b.customer_phone || "",
+      gender: b.gender || "Mr.",
+      service: b.service || "One Way Drop Pickup",
+      pickup: b.pickup || "",
+      drop: b.drop_location || "",
+      journeyDate: b.journey_date || "",
+      journeyTime: b.journey_time || "",
+      vehicleType: b.vehicle_type || "Sedan",
+      vehicleModel: b.vehicle_model || "Desire",
+      vehicleNumber: b.vehicle_number || "",
+      fare: String(b.fare || ""),
+      advance: String(b.advance || "0"),
+      driverName: b.driver_name || "",
+      driverMobile: b.driver_mobile || "",
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }}
+  style={{
+    padding: "8px 12px",
+    borderRadius: 10,
+    border: 0,
+    background: "#2563eb",
+    color: "white",
+    fontWeight: "bold",
+    cursor: "pointer",
+    marginRight: 8,
+  }}
+>
+  Edit
+</button>
+
+<button
+  type="button"
+  onClick={() => openBillPdf(b.booking_id || "")}
+  style={{
+    padding: "8px 12px",
+    borderRadius: 10,
+    border: 0,
+    background: "#059669",
+    color: "white",
+    fontWeight: "bold",
+    cursor: "pointer",
+    marginRight: 8,
+  }}
+>
+  PDF
+</button>
+                      
                       <button
                         type="button"
                         disabled={deletingBookingId === b.booking_id}
