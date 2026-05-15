@@ -287,8 +287,8 @@ Fare: ₹${fare}
 Advance Paid: ₹${advance}
 Net Payable Amount: ₹${netPayable}
 
-Visit- vishwakarma-travels-nine.vercel.app
-           for next booking
+🌐 Visit- vishwakarma-travels-nine.vercel.app
+              for next booking
 
 Thank You For Choosing Vishwakarma Travels
 Wish You A Very Happy Journey
