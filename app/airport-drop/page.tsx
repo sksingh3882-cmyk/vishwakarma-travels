@@ -103,6 +103,7 @@ export default function AirportDropPage() {
 
       <section style={noteCard}>
         <b>Booking Note: </b>
+        <span>Our one-way service is available throughout Entire Jharkhand, Bihar, Bengal, Chhattisgarh, and Odisha.</span>
         <span>Final fare may vary depending on pickup location, waiting time, tolls, parking charges, and late-night travel timing.</span>
       </section>
 
