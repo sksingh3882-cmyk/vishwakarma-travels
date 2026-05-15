@@ -97,7 +97,7 @@ export default function Home() {
       <section id="booking" style={bookingWrap}>
         <form onSubmit={handleSubmit} style={bookingCard}>
           <h2 style={sectionTitle}>Book Your Ride</h2>
-          <p style={mutedText}>Details fill kariye, booking request WhatsApp par send ho jayegi.</p>
+          <p style={mutedText}>For Booking Please Fill The Details Below.</p>
 
           <input name="customerName" placeholder="Your Name" style={inputStyle} required />
           <input name="mobile" placeholder="Mobile Number" style={inputStyle} required />
