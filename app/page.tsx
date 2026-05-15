@@ -84,9 +84,9 @@ export default function Home() {
 
       <section style={heroStyle}>
         <div style={heroCard}>
-          <p style={badgeStyle}>Jamshedpur Cab Booking Service</p>
-          <h2 style={heroTitle}>Safe & Reliable Cab Service</h2>
-          <p style={heroSub}>Airport drop, local movement, outstation trips and family function bookings with Vishwakarma Travels.</p>
+          <p style={badgeStyle}>Reliable And Affordable Cab Ride</p>
+          <h2 style={heroTitle}>TRAVEL MADE EASY</h2>
+          <p style={heroSub}>Airport drop, local movement, outstation trips and Marriage function bookings with Vishwakarma Travels.</p>
           <div style={heroActions}>
             <a href={`tel:+${phone}`} style={primaryButton}>Call Now</a>
             <a href="#booking" style={secondaryButton}>Book Ride</a>
@@ -171,7 +171,7 @@ export default function Home() {
 
       <section style={helpCard}>
         <h2 style={{ margin: 0 }}>Need Help?</h2>
-        <p>Call anytime for cab booking.</p>
+        <p>Call Or Whatsapp.</p>
         <a href={`tel:+${phone}`} style={{ color: "white", fontWeight: "bold", fontSize: 20, textDecoration: "none" }}>+91 7667989203</a>
       </section>
 
