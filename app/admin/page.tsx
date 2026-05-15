@@ -773,77 +773,75 @@ const payload = {
     }}
   >
     <div style={{ maxWidth: 1250, margin: "0 auto" }}>
-      <header
+  <header
+  style={{
+    background: "#071733",
+    color: "white",
+    padding: "22px 24px",
+    borderRadius: "0 0 24px 24px",
+    marginBottom: 24,
+    boxShadow: "0 10px 30px rgba(15,23,42,0.18)",
+  }}
+>
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 14,
+    }}
+  >
+    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+      <div
         style={{
-          background: "rgba(255,255,255,0.12)",
-          backdropFilter: "blur(12px)",
-          border: "1px solid rgba(255,255,255,0.15)",
-          borderRadius: 26,
-          padding: 22,
-          color: "white",
-          boxShadow: "0 10px 35px rgba(0,0,0,0.18)",
-          marginBottom: 22,
+          width: 52,
+          height: 52,
+          borderRadius: "50%",
+          border: "2px solid #f59e0b",
+          display: "grid",
+          placeItems: "center",
+          color: "#f59e0b",
+          fontSize: 28,
+          fontWeight: "bold",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 12,
-            flexWrap: "wrap",
-          }}
-        >
-          <div>
-            <p
-              style={{
-                margin: 0,
-                opacity: 0.8,
-                letterSpacing: 1,
-                fontSize: 13,
-              }}
-            >
-              VISHWAKARMA TRAVELS
-            </p>
+        V
+      </div>
 
-            <h1
-              style={{
-                margin: "8px 0 8px",
-                fontSize: 30,
-                fontWeight: "bold",
-              }}
-            >
-              Admin Dashboard
-            </h1>
+      <div>
+        <h1 style={{ margin: 0, fontSize: 22, color: "#f59e0b" }}>
+          VISHWAKARMA
+        </h1>
+        <p style={{ margin: 0, letterSpacing: 4, fontWeight: "bold" }}>
+          TRAVELS
+        </p>
+      </div>
+    </div>
 
-            <p
-              style={{
-                margin: 0,
-                color: "#dbeafe",
-                fontSize: 15,
-              }}
-            >
-              Booking, Billing, WhatsApp & Database Management
-            </p>
-          </div>
+    <button
+      onClick={logout}
+      style={{
+        border: 0,
+        background: "#ef4444",
+        color: "white",
+        borderRadius: 12,
+        padding: "10px 14px",
+        fontWeight: "bold",
+      }}
+    >
+      Logout
+    </button>
+  </div>
+</header>
 
-          <button
-            onClick={logout}
-            style={{
-              padding: "12px 18px",
-              borderRadius: 14,
-              border: "none",
-              background: "#dc2626",
-              color: "white",
-              fontWeight: "bold",
-              cursor: "pointer",
-              minWidth: 110,
-            }}
-          >
-            Logout
-          </button>
-        </div>
-      </header>
+<section style={{ marginBottom: 22 }}>
+  <h2 style={{ margin: "0 0 8px", color: "#0f172a", fontSize: 28 }}>
+    Hello, Admin 👋
+  </h2>
+  <p style={{ margin: 0, color: "#64748b", fontWeight: 600 }}>
+    Welcome back! Manage your bookings and operations.
+  </p>
+</section>    
 
       <section
         style={{
