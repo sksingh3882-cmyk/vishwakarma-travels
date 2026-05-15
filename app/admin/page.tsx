@@ -764,77 +764,181 @@ const payload = {
   }
 
   return (
-    <main style={{ minHeight: "100vh", background: "#f1f5f9", padding: 16 }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <header style={{ background: "#0b2d6b", color: "white", padding: 20, borderRadius: 18, marginBottom: 16 }}>
-          <h1 style={{ margin: 0, fontSize: 28 }}>Vishwakarma Travels Admin Dashboard</h1>
-          <p style={{ margin: "6px 0 0" }}>Booking, Bill, WhatsApp aur Database Management</p>
-          <button onClick={logout} style={{ marginTop: 12, padding: "10px 16px", borderRadius: 10, border: 0, fontWeight: "bold" }}>
+  <main
+    style={{
+      minHeight: "100vh",
+      background:
+        "linear-gradient(180deg,#061223 0%, #0b2d6b 35%, #f4f7fb 35%)",
+      padding: 16,
+    }}
+  >
+    <div style={{ maxWidth: 1250, margin: "0 auto" }}>
+      <header
+        style={{
+          background: "rgba(255,255,255,0.12)",
+          backdropFilter: "blur(12px)",
+          border: "1px solid rgba(255,255,255,0.15)",
+          borderRadius: 26,
+          padding: 22,
+          color: "white",
+          boxShadow: "0 10px 35px rgba(0,0,0,0.18)",
+          marginBottom: 22,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 12,
+            flexWrap: "wrap",
+          }}
+        >
+          <div>
+            <p
+              style={{
+                margin: 0,
+                opacity: 0.8,
+                letterSpacing: 1,
+                fontSize: 13,
+              }}
+            >
+              VISHWAKARMA TRAVELS
+            </p>
+
+            <h1
+              style={{
+                margin: "8px 0 8px",
+                fontSize: 30,
+                fontWeight: "bold",
+              }}
+            >
+              Admin Dashboard
+            </h1>
+
+            <p
+              style={{
+                margin: 0,
+                color: "#dbeafe",
+                fontSize: 15,
+              }}
+            >
+              Booking, Billing, WhatsApp & Database Management
+            </p>
+          </div>
+
+          <button
+            onClick={logout}
+            style={{
+              padding: "12px 18px",
+              borderRadius: 14,
+              border: "none",
+              background: "#dc2626",
+              color: "white",
+              fontWeight: "bold",
+              cursor: "pointer",
+              minWidth: 110,
+            }}
+          >
             Logout
           </button>
-        </header>
+        </div>
+      </header>
 
-        <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12, marginBottom: 16 }}>
-  <div onClick={() => setActiveView("customers")} style={{ background: "white", padding: 16, borderRadius: 16, cursor: "pointer" }}>
-    <p>Customers</p>
-    <h2>{customers.length}</h2>
-    <b style={{ color: "#0b2d6b" }}>View all</b>
-  </div>
+      <section
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
+          gap: 18,
+          marginBottom: 24,
+        }}
+      >
+        <div
+          onClick={() => setActiveView("customers")}
+          style={{
+            background: "white",
+            borderRadius: 22,
+            padding: 22,
+            cursor: "pointer",
+            boxShadow: "0 8px 24px rgba(15,23,42,0.08)",
+            border: "1px solid #e2e8f0",
+          }}
+        >
+          <p style={{ margin: 0, color: "#64748b", fontWeight: 600 }}>
+            Customers
+          </p>
 
-  <div onClick={() => setActiveView("vehicles")} style={{ background: "white", padding: 16, borderRadius: 16, cursor: "pointer" }}>
-    <p>Vehicles</p>
-    <h2>{vehicles.length}</h2>
-    <b style={{ color: "#0b2d6b" }}>View all</b>
-  </div>
+          <h2
+            style={{
+              margin: "10px 0",
+              fontSize: 34,
+              color: "#0b2d6b",
+            }}
+          >
+            {customers.length}
+          </h2>
 
-  <div onClick={() => setActiveView("bookings")} style={{ background: "white", padding: 16, borderRadius: 16, cursor: "pointer" }}>
-    <p>Bookings</p>
-    <h2>{bookings.length}</h2>
-    <b style={{ color: "#0b2d6b" }}>View all</b>
-  </div>
-</section>
+          <b style={{ color: "#2563eb" }}>View Records →</b>
+        </div>
 
-        {activeView && (
-  <section style={{ background: "white", padding: 18, borderRadius: 18, marginBottom: 16 }}>
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-      <h2 style={{ color: "#0b2d6b" }}>
-        {activeView === "customers" && "Customers"}
-        {activeView === "vehicles" && "Vehicles"}
-        {activeView === "bookings" && "Bookings"}
-      </h2>
+        <div
+          onClick={() => setActiveView("vehicles")}
+          style={{
+            background: "white",
+            borderRadius: 22,
+            padding: 22,
+            cursor: "pointer",
+            boxShadow: "0 8px 24px rgba(15,23,42,0.08)",
+            border: "1px solid #e2e8f0",
+          }}
+        >
+          <p style={{ margin: 0, color: "#64748b", fontWeight: 600 }}>
+            Vehicles
+          </p>
 
-      <button type="button" onClick={() => setActiveView("")}>
-        Close
-      </button>
-    </div>
+          <h2
+            style={{
+              margin: "10px 0",
+              fontSize: 34,
+              color: "#0b2d6b",
+            }}
+          >
+            {vehicles.length}
+          </h2>
 
-    {activeView === "customers" &&
-      customers.map((c, i) => (
-        <p key={i}>
-          <b>{c.name || "-"}</b> — {c.mobile || "-"} — {c.address || "-"}
-        </p>
-      ))}
+          <b style={{ color: "#2563eb" }}>View Records →</b>
+        </div>
 
-    {activeView === "vehicles" &&
-      vehicles.map((v, i) => (
-        <p key={i}>
-  <b>{v.vehicleNumber || v.vehicle_number || "-"}</b>
-  {" — "}
-  {v.vehicleModel || v.vehicle_model || "-"}
-  {" — "}
-  {v.driverName || v.driver_name || "-"}
-</p>
-      ))}
+        <div
+          onClick={() => setActiveView("bookings")}
+          style={{
+            background: "white",
+            borderRadius: 22,
+            padding: 22,
+            cursor: "pointer",
+            boxShadow: "0 8px 24px rgba(15,23,42,0.08)",
+            border: "1px solid #e2e8f0",
+          }}
+        >
+          <p style={{ margin: 0, color: "#64748b", fontWeight: 600 }}>
+            Total Bookings
+          </p>
 
-    {activeView === "bookings" &&
-      bookings.map((b, i) => (
-        <p key={i}>
-          <b>{b.booking_id || "-"}</b> — {b.customer_name || "-"} — ₹{b.fare || 0}
-        </p>
-      ))}
-  </section>
-)}
-        
+          <h2
+            style={{
+              margin: "10px 0",
+              fontSize: 34,
+              color: "#0b2d6b",
+            }}
+          >
+            {bookings.length}
+          </h2>
+
+          <b style={{ color: "#2563eb" }}>Open Dashboard →</b>
+        </div>
+      </section>
+    
+           
         <form onSubmit={handleSubmit} style={{ background: "white", padding: 18, borderRadius: 18, marginBottom: 16 }}>
           <h2 style={{ color: "#0b2d6b" }}>New Booking</h2>
 
