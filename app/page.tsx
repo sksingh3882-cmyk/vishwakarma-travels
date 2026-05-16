@@ -24,6 +24,7 @@ export default function Home() {
     const name = String(form.get("customerName") || "");
     const mobile = String(form.get("mobile") || "");
     const service = String(form.get("service") || "");
+    const vehicle = String(form.get("vehicle") || "");
     const pickup = String(form.get("pickup") || "");
     const drop = String(form.get("drop") || "");
     const bookingDate = String(form.get("bookingDate") || "");
@@ -56,6 +57,8 @@ export default function Home() {
           customer_name: name,
           mobile,
           service,
+          vehicle_type: vehicle,
+          vehicle_model: vehicle,
           pickup,
           drop_location: drop,
           booking_date: `${bookingDate} ${bookingTime}`,
@@ -66,7 +69,22 @@ export default function Home() {
       });
     }
 
-    const message = `Hello Vishwakarma Travels,\n\nI would like to book a cab.\n\nName: ${name}\nMobile: ${mobile}\nService: ${service}\nPickup: ${pickup}\nDrop: ${drop}\nDate: ${bookingDate}\nTime: ${bookingTime}\n\nPlease share the booking confirmation details.\n\nThank you.`;
+const message = `Hello Vishwakarma Travels,
+
+I would like to book a cab.
+
+Name: ${name}
+Mobile: ${mobile}
+Service: ${service}
+Vehicle: ${vehicle}
+Pickup: ${pickup}
+Drop: ${drop}
+Date: ${bookingDate}
+Time: ${bookingTime}
+
+Please share the booking confirmation details.
+
+Thank you.`;
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
   }
 
