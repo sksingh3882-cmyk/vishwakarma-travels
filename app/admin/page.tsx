@@ -100,6 +100,7 @@ export default function AdminPage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [searchBooking, setSearchBooking] = useState("");
   const [loading, setLoading] = useState(false);
   const [lastBookingId, setLastBookingId] = useState("");
   const [deletingBookingId, setDeletingBookingId] = useState("");
@@ -741,6 +742,17 @@ const payload = {
 
     window.location.href = whatsappUrl;
   }
+  const filteredBookings = bookings.filter((b) => {
+  const search = searchBooking.toLowerCase();
+
+  return (
+    (b.booking_id || "").toLowerCase().includes(search) ||
+    (b.customer_name || "").toLowerCase().includes(search) ||
+    (b.customer_phone || "").includes(search) ||
+    (b.pickup || "").toLowerCase().includes(search) ||
+    (b.drop_location || "").toLowerCase().includes(search)
+  );
+});
 
   if (!isLogin) {
     return (
@@ -974,6 +986,20 @@ const payload = {
 
         <section style={{ background: "white", padding: 18, borderRadius: 18 }}>
           <h2 style={{ color: "#0b2d6b" }}>Recent Bookings</h2>
+          <input
+  type="text"
+  placeholder="Search booking by name, phone, pickup..."
+  value={searchBooking}
+  onChange={(e) => setSearchBooking(e.target.value)}
+  style={{
+    width: "100%",
+    padding: 12,
+    borderRadius: 12,
+    border: "1px solid #cbd5e1",
+    marginBottom: 16,
+    marginTop: 10,
+  }}
+/>
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
               <thead>
@@ -988,7 +1014,7 @@ const payload = {
                 </tr>
               </thead>
               <tbody>
-                {bookings.map((b, i) => (
+                {filteredBookings.map((b, i) => (
                   <tr key={b.booking_id || i}>
                     <td style={tdStyle}>{b.booking_id || "-"}</td>
                     <td style={tdStyle}>{b.customer_name || "-"}</td>
