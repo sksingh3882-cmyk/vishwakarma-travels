@@ -163,7 +163,7 @@ Thank you.`;
             </label>
           </div>
 
-          <button type="submit" style={searchButton}>Send Booking On WhatsApp</button>
+          <button type="submit" style={searchButton}>Send Booking Request</button>
         </form>
       </section>
 
