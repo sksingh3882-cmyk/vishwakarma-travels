@@ -124,6 +124,7 @@ Thank you.`;
           <select name="service" style={inputStyle} required>
             <option value="">Select Service</option>
             <option>One Way Drop Pickup</option>
+            <option>Same Day Fair</option>
             <option>Local Movement</option>
             <option>Outstation Movement</option>
             <option>Short Time Booking</option>
