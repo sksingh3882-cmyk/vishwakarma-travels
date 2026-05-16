@@ -102,7 +102,7 @@ Thank you.`;
 
 <section style={heroStyle}>
   <img
-    src="/banner.jpg"
+    src="/cars/banner.jpg"
     alt="Vishwakarma Travels Banner"
     style={{
       width: "100%",
