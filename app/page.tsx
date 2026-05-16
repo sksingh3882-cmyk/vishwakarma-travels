@@ -100,17 +100,18 @@ Thank you.`;
         </a>
       </header>
 
-      <section style={heroStyle}>
-        <div style={heroCard}>
-          <p style={badgeStyle}>Reliable And Affordable Cab Ride</p>
-          <h2 style={heroTitle}>TRAVEL MADE EASY</h2>
-          <p style={heroSub}>Airport drop, local movement, outstation trips and Marriage function bookings with Vishwakarma Travels.</p>
-          <div style={heroActions}>
-            <a href={`tel:+${phone}`} style={primaryButton}>Call Now</a>
-            <a href="#booking" style={secondaryButton}>Book Ride</a>
-          </div>
-        </div>
-      </section>
+<section style={heroStyle}>
+  <img
+    src="/banner.jpg"
+    alt="Vishwakarma Travels Banner"
+    style={{
+      width: "100%",
+      borderRadius: 28,
+      display: "block",
+      boxShadow: "0 12px 35px rgba(0,0,0,0.15)",
+    }}
+  />
+</section>
 
       <section id="booking" style={bookingWrap}>
         <form onSubmit={handleSubmit} style={bookingCard}>
