@@ -112,6 +112,18 @@ export default function Home() {
             <option>Tour Package Service</option>
           </select>
 
+<select name="vehicle" style={inputStyle} required>
+  <option value="">Select Vehicle</option>
+  <option>Dzire</option>
+  <option>Ertiga</option>
+  <option>Innova</option>
+  <option>Innova Crysta</option>
+  <option>Ertiga With Carrier</option>
+  <option>Innova With Carrier</option>
+  <option>Crysta With Carrier</option>
+  <option>Traveller</option>
+</select>
+
           <input name="pickup" placeholder="Pickup Location" style={inputStyle} required />
           <input name="drop" placeholder="Drop Location" style={inputStyle} required />
 
