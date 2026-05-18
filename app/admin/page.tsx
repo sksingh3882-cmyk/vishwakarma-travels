@@ -22,8 +22,19 @@ const initialForm: FormDataState = {
 
 function cleanPhone(v: string) {
   let p = String(v || "").replace(/\D/g, "");
-  if (p.startsWith("91") && p.length === 12) p = p.slice(2);
-  return p.slice(0, 10);
+
+  // +91 / 91 remove
+  if (p.startsWith("91") && p.length > 10) {
+    p = p.slice(-10);
+  }
+
+  // 0 remove
+  if (p.startsWith("0") && p.length > 10) {
+    p = p.slice(-10);
+  }
+
+  // Always final 10 digit
+  return p.slice(-10);
 }
 function vehicleNo(v: string) { return String(v || "").replace(/[^a-zA-Z0-9]/g, "").toUpperCase(); }
 function formatDate(v: string) { return v && v.includes("-") ? v.split("-").reverse().join("-") : v || ""; }
