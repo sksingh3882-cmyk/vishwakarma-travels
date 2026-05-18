@@ -1,5 +1,5 @@
 "use client";
-
+import { useState } from "react";
 const phone = "917667989203";
 
 export default function Home() {
@@ -105,9 +105,64 @@ Please share the booking confirmation details.
 Thank you.`;
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
   }
-
+const [showPopup, setShowPopup] = useState(true)
+  
   return (
-    <main style={pageStyle}>
+    <main  style={pageStyle}>
+           {showPopup && (
+  <div
+    style={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.7)",
+      zIndex: 9999,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 20,
+    }}
+  >
+    <div
+      style={{
+        width: "100%",
+        maxWidth: 900,
+        background: "white",
+        borderRadius: 24,
+        overflow: "hidden",
+        position: "relative",
+      }}
+    >
+      <button
+        onClick={() => setShowPopup(false)}
+        style={{
+          position: "absolute",
+          top: 10,
+          right: 10,
+          border: 0,
+          width: 36,
+          height: 36,
+          borderRadius: "50%",
+          background: "#ef4444",
+          color: "white",
+          fontWeight: "bold",
+          cursor: "pointer",
+          zIndex: 2,
+        }}
+      >
+        ✕
+      </button>
+
+      <img
+        src="/cars/popup_banner.png"
+        alt="Vishwakarma Travels"
+        style={{
+          width: "100%",
+          display: "block",
+        }}
+      />
+    </div>
+  </div>
+)}
       <header style={headerStyle}>
         <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
           <div style={logoMark}>V</div>
