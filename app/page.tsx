@@ -3,6 +3,7 @@ import { useState } from "react";
 const phone = "917667989203";
 
 export default function Home() {
+  const [showPopup, setShowPopup] = useState(true)
   const services = [
     { icon: "✈️", title: "One Way Drop Pickup", text: "Ranchi / Kolkata airport and city drop", link: "/airport-drop" },
     { icon: "🚕", title: "Local Movement", text: "Jamshedpur city ride and daily travel", link: "#booking" },
@@ -105,7 +106,6 @@ Please share the booking confirmation details.
 Thank you.`;
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
   }
-const [showPopup, setShowPopup] = useState(true)
   
   return (
     <main  style={pageStyle}>
