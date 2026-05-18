@@ -43,6 +43,7 @@ export default function AdminPage() {
   const [confirmMode, setConfirmMode] = useState<"save" | "whatsapp">("save");
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [deletingBookingId, setDeletingBookingId] = useState("");
+  const [showCustomerSuggestions, setShowCustomerSuggestions] = useState(false);
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -75,11 +76,20 @@ export default function AdminPage() {
   }
   function logout() { localStorage.removeItem("vt_admin_login"); setIsLogin(false); }
 
+  function applyCustomer(c: Customer) {
+    setForm((p) => ({
+      ...p,
+      customerName: c.name || p.customerName,
+      customerPhone: cleanPhone(c.mobile || c.phone || p.customerPhone),
+      pickup: c.address || p.pickup,
+    }));
+    setShowCustomerSuggestions(false);
+  }
   function findCustomer() {
     const name = form.customerName.toLowerCase().trim();
     const phone = cleanPhone(form.customerPhone);
-    const found = customers.find((c) => (c.name || "").toLowerCase().trim() === name || cleanPhone(c.mobile || "") === phone);
-    if (found) setForm((p) => ({ ...p, customerName: found.name || p.customerName, customerPhone: found.mobile || p.customerPhone, pickup: found.address || p.pickup }));
+    const found = customers.find((c) => (name && (c.name || "").toLowerCase().trim() === name) || (phone && cleanPhone(c.mobile || c.phone || "") === phone));
+    if (found) applyCustomer(found);
   }
   function fillVehicle(value: string) {
     const no = value.toUpperCase(); update("vehicleNumber", no);
@@ -101,6 +111,7 @@ export default function AdminPage() {
   function sendWhatsApp() { if (!validate()) return; setPendingBookingId(lastBookingId || `VT-${Date.now()}`); setConfirmMode("whatsapp"); setShowConfirmPopup(true); }
 
   async function saveBooking(id: string) {
+    if (bookings.some((b) => b.booking_id === id)) return true;
     const payload = { booking_id: id, customer_name: form.customerName, customer_phone: cleanPhone(form.customerPhone), gender: form.gender, service: form.service, pickup: form.pickup, drop_location: form.drop, journey_date: form.journeyDate, journey_time: form.journeyTime, vehicle_type: form.vehicleType, vehicle_model: form.vehicleModel, vehicle_number: form.vehicleNumber, fare, advance, net_payable: net, driver_name: form.driverName, driver_mobile: cleanPhone(form.driverMobile) };
     const r = await fetch(`${supabaseUrl}/rest/v1/bookings`, { method: "POST", headers, body: JSON.stringify(payload) });
     if (!r.ok) return false;
@@ -109,7 +120,7 @@ export default function AdminPage() {
   }
   async function saveCustomer() {
     const phone = cleanPhone(form.customerPhone);
-    if (!phone || customers.some((c) => cleanPhone(c.mobile || "") === phone)) return;
+    if (!phone || customers.some((c) => cleanPhone(c.mobile || c.phone || "") === phone)) return;
     const payload = { name: form.customerName.trim(), mobile: phone, address: form.pickup.trim() };
     const r = await fetch(`${supabaseUrl}/rest/v1/customers`, { method: "POST", headers, body: JSON.stringify(payload) });
     if (r.ok) setCustomers((p) => [payload, ...p]);
@@ -130,10 +141,10 @@ export default function AdminPage() {
     const id = pendingBookingId || lastBookingId || `VT-${Date.now()}`;
     setLoading(true);
     try {
-      if (confirmMode === "save") {
-        const ok = await saveBooking(id); if (!ok) return alert("Booking save nahi hua.");
-        await Promise.all([saveCustomer(), saveVehicle()]); setLastBookingId(id); pdf(id);
-      }
+      const ok = await saveBooking(id); if (!ok) return alert("Booking save nahi hua.");
+      await Promise.all([saveCustomer(), saveVehicle()]);
+      setLastBookingId(id);
+      if (confirmMode === "save") pdf(id);
       window.location.href = `https://api.whatsapp.com/send?phone=91${cleanPhone(form.customerPhone)}&text=${encodeURIComponent(msg(id))}`;
       setShowConfirmPopup(false);
     } finally { setLoading(false); }
@@ -150,7 +161,9 @@ export default function AdminPage() {
   }
 
   const filtered = bookings.filter((b) => `${b.booking_id || ""} ${b.customer_name || ""} ${b.customer_phone || ""} ${b.pickup || ""} ${b.drop_location || ""}`.toLowerCase().includes(searchBooking.toLowerCase()));
-  const drops = Array.from(new Set(bookings.filter((b) => cleanPhone(b.customer_phone || "") === cleanPhone(form.customerPhone) || (b.customer_name || "").toLowerCase().includes(form.customerName.toLowerCase())).map((b) => b.drop_location).filter(Boolean))).slice(0, 6);
+  const customerSearch = `${form.customerName} ${form.customerPhone}`.toLowerCase().trim();
+  const customerSuggestions = customerSearch.length < 2 ? [] : customers.filter((c) => `${c.name || ""} ${c.mobile || c.phone || ""} ${c.address || ""}`.toLowerCase().includes(customerSearch) || cleanPhone(c.mobile || c.phone || "").includes(cleanPhone(form.customerPhone))).slice(0, 6);
+  const drops = Array.from(new Set(bookings.filter((b) => cleanPhone(b.customer_phone || "") === cleanPhone(form.customerPhone) || (form.customerName && (b.customer_name || "").toLowerCase().includes(form.customerName.toLowerCase()))).map((b) => b.drop_location).filter(Boolean))).slice(0, 6);
 
   if (!isLogin) return <main style={loginPage}><form onSubmit={login} style={card}><h1>Vishwakarma Travels</h1><p>Admin Login</p><input type="password" placeholder="Admin password" value={password} onChange={(e) => setPassword(e.target.value)} style={input} /><button style={blueBtn}>Login</button></form></main>;
 
@@ -160,7 +173,7 @@ export default function AdminPage() {
     <div style={{ maxWidth: 1200, margin: "0 auto" }}><header style={header}><h1>Vishwakarma Travels Admin Dashboard</h1><p>Booking, Bill, WhatsApp aur Database Management</p><button onClick={logout} style={whiteBtn}>Logout</button></header>
     <section style={stats}><Stat title="Customers" value={customers.length} onClick={() => setActiveView("customers")} /><Stat title="Vehicles" value={vehicles.length} onClick={() => setActiveView("vehicles")} /><Stat title="Bookings" value={bookings.length} onClick={() => setActiveView("bookings")} /></section>
     {activeView && <section style={panel}><button onClick={() => setActiveView("")} style={whiteBtn}>Close</button>{activeView === "customers" && customers.map((c, i) => <p key={i}><b>{c.name || "-"}</b> - {c.mobile || "-"} - {c.address || "-"}</p>)}{activeView === "vehicles" && vehicles.map((v, i) => <p key={i}><b>{v.vehicle_number || v.vehicleNumber || "-"}</b> - {v.vehicle_model || v.vehicleModel || "-"} - {v.driver_name || v.driverName || "-"}</p>)}{activeView === "bookings" && bookings.map((b, i) => <p key={i}><b>{b.booking_id || "-"}</b> - {b.customer_name || "-"} - Rs {b.fare || 0}</p>)}</section>}
-    <form onSubmit={submit} style={panel}><h2>New Booking</h2><div style={grid}><select value={form.gender} onChange={(e) => update("gender", e.target.value)} style={input}><option>Mr.</option><option>Mrs.</option><option>Ms.</option></select><input placeholder="Customer Name" value={form.customerName} onChange={(e) => update("customerName", e.target.value)} onBlur={findCustomer} style={input} required /><input type="text" inputMode="tel" placeholder="Customer WhatsApp Number" value={form.customerPhone} onChange={(e) => update("customerPhone", e.target.value)} onBlur={findCustomer} style={input} required /><input placeholder="Pickup Location" value={form.pickup} onChange={(e) => update("pickup", e.target.value)} style={input} required /><input placeholder="Drop Location" value={form.drop} onChange={(e) => update("drop", e.target.value)} style={input} required />{drops.length > 0 && <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>{drops.map((d) => <button key={d} type="button" onClick={() => update("drop", d)} style={chip}>{d}</button>)}</div>}<input type="date" value={form.journeyDate} onChange={(e) => update("journeyDate", e.target.value)} style={input} required /><input placeholder="Time e.g. 5:30 PM" value={form.journeyTime} onChange={(e) => update("journeyTime", e.target.value)} style={input} required /><input placeholder="Vehicle Number" value={form.vehicleNumber} onChange={(e) => fillVehicle(e.target.value)} style={input} /><select value={form.vehicleType} onChange={(e) => update("vehicleType", e.target.value)} style={input}><option>Sedan</option><option>SUV</option><option>SUV With Carrier</option><option>Sedan With Carrier</option><option>Mini Passenger Bus</option></select><select value={form.vehicleModel} onChange={(e) => update("vehicleModel", e.target.value)} style={input}><option>Desire</option><option>Ertiga</option><option>Innova</option><option>Innova Crysta</option><option>Ertiga With Carrier</option><option>Innova With Carrier</option><option>Crysta With Carrier</option><option>Force Traveller</option></select><input placeholder="Driver Name" value={form.driverName} onChange={(e) => update("driverName", e.target.value)} style={input} /><input type="text" inputMode="tel" placeholder="Driver Mobile" value={form.driverMobile} onChange={(e) => update("driverMobile", e.target.value)} style={input} /><select value={form.service} onChange={(e) => update("service", e.target.value)} style={input}><option>One Way Drop Pickup</option><option>Jamshedpur to Ranchi Airport Drop</option><option>Ranchi Airport to Jamshedpur Drop</option><option>Jamshedpur to Kolkata Airport Drop</option><option>Kolkata Airport to Jamshedpur Drop</option><option>Local Movment</option><option>Outstation Movment</option><option>Short Time Booking</option><option>Marriage Function Booking</option></select><input type="number" placeholder="Total Fare" value={form.fare} onChange={(e) => update("fare", e.target.value)} style={input} required /><input type="number" placeholder="Advance Paid" value={form.advance} onChange={(e) => update("advance", e.target.value)} style={input} /></div><div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 16 }}><button disabled={loading} style={saveBtn}>{loading ? "Saving..." : "Save Booking + PDF Bill"}</button><button type="button" onClick={sendWhatsApp} style={waBtn}>Send WhatsApp</button></div></form>
+    <form onSubmit={submit} style={panel}><h2>New Booking</h2><div style={grid}><select value={form.gender} onChange={(e) => update("gender", e.target.value)} style={input}><option>Mr.</option><option>Mrs.</option><option>Ms.</option></select><div style={fieldWrap}><input placeholder="Customer Name" value={form.customerName} onFocus={() => setShowCustomerSuggestions(true)} onChange={(e) => { update("customerName", e.target.value); setShowCustomerSuggestions(true); }} onBlur={() => setTimeout(() => { findCustomer(); setShowCustomerSuggestions(false); }, 180)} style={input} required />{showCustomerSuggestions && customerSuggestions.length > 0 && <div style={suggestBox}>{customerSuggestions.map((c, i) => <button key={`${c.mobile || c.phone || i}-${i}`} type="button" onMouseDown={() => applyCustomer(c)} style={suggestItem}><b>{c.name || "No Name"}</b><span>{cleanPhone(c.mobile || c.phone || "") || "No Mobile"}</span><small>{c.address || "No Address"}</small></button>)}</div>}</div><input type="text" inputMode="tel" placeholder="Customer WhatsApp Number" value={form.customerPhone} onChange={(e) => { update("customerPhone", e.target.value); setShowCustomerSuggestions(true); }} onBlur={findCustomer} style={input} required /><input placeholder="Pickup Location / Address" value={form.pickup} onChange={(e) => update("pickup", e.target.value)} style={input} required /><input placeholder="Drop Location" value={form.drop} onChange={(e) => update("drop", e.target.value)} style={input} required />{drops.length > 0 && <div style={fullRow}><b style={{ color: "#0b2d6b" }}>Old Drop Location:</b><div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>{drops.map((d) => <button key={d} type="button" onClick={() => update("drop", d)} style={chip}>{d}</button>)}</div></div>}<input type="date" value={form.journeyDate} onChange={(e) => update("journeyDate", e.target.value)} style={input} required /><input placeholder="Time e.g. 5:30 PM" value={form.journeyTime} onChange={(e) => update("journeyTime", e.target.value)} style={input} required /><input placeholder="Vehicle Number" value={form.vehicleNumber} onChange={(e) => fillVehicle(e.target.value)} style={input} /><select value={form.vehicleType} onChange={(e) => update("vehicleType", e.target.value)} style={input}><option>Sedan</option><option>SUV</option><option>SUV With Carrier</option><option>Sedan With Carrier</option><option>Mini Passenger Bus</option></select><select value={form.vehicleModel} onChange={(e) => update("vehicleModel", e.target.value)} style={input}><option>Desire</option><option>Ertiga</option><option>Innova</option><option>Innova Crysta</option><option>Ertiga With Carrier</option><option>Innova With Carrier</option><option>Crysta With Carrier</option><option>Force Traveller</option></select><input placeholder="Driver Name" value={form.driverName} onChange={(e) => update("driverName", e.target.value)} style={input} /><input type="text" inputMode="tel" placeholder="Driver Mobile" value={form.driverMobile} onChange={(e) => update("driverMobile", e.target.value)} style={input} /><select value={form.service} onChange={(e) => update("service", e.target.value)} style={input}><option>One Way Drop Pickup</option><option>Jamshedpur to Ranchi Airport Drop</option><option>Ranchi Airport to Jamshedpur Drop</option><option>Jamshedpur to Kolkata Airport Drop</option><option>Kolkata Airport to Jamshedpur Drop</option><option>Local Movment</option><option>Outstation Movment</option><option>Short Time Booking</option><option>Marriage Function Booking</option></select><input type="number" placeholder="Total Fare" value={form.fare} onChange={(e) => update("fare", e.target.value)} style={input} required /><input type="number" placeholder="Advance Paid" value={form.advance} onChange={(e) => update("advance", e.target.value)} style={input} /></div><div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 16 }}><button disabled={loading} style={saveBtn}>{loading ? "Saving..." : "Save Booking + PDF Bill"}</button><button type="button" onClick={sendWhatsApp} style={waBtn}>Send WhatsApp</button></div></form>
     <section style={panel}><h2>Recent Bookings</h2><input placeholder="Search booking by name, phone, pickup..." value={searchBooking} onChange={(e) => setSearchBooking(e.target.value)} style={input} /><div style={{ overflowX: "auto", marginTop: 12 }}><table style={{ width: "100%", minWidth: 900, borderCollapse: "collapse" }}><thead><tr style={{ background: "#0b2d6b", color: "white" }}><th style={th}>Booking ID</th><th style={th}>Customer</th><th style={th}>Phone</th><th style={th}>Route</th><th style={th}>Date</th><th style={th}>Fare</th><th style={th}>Action</th></tr></thead><tbody>{filtered.map((b, i) => <tr key={b.booking_id || i}><td style={td}>{b.booking_id || "-"}</td><td style={td}>{b.customer_name || "-"}</td><td style={td}>{b.customer_phone || "-"}</td><td style={td}>{b.pickup || "-"} to {b.drop_location || "-"}</td><td style={td}>{b.journey_date || "-"}</td><td style={td}>Rs {b.fare || 0}</td><td style={td}><button onClick={() => edit(b)} style={editBtn}>Edit</button><button onClick={() => pdf(b.booking_id || "")} style={pdfBtn}>PDF</button><button disabled={deletingBookingId === b.booking_id} onClick={() => removeBooking(b.booking_id)} style={delBtn}>{deletingBookingId === b.booking_id ? "Deleting..." : "Delete"}</button></td></tr>)}{bookings.length === 0 && <tr><td colSpan={7} style={{ padding: 20, textAlign: "center" }}>No booking found</td></tr>}</tbody></table></div></section></div>
   </main>;
 }
@@ -176,6 +189,10 @@ const stats: CSSProperties = { display: "grid", gridTemplateColumns: "repeat(aut
 const stat: CSSProperties = { background: "white", padding: 16, borderRadius: 16, cursor: "pointer" };
 const panel: CSSProperties = { background: "white", padding: 18, borderRadius: 18, marginBottom: 16 };
 const grid: CSSProperties = { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 12 };
+const fieldWrap: CSSProperties = { position: "relative" };
+const fullRow: CSSProperties = { gridColumn: "1 / -1", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" };
+const suggestBox: CSSProperties = { position: "absolute", left: 0, right: 0, top: "calc(100% + 4px)", zIndex: 20, background: "white", border: "1px solid #cbd5e1", borderRadius: 12, boxShadow: "0 10px 25px rgba(0,0,0,.14)", overflow: "hidden" };
+const suggestItem: CSSProperties = { width: "100%", display: "grid", gridTemplateColumns: "1fr", gap: 2, padding: "10px 12px", textAlign: "left", background: "white", border: 0, borderBottom: "1px solid #e2e8f0", cursor: "pointer" };
 const input: CSSProperties = { padding: 12, borderRadius: 12, border: "1px solid #cbd5e1", width: "100%", boxSizing: "border-box" };
 const blueBtn: CSSProperties = { width: "100%", padding: 13, borderRadius: 12, border: 0, background: "#0b2d6b", color: "white", fontWeight: "bold", marginTop: 15 };
 const whiteBtn: CSSProperties = { padding: "10px 16px", borderRadius: 10, border: 0, fontWeight: "bold" };
