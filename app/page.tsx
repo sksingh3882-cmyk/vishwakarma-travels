@@ -68,6 +68,24 @@ export default function Home() {
         }),
       });
     }
+  const confirmBooking = window.confirm(
+`Please Confirm Booking Details
+
+Name: ${name}
+Mobile: ${mobile}
+Service: ${service}
+Vehicle: ${vehicle}
+
+Pickup: ${pickup}
+Drop: ${drop}
+
+Date: ${bookingDate}
+Time: ${bookingTime}
+
+Click OK to continue`
+)
+
+if (!confirmBooking) return  
 
 const message = `Hello Vishwakarma Travels,
 
