@@ -119,7 +119,7 @@ export default function AdminPage() {
   }
 
   function msg(id: string) {
-    return `Booking Confirmation\n\n${form.gender} ${form.customerName},\nYour booking is confirmed.\n\nBooking ID: ${id}\nService: ${form.service}\nContact No: +91${cleanPhone(form.customerPhone)}\n\nPickup: ${form.pickup}\nDrop: ${form.drop}\nDate: ${formatDate(form.journeyDate)}\nTime: ${form.journeyTime}\n\nVehicle Type: ${form.vehicleType}\nVehicle Model: ${form.vehicleModel}\nVehicle No: ${vehicleNo(form.vehicleNumber)}\nDriver Name: ${form.driverName}\nDriver Mobile: ${form.driverMobile}\n\nFare: Rs ${fare}\nAdvance: Rs ${advance}\nNet Payable Amount: Rs ${net}\n\nThank You For Choosing Vishwakarma Travels`;
+    return `Booking Confirmation\n\n${form.gender} ${form.customerName},\nNamaste Your booking is confirmed.\n\nBooking ID: ${id}\nService: ${form.service}\nContact No: +91${cleanPhone(form.customerPhone)}\n\nPickup: ${form.pickup}\nDrop: ${form.drop}\nDate: ${formatDate(form.journeyDate)}\nTime: ${form.journeyTime}\n\nVehicle Type: ${form.vehicleType}\nVehicle Model: ${form.vehicleModel}\nVehicle No: ${vehicleNo(form.vehicleNumber)}\nDriver Name: ${form.driverName}\nDriver Mobile: ${form.driverMobile}\n\nFare: Rs ${fare}\nAdvance: Rs ${advance}\nNet Payable Amount: Rs ${net}\n\nThank You For Choosing Vishwakarma Travels\nWish You A Very Happy Journey\n🙏🙏🙏`;
   }
   function validate() {
     if (!supabaseUrl || !supabaseKey) return alert("Supabase URL/KEY missing hai."), false;
