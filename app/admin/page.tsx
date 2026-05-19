@@ -187,8 +187,8 @@ export default function AdminPage() {
       return Math.max(y + 56, ly + 34);
     };
     const drawDetails = () => {
-      x.fillStyle = "#0b2d6b"; x.font = "bold 46px 'Times New Roman', Times, serif"; x.fillText("Confirm Booking Details", 75, 545);
-      let y = 610;
+      x.fillStyle = "#0b2d6b"; x.font = "bold 46px 'Times New Roman', Times, serif"; x.fillText("Confirm Booking Details", 75, 640);
+let y = 705;
       y = row("Customer Name", form.customerName, y);
       y = row("Mobile No.", cleanPhone(form.customerPhone), y);
       y = row("Pickup", form.pickup, y);
