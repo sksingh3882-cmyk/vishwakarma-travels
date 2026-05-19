@@ -438,3 +438,4 @@ const cancelBtn: CSSProperties = { padding: 11, borderRadius: 12, border: "2px s
 const greenBtn: CSSProperties = { padding: 11, borderRadius: 12, border: 0, background: "#16a34a", color: "white", fontWeight: 950 };
 
 // Stable backup version
+}
