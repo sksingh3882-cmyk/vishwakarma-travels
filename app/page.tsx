@@ -109,39 +109,124 @@ export default function Home() {
     if (!ctx) return;
 
     const drawRoundRect = (x: number, y: number, w: number, h: number, r: number) => {
-      ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r); ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
     };
     const wrapText = (text: string, x: number, y: number, maxWidth: number, lineHeight: number) => {
-      const words = String(text || "-").split(" "); let line = "";
+      const words = String(text || "-").split(" ");
+      let line = "";
       for (let n = 0; n < words.length; n++) {
         const testLine = line + words[n] + " ";
-        if (ctx.measureText(testLine).width > maxWidth && n > 0) { ctx.fillText(line, x, y); line = words[n] + " "; y += lineHeight; } else line = testLine;
+        if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+          ctx.fillText(line.trim(), x, y);
+          line = words[n] + " ";
+          y += lineHeight;
+        } else line = testLine;
       }
-      ctx.fillText(line, x, y); return y;
+      ctx.fillText(line.trim(), x, y);
+      return y;
     };
-    const row = (label: string, value: string, y: number) => {
-      ctx.fillStyle = "#0b2d6b"; ctx.font = "bold 31px Arial"; ctx.fillText(label, 95, y);
-      ctx.fillStyle = "#0f172a"; ctx.font = "bold 36px Arial"; return wrapText(value || "-", 360, y, 610, 44) + 52;
+    const tableRow = (label: string, value: string, y: number) => {
+      ctx.strokeStyle = "#dbe3ef";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(75, y + 36);
+      ctx.lineTo(1005, y + 36);
+      ctx.stroke();
+      ctx.fillStyle = "#0b2d6b";
+      ctx.font = "bold 38px 'Times New Roman', Times, serif";
+      ctx.fillText(label, 95, y);
+      ctx.fillStyle = "#111111";
+      ctx.font = "38px 'Times New Roman', Times, serif";
+      const lastY = wrapText(value || "-", 430, y, 540, 43);
+      return Math.max(y + 58, lastY + 18);
+    };
+    const declarationLine = (text: string, y: number) => {
+      ctx.fillStyle = "#111111";
+      ctx.font = "34px 'Times New Roman', Times, serif";
+      ctx.fillText("*", 100, y);
+      return wrapText(text, 145, y, 830, 43) + 55;
     };
 
-    ctx.fillStyle = "#f4f7fb"; ctx.fillRect(0, 0, 1080, 1920);
-    ctx.fillStyle = "white"; drawRoundRect(30, 35, 1020, 1850, 28); ctx.fill();
+    ctx.fillStyle = "#f4f7fb";
+    ctx.fillRect(0, 0, 1080, 1920);
+    ctx.fillStyle = "white";
+    drawRoundRect(18, 18, 1044, 1884, 28);
+    ctx.fill();
 
     const drawBody = () => {
-      ctx.fillStyle = "#fff7ed"; drawRoundRect(80, 510, 230, 58, 29); ctx.fill();
-      ctx.fillStyle = "#ea580c"; ctx.font = "bold 28px Arial"; ctx.fillText("Booking Copy", 105, 548);
-      ctx.fillStyle = "#0b2d6b"; ctx.font = "bold 52px Arial"; ctx.fillText("Vishwakarma Travels", 80, 645);
-      ctx.fillStyle = "#64748b"; ctx.font = "31px Arial"; ctx.fillText("Your ride booking details", 80, 690);
-      let y = 790;
-      y = row("Customer Name", data.name, y);
-      y = row("Mobile", data.mobile, y);
-      y = row("Service", data.service, y);
-      y = row("Vehicle", data.vehicle, y);
-      y = row("Pickup", data.pickup, y);
-      y = row("Drop", data.drop, y);
-      y = row("Date & Time", `${formatDate(data.bookingDate)} ${data.bookingTime}`, y);
-      ctx.fillStyle = "#0b2d6b"; drawRoundRect(80, 1700, 920, 95, 22); ctx.fill();
-      ctx.fillStyle = "white"; ctx.font = "bold 30px Arial"; ctx.fillText("Thank you for choosing Vishwakarma Travels", 205, 1758);
+      ctx.fillStyle = "#fff7ed";
+      drawRoundRect(60, 560, 230, 58, 25);
+      ctx.fill();
+      ctx.fillStyle = "#ea580c";
+      ctx.font = "bold 34px 'Times New Roman', Times, serif";
+      ctx.fillText("Booking Copy", 86, 599);
+
+      ctx.fillStyle = "#0b2d6b";
+      ctx.font = "bold 58px 'Times New Roman', Times, serif";
+      ctx.fillText("Vishwakarma Travels", 78, 700);
+      ctx.fillStyle = "#64748b";
+      ctx.font = "35px 'Times New Roman', Times, serif";
+      ctx.fillText("Your ride booking details", 80, 748);
+
+      let y = 840;
+      y = tableRow("Customer Name", data.name, y);
+      y = tableRow("Mobile", data.mobile, y);
+      y = tableRow("Service", data.service, y);
+      y = tableRow("Vehicle", data.vehicle, y);
+      y = tableRow("Pickup", data.pickup, y);
+      y = tableRow("Drop", data.drop, y);
+      y = tableRow("Date", formatDate(data.bookingDate), y);
+      y = tableRow("Time", data.bookingTime, y);
+
+      const declY = Math.max(y + 50, 1360);
+      ctx.fillStyle = "#087a31";
+      ctx.font = "bold 36px 'Times New Roman', Times, serif";
+      ctx.fillText("Declaration", 95, declY);
+      ctx.fillStyle = "#111111";
+      ctx.font = "30px Arial";
+      ctx.fillText("Vishwakarma Taxi Service", 700, declY);
+      ctx.strokeStyle = "#087a31";
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(75, declY + 28);
+      ctx.lineTo(1005, declY + 28);
+      ctx.stroke();
+      ctx.fillStyle = "#087a31";
+      ctx.beginPath(); ctx.arc(75, declY + 28, 10, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(1005, declY + 28, 10, 0, Math.PI * 2); ctx.fill();
+
+      let dY = declY + 85;
+      dY = declarationLine("Book A Cab Atleast 24 Hour Before Travelling Otherwise Booking May Not Be Confirmed", dY);
+      dY = declarationLine("After the booking is Confirmed , Customer will have to make the Advance Payment", dY);
+      dY = declarationLine("Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances", dY);
+
+      ctx.strokeStyle = "#111111";
+      ctx.lineWidth = 4;
+      ctx.setLineDash([22, 14]);
+      ctx.beginPath();
+      ctx.moveTo(95, 1768);
+      ctx.lineTo(985, 1768);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "#0b2d6b";
+      ctx.font = "bold 35px 'Times New Roman', Times, serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Thank You And Wish You A Very Happy Journey", 540, 1822);
+      ctx.font = "bold 42px 'Times New Roman', Times, serif";
+      ctx.fillText("Vishwakarma Travels", 540, 1872);
+      ctx.textAlign = "left";
+
       const a = document.createElement("a");
       a.href = canvas.toDataURL("image/jpeg", 0.95);
       a.download = `Vishwakarma-Booking-${Date.now()}.jpg`;
@@ -150,8 +235,9 @@ export default function Home() {
       setTimeout(() => setCopyNotice(false), 3500);
     };
 
-    const img = new Image(); img.crossOrigin = "anonymous";
-    img.onload = () => { ctx.drawImage(img, 55, 60, 970, 410); drawBody(); };
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => { ctx.drawImage(img, 42, 42, 996, 480); drawBody(); };
     img.onerror = drawBody;
     img.src = "/cars/popup_banner.png";
   }
