@@ -212,8 +212,13 @@ let y = 705;
       for (const t of ["Book A Cab Atleast 24 Hour Before Travelling Otherwise Booking May Not Be Confirmed", "After the booking is Confirmed, Customer will have to make the Advance Payment", "Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances"]) {
         x.fillText("*", 95, yy); yy = wrap(t, 135, yy, 845, 36) + 34;
       }
-      const footerY = Math.min(1840, Math.max(yy + 22, 1765));
-      x.fillStyle = "#0b2d6b"; x.textAlign = "center"; x.font = "bold 34px 'Times New Roman', Times, serif"; x.fillText("Thank You And Wish You A Very Happy Journey", 540, footerY); x.font = "bold 42px 'Times New Roman', Times, serif"; x.fillText("Vishwakarma Travels", 540, footerY + 52); x.textAlign = "left";
+      const footerY = yy + 120;
+
+if (footerY > 1840) return;
+      x.fillStyle = "#0b2d6b"; x.textAlign = "center";x.font = "bold 26px 'Times New Roman', Times, serif";
+x.fillText("Thank You And Wish You A Very Happy Journey", 540, footerY);
+x.font = "bold 34px 'Times New Roman', Times, serif";
+x.fillText("Vishwakarma Travels", 540, footerY + 42);  x.textAlign = "left";
       const a = document.createElement("a");
       a.href = c.toDataURL("image/jpeg", .95);
       a.download = `Vishwakarma-Booking-${Date.now()}.jpg`;
