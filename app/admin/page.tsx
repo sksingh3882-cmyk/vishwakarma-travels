@@ -183,7 +183,7 @@ export default function AdminPage() {
       x.fillStyle = "#111"; x.font = "bold 34px 'Times New Roman', Times, serif"; x.fillText(l, 75, y);
       x.fillStyle = "#111"; x.font = "34px 'Times New Roman', Times, serif";
       const ly = wrap(v || "-", 430, y, 560, 38);
-      x.strokeStyle = "#e2e8f0"; x.lineWidth = 2; x.beginPath(); x.moveTo(75, Math.max(y + 22, ly + 12)); x.lineTo(1005, Math.max(y + 22, ly + 12)); x.stroke();
+      
       return Math.max(y + 56, ly + 34);
     };
     const drawDetails = () => {
