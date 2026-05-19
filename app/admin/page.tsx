@@ -214,7 +214,6 @@ let y = 705;
       }
       const footerY = yy + 120;
 
-if (footerY > 1840) return;
       x.fillStyle = "#0b2d6b"; x.textAlign = "center";x.font = "bold 26px 'Times New Roman', Times, serif";
 x.fillText("Thank You And Wish You A Very Happy Journey", 540, footerY);
 x.font = "bold 34px 'Times New Roman', Times, serif";
