@@ -151,130 +151,14 @@ export default function AdminPage() {
     if (r.ok) setVehicles((p) => [payload, ...p]);
   }
   function pdf(id: string) {
-    function pdf(id: string) {
-  const w = window.open("", "_blank");
-  if (!w) return alert("Popup allow karo.");
-
-  const html = `
-  <html>
-  <head>
-    <title>Invoice ${id}</title>
-
-    <style>
-      body{
-        font-family: Arial, sans-serif;
-        padding:20px;
-        color:#111;
-      }
-
-      .box{
-        max-width:800px;
-        margin:auto;
-        border:1px solid #ddd;
-        padding:20px;
-        border-radius:12px;
-      }
-
-      h1{
-        color:#0b2d6b;
-        margin-bottom:10px;
-      }
-
-      table{
-        width:100%;
-        border-collapse:collapse;
-        margin-top:20px;
-      }
-
-      td{
-        border:1px solid #ddd;
-        padding:10px;
-        font-size:16px;
-      }
-
-      .head{
-        font-weight:bold;
-        width:35%;
-        background:#f4f4f4;
-      }
-
-      .net{
-        margin-top:20px;
-        background:#ecfdf5;
-        padding:15px;
-        font-size:22px;
-        font-weight:bold;
-        color:#15803d;
-        border-radius:10px;
-        text-align:right;
-      }
-
-      .footer{
-        margin-top:30px;
-        text-align:center;
-        color:#0b2d6b;
-        font-weight:bold;
-        font-size:24px;
-      }
-    </style>
-  </head>
-
-  <body>
-
-    <div class="box">
-
-      <h1>Vishwakarma Travels</h1>
-
-      <table>
-        <tr><td class="head">Customer Name</td><td>${form.customerName}</td></tr>
-
-        <tr><td class="head">Mobile No.</td><td>${form.customerPhone}</td></tr>
-
-        <tr><td class="head">Pickup</td><td>${form.pickup}</td></tr>
-
-        <tr><td class="head">Drop</td><td>${form.drop}</td></tr>
-
-        <tr><td class="head">Date</td><td>${formatDate(form.journeyDate)}</td></tr>
-
-        <tr><td class="head">Time</td><td>${form.journeyTime}</td></tr>
-
-        <tr><td class="head">Vehicle No.</td><td>${form.vehicleNumber}</td></tr>
-
-        <tr><td class="head">Vehicle Type</td><td>${form.vehicleType}</td></tr>
-
-        <tr><td class="head">Vehicle Model</td><td>${form.vehicleModel}</td></tr>
-
-        <tr><td class="head">Driver Name</td><td>${form.driverName}</td></tr>
-
-        <tr><td class="head">Driver Mobile</td><td>${form.driverMobile}</td></tr>
-
-        <tr><td class="head">Fare</td><td>Rs ${fare}</td></tr>
-
-        <tr><td class="head">Advance</td><td>Rs ${advance}</td></tr>
-
-      </table>
-
-      <div class="net">
-        Net Payable : Rs ${net}
-      </div>
-
-      <div class="footer">
-        Thank You And Wish You A Very Happy Journey
-      </div>
-
-    </div>
-
-    <script>
-      setTimeout(() => window.print(), 500)
-    </script>
-
-  </body>
-  </html>
-  `;
-
-  w.document.write(html);
-  w.document.close();
-    }
+    const w = window.open("", "_blank"); if (!w) return alert("Popup allow karo.");
+    const today = new Date().toLocaleDateString("en-IN");
+    const html = `<!doctype html><html><head><meta charset="utf-8" /><title>Invoice ${safe(id)}</title><style>
+      @page{size:A4;margin:8mm}*{box-sizing:border-box}body{margin:0;background:#e5e7eb;font-family:Arial,Helvetica,sans-serif;color:#102033}.sheet{width:100%;max-width:210mm;min-height:297mm;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 12px 35px rgba(0,0,0,.16)}.content{padding:10mm 12mm}.top{display:grid;grid-template-columns:1.2fr .8fr;gap:8mm;margin-bottom:7mm}.box{border:1px solid #dbe3ef;border-radius:14px;overflow:hidden;background:#fff}.box h2{margin:0;background:#0b2d6b;color:#fff;font-size:14px;padding:8px 10px}.box .in{padding:10px 12px}.kv{display:grid;grid-template-columns:118px 1fr;gap:7px;border-bottom:1px dashed #d6deea;padding:6px 0;font-size:12.5px}.kv:last-child{border-bottom:0}.kv b{color:#0b2d6b}.route{display:grid;grid-template-columns:1fr 34px 1fr;gap:8px;align-items:center;margin:7mm 0}.routeCard{border-radius:15px;background:#eff6ff;border:1px solid #bfdbfe;padding:13px;min-height:64px}.routeCard small{display:block;color:#64748b;font-weight:800;margin-bottom:5px}.arrow{height:34px;width:34px;border-radius:50%;background:#f97316;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:7mm}.pay{background:linear-gradient(135deg,#0b2d6b,#174ea6);color:#fff;border-radius:16px;padding:13px}.payRow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.25);font-size:13px}.payRow:last-child{border-bottom:0}.net{margin-top:8px;background:#f97316;border-radius:12px;padding:10px 12px;display:flex;justify-content:space-between;font-size:18px;font-weight:900}.note{margin-top:8mm;border-left:5px solid #f97316;background:#fff7ed;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.45}.footer{margin-top:8mm;display:flex;justify-content:space-between;align-items:flex-end;font-size:12px;color:#475569}.sign{text-align:right}.sign b{display:block;color:#0b2d6b;margin-top:22px}.printBtn{position:fixed;right:18px;top:18px;background:#16a34a;color:white;border:0;border-radius:12px;padding:12px 18px;font-weight:900;box-shadow:0 8px 20px rgba(0,0,0,.2)}@media print{body{background:#fff}.sheet{box-shadow:none;border-radius:0;width:auto;min-height:auto}.printBtn{display:none}.content{padding:8mm 10mm}}
+    </style></head><body><button class="printBtn" onclick="window.print()">Print / Save PDF</button><div class="sheet"><div class="content"><div class="top"><div><h1 style="color:#0b2d6b;margin:0">Vishwakarma Travels</h1><p style="margin:4px 0 0;color:#64748b">Premium Taxi • Airport Drop • Outstation Booking</p></div><div style="text-align:right;font-weight:900;color:#0b2d6b">BOOKING INVOICE</div></div><div class="top"><div class="box"><h2>Customer Details</h2><div class="in"><div class="kv"><b>Name</b><span>${safe(form.gender)} ${safe(form.customerName)}</span></div><div class="kv"><b>Mobile</b><span>+91 ${safe(cleanPhone(form.customerPhone))}</span></div><div class="kv"><b>Service</b><span>${safe(form.service)}</span></div></div></div><div class="box"><h2>Invoice Details</h2><div class="in"><div class="kv"><b>Booking ID</b><span>${safe(id)}</span></div><div class="kv"><b>Invoice Date</b><span>${safe(today)}</span></div><div class="kv"><b>Journey</b><span>${safe(formatDate(form.journeyDate))} ${safe(form.journeyTime)}</span></div></div></div></div><div class="route"><div class="routeCard"><small>PICKUP LOCATION</small><b>${safe(form.pickup)}</b></div><div class="arrow">→</div><div class="routeCard"><small>DROP LOCATION</small><b>${safe(form.drop)}</b></div></div><div class="grid2"><div class="box"><h2>Vehicle & Driver</h2><div class="in"><div class="kv"><b>Vehicle Type</b><span>${safe(form.vehicleType)}</span></div><div class="kv"><b>Vehicle Model</b><span>${safe(form.vehicleModel)}</span></div><div class="kv"><b>Vehicle No.</b><span>${safe(vehicleNo(form.vehicleNumber))}</span></div><div class="kv"><b>Driver Name</b><span>${safe(form.driverName)}</span></div><div class="kv"><b>Driver Mobile</b><span>${safe(form.driverMobile)}</span></div></div></div><div><div class="pay"><div class="payRow"><span>Total Fare</span><b>Rs ${safe(fare)}</b></div><div class="payRow"><span>Advance Paid</span><b>Rs ${safe(advance)}</b></div><div class="net"><span>Net Payable</span><span>Rs ${safe(net)}</span></div></div><div class="note"><b>Note:</b> Please verify all booking details before journey. Toll, parking or extra waiting charges may be additional if applicable.</div></div></div><div class="footer"><div><b>Thank you for choosing Vishwakarma Travels</b><br/>Safe journey wishes from our team.</div><div class="sign"><span>Authorized By</span><b>Vishwakarma Travels</b></div></div></div></div><script>setTimeout(function(){window.print()},500)</script></body></html>`;
+    w.document.write(html);
+    w.document.close();
+  }
 
   function downloadBookingCopy() {
     if (!validateDownload()) return;
@@ -299,12 +183,11 @@ export default function AdminPage() {
       x.fillStyle = "#111"; x.font = "bold 34px 'Times New Roman', Times, serif"; x.fillText(l, 75, y);
       x.fillStyle = "#111"; x.font = "34px 'Times New Roman', Times, serif";
       const ly = wrap(v || "-", 430, y, 560, 38);
-      
       return Math.max(y + 56, ly + 34);
     };
     const drawDetails = () => {
       x.fillStyle = "#0b2d6b"; x.font = "bold 46px 'Times New Roman', Times, serif"; x.fillText("Confirm Booking Details", 75, 640);
-let y = 705;
+      let y = 705;
       y = row("Customer Name", form.customerName, y);
       y = row("Mobile No.", cleanPhone(form.customerPhone), y);
       y = row("Pickup", form.pickup, y);
@@ -329,11 +212,12 @@ let y = 705;
         x.fillText("*", 95, yy); yy = wrap(t, 135, yy, 845, 36) + 34;
       }
       const footerY = yy + 120;
-
-      x.fillStyle = "#0b2d6b"; x.textAlign = "center";x.font = "bold 26px 'Times New Roman', Times, serif";
-x.fillText("Thank You And Wish You A Very Happy Journey", 540, footerY);
-x.font = "bold 34px 'Times New Roman', Times, serif";
-x.fillText("Vishwakarma Travels", 540, footerY + 42);  x.textAlign = "left";
+      x.fillStyle = "#0b2d6b"; x.textAlign = "center";
+      x.font = "bold 26px 'Times New Roman', Times, serif";
+      x.fillText("Thank You And Wish You A Very Happy Journey", 540, footerY);
+      x.font = "bold 34px 'Times New Roman', Times, serif";
+      x.fillText("Vishwakarma Travels", 540, footerY + 42);
+      x.textAlign = "left";
       const a = document.createElement("a");
       a.href = c.toDataURL("image/jpeg", .95);
       a.download = `Vishwakarma-Booking-${Date.now()}.jpg`;
@@ -438,4 +322,3 @@ const cancelBtn: CSSProperties = { padding: 11, borderRadius: 12, border: "2px s
 const greenBtn: CSSProperties = { padding: 11, borderRadius: 12, border: 0, background: "#16a34a", color: "white", fontWeight: 950 };
 
 // Stable backup version
-}
