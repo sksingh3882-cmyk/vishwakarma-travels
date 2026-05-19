@@ -24,6 +24,7 @@ export default function Home() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [showCustomerSuggestions, setShowCustomerSuggestions] = useState(false);
+  const [copyNotice, setCopyNotice] = useState(false);
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -76,11 +77,15 @@ export default function Home() {
     return (bookingPhone && bookingPhone === cleanPhone(form.mobile)) || (form.name && bookingName.includes(form.name.toLowerCase()));
   }).map((b) => b.drop_location || b.drop || "").filter(Boolean))).slice(0, 8);
 
+  function makeBookingData(source = form): BookingData {
+    const mobile = cleanPhone(source.mobile);
+    const message = `Hello Vishwakarma Travels,\n\nI would like to book a cab.\n\nName: ${source.name}\nMobile: ${mobile}\nService: ${source.service}\nVehicle: ${source.vehicle}\nPickup: ${source.pickup}\nDrop: ${source.drop}\nDate: ${source.bookingDate}\nTime: ${source.bookingTime}\n\nPlease share the booking confirmation details.\n\nThank you.`;
+    return { ...source, mobile, message };
+  }
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const mobile = cleanPhone(form.mobile);
-    const message = `Hello Vishwakarma Travels,\n\nI would like to book a cab.\n\nName: ${form.name}\nMobile: ${mobile}\nService: ${form.service}\nVehicle: ${form.vehicle}\nPickup: ${form.pickup}\nDrop: ${form.drop}\nDate: ${form.bookingDate}\nTime: ${form.bookingTime}\n\nPlease share the booking confirmation details.\n\nThank you.`;
-    setBookingData({ ...form, mobile, message });
+    setBookingData(makeBookingData());
     setShowConfirm(true);
   }
 
@@ -95,104 +100,64 @@ export default function Home() {
   }
 
   async function downloadBookingCopy() {
-    if (!bookingData) return;
+    const data = bookingData || makeBookingData();
+    if (!data.name || !data.mobile || !data.pickup || !data.drop) return alert("Booking copy ke liye name, mobile, pickup aur drop fill karo.");
     const canvas = document.createElement("canvas");
-    canvas.width = 900;
-    canvas.height = 1200;
+    canvas.width = 1080;
+    canvas.height = 1920;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     const drawRoundRect = (x: number, y: number, w: number, h: number, r: number) => {
-      ctx.beginPath();
-      ctx.moveTo(x + r, y);
-      ctx.lineTo(x + w - r, y);
-      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-      ctx.lineTo(x + w, y + h - r);
-      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-      ctx.lineTo(x + r, y + h);
-      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-      ctx.lineTo(x, y + r);
-      ctx.quadraticCurveTo(x, y, x + r, y);
-      ctx.closePath();
+      ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r); ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
     };
     const wrapText = (text: string, x: number, y: number, maxWidth: number, lineHeight: number) => {
-      const words = String(text || "-").split(" ");
-      let line = "";
+      const words = String(text || "-").split(" "); let line = "";
       for (let n = 0; n < words.length; n++) {
         const testLine = line + words[n] + " ";
-        if (ctx.measureText(testLine).width > maxWidth && n > 0) {
-          ctx.fillText(line, x, y);
-          line = words[n] + " ";
-          y += lineHeight;
-        } else line = testLine;
+        if (ctx.measureText(testLine).width > maxWidth && n > 0) { ctx.fillText(line, x, y); line = words[n] + " "; y += lineHeight; } else line = testLine;
       }
-      ctx.fillText(line, x, y);
-      return y;
+      ctx.fillText(line, x, y); return y;
     };
-    const labelValue = (label: string, value: string, y: number) => {
-      ctx.fillStyle = "#0b2d6b";
-      ctx.font = "bold 25px Arial";
-      ctx.fillText(label, 78, y);
-      ctx.fillStyle = "#111827";
-      ctx.font = "bold 30px Arial";
-      return wrapText(value, 78, y + 42, 730, 36) + 20;
+    const row = (label: string, value: string, y: number) => {
+      ctx.fillStyle = "#0b2d6b"; ctx.font = "bold 31px Arial"; ctx.fillText(label, 95, y);
+      ctx.fillStyle = "#0f172a"; ctx.font = "bold 36px Arial"; return wrapText(value || "-", 360, y, 610, 44) + 52;
     };
 
-    ctx.fillStyle = "#f4f7fb";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "white";
-    drawRoundRect(35, 35, 830, 1130, 28);
-    ctx.fill();
+    ctx.fillStyle = "#f4f7fb"; ctx.fillRect(0, 0, 1080, 1920);
+    ctx.fillStyle = "white"; drawRoundRect(30, 35, 1020, 1850, 28); ctx.fill();
 
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-      ctx.drawImage(img, 60, 55, 780, 250);
-      drawBody();
-    };
-    img.onerror = drawBody;
-    img.src = "/cars/popup_banner.png";
-
-    function drawBody() {
-      ctx.fillStyle = "#fff7ed";
-      drawRoundRect(70, 330, 190, 48, 24);
-      ctx.fill();
-      ctx.fillStyle = "#ea580c";
-      ctx.font = "bold 24px Arial";
-      ctx.fillText("Booking Copy", 92, 362);
-
-      ctx.fillStyle = "#0b2d6b";
-      ctx.font = "bold 42px Arial";
-      ctx.fillText("Vishwakarma Travels", 70, 430);
-      ctx.fillStyle = "#64748b";
-      ctx.font = "24px Arial";
-      ctx.fillText("Your ride booking details", 70, 466);
-
-      let y = 535;
-      y = labelValue("Customer Name", bookingData.name, y);
-      y = labelValue("Mobile", bookingData.mobile, y);
-      y = labelValue("Service", bookingData.service, y);
-      y = labelValue("Vehicle", bookingData.vehicle, y);
-      y = labelValue("Pickup", bookingData.pickup, y);
-      y = labelValue("Drop", bookingData.drop, y);
-      y = labelValue("Date & Time", `${formatDate(bookingData.bookingDate)} ${bookingData.bookingTime}`, y);
-
-      ctx.fillStyle = "#0b2d6b";
-      drawRoundRect(70, 1055, 760, 70, 20);
-      ctx.fill();
-      ctx.fillStyle = "white";
-      ctx.font = "bold 26px Arial";
-      ctx.fillText("Thank you for choosing Vishwakarma Travels", 120, 1099);
-
+    const drawBody = () => {
+      ctx.fillStyle = "#fff7ed"; drawRoundRect(80, 510, 230, 58, 29); ctx.fill();
+      ctx.fillStyle = "#ea580c"; ctx.font = "bold 28px Arial"; ctx.fillText("Booking Copy", 105, 548);
+      ctx.fillStyle = "#0b2d6b"; ctx.font = "bold 52px Arial"; ctx.fillText("Vishwakarma Travels", 80, 645);
+      ctx.fillStyle = "#64748b"; ctx.font = "31px Arial"; ctx.fillText("Your ride booking details", 80, 690);
+      let y = 790;
+      y = row("Customer Name", data.name, y);
+      y = row("Mobile", data.mobile, y);
+      y = row("Service", data.service, y);
+      y = row("Vehicle", data.vehicle, y);
+      y = row("Pickup", data.pickup, y);
+      y = row("Drop", data.drop, y);
+      y = row("Date & Time", `${formatDate(data.bookingDate)} ${data.bookingTime}`, y);
+      ctx.fillStyle = "#0b2d6b"; drawRoundRect(80, 1700, 920, 95, 22); ctx.fill();
+      ctx.fillStyle = "white"; ctx.font = "bold 30px Arial"; ctx.fillText("Thank you for choosing Vishwakarma Travels", 205, 1758);
       const a = document.createElement("a");
       a.href = canvas.toDataURL("image/jpeg", 0.95);
       a.download = `Vishwakarma-Booking-${Date.now()}.jpg`;
       a.click();
-    }
+      setCopyNotice(true);
+      setTimeout(() => setCopyNotice(false), 3500);
+    };
+
+    const img = new Image(); img.crossOrigin = "anonymous";
+    img.onload = () => { ctx.drawImage(img, 55, 60, 970, 410); drawBody(); };
+    img.onerror = drawBody;
+    img.src = "/cars/popup_banner.png";
   }
 
   return <main style={pageStyle}>
-    {showConfirm && bookingData && <div style={modalOverlay}><div style={modalCard}><button type="button" onClick={() => setShowConfirm(false)} style={modalCloseButton}>✕</button><img src="/cars/popup_banner.png" alt="Vishwakarma Travels" style={modalBanner} /><div style={modalBody}><div style={modalHead}><span style={modalPill}>Review Booking</span><h2 style={modalTitle}>Confirm Your Ride Details</h2><p style={modalSub}>Please check details before WhatsApp submit.</p></div><div style={compactGrid}><Info icon="👤" label="Name" value={bookingData.name} /><Info icon="📱" label="Mobile" value={bookingData.mobile} /><Info icon="⚙️" label="Service" value={bookingData.service} /><Info icon="🚘" label="Vehicle" value={bookingData.vehicle} /><Info icon="📅" label="Date" value={bookingData.bookingDate} /><Info icon="🕘" label="Time" value={bookingData.bookingTime} /></div><div style={routeBox}><div style={routePoint}><b>Pickup</b><span>{bookingData.pickup}</span></div><div style={routeArrow}>↓</div><div style={routePoint}><b>Drop</b><span>{bookingData.drop}</span></div></div><div style={modalActions}><button type="button" onClick={downloadBookingCopy} style={downloadButton}>Download Booking Copy</button><button type="button" onClick={confirmAndSubmit} style={confirmButton}>Send Booking Request</button></div></div></div></div>}
+    {showConfirm && bookingData && <div style={modalOverlay}><div style={modalCard}><button type="button" onClick={() => setShowConfirm(false)} style={modalCloseButton}>✕</button><img src="/cars/popup_banner.png" alt="Vishwakarma Travels" style={modalBanner} /><div style={modalBody}><div style={modalHead}><span style={modalPill}>Review Booking</span><h2 style={modalTitle}>Confirm Your Ride Details</h2><p style={modalSub}>Please check details before WhatsApp submit.</p></div><div style={compactGrid}><Info icon="👤" label="Name" value={bookingData.name} /><Info icon="📱" label="Mobile" value={bookingData.mobile} /><Info icon="⚙️" label="Service" value={bookingData.service} /><Info icon="🚘" label="Vehicle" value={bookingData.vehicle} /><Info icon="📅" label="Date" value={bookingData.bookingDate} /><Info icon="🕘" label="Time" value={bookingData.bookingTime} /></div><div style={routeBox}><div style={routePoint}><b>Pickup</b><span>{bookingData.pickup}</span></div><div style={routeArrow}>↓</div><div style={routePoint}><b>Drop</b><span>{bookingData.drop}</span></div></div><div style={modalActions}><button type="button" onClick={() => setShowConfirm(false)} style={cancelButton}>Cancel</button><button type="button" onClick={confirmAndSubmit} style={confirmButton}>Confirm & Submit</button></div></div></div></div>}
 
     <header style={headerStyle}><a href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}><div style={logoMark}>V</div><div><h1 style={logoTitle}>VISHWAKARMA</h1><p style={logoSub}>TRAVELS</p></div></a></header>
     <section style={heroStyle}><img src="/cars/banner.jpg" alt="Vishwakarma Travels Banner" style={{ width: "100%", borderRadius: 28, display: "block", boxShadow: "0 12px 35px rgba(0,0,0,0.15)" }} /></section>
@@ -206,7 +171,9 @@ export default function Home() {
       <input name="drop" placeholder="Drop Location" value={form.drop} onChange={(e) => update("drop", e.target.value)} style={inputStyle} required />
       {oldDrops.length > 0 && <div style={dropChipWrap}><b style={{ color: "#0b2d6b", fontSize: 13 }}>Old Drop Locations</b><div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>{oldDrops.map((d) => <button key={d} type="button" onClick={() => update("drop", d)} style={dropChip}>{d}</button>)}</div></div>}
       <div style={dateTimeGrid}><label style={dateTimeBox}><span style={dateTimeIcon}>📅</span><span style={dateTimeContent}><b style={dateTimeLabel}>Pickup Date</b><input type="date" name="bookingDate" value={form.bookingDate} onChange={(e) => update("bookingDate", e.target.value)} style={dateTimeInput} required /></span></label><label style={dateTimeBox}><span style={dateTimeIcon}>⏰</span><span style={dateTimeContent}><b style={dateTimeLabel}>Pickup Time</b><input type="time" name="bookingTime" value={form.bookingTime} onChange={(e) => update("bookingTime", e.target.value)} style={dateTimeInput} required /></span></label></div>
-      <button type="submit" style={searchButton}>Send Booking Request</button></form></section>
+      <div style={bookingActionRow}><button type="button" onClick={downloadBookingCopy} style={mainDownloadButton}>↧ Download Booking Copy</button><button type="submit" style={mainSendButton}>Send Booking Request</button></div>
+      {copyNotice && <div style={successNotice}><b>✓ Booking copy downloaded successfully!</b><span>Check your gallery/downloads for the booking copy.</span><button type="button" onClick={() => setCopyNotice(false)} style={noticeClose}>×</button></div>}
+    </form></section>
 
     <section style={contentSection}><h2 style={sectionTitle}>Our Services</h2><div style={gridStyle}>{services.map((item) => <a key={item.title} href={item.link} style={serviceCard}><div style={serviceIcon}>{item.icon}</div><h3 style={cardTitle}>{item.title}</h3><p style={mutedText}>{item.text}</p>{item.link === "/airport-drop" && <b style={openText}>Open One Way Page →</b>}</a>)}</div></section>
     <section style={contentSection}><h2 style={sectionTitle}>Available Vehicles</h2><div style={vehicleGrid}>{vehicles.map((vehicle) => <div key={vehicle.name} style={vehicleCard}><div style={vehicleImageBox}><img src={vehicle.image} alt={vehicle.name} style={vehiclePhoto} /></div><div style={{ flex: 1 }}><h3 style={{ margin: 0, color: "#0b2d6b", fontSize: 24 }}>{vehicle.name}</h3><p style={{ margin: "6px 0", color: "#64748b" }}>{vehicle.detail}</p><b style={{ color: "#f97316" }}>{vehicle.price}</b></div><a href={`https://wa.me/${phone}?text=${encodeURIComponent("Hello Vishwakarma Travels, I would like to book a " + vehicle.name + " cab.")}`} style={smallBookButton}>Book</a></div>)}</div></section>
@@ -237,7 +204,11 @@ const dateTimeIcon: CSSProperties = { width: 46, height: 46, borderRadius: 14, d
 const dateTimeContent: CSSProperties = { display: "grid", gap: 5, flex: 1 };
 const dateTimeLabel: CSSProperties = { color: "#0b2d6b", fontSize: 17, fontWeight: 950 };
 const dateTimeInput: CSSProperties = { border: 0, outline: 0, background: "transparent", color: "#0f172a", fontSize: 17, fontWeight: 800, width: "100%" };
-const searchButton: CSSProperties = { background: "linear-gradient(135deg,#f97316,#ea580c)", color: "white", padding: 16, border: 0, borderRadius: 16, fontSize: 18, fontWeight: 950 };
+const bookingActionRow: CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, alignItems: "center" };
+const mainDownloadButton: CSSProperties = { padding: "11px 8px", borderRadius: 14, border: "2px solid #f97316", background: "white", color: "#f97316", fontSize: 12, fontWeight: 950 };
+const mainSendButton: CSSProperties = { background: "linear-gradient(135deg,#f97316,#ea580c)", color: "white", padding: "12px 8px", border: 0, borderRadius: 14, fontSize: 12, fontWeight: 950 };
+const successNotice: CSSProperties = { position: "relative", display: "grid", gap: 4, background: "#dcfce7", color: "#166534", border: "1px solid #86efac", borderRadius: 16, padding: "13px 38px 13px 14px", fontSize: 13 };
+const noticeClose: CSSProperties = { position: "absolute", right: 10, top: 8, border: 0, background: "transparent", fontSize: 22, color: "#166534" };
 const contentSection: CSSProperties = { maxWidth: 1120, margin: "0 auto", padding: "22px 16px" };
 const sectionTitle: CSSProperties = { textAlign: "center", fontSize: 30, margin: "5px 0 6px", color: "#0b2d6b" };
 const mutedText: CSSProperties = { color: "#64748b", margin: 0, lineHeight: 1.45 };
@@ -270,6 +241,6 @@ const infoValue: CSSProperties = { display: "block", color: "#0f172a", fontSize:
 const routeBox: CSSProperties = { marginTop: 9, background: "linear-gradient(135deg,#eff6ff,#fff7ed)", border: "1px solid #bfdbfe", borderRadius: 16, padding: 10 };
 const routePoint: CSSProperties = { display: "grid", gap: 3, fontSize: 13, color: "#0f172a" };
 const routeArrow: CSSProperties = { width: 24, height: 24, display: "grid", placeItems: "center", borderRadius: "50%", background: "#f97316", color: "white", fontWeight: 950, margin: "6px 0" };
-const modalActions: CSSProperties = { position: "sticky", bottom: 0, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 12, paddingTop: 10, background: "white" };
-const downloadButton: CSSProperties = { padding: "11px 8px", borderRadius: 14, border: "2px solid #0b2d6b", background: "white", color: "#0b2d6b", fontSize: 12, fontWeight: 950, cursor: "pointer" };
-const confirmButton: CSSProperties = { padding: "11px 8px", borderRadius: 14, border: 0, background: "linear-gradient(135deg,#0b57ff,#0052cc)", color: "white", fontSize: 12, fontWeight: 950, cursor: "pointer" };
+const modalActions: CSSProperties = { position: "sticky", bottom: 0, display: "grid", gridTemplateColumns: "0.8fr 1.2fr", gap: 9, marginTop: 12, paddingTop: 10, background: "white" };
+const cancelButton: CSSProperties = { padding: "12px", borderRadius: 14, border: "2px solid #ef4444", background: "white", color: "#ef4444", fontSize: 15, fontWeight: 950, cursor: "pointer" };
+const confirmButton: CSSProperties = { padding: "12px", borderRadius: 14, border: 0, background: "linear-gradient(135deg,#0b57ff,#0052cc)", color: "white", fontSize: 15, fontWeight: 950, cursor: "pointer" };
