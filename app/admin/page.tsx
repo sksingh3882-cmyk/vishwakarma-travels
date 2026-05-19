@@ -22,18 +22,8 @@ const initialForm: FormDataState = {
 
 function cleanPhone(v: string) {
   let p = String(v || "").replace(/\D/g, "");
-
-  // +91 / 91 remove
-  if (p.startsWith("91") && p.length > 10) {
-    p = p.slice(-10);
-  }
-
-  // 0 remove
-  if (p.startsWith("0") && p.length > 10) {
-    p = p.slice(-10);
-  }
-
-  // Always final 10 digit
+  if (p.startsWith("91") && p.length > 10) p = p.slice(-10);
+  if (p.startsWith("0") && p.length > 10) p = p.slice(-10);
   return p.slice(-10);
 }
 function vehicleNo(v: string) { return String(v || "").replace(/[^a-zA-Z0-9]/g, "").toUpperCase(); }
@@ -57,6 +47,7 @@ export default function AdminPage() {
   const [deletingBookingId, setDeletingBookingId] = useState("");
   const [showCustomerSuggestions, setShowCustomerSuggestions] = useState(false);
   const [showVehicleSuggestions, setShowVehicleSuggestions] = useState(false);
+  const [downloadNotice, setDownloadNotice] = useState(false);
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -128,6 +119,12 @@ export default function AdminPage() {
     if (advance > fare) return alert("Advance fare se zyada nahi ho sakta."), false;
     return true;
   }
+  function validateDownload() {
+    if (!form.customerName.trim()) return alert("Customer name fill karo."), false;
+    if (cleanPhone(form.customerPhone).length !== 10) return alert("Customer WhatsApp number 10 digit ka hona chahiye."), false;
+    if (!form.pickup.trim() || !form.drop.trim()) return alert("Pickup aur drop location fill karo."), false;
+    return true;
+  }
   function submit(e: FormEvent<HTMLFormElement>) { e.preventDefault(); if (!validate()) return; setPendingBookingId(`VT-${Date.now()}`); setConfirmMode("save"); setShowConfirmPopup(true); }
   function sendWhatsApp() { if (!validate()) return; setPendingBookingId(lastBookingId || `VT-${Date.now()}`); setConfirmMode("whatsapp"); setShowConfirmPopup(true); }
 
@@ -162,6 +159,79 @@ export default function AdminPage() {
     w.document.write(html);
     w.document.close();
   }
+
+  function downloadBookingCopy() {
+    if (!validateDownload()) return;
+    const c = document.createElement("canvas");
+    c.width = 1080;
+    c.height = 1920;
+    const x = c.getContext("2d");
+    if (!x) return;
+
+    const wrap = (t: string, xx: number, y: number, w: number, lh: number) => {
+      let line = "";
+      for (const word of String(t || "-").split(" ")) {
+        const test = line + word + " ";
+        if (x.measureText(test).width > w && line) { x.fillText(line.trim(), xx, y); line = word + " "; y += lh; }
+        else line = test;
+      }
+      x.fillText(line.trim(), xx, y);
+      return y;
+    };
+    const rr = (a: number, b: number, w: number, h: number, r: number) => { x.beginPath(); x.roundRect(a, b, w, h, r); x.fill(); };
+    const row = (l: string, v: string, y: number) => {
+      x.fillStyle = "#111"; x.font = "bold 34px 'Times New Roman', Times, serif"; x.fillText(l, 75, y);
+      x.fillStyle = "#111"; x.font = "34px 'Times New Roman', Times, serif";
+      const ly = wrap(v || "-", 430, y, 560, 38);
+      x.strokeStyle = "#e2e8f0"; x.lineWidth = 2; x.beginPath(); x.moveTo(75, Math.max(y + 22, ly + 12)); x.lineTo(1005, Math.max(y + 22, ly + 12)); x.stroke();
+      return Math.max(y + 56, ly + 34);
+    };
+    const draw = () => {
+      x.fillStyle = "#f4f7fb"; x.fillRect(0, 0, 1080, 1920);
+      x.fillStyle = "#fff"; rr(18, 18, 1044, 1884, 28);
+      x.fillStyle = "#0b2d6b"; x.font = "bold 46px 'Times New Roman', Times, serif"; x.fillText("Confirm Booking Details", 75, 545);
+      let y = 610;
+      y = row("Customer Name", form.customerName, y);
+      y = row("Mobile No.", cleanPhone(form.customerPhone), y);
+      y = row("Pickup", form.pickup, y);
+      y = row("Drop", form.drop, y);
+      y = row("Date", formatDate(form.journeyDate), y);
+      y = row("Time", form.journeyTime, y);
+      y = row("Vehicle No.", vehicleNo(form.vehicleNumber), y);
+      y = row("Vehicle Type", form.vehicleType, y);
+      y = row("Vehicle Model", form.vehicleModel, y);
+      y = row("Driver Name", form.driverName, y);
+      y = row("Driver Mobile", cleanPhone(form.driverMobile), y);
+      y = row("Fare", `Rs ${fare}`, y);
+      y = row("Advance", `Rs ${advance}`, y);
+      x.fillStyle = "#ecfdf5"; rr(75, y + 10, 930, 82, 24);
+      x.fillStyle = "#15803d"; x.font = "bold 36px 'Times New Roman', Times, serif"; x.fillText("Net Payable", 105, y + 62);
+      x.textAlign = "right"; x.fillText(`Rs ${net}`, 970, y + 62); x.textAlign = "left";
+      x.fillStyle = "#087a31"; x.font = "bold 34px 'Times New Roman', Times, serif"; x.fillText("Declaration", 75, y + 165);
+      x.strokeStyle = "#087a31"; x.lineWidth = 5; x.beginPath(); x.moveTo(75, y + 190); x.lineTo(1005, y + 190); x.stroke();
+      x.fillStyle = "#111"; x.font = "30px 'Times New Roman', Times, serif";
+      let yy = y + 245;
+      for (const t of ["Book A Cab Atleast 24 Hour Before Travelling Otherwise Booking May Not Be Confirmed", "After the booking is Confirmed, Customer will have to make the Advance Payment", "Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances"]) {
+        x.fillText("*", 95, yy); yy = wrap(t, 135, yy, 845, 38) + 45;
+      }
+      x.strokeStyle = "#111"; x.lineWidth = 4; x.setLineDash([22, 14]); x.beginPath(); x.moveTo(95, 1768); x.lineTo(985, 1768); x.stroke(); x.setLineDash([]);
+      x.fillStyle = "#0b2d6b"; x.textAlign = "center"; x.font = "bold 35px 'Times New Roman', Times, serif"; x.fillText("Thank You And Wish You A Very Happy Journey", 540, 1822); x.font = "bold 42px 'Times New Roman', Times, serif"; x.fillText("Vishwakarma Travels", 540, 1872); x.textAlign = "left";
+      const a = document.createElement("a");
+      a.href = c.toDataURL("image/jpeg", .95);
+      a.download = `Vishwakarma-Booking-${Date.now()}.jpg`;
+      a.click();
+      setDownloadNotice(true);
+      setTimeout(() => setDownloadNotice(false), 3500);
+    };
+    x.fillStyle = "#f4f7fb"; x.fillRect(0, 0, 1080, 1920);
+    x.fillStyle = "#fff"; rr(18, 18, 1044, 1884, 28);
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => { x.drawImage(img, 42, 42, 996, 480); draw(); };
+    img.onerror = draw;
+    img.src = "/cars/popup_banner.png";
+  }
+
   async function confirm() {
     const id = pendingBookingId || lastBookingId || `VT-${Date.now()}`;
     setLoading(true);
@@ -201,7 +271,7 @@ export default function AdminPage() {
     <div style={{ maxWidth: 1200, margin: "0 auto" }}><header style={header}><h1>Vishwakarma Travels Admin Dashboard</h1><p>Booking, Bill, WhatsApp aur Database Management</p><button onClick={logout} style={whiteBtn}>Logout</button></header>
     <section style={stats}><Stat title="Customers" value={customers.length} onClick={() => setActiveView("customers")} /><Stat title="Vehicles" value={vehicles.length} onClick={() => setActiveView("vehicles")} /><Stat title="Bookings" value={bookings.length} onClick={() => setActiveView("bookings")} /></section>
     {activeView && <section style={panel}><button onClick={() => setActiveView("")} style={whiteBtn}>Close</button>{activeView === "customers" && customers.map((c, i) => <p key={i}><b>{c.name || "-"}</b> - {c.mobile || "-"} - {c.address || "-"}</p>)}{activeView === "vehicles" && vehicles.map((v, i) => <p key={i}><b>{v.vehicle_number || v.vehicleNumber || "-"}</b> - {v.vehicle_model || v.vehicleModel || "-"} - {v.driver_name || v.driverName || "-"}</p>)}{activeView === "bookings" && bookings.map((b, i) => <p key={i}><b>{b.booking_id || "-"}</b> - {b.customer_name || "-"} - Rs {b.fare || 0}</p>)}</section>}
-    <form onSubmit={submit} style={panel}><h2>New Booking</h2><div style={grid}><select value={form.gender} onChange={(e) => update("gender", e.target.value)} style={input}><option>Mr.</option><option>Mrs.</option><option>Ms.</option></select><div style={fieldWrap}><input placeholder="Customer Name" value={form.customerName} onFocus={() => setShowCustomerSuggestions(true)} onChange={(e) => { update("customerName", e.target.value); setShowCustomerSuggestions(true); }} onBlur={() => setTimeout(() => { findCustomer(); setShowCustomerSuggestions(false); }, 180)} style={input} required />{showCustomerSuggestions && customerSuggestions.length > 0 && <div style={suggestBox}>{customerSuggestions.map((c, i) => <button key={`${c.mobile || c.phone || i}-${i}`} type="button" onMouseDown={() => applyCustomer(c)} style={suggestItem}><b>{c.name || "No Name"}</b><span>{cleanPhone(c.mobile || c.phone || "") || "No Mobile"}</span><small>{c.address || "No Address"}</small></button>)}</div>}</div><input type="text" inputMode="tel" placeholder="Customer WhatsApp Number" value={form.customerPhone} onChange={(e) => { update("customerPhone", e.target.value); setShowCustomerSuggestions(true); }} onBlur={findCustomer} style={input} required /><input placeholder="Pickup Location / Address" value={form.pickup} onChange={(e) => update("pickup", e.target.value)} style={input} required /><input placeholder="Drop Location" value={form.drop} onChange={(e) => update("drop", e.target.value)} style={input} required />{drops.length > 0 && <div style={fullRow}><b style={{ color: "#0b2d6b" }}>Old Drop Location:</b><div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>{drops.map((d) => <button key={d} type="button" onClick={() => update("drop", d)} style={chip}>{d}</button>)}</div></div>}<input type="date" value={form.journeyDate} onChange={(e) => update("journeyDate", e.target.value)} style={input} required /><input placeholder="Time e.g. 5:30 PM" value={form.journeyTime} onChange={(e) => update("journeyTime", e.target.value)} style={input} required /><div style={fieldWrap}><input placeholder="Vehicle Number" value={form.vehicleNumber} onFocus={() => setShowVehicleSuggestions(true)} onChange={(e) => fillVehicle(e.target.value)} onBlur={() => setTimeout(() => setShowVehicleSuggestions(false), 180)} style={input} />{showVehicleSuggestions && vehicleSearch.length >= 2 && <div style={suggestBox}>{vehicleSuggestions.map((v, i) => <button key={`${v.vehicle_number || v.vehicleNumber || i}-${i}`} type="button" onMouseDown={() => applyVehicle(v)} style={suggestItem}><b>{vehicleNo(v.vehicle_number || v.vehicleNumber || "")}</b><span>{v.vehicle_type || v.vehicleType || "Vehicle"} • {v.vehicle_model || v.vehicleModel || "Model"}</span><small>{v.driver_name || v.driverName || "Driver not saved"} {cleanPhone(v.phone || v.driver_mobile || v.driverMobile || "") ? `• ${cleanPhone(v.phone || v.driver_mobile || v.driverMobile || "")}` : ""}</small></button>)}{!hasExactVehicle && <div style={newHint}>+ New vehicle "{vehicleSearch}" — type, model, driver details fill karke submit karte hi save ho jayega.</div>}</div>}</div><select value={form.vehicleType} onChange={(e) => update("vehicleType", e.target.value)} style={input}><option>Sedan</option><option>SUV</option><option>SUV With Carrier</option><option>Sedan With Carrier</option><option>Mini Passenger Bus</option></select><select value={form.vehicleModel} onChange={(e) => update("vehicleModel", e.target.value)} style={input}><option>Desire</option><option>Ertiga</option><option>Innova</option><option>Innova Crysta</option><option>Ertiga With Carrier</option><option>Innova With Carrier</option><option>Crysta With Carrier</option><option>Force Traveller</option></select><input placeholder="Driver Name" value={form.driverName} onChange={(e) => update("driverName", e.target.value)} style={input} /><input type="text" inputMode="tel" placeholder="Driver Mobile" value={form.driverMobile} onChange={(e) => update("driverMobile", e.target.value)} style={input} /><select value={form.service} onChange={(e) => update("service", e.target.value)} style={input}><option>One Way Drop Pickup</option><option>Jamshedpur to Ranchi Airport Drop</option><option>Ranchi Airport to Jamshedpur Drop</option><option>Jamshedpur to Kolkata Airport Drop</option><option>Kolkata Airport to Jamshedpur Drop</option><option>Local Movment</option><option>Outstation Movment</option><option>Short Time Booking</option><option>Marriage Function Booking</option></select><input type="number" placeholder="Total Fare" value={form.fare} onChange={(e) => update("fare", e.target.value)} style={input} required /><input type="number" placeholder="Advance Paid" value={form.advance} onChange={(e) => update("advance", e.target.value)} style={input} /></div><div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 16 }}><button disabled={loading} style={saveBtn}>{loading ? "Saving..." : "Save + PDF"}</button><button type="button" onClick={() => pdf(lastBookingId || `VT-${Date.now()}`)} style={downloadBtn}>Download</button><button type="button" onClick={sendWhatsApp} style={waBtn}>Send WhatsApp</button></div></form>
+    <form onSubmit={submit} style={panel}><h2>New Booking</h2><div style={grid}><select value={form.gender} onChange={(e) => update("gender", e.target.value)} style={input}><option>Mr.</option><option>Mrs.</option><option>Ms.</option></select><div style={fieldWrap}><input placeholder="Customer Name" value={form.customerName} onFocus={() => setShowCustomerSuggestions(true)} onChange={(e) => { update("customerName", e.target.value); setShowCustomerSuggestions(true); }} onBlur={() => setTimeout(() => { findCustomer(); setShowCustomerSuggestions(false); }, 180)} style={input} required />{showCustomerSuggestions && customerSuggestions.length > 0 && <div style={suggestBox}>{customerSuggestions.map((c, i) => <button key={`${c.mobile || c.phone || i}-${i}`} type="button" onMouseDown={() => applyCustomer(c)} style={suggestItem}><b>{c.name || "No Name"}</b><span>{cleanPhone(c.mobile || c.phone || "") || "No Mobile"}</span><small>{c.address || "No Address"}</small></button>)}</div>}</div><input type="text" inputMode="tel" placeholder="Customer WhatsApp Number" value={form.customerPhone} onChange={(e) => { update("customerPhone", e.target.value); setShowCustomerSuggestions(true); }} onBlur={findCustomer} style={input} required /><input placeholder="Pickup Location / Address" value={form.pickup} onChange={(e) => update("pickup", e.target.value)} style={input} required /><input placeholder="Drop Location" value={form.drop} onChange={(e) => update("drop", e.target.value)} style={input} required />{drops.length > 0 && <div style={fullRow}><b style={{ color: "#0b2d6b" }}>Old Drop Location:</b><div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>{drops.map((d) => <button key={d} type="button" onClick={() => update("drop", d)} style={chip}>{d}</button>)}</div></div>}<input type="date" value={form.journeyDate} onChange={(e) => update("journeyDate", e.target.value)} style={input} required /><input placeholder="Time e.g. 5:30 PM" value={form.journeyTime} onChange={(e) => update("journeyTime", e.target.value)} style={input} required /><div style={fieldWrap}><input placeholder="Vehicle Number" value={form.vehicleNumber} onFocus={() => setShowVehicleSuggestions(true)} onChange={(e) => fillVehicle(e.target.value)} onBlur={() => setTimeout(() => setShowVehicleSuggestions(false), 180)} style={input} />{showVehicleSuggestions && vehicleSearch.length >= 2 && <div style={suggestBox}>{vehicleSuggestions.map((v, i) => <button key={`${v.vehicle_number || v.vehicleNumber || i}-${i}`} type="button" onMouseDown={() => applyVehicle(v)} style={suggestItem}><b>{vehicleNo(v.vehicle_number || v.vehicleNumber || "")}</b><span>{v.vehicle_type || v.vehicleType || "Vehicle"} • {v.vehicle_model || v.vehicleModel || "Model"}</span><small>{v.driver_name || v.driverName || "Driver not saved"} {cleanPhone(v.phone || v.driver_mobile || v.driverMobile || "") ? `• ${cleanPhone(v.phone || v.driver_mobile || v.driverMobile || "")}` : ""}</small></button>)}{!hasExactVehicle && <div style={newHint}>+ New vehicle "{vehicleSearch}" — type, model, driver details fill karke submit karte hi save ho jayega.</div>}</div>}</div><select value={form.vehicleType} onChange={(e) => update("vehicleType", e.target.value)} style={input}><option>Sedan</option><option>SUV</option><option>SUV With Carrier</option><option>Sedan With Carrier</option><option>Mini Passenger Bus</option></select><select value={form.vehicleModel} onChange={(e) => update("vehicleModel", e.target.value)} style={input}><option>Desire</option><option>Ertiga</option><option>Innova</option><option>Innova Crysta</option><option>Ertiga With Carrier</option><option>Innova With Carrier</option><option>Crysta With Carrier</option><option>Force Traveller</option></select><input placeholder="Driver Name" value={form.driverName} onChange={(e) => update("driverName", e.target.value)} style={input} /><input type="text" inputMode="tel" placeholder="Driver Mobile" value={form.driverMobile} onChange={(e) => update("driverMobile", e.target.value)} style={input} /><select value={form.service} onChange={(e) => update("service", e.target.value)} style={input}><option>One Way Drop Pickup</option><option>Jamshedpur to Ranchi Airport Drop</option><option>Ranchi Airport to Jamshedpur Drop</option><option>Jamshedpur to Kolkata Airport Drop</option><option>Kolkata Airport to Jamshedpur Drop</option><option>Local Movment</option><option>Outstation Movment</option><option>Short Time Booking</option><option>Marriage Function Booking</option></select><input type="number" placeholder="Total Fare" value={form.fare} onChange={(e) => update("fare", e.target.value)} style={input} required /><input type="number" placeholder="Advance Paid" value={form.advance} onChange={(e) => update("advance", e.target.value)} style={input} /></div><div style={buttonRow}><button type="button" onClick={downloadBookingCopy} style={smallDownloadBtn}>Download</button><button disabled={loading} style={smallSaveBtn}>{loading ? "Saving..." : "Save + PDF"}</button><button type="button" onClick={sendWhatsApp} style={smallWaBtn}>WhatsApp</button></div>{downloadNotice && <div style={downloadOk}>✓ Booking copy downloaded successfully!</div>}</form>
     <section style={panel}><h2>Recent Bookings</h2><input placeholder="Search booking by name, phone, pickup..." value={searchBooking} onChange={(e) => setSearchBooking(e.target.value)} style={input} /><div style={{ overflowX: "auto", marginTop: 12 }}><table style={{ width: "100%", minWidth: 900, borderCollapse: "collapse" }}><thead><tr style={{ background: "#0b2d6b", color: "white" }}><th style={th}>Booking ID</th><th style={th}>Customer</th><th style={th}>Phone</th><th style={th}>Route</th><th style={th}>Date</th><th style={th}>Fare</th><th style={th}>Action</th></tr></thead><tbody>{filtered.map((b, i) => <tr key={b.booking_id || i}><td style={td}>{b.booking_id || "-"}</td><td style={td}>{b.customer_name || "-"}</td><td style={td}>{b.customer_phone || "-"}</td><td style={td}>{b.pickup || "-"} to {b.drop_location || "-"}</td><td style={td}>{b.journey_date || "-"}</td><td style={td}>Rs {b.fare || 0}</td><td style={td}><button onClick={() => edit(b)} style={editBtn}>Edit</button><button onClick={() => pdf(b.booking_id || "")} style={pdfBtn}>PDF</button><button disabled={deletingBookingId === b.booking_id} onClick={() => removeBooking(b.booking_id)} style={delBtn}>{deletingBookingId === b.booking_id ? "Deleting..." : "Delete"}</button></td></tr>)}{bookings.length === 0 && <tr><td colSpan={7} style={{ padding: 20, textAlign: "center" }}>No booking found</td></tr>}</tbody></table></div></section></div>
   </main>;
 }
@@ -226,9 +296,12 @@ const input: CSSProperties = { padding: 12, borderRadius: 12, border: "1px solid
 const blueBtn: CSSProperties = { width: "100%", padding: 13, borderRadius: 12, border: 0, background: "#0b2d6b", color: "white", fontWeight: "bold", marginTop: 15 };
 const whiteBtn: CSSProperties = { padding: "10px 16px", borderRadius: 10, border: 0, fontWeight: "bold" };
 const chip: CSSProperties = { padding: "8px 10px", borderRadius: 10, border: "1px solid #0b2d6b", background: "white", color: "#0b2d6b", fontWeight: "bold" };
-const saveBtn: CSSProperties = { padding: "14px 20px", background: "#15803d", color: "white", border: 0, borderRadius: 12, fontWeight: "bold" };
-const downloadBtn: CSSProperties = { padding: "14px 20px", background: "#f97316", color: "white", border: 0, borderRadius: 12, fontWeight: "bold" };
-const waBtn: CSSProperties = { padding: "14px 20px", background: "#25D366", color: "white", border: 0, borderRadius: 12, fontWeight: "bold" };
+const buttonRow: CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginTop: 14 };
+const smallBaseBtn: CSSProperties = { minWidth: 0, padding: "11px 6px", color: "white", border: 0, borderRadius: 12, fontWeight: 900, fontSize: 13, lineHeight: 1.1 };
+const smallDownloadBtn: CSSProperties = { ...smallBaseBtn, background: "#f97316" };
+const smallSaveBtn: CSSProperties = { ...smallBaseBtn, background: "#15803d" };
+const smallWaBtn: CSSProperties = { ...smallBaseBtn, background: "#25D366" };
+const downloadOk: CSSProperties = { marginTop: 12, background: "#dcfce7", color: "#166534", padding: "12px 14px", borderRadius: 14, fontWeight: 800 };
 const th: CSSProperties = { padding: 10, textAlign: "left" };
 const td: CSSProperties = { padding: 10, borderBottom: "1px solid #e2e8f0" };
 const editBtn: CSSProperties = { padding: "8px 12px", borderRadius: 10, border: 0, background: "#2563eb", color: "white", fontWeight: "bold", marginRight: 8 };
