@@ -45,22 +45,7 @@ export default function Home() {
     const bookingDate = String(form.get("bookingDate") || "");
     const bookingTime = String(form.get("bookingTime") || "");
 
-    const message = `Hello Vishwakarma Travels,
-
-I would like to book a cab.
-
-Name: ${name}
-Mobile: ${mobile}
-Service: ${service}
-Vehicle: ${vehicle}
-Pickup: ${pickup}
-Drop: ${drop}
-Date: ${bookingDate}
-Time: ${bookingTime}
-
-Please share the booking confirmation details.
-
-Thank you.`;
+    const message = `Hello Vishwakarma Travels,\n\nI would like to book a cab.\n\nName: ${name}\nMobile: ${mobile}\nService: ${service}\nVehicle: ${vehicle}\nPickup: ${pickup}\nDrop: ${drop}\nDate: ${bookingDate}\nTime: ${bookingTime}\n\nPlease share the booking confirmation details.\n\nThank you.`;
 
     setBookingData({ name, mobile, service, vehicle, pickup, drop, bookingDate, bookingTime, message });
     setShowConfirm(true);
@@ -111,34 +96,39 @@ Thank you.`;
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(bookingData.message)}`, "_blank");
     setShowConfirm(false);
   }
-  
+
   return (
     <main style={pageStyle}>
       {showConfirm && bookingData && (
         <div style={modalOverlay}>
           <div style={modalCard}>
-            <button type="button" onClick={() => setShowConfirm(false)} style={modalCloseButton}>
-              ✕
-            </button>
-
+            <button type="button" onClick={() => setShowConfirm(false)} style={modalCloseButton}>✕</button>
             <img src="/cars/popup_banner.png" alt="Vishwakarma Travels" style={modalBanner} />
 
             <div style={modalBody}>
-              <h2 style={modalTitle}>Please Confirm Booking Details</h2>
+              <div style={modalHead}>
+                <span style={modalPill}>Review Booking</span>
+                <h2 style={modalTitle}>Confirm Your Ride Details</h2>
+                <p style={modalSub}>Please check details before WhatsApp submit.</p>
+              </div>
 
-              <div style={detailList}>
-                <div style={detailRow}><span style={detailIcon}>👤</span><b>Name</b><span>:</span><span>{bookingData.name}</span></div>
-                <div style={detailRow}><span style={detailIcon}>📱</span><b>Mobile</b><span>:</span><span>{bookingData.mobile}</span></div>
-                <div style={detailRow}><span style={detailIcon}>⚙️</span><b>Service</b><span>:</span><span>{bookingData.service}</span></div>
-                <div style={detailRow}><span style={detailIcon}>🚘</span><b>Vehicle</b><span>:</span><span>{bookingData.vehicle}</span></div>
-                <div style={detailRow}><span style={detailIcon}>📍</span><b>Pickup</b><span>:</span><span>{bookingData.pickup}</span></div>
-                <div style={detailRow}><span style={detailIcon}>📍</span><b>Drop</b><span>:</span><span>{bookingData.drop}</span></div>
-                <div style={detailRow}><span style={detailIcon}>📅</span><b>Date</b><span>:</span><span>{bookingData.bookingDate}</span></div>
-                <div style={detailRow}><span style={detailIcon}>🕘</span><b>Time</b><span>:</span><span>{bookingData.bookingTime}</span></div>
+              <div style={compactGrid}>
+                <Info icon="👤" label="Name" value={bookingData.name} />
+                <Info icon="📱" label="Mobile" value={bookingData.mobile} />
+                <Info icon="⚙️" label="Service" value={bookingData.service} />
+                <Info icon="🚘" label="Vehicle" value={bookingData.vehicle} />
+                <Info icon="📅" label="Date" value={bookingData.bookingDate} />
+                <Info icon="🕘" label="Time" value={bookingData.bookingTime} />
+              </div>
+
+              <div style={routeBox}>
+                <div style={routePoint}><b>Pickup</b><span>{bookingData.pickup}</span></div>
+                <div style={routeArrow}>↓</div>
+                <div style={routePoint}><b>Drop</b><span>{bookingData.drop}</span></div>
               </div>
 
               <div style={modalActions}>
-                <button type="button" onClick={() => setShowConfirm(false)} style={cancelButton}>Cancel</button>
+                <button type="button" onClick={() => setShowConfirm(false)} style={cancelButton}>Edit</button>
                 <button type="button" onClick={confirmAndSubmit} style={confirmButton}>Confirm & Submit</button>
               </div>
             </div>
@@ -157,16 +147,7 @@ Thank you.`;
       </header>
 
       <section style={heroStyle}>
-        <img
-          src="/cars/banner.jpg"
-          alt="Vishwakarma Travels Banner"
-          style={{
-            width: "100%",
-            borderRadius: 28,
-            display: "block",
-            boxShadow: "0 12px 35px rgba(0,0,0,0.15)",
-          }}
-        />
+        <img src="/cars/banner.jpg" alt="Vishwakarma Travels Banner" style={{ width: "100%", borderRadius: 28, display: "block", boxShadow: "0 12px 35px rgba(0,0,0,0.15)" }} />
       </section>
 
       <section id="booking" style={bookingWrap}>
@@ -243,9 +224,7 @@ Thank you.`;
         <div style={vehicleGrid}>
           {vehicles.map((vehicle) => (
             <div key={vehicle.name} style={vehicleCard}>
-              <div style={vehicleImageBox}>
-                <img src={vehicle.image} alt={vehicle.name} style={vehiclePhoto} />
-              </div>
+              <div style={vehicleImageBox}><img src={vehicle.image} alt={vehicle.name} style={vehiclePhoto} /></div>
               <div style={{ flex: 1 }}>
                 <h3 style={{ margin: 0, color: "#0b2d6b", fontSize: 24 }}>{vehicle.name}</h3>
                 <p style={{ margin: "6px 0", color: "#64748b" }}>{vehicle.detail}</p>
@@ -269,6 +248,10 @@ Thank you.`;
       </footer>
     </main>
   );
+}
+
+function Info({ icon, label, value }: { icon: string; label: string; value: string }) {
+  return <div style={infoCard}><span style={infoIcon}>{icon}</span><span><b style={infoLabel}>{label}</b><small style={infoValue}>{value || "-"}</small></span></div>;
 }
 
 const pageStyle: CSSProperties = { minHeight: "100vh", background: "#f4f7fb", fontFamily: "Arial, sans-serif", color: "#0f172a" };
@@ -302,15 +285,23 @@ const vehiclePhoto: CSSProperties = { width: "100%", height: "100%", objectFit: 
 const smallBookButton: CSSProperties = { background: "#0b2d6b", color: "white", padding: "10px 14px", borderRadius: 14, textDecoration: "none", fontWeight: 950 };
 const helpCard: CSSProperties = { maxWidth: 1088, margin: "18px auto", padding: 22, borderRadius: 24, background: "linear-gradient(135deg,#0b2d6b,#1d4ed8)", color: "white" };
 const footerStyle: CSSProperties = { textAlign: "center", padding: "25px 18px 40px", color: "#475569" };
-const modalOverlay: CSSProperties = { position: "fixed", inset: 0, background: "rgba(0,0,0,0.72)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 14 };
-const modalCard: CSSProperties = { width: "100%", maxWidth: 920, maxHeight: "92vh", overflowY: "auto", background: "white", borderRadius: 24, position: "relative", boxShadow: "0 22px 60px rgba(0,0,0,0.35)" };
-const modalCloseButton: CSSProperties = { position: "absolute", top: 12, right: 12, width: 44, height: 44, borderRadius: "50%", border: 0, background: "white", color: "#0f172a", fontSize: 28, fontWeight: 900, cursor: "pointer", zIndex: 2, boxShadow: "0 6px 18px rgba(0,0,0,0.2)" };
-const modalBanner: CSSProperties = { width: "100%", display: "block" };
-const modalBody: CSSProperties = { padding: "22px 26px 26px" };
-const modalTitle: CSSProperties = { color: "#0b2d6b", fontSize: "clamp(23px,4vw,34px)", margin: "0 0 18px", fontWeight: 950 };
-const detailList: CSSProperties = { display: "grid", gap: 0 };
-const detailRow: CSSProperties = { display: "grid", gridTemplateColumns: "36px minmax(86px,140px) 16px 1fr", gap: 10, alignItems: "center", borderBottom: "1px solid #e2e8f0", padding: "11px 0", fontSize: "clamp(16px,3.4vw,22px)", color: "#0f172a" };
-const detailIcon: CSSProperties = { color: "#0b57ff", fontSize: 23 };
-const modalActions: CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 24 };
-const cancelButton: CSSProperties = { padding: "15px", borderRadius: 16, border: "2px solid #ef4444", background: "white", color: "#ef4444", fontSize: "clamp(16px,3vw,22px)", fontWeight: 950, cursor: "pointer" };
-const confirmButton: CSSProperties = { padding: "15px", borderRadius: 16, border: 0, background: "linear-gradient(135deg,#0b57ff,#0052cc)", color: "white", fontSize: "clamp(16px,3vw,22px)", fontWeight: 950, cursor: "pointer" };
+const modalOverlay: CSSProperties = { position: "fixed", inset: 0, background: "rgba(2,8,23,0.72)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 12 };
+const modalCard: CSSProperties = { width: "100%", maxWidth: 430, maxHeight: "88vh", overflowY: "auto", background: "white", borderRadius: 22, position: "relative", boxShadow: "0 24px 70px rgba(0,0,0,0.36)", border: "1px solid rgba(255,255,255,.65)" };
+const modalCloseButton: CSSProperties = { position: "absolute", top: 8, right: 8, width: 32, height: 32, borderRadius: "50%", border: 0, background: "rgba(255,255,255,.94)", color: "#0f172a", fontSize: 18, fontWeight: 900, cursor: "pointer", zIndex: 2, boxShadow: "0 5px 14px rgba(0,0,0,0.22)" };
+const modalBanner: CSSProperties = { width: "100%", height: 92, objectFit: "cover", display: "block", borderRadius: "22px 22px 0 0" };
+const modalBody: CSSProperties = { padding: "12px 14px 14px" };
+const modalHead: CSSProperties = { display: "grid", gap: 3, marginBottom: 10 };
+const modalPill: CSSProperties = { justifySelf: "start", background: "#fff7ed", color: "#ea580c", border: "1px solid #fed7aa", borderRadius: 999, padding: "4px 9px", fontSize: 11, fontWeight: 950 };
+const modalTitle: CSSProperties = { color: "#0b2d6b", fontSize: 20, margin: 0, fontWeight: 950, lineHeight: 1.15 };
+const modalSub: CSSProperties = { color: "#64748b", margin: 0, fontSize: 12 };
+const compactGrid: CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 };
+const infoCard: CSSProperties = { display: "flex", gap: 8, alignItems: "center", minHeight: 54, background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: 14, padding: "8px 9px" };
+const infoIcon: CSSProperties = { width: 28, height: 28, borderRadius: 10, display: "grid", placeItems: "center", background: "white", flexShrink: 0, boxShadow: "0 3px 9px rgba(15,23,42,.08)" };
+const infoLabel: CSSProperties = { display: "block", color: "#0b2d6b", fontSize: 11, lineHeight: 1, marginBottom: 3 };
+const infoValue: CSSProperties = { display: "block", color: "#0f172a", fontSize: 13, fontWeight: 800, lineHeight: 1.15, wordBreak: "break-word" };
+const routeBox: CSSProperties = { marginTop: 9, background: "linear-gradient(135deg,#eff6ff,#fff7ed)", border: "1px solid #bfdbfe", borderRadius: 16, padding: 10 };
+const routePoint: CSSProperties = { display: "grid", gap: 3, fontSize: 13, color: "#0f172a" };
+const routeArrow: CSSProperties = { width: 24, height: 24, display: "grid", placeItems: "center", borderRadius: "50%", background: "#f97316", color: "white", fontWeight: 950, margin: "6px 0" };
+const modalActions: CSSProperties = { position: "sticky", bottom: 0, display: "grid", gridTemplateColumns: "0.8fr 1.2fr", gap: 9, marginTop: 12, paddingTop: 10, background: "white" };
+const cancelButton: CSSProperties = { padding: "12px", borderRadius: 14, border: "2px solid #ef4444", background: "white", color: "#ef4444", fontSize: 15, fontWeight: 950, cursor: "pointer" };
+const confirmButton: CSSProperties = { padding: "12px", borderRadius: 14, border: 0, background: "linear-gradient(135deg,#0b57ff,#0052cc)", color: "white", fontSize: 15, fontWeight: 950, cursor: "pointer" };
