@@ -69,8 +69,34 @@ export default function Home() {
 
   const customerSearch = `${form.name} ${form.mobile}`.toLowerCase().trim();
   const customerSuggestions = customerSearch.length < 2 ? [] : customers.filter((c) => `${c.name || ""} ${c.mobile || c.phone || ""} ${c.address || ""}`.toLowerCase().includes(customerSearch) || cleanPhone(c.mobile || c.phone || "").includes(cleanPhone(form.mobile))).slice(0, 6);
-  const oldDrops = Array.from(new Set(bookings.filter((b) => cleanPhone(b.customer_phone || b.mobile || "") === cleanPhone(form.mobile) || (form.name && (b.customer_name || "").toLowerCase().includes(form.name.toLowerCase()))).map((b) => b.drop_location || b.drop).filter(Boolean))).slice(0, 8);
+  const oldDrops = Array.from(
+  new Set(
+    bookings
+      .filter((b) => {
+        const bookingPhone = cleanPhone(
+          b.customer_phone ||
+          b.mobile ||
+          b.customer_mobile ||
+          ""
+        );
 
+        const bookingName = String(
+          b.customer_name ||
+          b.name ||
+          ""
+        ).toLowerCase();
+
+        return (
+          (bookingPhone &&
+            bookingPhone === cleanPhone(form.mobile)) ||
+          (form.name &&
+            bookingName.includes(form.name.toLowerCase()))
+        );
+      })
+      .map((b) => b.drop_location || b.drop || "")
+      .filter(Boolean)
+  )
+).slice(0, 8);
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const mobile = cleanPhone(form.mobile);
