@@ -37,23 +37,21 @@ const routes = [
 
 export default function AirportDropPage() {
   const [bookingOpen, setBookingOpen] = useState(false);
-
-const [selectedBooking, setSelectedBooking] = useState({
-  service: "",
-  route: "",
-  vehicle: "",
-  vehicleType: "",
-  price: "",
-});
-
-const [formData, setFormData] = useState({
-  name: "",
-  mobile: "",
-  pickup: "",
-  drop: "",
-  date: "",
-  time: "",
-});
+  const [selectedBooking, setSelectedBooking] = useState({
+    service: "",
+    route: "",
+    vehicle: "",
+    vehicleType: "",
+    price: "",
+  });
+  const [formData, setFormData] = useState({
+    name: "",
+    mobile: "",
+    pickup: "",
+    drop: "",
+    date: "",
+    time: "",
+  });
   const quickMessage = "Hello Vishwakarma Travels, I would like to book a one way drop cab.";
 
   return (
@@ -96,8 +94,6 @@ const [formData, setFormData] = useState({
 
           <div style={vehicleGrid}>
             {route.cars.map((car) => {
-              
-
               return (
                 <article key={`${route.title}-${car.name}`} style={cardStyle}>
                   <div style={carImageWrap}>
@@ -112,25 +108,21 @@ const [formData, setFormData] = useState({
                     <p style={muted}>Starting From</p>
                     <div style={priceStyle}>{car.price}</div>
                     <button
-  type="button"
-  onClick={() => {
-    setSelectedBooking({
-      service: "One Way Drop Pickup",
-      route: route.title,
-      vehicle: car.name,
-      vehicleType:
-        car.name === "Dzire"
-          ? "Sedan"
-          : "SUV",
-      price: car.price,
-    });
-
-    setBookingOpen(true);
-  }}
-  style={bookButton}
->
-  ☏ Book Now
-</button>
+                      type="button"
+                      onClick={() => {
+                        setSelectedBooking({
+                          service: "One Way Drop Pickup",
+                          route: route.title,
+                          vehicle: car.name,
+                          vehicleType: car.name === "Dzire" ? "Sedan" : "SUV",
+                          price: car.price,
+                        });
+                        setBookingOpen(true);
+                      }}
+                      style={bookButton}
+                    >
+                      ☏ Book Now
+                    </button>
                   </div>
                 </article>
               );
@@ -150,102 +142,42 @@ const [formData, setFormData] = useState({
         <p style={{ margin: "5px 0 0" }}>Jugsalai, Jamshedpur</p>
       </footer>
 
-{bookingOpen && (
-  <div style={modalOverlay}>
-    <div style={modalBox}>
-      <button
-        onClick={() => setBookingOpen(false)}
-        style={closeButton}
-      >
-        ✕
-      </button>
+      {bookingOpen && (
+        <div style={modalOverlay}>
+          <div style={modalBox}>
+            <button onClick={() => setBookingOpen(false)} style={closeButton}>✕</button>
 
-      <h2 style={modalTitle}>Confirm Your Ride Details</h2>
+            <h2 style={modalTitle}>Confirm Your Ride Details</h2>
 
-      <div style={autoInfoBox}>
-        <p><b>Service:</b> {selectedBooking.service}</p>
-        <p><b>Route:</b> {selectedBooking.route}</p>
-        <p><b>Vehicle:</b> {selectedBooking.vehicle}</p>
-        <p><b>Vehicle Type:</b> {selectedBooking.vehicleType}</p>
-        <p><b>Fare:</b> {selectedBooking.price}</p>
-      </div>
+            <div style={autoInfoBox}>
+              <p><b>Service:</b> {selectedBooking.service}</p>
+              <p><b>Vehicle:</b> {selectedBooking.vehicle}</p>
+              <p><b>Vehicle Type:</b> {selectedBooking.vehicleType}</p>
+            </div>
 
-      <div style={formGrid}>
-        <input
-          type="text"
-          placeholder="Your Name"
-          style={formInput}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              name: e.target.value,
-            })
-          }
-        />
+            <div style={formGrid}>
+              <input type="text" placeholder="Your Name" style={formInput} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+              <input type="tel" placeholder="Mobile Number" style={formInput} onChange={(e) => setFormData({ ...formData, mobile: e.target.value })} />
+              <input type="text" placeholder="Pickup Location" style={formInput} onChange={(e) => setFormData({ ...formData, pickup: e.target.value })} />
+              <input type="text" placeholder="Drop Location" style={formInput} onChange={(e) => setFormData({ ...formData, drop: e.target.value })} />
+              <label style={formSmallLabel}>Select Date</label>
+              <input type="date" style={formInput} onChange={(e) => setFormData({ ...formData, date: e.target.value })} />
+              <label style={formSmallLabel}>Select Time</label>
+              <input type="time" style={formInput} onChange={(e) => setFormData({ ...formData, time: e.target.value })} />
+            </div>
 
-        <input
-          type="tel"
-          placeholder="Mobile Number"
-          style={formInput}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              mobile: e.target.value,
-            })
-          }
-        />
+            <button
+              style={submitButton}
+              onClick={() => {
+                const formattedTime = formData.time
+                  ? new Date(`1970-01-01T${formData.time}`).toLocaleTimeString("en-IN", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })
+                  : "";
 
-        <input
-          type="text"
-          placeholder="Pickup Location"
-          style={formInput}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              pickup: e.target.value,
-            })
-          }
-        />
-
-        <input
-          type="text"
-          placeholder="Drop Location"
-          style={formInput}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              drop: e.target.value,
-            })
-          }
-        />
-
-        <input
-          type="date"
-          style={formInput}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              date: e.target.value,
-            })
-          }
-        />
-
-        <input
-          type="time"
-          style={formInput}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              time: e.target.value,
-            })
-          }
-        />
-      </div>
-
-      <button
-        style={submitButton}
-        onClick={() => {
-          const message = `Hello Vishwakarma Travels,
+                const message = `Hello Vishwakarma Travels,
 
 Booking Request
 
@@ -253,32 +185,29 @@ Name: ${formData.name}
 Mobile: ${formData.mobile}
 
 Service: ${selectedBooking.service}
-Route: ${selectedBooking.route}
 Vehicle: ${selectedBooking.vehicle}
 Vehicle Type: ${selectedBooking.vehicleType}
-Fare: ${selectedBooking.price}
 
 Pickup: ${formData.pickup}
 Drop: ${formData.drop}
 
 Date: ${formData.date}
-Time: ${formData.time}
+Time: ${formattedTime}
 
 Please confirm this booking.`;
 
-          window.open(
-            `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
-            "_blank"
-          );
-        }}
-      >
-        Confirm & Send WhatsApp
-      </button>
-    </div>
-  </div>
-)}
-
-</main>
+                window.open(
+                  `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+                  "_blank"
+                );
+              }}
+            >
+              Confirm & Send WhatsApp
+            </button>
+          </div>
+        </div>
+      )}
+    </main>
   );
 }
 
@@ -312,7 +241,7 @@ const seatTag: React.CSSProperties = { background: "#eff6ff", color: "#0b2d6b", 
 const carName: React.CSSProperties = { margin: 0, fontSize: 26, color: "#0b2d6b", fontWeight: 950 };
 const muted: React.CSSProperties = { margin: "10px 0 0", color: "#64748b", fontSize: 16 };
 const priceStyle: React.CSSProperties = { color: "#f97316", fontSize: 34, fontWeight: 950, margin: "2px 0 12px" };
-const bookButton: React.CSSProperties = { display: "block", textAlign: "center", background: "linear-gradient(135deg,#f97316,#ea580c)", color: "white", textDecoration: "none", padding: "13px 14px", borderRadius: 16, fontWeight: 950, fontSize: 17, boxShadow: "0 8px 18px rgba(249,115,22,.24)" };
+const bookButton: React.CSSProperties = { display: "block", width: "100%", border: 0, cursor: "pointer", textAlign: "center", background: "linear-gradient(135deg,#f97316,#ea580c)", color: "white", textDecoration: "none", padding: "13px 14px", borderRadius: 16, fontWeight: 950, fontSize: 17, boxShadow: "0 8px 18px rgba(249,115,22,.24)" };
 const noteCard: React.CSSProperties = { maxWidth: 1148, margin: "18px auto", padding: 18, borderRadius: 20, background: "#0b2d6b", color: "white", fontSize: 15, lineHeight: 1.5 };
 const footerStyle: React.CSSProperties = { textAlign: "center", padding: "20px 16px 90px", color: "#475569", fontSize: 14 };
 const floatingWhatsApp: React.CSSProperties = { position: "fixed", right: 16, bottom: 18, zIndex: 9999, background: "#25D366", color: "white", textDecoration: "none", padding: "13px 16px", borderRadius: 999, fontWeight: 950, boxShadow: "0 12px 28px rgba(15,23,42,.25)" };
@@ -323,4 +252,5 @@ const modalTitle: React.CSSProperties = { color: "#0b2d6b", fontSize: 24, fontWe
 const autoInfoBox: React.CSSProperties = { background: "#eff6ff", padding: 12, borderRadius: 12, marginBottom: 14 };
 const formGrid: React.CSSProperties = { display: "grid", gap: 12 };
 const formInput: React.CSSProperties = { padding: 12, borderRadius: 10, border: "1px solid #ccc", width: "100%" };
+const formSmallLabel: React.CSSProperties = { fontWeight: 900, color: "#0b2d6b", marginTop: 4 };
 const submitButton: React.CSSProperties = { marginTop: 16, width: "100%", padding: 14, borderRadius: 12, border: 0, background: "#25D366", color: "#fff", fontWeight: 900 };
