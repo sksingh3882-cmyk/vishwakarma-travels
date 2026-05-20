@@ -137,7 +137,7 @@ function InvoiceContent() {
           <p>• Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances</p>
         </div>
         <div className="footerLine">THANK YOU & WISH YOU A VERY HAPPY JOURNEY</div>
-      </section>
+           </section>
 
       <style jsx>{`
         @page { size: A4; margin: 3mm; }
