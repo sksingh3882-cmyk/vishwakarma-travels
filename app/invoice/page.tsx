@@ -136,10 +136,13 @@ function InvoiceContent() {
           <p>• After the booking is Confirmed, Customer will have to make the Advance Payment</p>
           <p>• Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances</p>
         </div>
-        <div className="footerLine">THANK YOU & WISH YOU A VERY HAPPY JOURNEY</div>
-           </section>
+<div className="footerLine">
+  {"THANK YOU & WISH YOU A VERY HAPPY JOURNEY"}
+</div>
 
-      <style jsx>{`
+</section>
+
+<style jsx global>{`
         @page { size: A4; margin: 3mm; }
         * { box-sizing: border-box; }
         html, body { margin: 0; padding: 0; }
