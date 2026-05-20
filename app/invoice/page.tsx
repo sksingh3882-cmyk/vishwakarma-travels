@@ -59,7 +59,7 @@ function InvoiceContent() {
           <div className="invoiceTitle">INVOICE</div>
 
           <div className="pdfLogo">
-            <img src="/pdflogo.png" alt="Vishwakarma Travels Logo" className="logoImg" />
+            <img src="/cars/pdflogo.png" alt="Vishwakarma Travels Logo" className="logoImg" />
           </div>
         </div>
 
@@ -152,59 +152,7 @@ function InvoiceContent() {
         .invoice { width: 200mm; min-height: 286mm; margin: 0 auto; background: white; padding: 5mm 7mm; overflow: hidden; page-break-after: avoid; break-after: avoid; }
         .top { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; gap: 12px; border-bottom: 1px solid #333; padding-bottom: 7px; }
         .pdfLogo { text-align: center; color: #111; font-weight: 900; line-height: 1; }
-        .pdfLogo .carShape { font-size: 36px; letter-spacing: -9px; transform: skew(-18deg); margin-bottom: 6px; }
-        .pdfLogo b { display: block; font-size: 28px; letter-spacing: .5px; }
-        .pdfLogo span { display: block; font-size: 20px; letter-spacing: 9px; margin-top: 5px; }
         .logoImg { width: 220px; height: auto; object-fit: contain; display: block; margin: 0 auto; }
-        .invoiceTitle { text-align: center; font-size: 44px; font-weight: 900; color: #0b2d6b; border-bottom: 2px solid #0b2d6b; padding-bottom: 8px; letter-spacing: .5px; }
-        .company { color: #0b2d6b; line-height: 1.32; }
-        .leftCompany { text-align: left; }
-        .company h2 { margin: 0 0 3px; font-size: 24px; }
-        .company p { margin: 0; font-size: 14px; }
-        .company b { display: block; margin-top: 3px; font-size: 15px; }
-        .detailsGrid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 20px; margin-top: 12px; }
-        .leftInfo, .rightInfo { font-size: 13.4px; line-height: 1.42; }
-        .rightInfo { border-left: 1px solid #333; padding-left: 30px; }
-        .blueHead { width: 220px; background: #0b2d6b; color: white; text-align: center; font-weight: 900; padding: 7px; border-radius: 4px; margin: 0 auto 9px; font-size: 17px; }
-        .info { display: grid; grid-template-columns: 150px 11px 1fr; gap: 4px; margin: 2px 0; align-items: start; }
-        .info label { font-weight: 700; }
-        .info .strongValue { font-weight: 900; font-size: 15px; }
-        .serviceTable { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 14px; }
-        .serviceTable th { background: #f1f5f9; color: #0b2d6b; text-align: left; padding: 7px 10px; border: 1px solid #555; font-size: 16px; }
-        .serviceTable th:last-child { width: 27%; text-align: center; }
-        .serviceTable td { border: 1px solid #555; padding: 9px 11px; vertical-align: top; }
-        .serviceRow td { height: 84px; }
-        .serviceRow b { display: block; margin-bottom: 7px; }
-        .serviceRow span { display: block; }
-        .amount { text-align: right; font-weight: 900; font-size: 16px; }
-        .totalRow td { height: auto; font-size: 17px; font-weight: 900; }
-        .payGrid { display: grid; grid-template-columns: 1.25fr .95fr; gap: 30px; margin-top: 12px; align-items: start; }
-        .payableBox { display: grid; grid-template-columns: 1.12fr .95fr; border: 1px solid #333; border-radius: 4px; overflow: hidden; width: 100%; }
-        .payableBox div { background: #0b2d6b; color: white; font-size: 17px; line-height: 1.18; font-weight: 900; padding: 11px 14px; }
-        .payableBox b { text-align: center; font-size: 25px; padding: 13px 10px; }
-        .thanksText { margin-top: 12px; line-height: 1.35; font-size: 13.5px; }
-        .thanksText p { margin: 0; }
-        .adjustments { font-size: 13.5px; line-height: 1.5; padding-top: 1px; }
-        .adjustments .info { grid-template-columns: 125px 11px 1fr; }
-        .cutLine { display: flex; align-items: center; gap: 10px; margin: 8px 0 10px; color: #333; }
-        .cutLine:before, .cutLine:after { content: ""; flex: 1; border-top: 1px dashed #333; }
-        .cutLine span { font-size: 21px; }
-        .copyHead { width: 390px; margin: 0 auto 9px; background: #0b2d6b; color: white; text-align: center; font-weight: 900; border-radius: 4px; padding: 7px; font-size: 16px; }
-        .copyGrid { display: grid; grid-template-columns: 1.08fr .92fr; gap: 22px; font-size: 12px; line-height: 1.34; }
-        .copyGrid .info { grid-template-columns: 125px 11px 1fr; }
-        .copyVehicle { border-left: 1px solid #333; padding-left: 28px; min-height: 98px; }
-        .copyVehicle h3 { color: #0b2d6b; margin: 0 0 7px; font-size: 16px; }
-        .declaration { border: 1px solid #777; border-radius: 4px; margin-top: 10px; padding: 7px 10px; font-size: 11px; line-height: 1.28; }
-        .declaration b { color: #0b2d6b; font-size: 15px; }
-        .declaration p { margin: 2px 0; }
-        .footerLine { display: flex; align-items: center; gap: 10px; margin-top: 9px; color: #0b2d6b; font-weight: 900; text-align: center; font-size: 13.5px; }
-        .footerLine:before, .footerLine:after { content: ""; flex: 1; border-top: 1px solid #333; }
-        @media print {
-          html, body { width: 210mm; min-height: 297mm; margin: 0; padding: 0; }
-          .screen { background: white; width: 210mm; min-height: 297mm; overflow: hidden; }
-          .invoice { margin: 0; width: 204mm; min-height: 291mm; padding: 5mm 7mm; page-break-after: avoid; break-after: avoid; }
-          .printBtn { display: none; }
-        }
       `}</style>
     </main>
   );
