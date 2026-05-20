@@ -25,8 +25,7 @@ export default function InvoicePage() {
 function InvoiceContent() {
   const p = useSearchParams();
 
-  const billNo = getParam(p, "billNo", "1056");
-  const custId = getParam(p, "custId", billNo);
+  const bookingId = getParam(p, "bookingId", getParam(p, "id", "VT 1779269641437"));
   const service = getParam(p, "service", "Airport Drop Pickup");
   const pickup = getParam(p, "pickup", "Ranchi Airport");
   const drop = getParam(p, "drop", "Jamshedpur");
@@ -50,9 +49,7 @@ function InvoiceContent() {
       <section className="invoice">
         <div className="top">
           <div className="brand">
-            <div className="carMark">🚕</div>
-            <h1>VISHWAKARMA</h1>
-            <p>TRAVELS</p>
+            <img src="/logo.png" alt="Vishwakarma Travels" />
           </div>
 
           <div className="invoiceTitle">INVOICE</div>
@@ -68,8 +65,7 @@ function InvoiceContent() {
 
         <div className="detailsGrid">
           <div className="leftInfo">
-            <Info label="Bill No." value={billNo} />
-            <Info label="Cust ID" value={custId} />
+            <Info label="Booking ID" value={bookingId} strong />
             <Info label="Trip Detail" value={service} />
             <Info label="Pickup Location" value={pickup} />
             <Info label="Drop Location" value={drop} />
@@ -104,9 +100,8 @@ function InvoiceContent() {
 
         <div className="payGrid">
           <div>
-            <div className="payableBox"><div>TOTAL AMOUNT PAYABLE</div><b>₹ {money(payable)}</b></div>
+            <div className="payableBox"><div>TOTAL AMOUNT<br/>PAYABLE</div><b>₹ {money(payable)}</b></div>
             <div className="thanksText"><p>Thank You Dear Sir/Madam</p><p>For Giving Us Booking</p><p>Thank You For Your</p><p>Support & Booking</p></div>
-            <div className="payLogos">PhonePe &nbsp; BHIM &nbsp; UPI</div>
           </div>
           <div className="adjustments"><Info label="Advance" value={money(advance)} /><Info label="Discount" value="0.00" /><Info label="Round Off" value="0.00" /></div>
         </div>
@@ -130,7 +125,6 @@ function InvoiceContent() {
             <Info label="Vehicle No." value={vehicleNumber} />
             <Info label="Driver Name" value={driverName} />
             <Info label="Contact No." value={driverMobile} />
-            <div className="stamp">V<br/>TAXI<br/>SERVICE</div>
           </div>
         </div>
 
@@ -146,62 +140,59 @@ function InvoiceContent() {
       <style jsx>{`
         @page { size: A4; margin: 7mm; }
         * { box-sizing: border-box; }
-        .screen { min-height: 100vh; background: #e5e7eb; font-family: Arial, Helvetica, sans-serif; color: #111; }
+        .screen { min-height: 100vh; background: #e5e7eb; font-family: Arial, Helvetica, sans-serif; color: #111; padding: 0; }
         .printBtn { position: fixed; right: 14px; top: 14px; z-index: 10; border: 0; border-radius: 10px; background: #16a34a; color: white; padding: 10px 16px; font-weight: 900; box-shadow: 0 8px 22px rgba(0,0,0,.18); }
-        .invoice { width: 210mm; min-height: 297mm; margin: 0 auto; background: white; padding: 7mm; border: 1px solid #222; }
+        .invoice { width: 210mm; min-height: 297mm; margin: 0 auto; background: white; padding: 7mm 8mm; overflow: hidden; }
         .top { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; gap: 12px; border-bottom: 1px solid #333; padding-bottom: 8px; }
-        .brand { color: #0b2d6b; font-weight: 900; }
-        .carMark { font-size: 42px; line-height: 1; }
-        .brand h1 { margin: 0; font-size: 28px; letter-spacing: .5px; }
-        .brand p { margin: 3px 0 0; font-size: 15px; letter-spacing: 8px; }
-        .invoiceTitle { text-align: center; font-size: 44px; font-weight: 900; color: #0b2d6b; border-bottom: 2px solid #0b2d6b; padding-bottom: 10px; }
+        .brand img { width: 210px; max-height: 112px; object-fit: contain; object-position: left center; display: block; }
+        .invoiceTitle { text-align: center; font-size: 44px; font-weight: 900; color: #0b2d6b; border-bottom: 2px solid #0b2d6b; padding-bottom: 10px; letter-spacing: .5px; }
         .company { text-align: right; color: #0b2d6b; line-height: 1.45; }
         .company h2 { margin: 0 0 4px; font-size: 25px; }
         .company p { margin: 0; font-size: 15px; }
         .company b { display: block; margin-top: 4px; font-size: 16px; }
         .detailsGrid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 22px; margin-top: 14px; }
-        .leftInfo, .rightInfo { font-size: 14px; line-height: 1.65; }
-        .rightInfo { border-left: 1px solid #333; padding-left: 28px; }
-        .blueHead { width: 220px; background: #0b2d6b; color: white; text-align: center; font-weight: 900; padding: 7px; border-radius: 4px; margin: 0 auto 10px; }
-        .info { display: grid; grid-template-columns: 150px 12px 1fr; gap: 4px; margin: 2px 0; }
-        .info label { font-weight: 800; }
-        .serviceTable { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 15px; }
+        .leftInfo, .rightInfo { font-size: 14px; line-height: 1.66; }
+        .rightInfo { border-left: 1px solid #333; padding-left: 34px; }
+        .blueHead { width: 230px; background: #0b2d6b; color: white; text-align: center; font-weight: 900; padding: 9px; border-radius: 4px; margin: 0 auto 14px; font-size: 18px; }
+        .info { display: grid; grid-template-columns: 160px 12px 1fr; gap: 4px; margin: 3px 0; align-items: start; }
+        .info label { font-weight: 700; }
+        .info .strongValue { font-weight: 900; font-size: 16px; }
+        .serviceTable { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 15px; }
         .serviceTable th { background: #f1f5f9; color: #0b2d6b; text-align: left; padding: 8px 12px; border: 1px solid #555; font-size: 17px; }
         .serviceTable th:last-child { width: 27%; text-align: center; }
-        .serviceTable td { border: 1px solid #555; padding: 10px 12px; vertical-align: top; }
-        .serviceRow td { height: 118px; }
+        .serviceTable td { border: 1px solid #555; padding: 12px 14px; vertical-align: top; }
+        .serviceRow td { height: 112px; }
         .serviceRow b { display: block; margin-bottom: 10px; }
         .serviceRow span { display: block; }
         .amount { text-align: right; font-weight: 900; font-size: 17px; }
         .totalRow td { height: auto; font-size: 18px; font-weight: 900; }
-        .payGrid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 28px; margin-top: 14px; }
-        .payableBox { display: grid; grid-template-columns: 1.25fr .95fr; border: 1px solid #333; border-radius: 4px; overflow: hidden; }
-        .payableBox div { background: #0b2d6b; color: white; font-size: 18px; font-weight: 900; padding: 14px; }
-        .payableBox b { text-align: center; font-size: 25px; padding: 13px; }
-        .thanksText { margin-top: 20px; line-height: 1.55; font-size: 15px; }
+        .payGrid { display: grid; grid-template-columns: 1.25fr .95fr; gap: 30px; margin-top: 18px; align-items: start; }
+        .payableBox { display: grid; grid-template-columns: 1.12fr .95fr; border: 1px solid #333; border-radius: 4px; overflow: hidden; width: 100%; }
+        .payableBox div { background: #0b2d6b; color: white; font-size: 18px; line-height: 1.25; font-weight: 900; padding: 14px 16px; }
+        .payableBox b { text-align: center; font-size: 27px; padding: 18px 12px; }
+        .thanksText { margin-top: 22px; line-height: 1.55; font-size: 15px; }
         .thanksText p { margin: 0; }
-        .payLogos { text-align: center; color: #5b21b6; font-weight: 900; font-size: 22px; margin-top: -58px; }
         .adjustments { font-size: 15px; line-height: 1.7; padding-top: 2px; }
-        .cutLine { display: flex; align-items: center; gap: 10px; margin: 18px 0 10px; color: #333; }
+        .adjustments .info { grid-template-columns: 140px 12px 1fr; }
+        .cutLine { display: flex; align-items: center; gap: 10px; margin: 10px 0 14px; color: #333; }
         .cutLine:before, .cutLine:after { content: ""; flex: 1; border-top: 1px dashed #333; }
         .cutLine span { font-size: 24px; }
-        .copyHead { width: 365px; margin: 0 auto 12px; background: #0b2d6b; color: white; text-align: center; font-weight: 900; border-radius: 4px; padding: 7px; }
-        .copyGrid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; font-size: 13px; line-height: 1.55; }
-        .copyGrid .info { grid-template-columns: 128px 12px 1fr; }
-        .copyVehicle { border-left: 1px solid #333; padding-left: 25px; position: relative; min-height: 120px; }
-        .copyVehicle h3 { color: #0b2d6b; margin: 0 0 8px; font-size: 15px; }
-        .stamp { position: absolute; right: 12px; top: 35px; width: 105px; height: 105px; border: 2px solid #0b2d6b; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #0b2d6b; font-weight: 900; text-align: center; transform: rotate(-12deg); }
-        .declaration { border: 1px solid #777; border-radius: 4px; margin-top: 14px; padding: 8px 10px; font-size: 12.5px; line-height: 1.45; }
+        .copyHead { width: 420px; margin: 0 auto 14px; background: #0b2d6b; color: white; text-align: center; font-weight: 900; border-radius: 4px; padding: 9px; font-size: 17px; }
+        .copyGrid { display: grid; grid-template-columns: 1.08fr .92fr; gap: 24px; font-size: 13px; line-height: 1.55; }
+        .copyGrid .info { grid-template-columns: 132px 12px 1fr; }
+        .copyVehicle { border-left: 1px solid #333; padding-left: 30px; min-height: 125px; }
+        .copyVehicle h3 { color: #0b2d6b; margin: 0 0 10px; font-size: 17px; }
+        .declaration { border: 1px solid #777; border-radius: 4px; margin-top: 16px; padding: 8px 10px; font-size: 12.5px; line-height: 1.45; }
         .declaration b { color: #0b2d6b; font-size: 16px; }
         .declaration p { margin: 2px 0; }
-        .footerLine { display: flex; align-items: center; gap: 12px; margin-top: 16px; color: #0b2d6b; font-weight: 900; text-align: center; font-size: 16px; }
+        .footerLine { display: flex; align-items: center; gap: 12px; margin-top: 18px; color: #0b2d6b; font-weight: 900; text-align: center; font-size: 16px; }
         .footerLine:before, .footerLine:after { content: ""; flex: 1; border-top: 1px solid #333; }
-        @media print { .screen { background: white; } .invoice { margin: 0; border: 0; width: auto; min-height: auto; } .printBtn { display: none; } }
+        @media print { .screen { background: white; } .invoice { margin: 0; width: auto; min-height: auto; } .printBtn { display: none; } }
       `}</style>
     </main>
   );
 }
 
-function Info({ label, value }: { label: string; value: string }) {
-  return <div className="info"><label>{label}</label><span>:</span><span>{value || "-"}</span></div>;
+function Info({ label, value, strong = false }: { label: string; value: string; strong?: boolean }) {
+  return <div className="info"><label>{label}</label><span>:</span><span className={strong ? "strongValue" : ""}>{value || "-"}</span></div>;
 }
