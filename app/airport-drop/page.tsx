@@ -1,4 +1,4 @@
-"use client";
+import { useState } from "react";
 
 const phone = "917667989203";
 
@@ -35,6 +35,24 @@ const routes = [
 ];
 
 export default function AirportDropPage() {
+  const [bookingOpen, setBookingOpen] = useState(false);
+
+const [selectedBooking, setSelectedBooking] = useState({
+  service: "",
+  route: "",
+  vehicle: "",
+  vehicleType: "",
+  price: "",
+});
+
+const [formData, setFormData] = useState({
+  name: "",
+  mobile: "",
+  pickup: "",
+  drop: "",
+  date: "",
+  time: "",
+});
   const quickMessage = "Hello Vishwakarma Travels, I would like to book a one way drop cab.";
 
   return (
@@ -77,7 +95,7 @@ export default function AirportDropPage() {
 
           <div style={vehicleGrid}>
             {route.cars.map((car) => {
-              const message = `Hello Vishwakarma Travels,\n\nI would like to book a one way drop cab.\n\nRoute: ${route.title}\nVehicle: ${car.name}\n\nPlease share the booking confirmation details.\n\nThank you.`;
+              
 
               return (
                 <article key={`${route.title}-${car.name}`} style={cardStyle}>
@@ -92,7 +110,26 @@ export default function AirportDropPage() {
                     </div>
                     <p style={muted}>Starting From</p>
                     <div style={priceStyle}>{car.price}</div>
-                    <a href={`https://wa.me/${phone}?text=${encodeURIComponent(message)}`} style={bookButton}>☏ Book Now</a>
+                    <button
+  type="button"
+  onClick={() => {
+    setSelectedBooking({
+      service: "One Way Drop Pickup",
+      route: route.title,
+      vehicle: car.name,
+      vehicleType:
+        car.name === "Dzire"
+          ? "Sedan"
+          : "SUV",
+      price: car.price,
+    });
+
+    setBookingOpen(true);
+  }}
+  style={bookButton}
+>
+  ☏ Book Now
+</button>
                   </div>
                 </article>
               );
@@ -111,7 +148,136 @@ export default function AirportDropPage() {
         <b>Vishwakarma Travels</b>
         <p style={{ margin: "5px 0 0" }}>Jugsalai, Jamshedpur</p>
       </footer>
-    </main>
+
+{bookingOpen && (
+  <div style={modalOverlay}>
+    <div style={modalBox}>
+      <button
+        onClick={() => setBookingOpen(false)}
+        style={closeButton}
+      >
+        ✕
+      </button>
+
+      <h2 style={modalTitle}>Confirm Your Ride Details</h2>
+
+      <div style={autoInfoBox}>
+        <p><b>Service:</b> {selectedBooking.service}</p>
+        <p><b>Route:</b> {selectedBooking.route}</p>
+        <p><b>Vehicle:</b> {selectedBooking.vehicle}</p>
+        <p><b>Vehicle Type:</b> {selectedBooking.vehicleType}</p>
+        <p><b>Fare:</b> {selectedBooking.price}</p>
+      </div>
+
+      <div style={formGrid}>
+        <input
+          type="text"
+          placeholder="Your Name"
+          style={formInput}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              name: e.target.value,
+            })
+          }
+        />
+
+        <input
+          type="tel"
+          placeholder="Mobile Number"
+          style={formInput}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              mobile: e.target.value,
+            })
+          }
+        />
+
+        <input
+          type="text"
+          placeholder="Pickup Location"
+          style={formInput}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              pickup: e.target.value,
+            })
+          }
+        />
+
+        <input
+          type="text"
+          placeholder="Drop Location"
+          style={formInput}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              drop: e.target.value,
+            })
+          }
+        />
+
+        <input
+          type="date"
+          style={formInput}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              date: e.target.value,
+            })
+          }
+        />
+
+        <input
+          type="time"
+          style={formInput}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              time: e.target.value,
+            })
+          }
+        />
+      </div>
+
+      <button
+        style={submitButton}
+        onClick={() => {
+          const message = `Hello Vishwakarma Travels,
+
+Booking Request
+
+Name: ${formData.name}
+Mobile: ${formData.mobile}
+
+Service: ${selectedBooking.service}
+Route: ${selectedBooking.route}
+Vehicle: ${selectedBooking.vehicle}
+Vehicle Type: ${selectedBooking.vehicleType}
+Fare: ${selectedBooking.price}
+
+Pickup: ${formData.pickup}
+Drop: ${formData.drop}
+
+Date: ${formData.date}
+Time: ${formData.time}
+
+Please confirm this booking.`;
+
+          window.open(
+            `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+            "_blank"
+          );
+        }}
+      >
+        Confirm & Send WhatsApp
+      </button>
+    </div>
+  </div>
+)}
+
+</main>
   );
 }
 
