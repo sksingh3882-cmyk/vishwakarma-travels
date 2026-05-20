@@ -59,11 +59,8 @@ function InvoiceContent() {
           <div className="invoiceTitle">INVOICE</div>
 
           <div className="pdfLogo">
-            <div className="carShape">▰▰▰</div>
-            <b>VISHWAKARMA</b>
-            <span>Travels</span>
-          </div>
-        </div>
+  <img src="/pdflogo.png" alt="logo" className="logoImg" />
+</div>
 
         <div className="detailsGrid">
           <div className="leftInfo">
@@ -154,6 +151,7 @@ function InvoiceContent() {
         .pdfLogo .carShape { font-size: 36px; letter-spacing: -9px; transform: skew(-18deg); margin-bottom: 6px; }
         .pdfLogo b { display: block; font-size: 28px; letter-spacing: .5px; }
         .pdfLogo span { display: block; font-size: 20px; letter-spacing: 9px; margin-top: 5px; }
+        .logoImg{width:220px;height:auto;object-fit:contain;}
         .invoiceTitle { text-align: center; font-size: 44px; font-weight: 900; color: #0b2d6b; border-bottom: 2px solid #0b2d6b; padding-bottom: 8px; letter-spacing: .5px; }
         .company { color: #0b2d6b; line-height: 1.32; }
         .leftCompany { text-align: left; }
