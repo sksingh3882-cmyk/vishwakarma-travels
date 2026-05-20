@@ -59,8 +59,9 @@ function InvoiceContent() {
           <div className="invoiceTitle">INVOICE</div>
 
           <div className="pdfLogo">
-  <img src="/pdflogo.png" alt="logo" className="logoImg" />
-</div>
+            <img src="/pdflogo.png" alt="Vishwakarma Travels Logo" className="logoImg" />
+          </div>
+        </div>
 
         <div className="detailsGrid">
           <div className="leftInfo">
@@ -136,13 +137,13 @@ function InvoiceContent() {
           <p>• After the booking is Confirmed, Customer will have to make the Advance Payment</p>
           <p>• Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances</p>
         </div>
-<div className="footerLine">
-  {"THANK YOU & WISH YOU A VERY HAPPY JOURNEY"}
-</div>
 
-</section>
+        <div className="footerLine">
+          {"THANK YOU & WISH YOU A VERY HAPPY JOURNEY"}
+        </div>
+      </section>
 
-<style jsx global>{`
+      <style jsx global>{`
         @page { size: A4; margin: 3mm; }
         * { box-sizing: border-box; }
         html, body { margin: 0; padding: 0; }
@@ -154,7 +155,7 @@ function InvoiceContent() {
         .pdfLogo .carShape { font-size: 36px; letter-spacing: -9px; transform: skew(-18deg); margin-bottom: 6px; }
         .pdfLogo b { display: block; font-size: 28px; letter-spacing: .5px; }
         .pdfLogo span { display: block; font-size: 20px; letter-spacing: 9px; margin-top: 5px; }
-        .logoImg{width:220px;height:auto;object-fit:contain;}
+        .logoImg { width: 220px; height: auto; object-fit: contain; display: block; margin: 0 auto; }
         .invoiceTitle { text-align: center; font-size: 44px; font-weight: 900; color: #0b2d6b; border-bottom: 2px solid #0b2d6b; padding-bottom: 8px; letter-spacing: .5px; }
         .company { color: #0b2d6b; line-height: 1.32; }
         .leftCompany { text-align: left; }
