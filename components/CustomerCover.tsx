@@ -65,31 +65,18 @@ export default function CustomerCover({ onContinue }: Props) {
   );
 }
 
-const coverOverlay: CSSProperties = {
-  position: "fixed",
-  inset: 0,
-  zIndex: 999999,
-  minHeight: "100svh",
-  overflowY: "auto",
-  padding: "clamp(10px,2.5vw,24px)",
-  backgroundImage: "url('/bg-travel.jpg')",
-  backgroundSize: "cover",
-  backgroundPosition: "center top",
-  backgroundRepeat: "no-repeat",
-  fontFamily: "Arial, sans-serif",
-  color: "#061a3d",
-};
-const shade: CSSProperties = { position: "fixed", inset: 0, background: "linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02) 45%,rgba(3,7,18,.16))", pointerEvents: "none" };
+const coverOverlay: CSSProperties = { position: "fixed", inset: 0, zIndex: 999999, minHeight: "100svh", overflowY: "auto", padding: "10px", backgroundImage: "url('/bg-travel.jpg')", backgroundSize: "cover", backgroundPosition: "center top", backgroundRepeat: "no-repeat", fontFamily: "Arial, sans-serif", color: "#061a3d" };
+const shade: CSSProperties = { position: "fixed", inset: 0, background: "linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01) 45%,rgba(3,7,18,.12))", pointerEvents: "none" };
 const contentWrap: CSSProperties = { position: "relative", zIndex: 1, minHeight: "calc(100svh - 20px)", display: "grid", alignContent: "start" };
-const adminLink: CSSProperties = { position: "fixed", top: 12, right: 12, zIndex: 3, background: "rgba(255,255,255,.92)", color: "#0f172a", textDecoration: "none", border: "1px solid rgba(255,255,255,.9)", borderRadius: 999, padding: "9px 13px", fontSize: "clamp(12px,2.6vw,14px)", fontWeight: 950, boxShadow: "0 10px 25px rgba(15,23,42,.15)" };
-const spacer: CSSProperties = { height: "clamp(310px,48svh,520px)" };
-const coverCard: CSSProperties = { width: "min(620px,100%)", margin: "0 auto 18px", background: "rgba(255,255,255,.97)", borderRadius: "clamp(18px,5vw,28px)", padding: "clamp(14px,3.8vw,22px)", boxShadow: "0 24px 70px rgba(0,0,0,.24)", border: "1px solid rgba(255,255,255,.82)", backdropFilter: "blur(10px)" };
-const modeRow: CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(8px,2.6vw,14px)", marginBottom: 12 };
-const modeBtn: CSSProperties = { border: "1px solid #cbd5e1", background: "white", color: "#0f172a", padding: "clamp(10px,3vw,14px) 8px", borderRadius: 999, fontWeight: 950, cursor: "pointer", fontSize: "clamp(14px,3.8vw,17px)" };
+const adminLink: CSSProperties = { position: "fixed", top: 12, right: 12, zIndex: 3, background: "rgba(255,255,255,.92)", color: "#0f172a", textDecoration: "none", border: "1px solid rgba(255,255,255,.9)", borderRadius: 999, padding: "8px 12px", fontSize: 13, fontWeight: 950, boxShadow: "0 10px 25px rgba(15,23,42,.15)" };
+const spacer: CSSProperties = { height: "clamp(245px,39svh,430px)" };
+const coverCard: CSSProperties = { width: "min(420px,100%)", margin: "0 auto 12px", background: "rgba(255,255,255,.97)", borderRadius: 20, padding: "12px", boxShadow: "0 18px 50px rgba(0,0,0,.22)", border: "1px solid rgba(255,255,255,.82)", backdropFilter: "blur(8px)" };
+const modeRow: CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 9 };
+const modeBtn: CSSProperties = { border: "1px solid #cbd5e1", background: "white", color: "#0f172a", padding: "9px 6px", borderRadius: 999, fontWeight: 950, cursor: "pointer", fontSize: 14 };
 const activeModeBtn: CSSProperties = { ...modeBtn, background: "#eff6ff", color: "#0b2d6b", border: "1px solid #93c5fd" };
-const divider: CSSProperties = { height: 1, background: "#e5e7eb", marginBottom: 11 };
-const warningText: CSSProperties = { textAlign: "center", color: "#dc2626", fontSize: "clamp(10px,2.8vw,12px)", lineHeight: 1.35, margin: "0 0 13px", fontWeight: 950 };
-const formBox: CSSProperties = { display: "grid", gap: "clamp(9px,2.4vw,12px)" };
-const inputStyle: CSSProperties = { width: "100%", padding: "clamp(13px,3.5vw,16px) clamp(14px,4vw,18px)", borderRadius: 15, border: "1px solid #cbd5e1", fontSize: "clamp(16px,4.2vw,18px)", outline: "none", color: "#0f172a", background: "white" };
-const continueBtn: CSSProperties = { width: "100%", marginTop: "clamp(12px,3vw,16px)", border: 0, borderRadius: 14, background: "linear-gradient(135deg,#063b9a,#001e70)", color: "white", padding: "clamp(13px,3.5vw,15px) 16px", fontSize: "clamp(17px,4.8vw,20px)", fontWeight: 950, cursor: "pointer", boxShadow: "0 10px 24px rgba(6,59,154,.28)", display: "flex", justifyContent: "center", gap: "clamp(40px,14vw,70px)" };
-const safeText: CSSProperties = { textAlign: "center", color: "#6b7280", margin: "12px 0 0", fontWeight: 800, fontSize: "clamp(13px,3.4vw,15px)" };
+const divider: CSSProperties = { height: 1, background: "#e5e7eb", marginBottom: 8 };
+const warningText: CSSProperties = { textAlign: "center", color: "#dc2626", fontSize: 10.5, lineHeight: 1.25, margin: "0 0 9px", fontWeight: 950 };
+const formBox: CSSProperties = { display: "grid", gap: 8 };
+const inputStyle: CSSProperties = { width: "100%", padding: "11px 13px", borderRadius: 12, border: "1px solid #cbd5e1", fontSize: 15, outline: "none", color: "#0f172a", background: "white" };
+const continueBtn: CSSProperties = { width: "100%", marginTop: 10, border: 0, borderRadius: 13, background: "linear-gradient(135deg,#063b9a,#001e70)", color: "white", padding: "12px 14px", fontSize: 17, fontWeight: 950, cursor: "pointer", boxShadow: "0 8px 20px rgba(6,59,154,.25)", display: "flex", justifyContent: "center", gap: 45 };
+const safeText: CSSProperties = { textAlign: "center", color: "#6b7280", margin: "8px 0 0", fontWeight: 800, fontSize: 13 };
