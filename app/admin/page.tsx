@@ -241,7 +241,7 @@ export default function AdminPage() {
       const ok = await saveBooking(id); if (!ok) return alert("Booking save nahi hua.");
       await Promise.all([saveCustomer(), saveVehicle()]);
       setLastBookingId(id);
-      if (confirmMode === "save") pdf(id);
+      if (confirmMode === "save") window.open(`/invoice?bookingId=${encodeURIComponent(id)}&customerName=${encodeURIComponent(form.customerName)}&customerPhone=${encodeURIComponent(cleanPhone(form.customerPhone))}&service=${encodeURIComponent(form.service)}&pickup=${encodeURIComponent(form.pickup)}&drop=${encodeURIComponent(form.drop)}&journeyDate=${encodeURIComponent(formatDate(form.journeyDate))}&journeyTime=${encodeURIComponent(form.journeyTime)}&vehicleType=${encodeURIComponent(form.vehicleType)}&vehicleModel=${encodeURIComponent(form.vehicleModel)}&vehicleNumber=${encodeURIComponent(vehicleNo(form.vehicleNumber))}&driverName=${encodeURIComponent(form.driverName)}&driverMobile=${encodeURIComponent(cleanPhone(form.driverMobile))}&fare=${encodeURIComponent(String(fare))}&advance=${encodeURIComponent(String(advance))}`,"_blank");
       window.location.href = `https://api.whatsapp.com/send?phone=91${cleanPhone(form.customerPhone)}&text=${encodeURIComponent(msg(id))}`;
       setShowConfirmPopup(false);
     } finally { setLoading(false); }
