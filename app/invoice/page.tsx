@@ -1,8 +1,11 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
-function getParam(params: URLSearchParams, key: string, fallback = "-") {
+type ParamsLike = { get: (key: string) => string | null };
+
+function getParam(params: ParamsLike, key: string, fallback = "-") {
   return params.get(key) || fallback;
 }
 
@@ -12,6 +15,14 @@ function money(v: string) {
 }
 
 export default function InvoicePage() {
+  return (
+    <Suspense fallback={<main style={{ padding: 24 }}>Loading invoice...</main>}>
+      <InvoiceContent />
+    </Suspense>
+  );
+}
+
+function InvoiceContent() {
   const p = useSearchParams();
 
   const billNo = getParam(p, "billNo", "1056");
@@ -81,52 +92,26 @@ export default function InvoicePage() {
         </div>
 
         <table className="serviceTable">
-          <thead>
-            <tr>
-              <th>SERVICE</th>
-              <th>AMOUNT (₹)</th>
-            </tr>
-          </thead>
+          <thead><tr><th>SERVICE</th><th>AMOUNT (₹)</th></tr></thead>
           <tbody>
             <tr className="serviceRow">
-              <td>
-                <b>{service}</b>
-                <span>{pickup} - {drop}</span>
-              </td>
+              <td><b>{service}</b><span>{pickup} - {drop}</span></td>
               <td className="amount">{money(fare)}</td>
             </tr>
-            <tr className="totalRow">
-              <td>TOTAL AMOUNT</td>
-              <td className="amount">{money(fare)}</td>
-            </tr>
+            <tr className="totalRow"><td>TOTAL AMOUNT</td><td className="amount">{money(fare)}</td></tr>
           </tbody>
         </table>
 
         <div className="payGrid">
           <div>
-            <div className="payableBox">
-              <div>TOTAL AMOUNT PAYABLE</div>
-              <b>₹ {money(payable)}</b>
-            </div>
-            <div className="thanksText">
-              <p>Thank You Dear Sir/Madam</p>
-              <p>For Giving Us Booking</p>
-              <p>Thank You For Your</p>
-              <p>Support & Booking</p>
-            </div>
+            <div className="payableBox"><div>TOTAL AMOUNT PAYABLE</div><b>₹ {money(payable)}</b></div>
+            <div className="thanksText"><p>Thank You Dear Sir/Madam</p><p>For Giving Us Booking</p><p>Thank You For Your</p><p>Support & Booking</p></div>
             <div className="payLogos">PhonePe &nbsp; BHIM &nbsp; UPI</div>
-            <p className="payHint">Scan This QR Code To Pay Us</p>
           </div>
-
-          <div className="adjustments">
-            <Info label="Advance" value={money(advance)} />
-            <Info label="Discount" value="0.00" />
-            <Info label="Round Off" value="0.00" />
-          </div>
+          <div className="adjustments"><Info label="Advance" value={money(advance)} /><Info label="Discount" value="0.00" /><Info label="Round Off" value="0.00" /></div>
         </div>
 
         <div className="cutLine"><span>✂</span></div>
-
         <div className="copyHead">BOOKING CONFIRMATION COPY</div>
 
         <div className="copyGrid">
@@ -139,7 +124,6 @@ export default function InvoicePage() {
             <Info label="Contact No." value={customerPhone} />
             <Info label="Booking Date" value={journeyDate} />
           </div>
-
           <div className="copyVehicle">
             <h3>VEHICLE DETAILS</h3>
             <Info label="Vehicle Requirement" value={vehicleType} />
@@ -156,7 +140,6 @@ export default function InvoicePage() {
           <p>• After the booking is Confirmed, Customer will have to make the Advance Payment</p>
           <p>• Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances</p>
         </div>
-
         <div className="footerLine">THANK YOU & WISH YOU A VERY HAPPY JOURNEY</div>
       </section>
 
@@ -198,7 +181,6 @@ export default function InvoicePage() {
         .thanksText { margin-top: 20px; line-height: 1.55; font-size: 15px; }
         .thanksText p { margin: 0; }
         .payLogos { text-align: center; color: #5b21b6; font-weight: 900; font-size: 22px; margin-top: -58px; }
-        .payHint { text-align: center; margin-top: 8px; }
         .adjustments { font-size: 15px; line-height: 1.7; padding-top: 2px; }
         .cutLine { display: flex; align-items: center; gap: 10px; margin: 18px 0 10px; color: #333; }
         .cutLine:before, .cutLine:after { content: ""; flex: 1; border-top: 1px dashed #333; }
@@ -221,11 +203,5 @@ export default function InvoicePage() {
 }
 
 function Info({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="info">
-      <label>{label}</label>
-      <span>:</span>
-      <span>{value || "-"}</span>
-    </div>
-  );
+  return <div className="info"><label>{label}</label><span>:</span><span>{value || "-"}</span></div>;
 }
