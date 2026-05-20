@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
 type ParamsLike = { get: (key: string) => string | null };
@@ -41,6 +41,19 @@ function InvoiceContent() {
   const fare = getParam(p, "fare", "0");
   const advance = getParam(p, "advance", "0");
   const payable = String(Math.max(Number(fare || 0) - Number(advance || 0), 0));
+  const fare = getParam(p, "fare", "0");
+const advance = getParam(p, "advance", "0");
+
+const payable = String(Math.max(Number(fare || 0) - Number(advance || 0), 0));
+
+useEffect(() => {
+  const safeCustomer = customerName.replace(/\s+/g, "-");
+  const safeService = service.replace(/\s+/g, "-");
+
+  document.title = `${safeCustomer}-${safeService}`;
+}, [customerName, service]);
+
+return (
 
   return (
     <main className="screen">
