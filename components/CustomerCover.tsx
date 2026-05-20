@@ -40,19 +40,7 @@ export default function CustomerCover({ onContinue }: Props) {
       <a href="/admin" style={adminLink}>Admin Login</a>
 
       <div style={contentWrap}>
-        <div style={topArea}>
-          <div style={logoRow}>
-            <div style={brandMark}>V</div>
-            <div>
-              <h1 style={brandTitle}>VISHWAKARMA</h1>
-              <p style={brandSub}>TRAVELS</p>
-            </div>
-          </div>
-          <p style={tagline}>Travels Made Easy</p>
-          <h2 style={welcome}>Welcome to<br />Vishwakarma Travels</h2>
-          <div style={linePin}><span style={smallLine}></span><b>●</b><span style={smallLine}></span></div>
-          <p style={registerText}>Register to continue</p>
-        </div>
+        <div style={spacer} />
 
         <div style={coverCard}>
           <div style={modeRow}>
@@ -86,25 +74,16 @@ const coverOverlay: CSSProperties = {
   padding: "clamp(10px,2.5vw,24px)",
   backgroundImage: "url('/bg-travel.jpg')",
   backgroundSize: "cover",
-  backgroundPosition: "center",
+  backgroundPosition: "center top",
   backgroundRepeat: "no-repeat",
   fontFamily: "Arial, sans-serif",
   color: "#061a3d",
 };
-const shade: CSSProperties = { position: "fixed", inset: 0, background: "linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.02) 44%,rgba(3,7,18,.22))", pointerEvents: "none" };
+const shade: CSSProperties = { position: "fixed", inset: 0, background: "linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02) 45%,rgba(3,7,18,.16))", pointerEvents: "none" };
 const contentWrap: CSSProperties = { position: "relative", zIndex: 1, minHeight: "calc(100svh - 20px)", display: "grid", alignContent: "start" };
 const adminLink: CSSProperties = { position: "fixed", top: 12, right: 12, zIndex: 3, background: "rgba(255,255,255,.92)", color: "#0f172a", textDecoration: "none", border: "1px solid rgba(255,255,255,.9)", borderRadius: 999, padding: "9px 13px", fontSize: "clamp(12px,2.6vw,14px)", fontWeight: 950, boxShadow: "0 10px 25px rgba(15,23,42,.15)" };
-const topArea: CSSProperties = { width: "min(760px,100%)", margin: "clamp(14px,5svh,44px) auto clamp(8px,2svh,14px)", textAlign: "center" };
-const logoRow: CSSProperties = { display: "flex", justifyContent: "center", alignItems: "center", gap: "clamp(8px,2vw,13px)" };
-const brandMark: CSSProperties = { width: "clamp(42px,11vw,68px)", height: "clamp(42px,11vw,68px)", borderRadius: "17px 7px 17px 7px", display: "grid", placeItems: "center", background: "linear-gradient(135deg,#ff6b00,#ff8a1f)", color: "white", fontSize: "clamp(27px,7vw,42px)", fontWeight: 950, transform: "skew(-10deg)", boxShadow: "0 10px 24px rgba(249,115,22,.28)" };
-const brandTitle: CSSProperties = { margin: 0, color: "#0b2d6b", fontSize: "clamp(25px,8vw,52px)", lineHeight: .95, fontWeight: 950, letterSpacing: "clamp(.4px,.25vw,1.3px)" };
-const brandSub: CSSProperties = { margin: "2px 0 0", color: "#f97316", fontSize: "clamp(18px,5.3vw,32px)", fontWeight: 950, letterSpacing: "clamp(4px,1.2vw,8px)" };
-const tagline: CSSProperties = { margin: "clamp(7px,1.5vw,12px) 0 0", color: "#0b2d6b", fontWeight: 800, fontSize: "clamp(16px,4.2vw,25px)" };
-const welcome: CSSProperties = { margin: "clamp(13px,3svh,28px) 0 4px", color: "#0b2d6b", fontSize: "clamp(29px,8.2vw,56px)", lineHeight: 1.05, fontWeight: 950, textShadow: "0 1px 8px rgba(255,255,255,.35)" };
-const linePin: CSSProperties = { display: "flex", alignItems: "center", justifyContent: "center", gap: 10, color: "#f97316", fontSize: 18 };
-const smallLine: CSSProperties = { display: "block", width: "clamp(52px,17vw,105px)", height: 3, background: "#f97316", borderRadius: 999 };
-const registerText: CSSProperties = { margin: "5px 0 clamp(8px,2svh,14px)", color: "#0f172a", fontSize: "clamp(18px,4.5vw,25px)", fontWeight: 800 };
-const coverCard: CSSProperties = { width: "min(620px,100%)", margin: "0 auto", background: "rgba(255,255,255,.96)", borderRadius: "clamp(18px,5vw,28px)", padding: "clamp(14px,3.8vw,22px)", boxShadow: "0 24px 70px rgba(0,0,0,.24)", border: "1px solid rgba(255,255,255,.82)", backdropFilter: "blur(10px)" };
+const spacer: CSSProperties = { height: "clamp(310px,48svh,520px)" };
+const coverCard: CSSProperties = { width: "min(620px,100%)", margin: "0 auto 18px", background: "rgba(255,255,255,.97)", borderRadius: "clamp(18px,5vw,28px)", padding: "clamp(14px,3.8vw,22px)", boxShadow: "0 24px 70px rgba(0,0,0,.24)", border: "1px solid rgba(255,255,255,.82)", backdropFilter: "blur(10px)" };
 const modeRow: CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(8px,2.6vw,14px)", marginBottom: 12 };
 const modeBtn: CSSProperties = { border: "1px solid #cbd5e1", background: "white", color: "#0f172a", padding: "clamp(10px,3vw,14px) 8px", borderRadius: 999, fontWeight: 950, cursor: "pointer", fontSize: "clamp(14px,3.8vw,17px)" };
 const activeModeBtn: CSSProperties = { ...modeBtn, background: "#eff6ff", color: "#0b2d6b", border: "1px solid #93c5fd" };
