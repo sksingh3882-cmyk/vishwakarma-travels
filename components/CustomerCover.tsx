@@ -48,17 +48,11 @@ export default function CustomerCover({ onContinue }: Props) {
       <a href="/admin" className="vt-admin">Admin Login</a>
 
       <div className="vt-shell">
-        <header className="vt-hero">
-          <div className="vt-logoBlock">
-            <div className="vt-mark">V</div>
-            <div className="vt-brandText">
-              <div className="vt-brandName">VISHWAKARMA</div>
-              <div className="vt-travel">TRAVELS</div>
-              <div className="vt-tagline">Travels Made Easy</div>
-            </div>
-          </div>
-
-          <h1>Welcome to<br />Vishwakarma Travels</h1>
+        
+         <h1>
+  Welcome to<br />
+  <span className="vt-welcome-brand">Vishwakarma Travels</span>
+</h1>
           <p className="vt-register">Register to continue</p>
         </header>
 
@@ -92,6 +86,13 @@ export default function CustomerCover({ onContinue }: Props) {
       </div>
 
       <style jsx>{`
+       .vt-welcome-brand{
+        font-family:"Montserrat",sans-serif;
+        font-weight:900;
+        letter-spacing:1px;
+        color:#0b2d6b;
+       }
+      
         .vt-cover {
           position: fixed;
           inset: 0;
