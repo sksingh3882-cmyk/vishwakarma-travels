@@ -49,7 +49,7 @@ export default function CustomerCover({ onContinue }: Props) {
 
       <div className="vt-shell">
 
-        <img src="/vt-logo.png" className="vt-top-logo" alt="VT Logo" />
+        <img src="/cars/vt-logo.png" className="vt-top-logo" alt="VT Logo" />
          <h1>
   <span className="vt-welcome-brand">Vishwakarma Travels</span>
 </h1>
