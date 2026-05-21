@@ -1,16 +1,16 @@
 /* UI banner swap - test-ui only */
-main > section:nth-of-type(1) img {
+main > section:not(.vt-cover) img[src*='banner.jpg'] {
   content: url('/cars/uibanner.png') !important;
   width: 100% !important;
   object-fit: cover !important;
 }
 
 @media (max-width: 640px) {
-  main > section:nth-of-type(1) {
+  main > section:not(.vt-cover):has(img[src*='banner.jpg']) {
     padding-bottom: 48px !important;
   }
 
-  main > section:nth-of-type(1) img {
+  main > section:not(.vt-cover) img[src*='banner.jpg'] {
     min-height: 118px !important;
     max-height: 150px !important;
     object-position: center !important;
