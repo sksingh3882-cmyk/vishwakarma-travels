@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import AppMenu from "./components/AppMenu";
-import "./compact-booking.css";
+import "../compact-booking.css";
 
 const siteUrl = "https://vishwakarma-travels-nine.vercel.app";
 const previewImage = `${siteUrl}/Vishwakarma.jpg`;
