@@ -48,9 +48,9 @@ export default function CustomerCover({ onContinue }: Props) {
       <a href="/admin" className="vt-admin">Admin Login</a>
 
       <div className="vt-shell">
-        
-         <h1>
 
+        <img src="/vt-logo.png" className="vt-top-logo" alt="VT Logo" />
+         <h1>
   <span className="vt-welcome-brand">Vishwakarma Travels</span>
 </h1>
           <p className="vt-register">Register to continue</p>
@@ -86,6 +86,14 @@ export default function CustomerCover({ onContinue }: Props) {
       </div>
 
       <style jsx>{`
+       .vt-top-logo{
+  width:120px;
+  height:auto;
+  display:block;
+  margin:0 auto 14px;
+  object-fit:contain;
+}
+      
         .vt-welcome{
   display:block;
   text-align:center;
