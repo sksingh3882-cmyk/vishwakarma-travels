@@ -1,9 +1,16 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import AppMenu from "./components/AppMenu";
 import "../compact-booking.css";
+import "../ui-banner-override.css";
 
 const siteUrl = "https://vishwakarma-travels-nine.vercel.app";
 const previewImage = `${siteUrl}/Vishwakarma.jpg`;
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
