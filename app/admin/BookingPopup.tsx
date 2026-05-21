@@ -78,14 +78,14 @@ export default function BookingPopup({ data, loading, onClose, onSavePdf, onWhat
             </div>
 
             <div style={routeBox}>
-              <div>
+              <div style={routeCell}>
                 <small style={routeLabel}>Pickup</small>
-                <b>{value(data.pickup)}</b>
+                <b style={routeText}>{value(data.pickup)}</b>
               </div>
               <div style={arrow}>→</div>
-              <div>
+              <div style={routeCell}>
                 <small style={routeLabel}>Drop</small>
-                <b>{value(data.drop)}</b>
+                <b style={routeText}>{value(data.drop)}</b>
               </div>
             </div>
 
@@ -138,23 +138,25 @@ const popupWrap: CSSProperties = { width: "100%", maxWidth: 430, maxHeight: "94v
 const closeBtn: CSSProperties = { position: "sticky", top: 8, float: "right", zIndex: 5, width: 34, height: 34, borderRadius: "50%", border: 0, background: "white", fontSize: 24, fontWeight: 900, boxShadow: "0 4px 12px rgba(0,0,0,.2)" };
 const card: CSSProperties = { clear: "both", background: "white", borderRadius: 22, overflow: "hidden", boxShadow: "0 18px 50px rgba(0,0,0,.35)", fontFamily: "Arial, sans-serif", color: "#102033" };
 const banner: CSSProperties = { width: "100%", display: "block", background: "white" };
-const content: CSSProperties = { padding: "14px 16px 16px" };
-const copyBadge: CSSProperties = { display: "inline-block", background: "#0b2d6b", color: "white", borderRadius: 999, padding: "6px 12px", fontSize: 12, fontWeight: 900, letterSpacing: .4 };
-const title: CSSProperties = { color: "#0b2d6b", margin: "10px 0 2px", fontSize: 24, fontWeight: 950 };
-const subTitle: CSSProperties = { margin: "0 0 12px", color: "#f97316", fontWeight: 900 };
-const twoCol: CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 };
-const infoRow: CSSProperties = { border: "1px solid #e2e8f0", borderRadius: 12, padding: "8px 9px", display: "grid", gap: 3, fontSize: 12.5 };
-const routeBox: CSSProperties = { margin: "12px 0", border: "1px solid #bfdbfe", background: "#eff6ff", borderRadius: 16, padding: 12, display: "grid", gridTemplateColumns: "1fr 34px 1fr", gap: 8, alignItems: "center" };
-const routeLabel: CSSProperties = { display: "block", color: "#64748b", fontWeight: 900, marginBottom: 4, textTransform: "uppercase" };
-const arrow: CSSProperties = { width: 34, height: 34, borderRadius: "50%", background: "#f97316", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 950 };
-const section: CSSProperties = { marginTop: 10 };
-const sectionTitle: CSSProperties = { margin: "0 0 8px", color: "#0b2d6b", fontSize: 15 };
-const fareBox: CSSProperties = { marginTop: 12, background: "#0b2d6b", color: "white", borderRadius: 16, padding: 12 };
-const moneyRow: CSSProperties = { display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: "1px solid rgba(255,255,255,.25)" };
-const netRow: CSSProperties = { marginTop: 8, background: "#f97316", color: "white", borderRadius: 12, padding: "10px 12px", display: "flex", justifyContent: "space-between", fontSize: 18, fontWeight: 950 };
-const declaration: CSSProperties = { marginTop: 12, borderLeft: "5px solid #f97316", background: "#fff7ed", borderRadius: 12, padding: "10px 12px", fontSize: 12.5, lineHeight: 1.45 };
-const thankYou: CSSProperties = { marginTop: 13, textAlign: "center", color: "#0b2d6b", fontSize: 26, fontWeight: 950, letterSpacing: 1.2 };
-const footer: CSSProperties = { textAlign: "center", color: "#475569", fontSize: 12.5, marginTop: 4 };
+const content: CSSProperties = { padding: "12px 14px 14px" };
+const copyBadge: CSSProperties = { display: "inline-block", background: "#0b2d6b", color: "white", borderRadius: 999, padding: "5px 11px", fontSize: 11.5, fontWeight: 900, letterSpacing: .4 };
+const title: CSSProperties = { color: "#0b2d6b", margin: "8px 0 1px", fontSize: 23, fontWeight: 950 };
+const subTitle: CSSProperties = { margin: "0 0 10px", color: "#f97316", fontWeight: 900 };
+const twoCol: CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7 };
+const infoRow: CSSProperties = { border: "1px solid #e2e8f0", borderRadius: 11, padding: "7px 8px", display: "grid", gap: 2, fontSize: 12.2 };
+const routeBox: CSSProperties = { margin: "9px 0", border: "1px solid #bfdbfe", background: "#eff6ff", borderRadius: 14, padding: "9px 10px", display: "grid", gridTemplateColumns: "minmax(0, 1fr) 30px minmax(0, 1fr)", gap: 7, alignItems: "center" };
+const routeCell: CSSProperties = { minWidth: 0 };
+const routeLabel: CSSProperties = { display: "block", color: "#64748b", fontWeight: 900, marginBottom: 2, textTransform: "uppercase", fontSize: 10.5 };
+const routeText: CSSProperties = { display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", wordBreak: "break-word", lineHeight: 1.22, fontSize: 12.5 };
+const arrow: CSSProperties = { width: 30, height: 30, borderRadius: "50%", background: "#f97316", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 950 };
+const section: CSSProperties = { marginTop: 8 };
+const sectionTitle: CSSProperties = { margin: "0 0 7px", color: "#0b2d6b", fontSize: 14.5 };
+const fareBox: CSSProperties = { marginTop: 9, background: "#0b2d6b", color: "white", borderRadius: 14, padding: "9px 11px" };
+const moneyRow: CSSProperties = { display: "flex", justifyContent: "space-between", padding: "4px 0", borderBottom: "1px solid rgba(255,255,255,.25)", fontSize: 12.5 };
+const netRow: CSSProperties = { marginTop: 7, background: "#f97316", color: "white", borderRadius: 11, padding: "8px 10px", display: "flex", justifyContent: "space-between", fontSize: 17, fontWeight: 950 };
+const declaration: CSSProperties = { marginTop: 8, borderLeft: "4px solid #f97316", background: "#fff7ed", borderRadius: 10, padding: "8px 10px", fontSize: 11.7, lineHeight: 1.32 };
+const thankYou: CSSProperties = { marginTop: 9, textAlign: "center", color: "#0b2d6b", fontSize: 23, fontWeight: 950, letterSpacing: 1.1, lineHeight: 1 };
+const footer: CSSProperties = { textAlign: "center", color: "#475569", fontSize: 11.6, marginTop: 4, lineHeight: 1.25 };
 const actions: CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, background: "white", padding: 10, borderRadius: 18, marginTop: 10 };
 const savePdfBtn: CSSProperties = { padding: "12px 8px", background: "#15803d", color: "white", border: 0, borderRadius: 12, fontWeight: 900 };
 const imageBtn: CSSProperties = { padding: "12px 8px", background: "#f97316", color: "white", border: 0, borderRadius: 12, fontWeight: 900 };
