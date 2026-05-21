@@ -50,7 +50,7 @@ export default function CustomerCover({ onContinue }: Props) {
       <div className="vt-shell">
         
          <h1>
-  Welcome to<br />
+  <span className="vt-welcome">Welcome to</span><br />
   <span className="vt-welcome-brand">Vishwakarma Travels</span>
 </h1>
           <p className="vt-register">Register to continue</p>
@@ -86,6 +86,10 @@ export default function CustomerCover({ onContinue }: Props) {
       </div>
 
       <style jsx>{`
+        .vt-welcome{
+  display:block;
+  text-align:center;
+}
        .vt-welcome-brand{
         font-family:"Montserrat",sans-serif;
         font-weight:900;
