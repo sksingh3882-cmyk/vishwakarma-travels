@@ -54,7 +54,7 @@ export default function CustomerCover({ onContinue }: Props) {
   <span className="vt-welcome-brand">Vishwakarma Travels</span>
 </h1>
           <p className="vt-register">Register to continue</p>
-        </header>
+        
 
         <div className="vt-card">
           <div className="vt-tabs">
