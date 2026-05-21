@@ -1,16 +1,20 @@
 /* UI banner swap - test-ui only */
-main > section:not(.vt-cover) img[src*='banner.jpg'] {
+main > section:not(.vt-cover) img[src*='banner'] {
   content: url('/cars/uibanner.png') !important;
   width: 100% !important;
   object-fit: cover !important;
 }
 
+.vt-cover img {
+  content: none !important;
+}
+
 @media (max-width: 640px) {
-  main > section:not(.vt-cover):has(img[src*='banner.jpg']) {
+  main > section:not(.vt-cover):has(img[src*='banner']) {
     padding-bottom: 48px !important;
   }
 
-  main > section:not(.vt-cover) img[src*='banner.jpg'] {
+  main > section:not(.vt-cover) img[src*='banner'] {
     min-height: 118px !important;
     max-height: 150px !important;
     object-position: center !important;
@@ -18,5 +22,23 @@ main > section:not(.vt-cover) img[src*='banner.jpg'] {
 
   section:has(> #booking-form) {
     margin-top: -46px !important;
+  }
+
+  #booking-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #booking-form > h2,
+  #booking-form > p,
+  #booking-form > div,
+  #booking-form > input:not([type='date']):not([type='time']),
+  #booking-form > select {
+    grid-column: 1 / -1 !important;
+  }
+
+  #booking-form > input[type='date'],
+  #booking-form > input[type='time'] {
+    grid-column: auto !important;
+    min-width: 0 !important;
   }
 }
