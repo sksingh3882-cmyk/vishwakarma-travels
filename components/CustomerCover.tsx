@@ -376,3 +376,4 @@ export default function CustomerCover({ onContinue }: Props) {
     </section>
   );
 }
+// logo path updated
