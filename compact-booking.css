@@ -1,0 +1,59 @@
+/* Compact booking form restore: safe mobile layout for test-ui */
+section:has(> #booking-form) {
+  margin: 12px auto 18px !important;
+  padding: 0 16px !important;
+}
+
+#booking-form {
+  width: 100% !important;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+  gap: 10px !important;
+  align-items: start !important;
+  box-sizing: border-box !important;
+}
+
+#booking-form > h2,
+#booking-form > p {
+  grid-column: 1 / -1 !important;
+}
+
+#booking-form > p {
+  margin: 0 0 4px !important;
+  font-size: clamp(20px, 5vw, 26px) !important;
+  line-height: 1.15 !important;
+}
+
+#booking-form input,
+#booking-form select {
+  width: 100% !important;
+  min-height: 52px !important;
+  border-radius: 16px !important;
+  padding: 0 14px !important;
+  font-size: 16px !important;
+  box-sizing: border-box !important;
+}
+
+#booking-form > div[style*='grid-column'] {
+  grid-column: 1 / -1 !important;
+}
+
+#booking-form > div[style*='grid-template-columns'] {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+}
+
+@media (max-width: 640px) {
+  #booking-form {
+    grid-template-columns: 1fr !important;
+    padding: 14px !important;
+    border-radius: 22px !important;
+  }
+
+  #booking-form > div {
+    min-width: 0 !important;
+  }
+
+  #booking-form button {
+    min-height: 54px !important;
+    font-size: 16px !important;
+  }
+}
