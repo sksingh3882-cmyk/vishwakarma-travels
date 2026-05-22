@@ -48,6 +48,21 @@ function selectLabel(select: HTMLSelectElement, index: number) {
   return "Select Option " + (index + 1);
 }
 
+function addSupabaseSyncButton() {
+  if (document.getElementById("vt-supabase-sync-bottom")) return;
+  const btn = document.createElement("button");
+  btn.id = "vt-supabase-sync-bottom";
+  btn.type = "button";
+  btn.textContent = "↻ Supabase Sync";
+  btn.style.cssText = "position:fixed;left:12px;right:12px;bottom:10px;z-index:99999;height:50px;border:0;border-radius:16px;background:#0b2d6b;color:#fff;font-weight:950;font-size:15px;box-shadow:0 10px 28px rgba(15,23,42,.25);";
+  btn.onclick = () => {
+    btn.textContent = "Syncing...";
+    btn.setAttribute("disabled", "true");
+    window.setTimeout(() => window.location.reload(), 250);
+  };
+  document.body.appendChild(btn);
+}
+
 function enhanceSelect(select: HTMLSelectElement, index: number) {
   if (select.dataset.customDropdownReady === "yes") { hideNative(select); return; }
   select.dataset.customDropdownReady = "yes";
@@ -161,6 +176,7 @@ function enhanceTime(input: HTMLInputElement) {
 export default function AdminCustomDropdowns() {
   useEffect(() => {
     const setup = () => {
+      addSupabaseSyncButton();
       document.querySelectorAll<HTMLSelectElement>(".admin-shell form select:not(.vt-ap):not(.vt-h):not(.vt-m)").forEach(enhanceSelect);
       const dateInput = document.querySelector<HTMLInputElement>('.admin-shell form input[type="date"]');
       if (dateInput) enhanceDate(dateInput);
@@ -172,7 +188,7 @@ export default function AdminCustomDropdowns() {
     const observer = new MutationObserver(setup);
     observer.observe(document.body, { childList: true, subtree: true });
     document.addEventListener("click", closeAll);
-    return () => { window.clearInterval(interval); observer.disconnect(); document.removeEventListener("click", closeAll); };
+    return () => { window.clearInterval(interval); observer.disconnect(); document.removeEventListener("click", closeAll); document.getElementById("vt-supabase-sync-bottom")?.remove(); };
   }, []);
   return null;
 }
