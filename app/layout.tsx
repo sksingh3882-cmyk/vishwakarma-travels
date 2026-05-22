@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import AppMenu from "./components/AppMenu";
+import AdminTimePickerEnhancer from "./components/AdminTimePickerEnhancer";
 import "../compact-booking.css";
 import "../ui-banner-override.css";
 
@@ -50,6 +51,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AppMenu />
+        <AdminTimePickerEnhancer />
         {children}
       </body>
     </html>
