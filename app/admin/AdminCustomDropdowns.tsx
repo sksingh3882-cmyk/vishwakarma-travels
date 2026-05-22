@@ -1,15 +1,275 @@
 "use client";
+
 import { useEffect } from "react";
 
-const hide=(e:HTMLInputElement|HTMLSelectElement)=>{e.style.setProperty("display","none","important");e.style.setProperty("position","absolute","important");e.style.setProperty("left","-9999px","important")};
-const setVal=(i:HTMLInputElement,v:string)=>{Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,"value")?.set?.call(i,v);i.dispatchEvent(new Event("input",{bubbles:true}));i.dispatchEvent(new Event("change",{bubbles:true}))};
-const time12=(v:string)=>!v?"Select Time":/am|pm/i.test(v)?v:new Date(`2000-01-01T${v}`).toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true});
-const iso=(d:Date)=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-const nice=(v:string)=>v?new Date(`${v}T00:00:00`).toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}):"Select Date";
-const close=()=>document.querySelectorAll(".open").forEach(e=>e.classList.remove("open"));
+function hideNative(el: HTMLInputElement | HTMLSelectElement) {
+  el.style.setProperty("display", "none", "important");
+  el.style.setProperty("position", "absolute", "important");
+  el.style.setProperty("left", "-9999px", "important");
+}
 
-function label(s:HTMLSelectElement,i:number){const o=Array.from(s.options).map(x=>x.text);if(o.includes("Mr."))return"Select Gender";if(o.includes("Sedan"))return"Select Vehicle Type";if(o.includes("Desire"))return"Select Vehicle Model";if(o.includes("One Way Drop Pickup"))return"Select Service";return`Select Option ${i+1}`}
-function customSelect(s:HTMLSelectElement,i:number){if(s.dataset.customDropdownReady==="yes")return hide(s);s.dataset.customDropdownReady="yes";const w=document.createElement("div"),b=document.createElement("button"),m=document.createElement("div");w.className="vt-custom-select";b.type="button";b.className="vt-custom-select-btn";m.className="vt-custom-select-menu";const txt=()=>b.innerHTML=`<span>${s.options[s.selectedIndex]?.text||label(s,i)}</span><b>⌄</b>`;txt();Array.from(s.options).forEach(o=>{const it=document.createElement("button");it.type="button";it.className="vt-custom-select-item";it.textContent=o.text;it.onclick=e=>{e.stopPropagation();s.value=o.value;s.dispatchEvent(new Event("change",{bubbles:true}));txt();w.classList.remove("open")};m.appendChild(it)});b.onclick=e=>{e.stopPropagation();close();w.classList.toggle("open")};w.append(b,m);s.parentElement?.insertBefore(w,s);hide(s)}
-function datePicker(i:HTMLInputElement){if(i.dataset.customPickerReady==="yes")return hide(i);i.dataset.customPickerReady="yes";const w=document.createElement("div"),b=document.createElement("button"),m=document.createElement("div");w.className="vt-picker";b.type="button";b.className="vt-custom-select-btn";m.className="vt-picker-menu";const txt=()=>b.innerHTML=`<span>📅 ${nice(i.value)}</span><b>⌄</b>`;txt();for(let n=0;n<14;n++){const d=new Date();d.setDate(d.getDate()+n);const v=iso(d),it=document.createElement("button");it.type="button";it.className="vt-custom-select-item";it.textContent=d.toLocaleDateString("en-IN",{day:"2-digit",month:"short",weekday:"short"});it.onclick=e=>{e.stopPropagation();setVal(i,v);txt();close()};m.appendChild(it)}b.onclick=e=>{e.stopPropagation();close();w.classList.toggle("open")};w.append(b,m);i.parentElement?.insertBefore(w,i);hide(i)}
-function timePicker(i:HTMLInputElement){if(i.dataset.customPickerReady==="yes")return hide(i);i.dataset.customPickerReady="yes";const w=document.createElement("div"),b=document.createElement("button"),m=document.createElement("div");w.className="vt-picker vt-time-picker";b.type="button";b.className="vt-custom-select-btn";m.className="vt-picker-menu vt-time-menu";m.innerHTML='<div class="vt-time-head"><b>🕘 Select Time</b><button type="button" class="vt-time-close">×</button></div><div class="vt-time-grid"></div><div class="vt-custom-row"><span>Custom</span><select class="vt-h"></select><select class="vt-m"></select><select class="vt-ap"><option>AM</option><option>PM</option></select><button type="button" class="vt-custom-done">Done</button></div>';const txt=()=>b.innerHTML=`<span>🕘 ${time12(i.value)}</span><b>⌄</b>`;txt();const g=m.querySelector(".vt-time-grid") as HTMLDivElement;Array.from({length:30},(_,n)=>{const h=7+Math.floor(n/2),mm=n%2?30:0,ap=h>=12?"PM":"AM",hh=h%12||12,t=`${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")} ${ap}`;return{t}}).forEach(({t})=>{const it=document.createElement("button");it.type="button";it.className="vt-time-slot";it.textContent=t;it.onclick=e=>{e.stopPropagation();setVal(i,t);txt();close()};g.appendChild(it)});const hs=m.querySelector(".vt-h") as HTMLSelectElement,ms=m.querySelector(".vt-m") as HTMLSelectElement,ap=m.querySelector(".vt-ap") as HTMLSelectElement;for(let n=1;n<=12;n++)hs.add(new Option(String(n).padStart(2,"0")));for(let n=0;n<60;n++)ms.add(new Option(String(n).padStart(2,"0")));hs.value="07";ms.value="40";m.onclick=e=>{e.stopPropagation();const target=e.target as HTMLElement;if(target.closest(".vt-time-close")){close();return}if(target.closest(".vt-custom-done")){setVal(i,`${hs.value}:${ms.value} ${ap.value}`);txt();close();return}};b.onclick=e=>{e.stopPropagation();close();w.classList.toggle("open")};w.append(b,m);i.parentElement?.insertBefore(w,i);hide(i)}
-export default function AdminCustomDropdowns(){useEffect(()=>{const setup=()=>{document.querySelectorAll<HTMLSelectElement>(".admin-shell form select:not(.vt-ap):not(.vt-h):not(.vt-m)").forEach(customSelect);const d=document.querySelector<HTMLInputElement>('.admin-shell form input[type="date"]');if(d)datePicker(d);const t=Array.from(document.querySelectorAll<HTMLInputElement>(".admin-shell form input")).find(x=>(x.placeholder||"").toLowerCase().includes("time"));if(t)timePicker(t)};setup();const int=window.setInterval(setup,800);const obs=new MutationObserver(setup);obs.observe(document.body,{childList:true,subtree:true});document.addEventListener("click",close);return()=>{window.clearInterval(int);obs.disconnect();document.removeEventListener("click",close)}},[]);return null}
+function setInputValue(input: HTMLInputElement, value: string) {
+  const descriptor = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value");
+  if (descriptor && descriptor.set) descriptor.set.call(input, value);
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+  input.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
+function setSelectValue(select: HTMLSelectElement, value: string) {
+  select.value = value;
+  select.dispatchEvent(new Event("change", { bubbles: true }));
+}
+
+function formatDateValue(value: string) {
+  if (!value) return "Select Date";
+  return new Date(value + "T00:00:00").toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function isoDate(date: Date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return y + "-" + m + "-" + d;
+}
+
+function formatTime(value: string) {
+  if (!value) return "Select Time";
+  if (/am|pm/i.test(value)) return value;
+  return new Date("2000-01-01T" + value).toLocaleTimeString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
+
+function closeAll() {
+  document.querySelectorAll(".open").forEach((el) => el.classList.remove("open"));
+}
+
+function selectLabel(select: HTMLSelectElement, index: number) {
+  const options = Array.from(select.options).map((option) => option.text);
+  if (options.includes("Mr.")) return "Select Gender";
+  if (options.includes("Sedan")) return "Select Vehicle Type";
+  if (options.includes("Desire")) return "Select Vehicle Model";
+  if (options.includes("One Way Drop Pickup")) return "Select Service";
+  return "Select Option " + (index + 1);
+}
+
+function enhanceSelect(select: HTMLSelectElement, index: number) {
+  if (select.dataset.customDropdownReady === "yes") {
+    hideNative(select);
+    return;
+  }
+
+  select.dataset.customDropdownReady = "yes";
+
+  const wrap = document.createElement("div");
+  const button = document.createElement("button");
+  const menu = document.createElement("div");
+
+  wrap.className = "vt-custom-select";
+  button.type = "button";
+  button.className = "vt-custom-select-btn";
+  menu.className = "vt-custom-select-menu";
+
+  const refreshText = () => {
+    const text = select.options[select.selectedIndex]?.text || selectLabel(select, index);
+    button.innerHTML = "<span>" + text + "</span><b>⌄</b>";
+  };
+
+  refreshText();
+
+  Array.from(select.options).forEach((option) => {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "vt-custom-select-item";
+    item.textContent = option.text;
+    item.onclick = (event) => {
+      event.stopPropagation();
+      setSelectValue(select, option.value);
+      refreshText();
+      wrap.classList.remove("open");
+    };
+    menu.appendChild(item);
+  });
+
+  button.onclick = (event) => {
+    event.stopPropagation();
+    closeAll();
+    wrap.classList.toggle("open");
+  };
+
+  wrap.append(button, menu);
+  select.parentElement?.insertBefore(wrap, select);
+  hideNative(select);
+}
+
+function enhanceDate(input: HTMLInputElement) {
+  if (input.dataset.customPickerReady === "yes") {
+    hideNative(input);
+    return;
+  }
+
+  input.dataset.customPickerReady = "yes";
+
+  const wrap = document.createElement("div");
+  const button = document.createElement("button");
+  const menu = document.createElement("div");
+
+  wrap.className = "vt-picker";
+  button.type = "button";
+  button.className = "vt-custom-select-btn";
+  menu.className = "vt-picker-menu";
+
+  const refreshText = () => {
+    button.innerHTML = "<span>📅 " + formatDateValue(input.value) + "</span><b>⌄</b>";
+  };
+
+  refreshText();
+
+  for (let n = 0; n < 14; n += 1) {
+    const date = new Date();
+    date.setDate(date.getDate() + n);
+    const value = isoDate(date);
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "vt-custom-select-item";
+    item.textContent = date.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      weekday: "short",
+    });
+    item.onclick = (event) => {
+      event.stopPropagation();
+      setInputValue(input, value);
+      refreshText();
+      closeAll();
+    };
+    menu.appendChild(item);
+  }
+
+  button.onclick = (event) => {
+    event.stopPropagation();
+    closeAll();
+    wrap.classList.toggle("open");
+  };
+
+  wrap.append(button, menu);
+  input.parentElement?.insertBefore(wrap, input);
+  hideNative(input);
+}
+
+function enhanceTime(input: HTMLInputElement) {
+  if (input.dataset.customPickerReady === "yes") {
+    hideNative(input);
+    return;
+  }
+
+  input.dataset.customPickerReady = "yes";
+
+  const wrap = document.createElement("div");
+  const button = document.createElement("button");
+  const menu = document.createElement("div");
+
+  wrap.className = "vt-picker vt-time-picker";
+  button.type = "button";
+  button.className = "vt-custom-select-btn";
+  menu.className = "vt-picker-menu vt-time-menu";
+
+  menu.innerHTML = '<div class="vt-time-head"><b>🕘 Select Time</b><button type="button" class="vt-time-close">×</button></div><div class="vt-time-grid"></div><div class="vt-custom-row"><span>Custom</span><select class="vt-h"></select><select class="vt-m"></select><select class="vt-ap"><option>AM</option><option>PM</option></select><button type="button" class="vt-custom-done">Done</button></div>';
+
+  const refreshText = () => {
+    button.innerHTML = "<span>🕘 " + formatTime(input.value) + "</span><b>⌄</b>";
+  };
+
+  refreshText();
+
+  const grid = menu.querySelector(".vt-time-grid") as HTMLDivElement;
+  for (let n = 0; n < 30; n += 1) {
+    const hour24 = 7 + Math.floor(n / 2);
+    const minute = n % 2 ? 30 : 0;
+    const ampm = hour24 >= 12 ? "PM" : "AM";
+    const hour12 = hour24 % 12 || 12;
+    const text = String(hour12).padStart(2, "0") + ":" + String(minute).padStart(2, "0") + " " + ampm;
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "vt-time-slot";
+    item.textContent = text;
+    item.onclick = (event) => {
+      event.stopPropagation();
+      setInputValue(input, text);
+      refreshText();
+      closeAll();
+    };
+    grid.appendChild(item);
+  }
+
+  const hourSelect = menu.querySelector(".vt-h") as HTMLSelectElement;
+  const minuteSelect = menu.querySelector(".vt-m") as HTMLSelectElement;
+  const ampmSelect = menu.querySelector(".vt-ap") as HTMLSelectElement;
+
+  for (let n = 1; n <= 12; n += 1) hourSelect.add(new Option(String(n).padStart(2, "0")));
+  for (let n = 0; n < 60; n += 1) minuteSelect.add(new Option(String(n).padStart(2, "0")));
+  hourSelect.value = "07";
+  minuteSelect.value = "40";
+
+  menu.onclick = (event) => {
+    event.stopPropagation();
+    const target = event.target as HTMLElement;
+    if (target.closest(".vt-time-close")) {
+      closeAll();
+      return;
+    }
+    if (target.closest(".vt-custom-done")) {
+      setInputValue(input, hourSelect.value + ":" + minuteSelect.value + " " + ampmSelect.value);
+      refreshText();
+      closeAll();
+    }
+  };
+
+  button.onclick = (event) => {
+    event.stopPropagation();
+    closeAll();
+    wrap.classList.toggle("open");
+  };
+
+  wrap.append(button, menu);
+  input.parentElement?.insertBefore(wrap, input);
+  hideNative(input);
+}
+
+export default function AdminCustomDropdowns() {
+  useEffect(() => {
+    const setup = () => {
+      document
+        .querySelectorAll<HTMLSelectElement>(".admin-shell form select:not(.vt-ap):not(.vt-h):not(.vt-m)")
+        .forEach(enhanceSelect);
+
+      const dateInput = document.querySelector<HTMLInputElement>('.admin-shell form input[type="date"]');
+      if (dateInput) enhanceDate(dateInput);
+
+      const timeInput = Array.from(document.querySelectorAll<HTMLInputElement>(".admin-shell form input")).find((item) =>
+        (item.placeholder || "").toLowerCase().includes("time")
+      );
+      if (timeInput) enhanceTime(timeInput);
+    };
+
+    setup();
+    const interval = window.setInterval(setup, 800);
+    const observer = new MutationObserver(setup);
+    observer.observe(document.body, { childList: true, subtree: true });
+    document.addEventListener("click", closeAll);
+
+    return () => {
+      window.clearInterval(interval);
+      observer.disconnect();
+      document.removeEventListener("click", closeAll);
+    };
+  }, []);
+
+  return null;
+}
