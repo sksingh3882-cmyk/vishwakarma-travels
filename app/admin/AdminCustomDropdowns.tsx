@@ -140,9 +140,13 @@ function buildTimePicker(input: HTMLInputElement) {
   });
   const footer = document.createElement("div");
   footer.className = "vt-custom-time";
-  footer.innerHTML = `<select class="vt-ap"><option>AM</option><option>PM</option></select><button type="button">Done</button>`;
+  footer.innerHTML = `<input class="vt-manual-time" inputmode="numeric" placeholder="Manual e.g. 5:45" /><select class="vt-ap"><option>AM</option><option>PM</option></select><button type="button">Done</button>`;
   footer.querySelector("button")?.addEventListener("click", (e) => {
     e.stopPropagation();
+    const manual = (footer.querySelector(".vt-manual-time") as HTMLInputElement).value.trim();
+    const ap = (menu.querySelector(".vt-ap") as HTMLSelectElement).value;
+    if (manual) setInputValue(input, `${manual} ${ap}`);
+    setButtonText();
     wrapper.classList.remove("open");
   });
   menu.append(grid, footer);
