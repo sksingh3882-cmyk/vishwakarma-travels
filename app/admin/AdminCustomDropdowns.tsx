@@ -2,6 +2,13 @@
 
 import { useEffect } from "react";
 
+function hideNative(el: HTMLInputElement | HTMLSelectElement) {
+  el.style.setProperty("display", "none", "important");
+  el.style.setProperty("visibility", "hidden", "important");
+  el.style.setProperty("position", "absolute", "important");
+  el.style.setProperty("left", "-9999px", "important");
+}
+
 function labelForSelect(select: HTMLSelectElement, index: number) {
   const options = Array.from(select.options).map((option) => option.text);
   if (options.includes("Mr.")) return "Select Gender";
@@ -28,7 +35,7 @@ function setInputValue(input: HTMLInputElement, value: string) {
 }
 
 function buildCustomSelect(select: HTMLSelectElement, index: number) {
-  if (select.dataset.customDropdownReady === "yes") return;
+  if (select.dataset.customDropdownReady === "yes") return hideNative(select);
   select.dataset.customDropdownReady = "yes";
   const wrapper = document.createElement("div");
   wrapper.className = "vt-custom-select";
@@ -60,11 +67,11 @@ function buildCustomSelect(select: HTMLSelectElement, index: number) {
   };
   wrapper.append(button, menu);
   select.parentElement?.insertBefore(wrapper, select);
-  select.style.display = "none";
+  hideNative(select);
 }
 
 function buildDatePicker(input: HTMLInputElement) {
-  if (input.dataset.customPickerReady === "yes") return;
+  if (input.dataset.customPickerReady === "yes") return hideNative(input);
   input.dataset.customPickerReady = "yes";
   const wrapper = document.createElement("div");
   wrapper.className = "vt-picker";
@@ -99,10 +106,11 @@ function buildDatePicker(input: HTMLInputElement) {
   };
   wrapper.append(button, menu);
   input.parentElement?.insertBefore(wrapper, input);
+  hideNative(input);
 }
 
 function buildTimePicker(input: HTMLInputElement) {
-  if (input.dataset.customPickerReady === "yes") return;
+  if (input.dataset.customPickerReady === "yes") return hideNative(input);
   input.dataset.customPickerReady = "yes";
   const wrapper = document.createElement("div");
   wrapper.className = "vt-picker";
@@ -145,21 +153,25 @@ function buildTimePicker(input: HTMLInputElement) {
   };
   wrapper.append(button, menu);
   input.parentElement?.insertBefore(wrapper, input);
+  hideNative(input);
 }
 
 export default function AdminCustomDropdowns() {
   useEffect(() => {
     const setup = () => {
-      Array.from(document.querySelectorAll<HTMLSelectElement>(".admin-shell form select")).forEach(buildCustomSelect);
+      Array.from(document.querySelectorAll<HTMLSelectElement>(".admin-shell form select:not(.vt-ap)")).forEach(buildCustomSelect);
       const dateInput = document.querySelector<HTMLInputElement>('.admin-shell form input[type="date"]');
       if (dateInput) buildDatePicker(dateInput);
       const timeInput = Array.from(document.querySelectorAll<HTMLInputElement>(".admin-shell form input")).find((el) => (el.placeholder || "").toLowerCase().includes("time"));
       if (timeInput) buildTimePicker(timeInput);
     };
     setup();
+    const interval = window.setInterval(setup, 800);
+    const observer = new MutationObserver(setup);
+    observer.observe(document.body, { childList: true, subtree: true });
     const closeAll = () => document.querySelectorAll(".open").forEach((el) => el.classList.remove("open"));
     document.addEventListener("click", closeAll);
-    return () => document.removeEventListener("click", closeAll);
+    return () => { window.clearInterval(interval); observer.disconnect(); document.removeEventListener("click", closeAll); };
   }, []);
   return null;
 }
