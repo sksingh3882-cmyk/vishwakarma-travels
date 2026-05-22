@@ -63,10 +63,6 @@ function InvoiceContent() {
           </div>
 
           <div className="invoiceTitle">INVOICE</div>
-
-          <div className="pdfLogo">
-            <img src="/cars/pdflogo.png" alt="Vishwakarma Travels Logo" className="logoImg" />
-          </div>
         </div>
 
         <div className="detailsGrid">
@@ -109,30 +105,24 @@ function InvoiceContent() {
         </div>
 
         <div className="thanksText"><p>Thank You Dear Sir/Madam For Giving Us Booking.</p><p>Thank You For Your Support & Booking.</p></div>
-
         <div className="cutLine"><span>✂</span></div>
         <div className="copyHead">BOOKING CONFIRMATION COPY</div>
-
         <div className="copyGrid">
           <div><Info label="Trip Detail" value={service} /><Info label="Pickup Location" value={pickup} /><Info label="Drop Location" value={drop} /><Info label="Client Name" value={customerName} /><Info label="Address" value={pickup} /><Info label="Contact No." value={customerPhone} /><Info label="Booking Date" value={journeyDate} /></div>
           <div className="copyVehicle"><h3>VEHICLE DETAILS</h3><Info label="Vehicle Requirement" value={vehicleType} /><Info label="Vehicle No." value={vehicleNumber} /><Info label="Driver Name" value={driverName} /><Info label="Contact No." value={driverMobile} /></div>
         </div>
-
         <div className="declaration"><b>DECLARATION</b><p>• Book A Cab Atleast 24 Hour Before Travelling Otherwise Booking May Not Be Confirmed</p><p>• After the booking is Confirmed, Customer will have to make the Advance Payment</p><p>• Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances</p></div>
-
         <div className="footerLine">{"THANK YOU & WISH YOU A VERY HAPPY JOURNEY"}</div>
       </section>
 
       <style jsx global>{`
-        @page { size: A4; margin: 2mm; }
+        @page { size: A4 portrait; margin: 2mm; }
         * { box-sizing: border-box; }
         html, body { margin: 0; padding: 0; }
         .screen { background: #e5e7eb; font-family: Arial, Helvetica, sans-serif; color: #111; padding: 0; }
         .printBtn { position: fixed; right: 14px; top: 14px; z-index: 10; border: 0; border-radius: 10px; background: #16a34a; color: white; padding: 10px 16px; font-weight: 900; box-shadow: 0 8px 22px rgba(0,0,0,.18); }
         .invoice { width: 200mm; min-height: 282mm; margin: 0 auto; background: white; padding: 4mm 7mm; overflow: hidden; page-break-after: avoid; break-after: avoid; }
-        .top { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; gap: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
-        .pdfLogo { text-align: center; color: #111; font-weight: 900; line-height: 1; }
-        .logoImg { width: 190px; height: auto; object-fit: contain; display: block; margin: 0 auto; }
+        .top { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
         .invoiceTitle { text-align: center; font-size: 36px; font-weight: 900; color: #0b2d6b; border-bottom: 2px solid #0b2d6b; padding-bottom: 4px; letter-spacing: .5px; }
         .company { color: #0b2d6b; line-height: 1.24; }
         .leftCompany { text-align: left; }
@@ -177,10 +167,10 @@ function InvoiceContent() {
         .footerLine { display: flex; align-items: center; gap: 10px; margin-top: 7px; color: #0b2d6b; font-weight: 900; text-align: center; font-size: 12.5px; }
         .footerLine:before, .footerLine:after { content: ""; flex: 1; border-top: 1px solid #333; }
         @media print {
-          html, body { width: 210mm; min-height: 297mm; margin: 0; padding: 0; }
-          .screen { background: white; width: 210mm; min-height: 297mm; overflow: hidden; }
-          .invoice { margin: 0; width: 204mm; min-height: 289mm; padding: 4mm 7mm; page-break-after: avoid; break-after: avoid; }
-          .printBtn { display: none; }
+          html, body { width: auto; min-height: auto; margin: 0; padding: 0; overflow: hidden; }
+          .screen { background: white; width: 100%; min-height: auto; overflow: hidden; }
+          .invoice { margin: 0 auto; width: 190mm; min-height: auto; padding: 3mm 6mm; page-break-after: avoid; break-after: avoid; }
+          .printBtn, button:not(.keep-print) { display: none !important; }
         }
       `}</style>
     </main>
