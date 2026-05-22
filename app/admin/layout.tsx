@@ -6,7 +6,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       <div style={menuWrap}>
         <div style={menuInner}>
           <a href="/admin" style={brandLink}>Vishwakarma Admin</a>
-          <a href="/admin/vehicle-documents" style={menuButton}>Vehicle Documents</a>
+          <span style={menuBadge}>Admin Panel</span>
         </div>
       </div>
       {children}
@@ -16,7 +16,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
 const menuWrap: CSSProperties = {
   background: "#f1f5f9",
-  padding: "12px 16px 0",
+  padding: "10px 12px 0",
   fontFamily: "Arial, sans-serif",
 };
 
@@ -25,13 +25,12 @@ const menuInner: CSSProperties = {
   margin: "0 auto",
   background: "white",
   border: "1px solid #e2e8f0",
-  borderRadius: 16,
-  padding: 12,
+  borderRadius: 18,
+  padding: "12px 14px",
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
   gap: 10,
-  flexWrap: "wrap",
   boxShadow: "0 8px 22px rgba(15,23,42,.08)",
 };
 
@@ -39,14 +38,17 @@ const brandLink: CSSProperties = {
   color: "#0b2d6b",
   fontWeight: 950,
   textDecoration: "none",
-  fontSize: 18,
+  fontSize: 20,
+  whiteSpace: "nowrap",
 };
 
-const menuButton: CSSProperties = {
-  background: "linear-gradient(135deg,#f97316,#ea580c)",
-  color: "white",
-  textDecoration: "none",
-  padding: "11px 14px",
-  borderRadius: 12,
-  fontWeight: 950,
+const menuBadge: CSSProperties = {
+  background: "#eff6ff",
+  color: "#0b2d6b",
+  padding: "8px 10px",
+  borderRadius: 999,
+  fontSize: 12,
+  fontWeight: 900,
+  border: "1px solid #bfdbfe",
+  whiteSpace: "nowrap",
 };
