@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import AdminCustomDropdowns from "./AdminCustomDropdowns";
+import AdminCalendarStyle from "./AdminCalendarStyle";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
@@ -12,6 +13,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       </div>
       <div className="admin-shell"><AdminCustomDropdowns />{children}</div>
       <style>{adminCss}</style>
+      <AdminCalendarStyle />
     </>
   );
 }
