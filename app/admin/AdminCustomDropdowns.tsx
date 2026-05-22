@@ -34,6 +34,11 @@ function setInputValue(input: HTMLInputElement, value: string) {
   input.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
+function closeOpen() {
+  document.querySelectorAll(".open").forEach((el) => el.classList.remove("open"));
+  document.querySelectorAll(".vt-time-backdrop").forEach((el) => el.remove());
+}
+
 function buildCustomSelect(select: HTMLSelectElement, index: number) {
   if (select.dataset.customDropdownReady === "yes") return hideNative(select);
   select.dataset.customDropdownReady = "yes";
@@ -62,7 +67,7 @@ function buildCustomSelect(select: HTMLSelectElement, index: number) {
   });
   button.onclick = (e) => {
     e.stopPropagation();
-    document.querySelectorAll(".open").forEach((el) => el !== wrapper && el.classList.remove("open"));
+    closeOpen();
     wrapper.classList.toggle("open");
   };
   wrapper.append(button, menu);
@@ -95,13 +100,13 @@ function buildDatePicker(input: HTMLInputElement) {
       e.stopPropagation();
       setInputValue(input, val);
       setButtonText();
-      wrapper.classList.remove("open");
+      closeOpen();
     };
     menu.appendChild(item);
   }
   button.onclick = (e) => {
     e.stopPropagation();
-    document.querySelectorAll(".open").forEach((el) => el !== wrapper && el.classList.remove("open"));
+    closeOpen();
     wrapper.classList.toggle("open");
   };
   wrapper.append(button, menu);
@@ -113,47 +118,46 @@ function buildTimePicker(input: HTMLInputElement) {
   if (input.dataset.customPickerReady === "yes") return hideNative(input);
   input.dataset.customPickerReady = "yes";
   const wrapper = document.createElement("div");
-  wrapper.className = "vt-picker";
+  wrapper.className = "vt-picker vt-time-picker";
   const button = document.createElement("button");
   button.type = "button";
   button.className = "vt-custom-select-btn";
   const setButtonText = () => button.innerHTML = `<span>🕘 ${input.value || "Select Time"}</span><b>⌄</b>`;
   setButtonText();
   const menu = document.createElement("div");
-  menu.className = "vt-picker-menu";
-  const grid = document.createElement("div");
-  grid.className = "vt-time-grid";
-  const times = ["12:00","12:30","01:00","01:30","02:00","02:30","03:00","03:30","04:00","04:30","05:00","05:30","06:00","06:30","07:00","07:30","08:00","08:30","09:00","09:30","10:00","10:30","11:00","11:30"];
-  times.forEach((time) => {
+  menu.className = "vt-time-modal";
+  menu.innerHTML = `<div class="vt-time-head"><b>🕘 Select Time</b><button type="button" class="vt-time-close">×</button></div><div class="vt-time-grid"></div><div class="vt-custom-time"><b>Custom</b><input class="vt-manual-time" inputmode="numeric" placeholder="5:45" /><select class="vt-ap"><option>AM</option><option>PM</option></select><button type="button">Done</button></div>`;
+  const grid = menu.querySelector(".vt-time-grid") as HTMLDivElement;
+  ["07:00","07:30","08:00","08:30","09:00","09:30","10:00","10:30","11:00","11:30","12:00","12:30"].forEach((time) => {
     const item = document.createElement("button");
     item.type = "button";
     item.className = "vt-time-slot";
-    item.textContent = time;
+    item.textContent = `${time} am`;
     item.onclick = (e) => {
       e.stopPropagation();
-      const ap = (menu.querySelector(".vt-ap") as HTMLSelectElement).value;
-      setInputValue(input, `${time} ${ap}`);
+      setInputValue(input, item.textContent || time);
       setButtonText();
-      wrapper.classList.remove("open");
+      closeOpen();
     };
     grid.appendChild(item);
   });
-  const footer = document.createElement("div");
-  footer.className = "vt-custom-time";
-  footer.innerHTML = `<input class="vt-manual-time" inputmode="numeric" placeholder="Manual e.g. 5:45" /><select class="vt-ap"><option>AM</option><option>PM</option></select><button type="button">Done</button>`;
-  footer.querySelector("button")?.addEventListener("click", (e) => {
+  menu.querySelector(".vt-time-close")?.addEventListener("click", (e) => { e.stopPropagation(); closeOpen(); });
+  menu.querySelector(".vt-custom-time button")?.addEventListener("click", (e) => {
     e.stopPropagation();
-    const manual = (footer.querySelector(".vt-manual-time") as HTMLInputElement).value.trim();
+    const manual = (menu.querySelector(".vt-manual-time") as HTMLInputElement).value.trim();
     const ap = (menu.querySelector(".vt-ap") as HTMLSelectElement).value;
     if (manual) setInputValue(input, `${manual} ${ap}`);
     setButtonText();
-    wrapper.classList.remove("open");
+    closeOpen();
   });
-  menu.append(grid, footer);
   button.onclick = (e) => {
     e.stopPropagation();
-    document.querySelectorAll(".open").forEach((el) => el !== wrapper && el.classList.remove("open"));
-    wrapper.classList.toggle("open");
+    closeOpen();
+    const backdrop = document.createElement("div");
+    backdrop.className = "vt-time-backdrop";
+    backdrop.onclick = closeOpen;
+    document.body.appendChild(backdrop);
+    wrapper.classList.add("open");
   };
   wrapper.append(button, menu);
   input.parentElement?.insertBefore(wrapper, input);
@@ -173,7 +177,7 @@ export default function AdminCustomDropdowns() {
     const interval = window.setInterval(setup, 800);
     const observer = new MutationObserver(setup);
     observer.observe(document.body, { childList: true, subtree: true });
-    const closeAll = () => document.querySelectorAll(".open").forEach((el) => el.classList.remove("open"));
+    const closeAll = () => closeOpen();
     document.addEventListener("click", closeAll);
     return () => { window.clearInterval(interval); observer.disconnect(); document.removeEventListener("click", closeAll); };
   }, []);
