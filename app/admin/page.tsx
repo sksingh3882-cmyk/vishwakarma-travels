@@ -14,7 +14,7 @@ type FormDataState = {
 };
 
 const initialForm: FormDataState = {
-  customerName: "", customerPhone: "", gender: gender: "👋 Hii", service: "One Way Drop Pickup",
+  customerName: "", customerPhone: "", gender: "👋 Hii", service: "One Way Drop Pickup",
   pickup: "", drop: "", journeyDate: "", journeyTime: "",
   vehicleType: "Sedan", vehicleModel: "Desire", vehicleNumber: "",
   fare: "", advance: "0", driverName: "", driverMobile: "",
