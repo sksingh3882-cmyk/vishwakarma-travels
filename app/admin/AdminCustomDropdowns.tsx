@@ -48,7 +48,27 @@ function selectLabel(select: HTMLSelectElement, index: number) {
   return "Select Option " + (index + 1);
 }
 
+function addCompactTimeStyle() {
+  if (document.getElementById("vt-compact-time-style")) return;
+  const style = document.createElement("style");
+  style.id = "vt-compact-time-style";
+  style.textContent = `
+@media(max-width:720px){
+  .admin-shell .vt-time-picker.open .vt-time-menu{position:fixed!important;left:12px!important;right:12px!important;bottom:76px!important;top:auto!important;width:auto!important;max-width:none!important;max-height:46vh!important;overflow:auto!important;padding:10px!important;border-radius:20px!important;z-index:99990!important}
+  .admin-shell .vt-time-head{padding:4px 8px!important;font-size:17px!important;line-height:1.1!important}
+  .admin-shell .vt-time-close{width:30px!important;height:30px!important;min-height:30px!important;padding:0!important;font-size:18px!important}
+  .admin-shell .vt-time-grid{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:6px!important}
+  .admin-shell .vt-time-slot{min-height:38px!important;height:38px!important;padding:0 2px!important;font-size:12px!important;border-radius:14px!important}
+  .admin-shell .vt-custom-row{position:sticky!important;bottom:0!important;background:white!important;grid-template-columns:auto 1fr 1fr 1fr auto!important;gap:5px!important;padding:7px 0 0!important;margin-top:6px!important;font-size:11px!important}
+  .admin-shell .vt-custom-row select{height:32px!important;min-height:32px!important;font-size:12px!important}
+  .admin-shell .vt-custom-row button{height:32px!important;min-height:32px!important;padding:0 8px!important;font-size:12px!important}
+}
+`;
+  document.head.appendChild(style);
+}
+
 function addSupabaseSyncButton() {
+  addCompactTimeStyle();
   if (document.getElementById("vt-supabase-sync-bottom")) return;
   const btn = document.createElement("button");
   btn.id = "vt-supabase-sync-bottom";
@@ -188,7 +208,7 @@ export default function AdminCustomDropdowns() {
     const observer = new MutationObserver(setup);
     observer.observe(document.body, { childList: true, subtree: true });
     document.addEventListener("click", closeAll);
-    return () => { window.clearInterval(interval); observer.disconnect(); document.removeEventListener("click", closeAll); document.getElementById("vt-supabase-sync-bottom")?.remove(); };
+    return () => { window.clearInterval(interval); observer.disconnect(); document.removeEventListener("click", closeAll); document.getElementById("vt-supabase-sync-bottom")?.remove(); document.getElementById("vt-compact-time-style")?.remove(); };
   }, []);
   return null;
 }
