@@ -128,8 +128,8 @@ function InvoiceContent() {
         .invoice { width: 200mm; min-height: 282mm; margin: 0 auto; background: white; padding: 4mm 7mm; overflow: hidden; page-break-after: avoid; break-after: avoid; }
         .top { display: grid; grid-template-columns: 1.18fr .92fr .9fr; align-items: center; gap: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
         .invoiceTitle { text-align: center; font-size: 36px; font-weight: 900; color: #0b2d6b; border-bottom: 2px solid #0b2d6b; padding-bottom: 4px; letter-spacing: .5px; }
-        .topLogo { display: flex; align-items: center; justify-content: flex-end; background: transparent; border: 0; box-shadow: none; border-radius: 0; }
-        .topLogoImg { width: 126px; height: auto; display: block; object-fit: contain; background: transparent; border: 0; box-shadow: none; border-radius: 0; filter: none; }
+        .topLogo { display: flex; align-items: center; justify-content: flex-end; background: transparent !important; border: none !important; box-shadow: none !important; filter: none !important; border-radius: 0 !important; }
+        .topLogoImg { width: 126px; height: auto; display: block; object-fit: contain; background: transparent !important; border: none !important; box-shadow: none !important; filter: none !important; border-radius: 0 !important; mix-blend-mode: normal !important; }
         .company { color: #0b2d6b; line-height: 1.24; }
         .leftCompany { text-align: left; }
         .company h2 { margin: 0 0 2px; font-size: 22px; }
@@ -178,7 +178,8 @@ function InvoiceContent() {
           .screen, .screen * { visibility: visible !important; }
           .screen { background: white; width: 100%; min-height: auto; overflow: hidden; }
           .invoice { position: absolute; top: 0; left: 50%; transform: translateX(-50%); margin: 0 auto; width: 190mm; min-height: auto; padding: 3mm 6mm; page-break-after: avoid; break-after: avoid; }
-          .topLogoImg { width: 108px; box-shadow: none !important; border-radius: 0 !important; filter: none !important; }
+          .topLogo, .topLogoImg { box-shadow: none !important; filter: none !important; border: none !important; border-radius: 0 !important; background: transparent !important; }
+          .topLogoImg { width: 108px; }
           .printBtn, .printBtn *, button:not(.keep-print) { display: none !important; visibility: hidden !important; }
         }
       `}</style>
