@@ -5,8 +5,6 @@ import "../ui-banner-override.css";
 
 const siteUrl = "https://vishwakarma-travels-nine.vercel.app";
 const previewImage = `${siteUrl}/Vishwakarma.jpg`;
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -43,8 +41,6 @@ export const metadata: Metadata = {
   },
 };
 
-
-
 export default function RootLayout({
   children,
 }: {
@@ -55,7 +51,7 @@ export default function RootLayout({
       <body>
         <AppMenu />
         {children}
-      
+        <style dangerouslySetInnerHTML={{ __html: `#booking-form > div:first-of-type > div{display:none!important;visibility:hidden!important;pointer-events:none!important;}` }} />
       </body>
     </html>
   );
