@@ -113,7 +113,7 @@ function InvoiceContent() {
         <div className="copyHead">BOOKING CONFIRMATION COPY</div>
         <div className="copyGrid">
           <div><Info label="Trip Detail" value={service} /><Info label="Pickup Location" value={pickup} /><Info label="Drop Location" value={drop} /><Info label="Client Name" value={customerName} /><Info label="Address" value={pickup} /><Info label="Contact No." value={customerPhone} /><Info label="Booking Date" value={journeyDate} /></div>
-          <div className="copyVehicle"><h3>VEHICLE DETAILS</h3><Info label="Vehicle Requirement" value={vehicleType} /><Info label="Vehicle No." value={vehicleNumber} /><Info label="Driver Name" value={driverName} /><Info label="Contact No." value={driverMobile} /></div>
+          <div className="copyVehicle"><h3>VEHICLE DETAILS</h3><Info label="Vehicle Requirement" value={vehicleType} /><Info label="Vehicle Model" value={vehicleModel} /><Info label="Vehicle No." value={vehicleNumber} /><Info label="Driver Name" value={driverName} /><Info label="Contact No." value={driverMobile} /></div>
         </div>
         <div className="declaration"><b>DECLARATION</b><p>• Book A Cab Atleast 24 Hour Before Travelling Otherwise Booking May Not Be Confirmed</p><p>• After the booking is Confirmed, Customer will have to make the Advance Payment</p><p>• Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances</p></div>
         <div className="footerLine">{"THANK YOU & WISH YOU A VERY HAPPY JOURNEY"}</div>
@@ -173,16 +173,44 @@ function InvoiceContent() {
         .footerLine { display: flex; align-items: center; gap: 10px; margin-top: 7px; color: #0b2d6b; font-weight: 900; text-align: center; font-size: 12.5px; }
         .footerLine:before, .footerLine:after { content: ""; flex: 1; border-top: 1px solid #333; }
         @media print {
-          @page { size: letter portrait; margin: 0; }
+          @page { size: A4 portrait; margin: 0; }
           html, body { width: auto; min-height: auto; margin: 0 !important; padding: 0 !important; overflow: hidden; background: white !important; }
           body * { visibility: hidden !important; }
           .screen, .screen * { visibility: visible !important; }
           .screen { background: white; width: 100%; min-height: auto; overflow: hidden; margin: 0 !important; padding: 0 !important; }
-          .invoice { position: absolute; top: 0 !important; left: 50%; transform: translateX(-50%); margin: 0 auto !important; width: 190mm; min-height: auto; padding: 1.5mm 6mm 3mm; page-break-after: avoid; break-after: avoid; }
-          .top { padding-top: 0 !important; margin-top: 0 !important; }
-          .topLogo, .topLogoImg { box-shadow: none !important; filter: none !important; border: none !important; border-radius: 0 !important; background: transparent !important; }
-          .topLogoImg { width: 108px; }
+          .invoice { position: absolute; top: 0 !important; left: 50%; transform: translateX(-50%) scale(.965); transform-origin: top center; margin: 0 auto !important; width: 190mm; min-height: auto; max-height: 296mm; padding: .8mm 5.5mm 2mm; page-break-after: avoid; break-after: avoid; overflow: hidden; }
           .printBtn, .printBtn *, button:not(.keep-print) { display: none !important; visibility: hidden !important; }
+          .top { padding-top: 0 !important; margin-top: 0 !important; padding-bottom: 3px; }
+          .topLogoImg { width: 88px; }
+          .invoiceTitle { font-size: 32px; padding-bottom: 2px; }
+          .company h2 { font-size: 20px; }
+          .company p { font-size: 11.5px; }
+          .company b { font-size: 12px; }
+          .detailsGrid { margin-top: 5px; gap: 12px; }
+          .leftInfo, .rightInfo { font-size: 11.4px; line-height: 1.2; }
+          .rightInfo { padding-left: 18px; }
+          .blueHead { font-size: 13px; padding: 3px; margin-bottom: 4px; }
+          .info { grid-template-columns: 132px 9px 1fr; margin: 0; gap: 3px; }
+          .serviceTable { margin-top: 5px; font-size: 11.5px; }
+          .serviceTable th { padding: 4px 8px; font-size: 13px; }
+          .serviceTable td { padding: 5px 8px; }
+          .serviceRow td { height: 48px; }
+          .totalRow td { font-size: 14px; }
+          .payGrid { margin-top: 5px; gap: 10px; }
+          .payableBox { min-height: 32px; }
+          .payableBox span { font-size: 12.5px; padding: 7px 9px; }
+          .payableBox b { font-size: 18px; padding: 6px 8px; }
+          .thanksText { margin-top: 5px; font-size: 11px; }
+          .adjustments { font-size: 11px; }
+          .cutLine { margin: 4px 0; }
+          .copyHead { padding: 3px; margin-bottom: 4px; font-size: 12px; }
+          .copyGrid { font-size: 10px; gap: 14px; line-height: 1.13; }
+          .copyGrid .info { grid-template-columns: 112px 8px 1fr; }
+          .copyVehicle { padding-left: 18px; min-height: 72px; }
+          .copyVehicle h3 { font-size: 13px; margin-bottom: 3px; }
+          .declaration { margin-top: 4px; padding: 4px 7px; font-size: 9px; line-height: 1.08; }
+          .declaration b { font-size: 12px; }
+          .footerLine { margin-top: 4px; font-size: 10.5px; }
         }
       `}</style>
     </main>
