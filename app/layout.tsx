@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import AppMenu from "./components/AppMenu";
+import PublicBookingValidation from "./components/PublicBookingValidation";
 import "../compact-booking.css";
 import "../ui-banner-override.css";
 
@@ -50,6 +51,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AppMenu />
+        <PublicBookingValidation />
         {children}
         <style dangerouslySetInnerHTML={{ __html: `#booking-form > div:first-of-type > div{display:none!important;visibility:hidden!important;pointer-events:none!important;}` }} />
       </body>
