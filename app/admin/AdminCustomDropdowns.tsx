@@ -95,7 +95,7 @@ function enhanceSelect(select: HTMLSelectElement, index: number) {
   button.type = "button";
   button.className = "vt-custom-select-btn";
   menu.className = "vt-custom-select-menu";
-  const refreshText = () => { button.innerHTML = "<span>" + (select.options[select.selectedIndex]?.text || selectLabel(select, index)) + "</span><b>âŒ„</b>"; };
+  const refreshText = () => { button.innerHTML = "<span>" + (select.options[select.selectedIndex]?.text || selectLabel(select, index)) + "</span><b>▼</b>"; };
   refreshText();
   Array.from(select.options).forEach((option) => {
     const item = document.createElement("button");
