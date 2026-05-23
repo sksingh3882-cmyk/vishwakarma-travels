@@ -54,14 +54,16 @@ function addCompactTimeStyle() {
   style.id = "vt-compact-time-style";
   style.textContent = `
 @media(max-width:720px){
-  .admin-shell .vt-time-picker.open .vt-time-menu{position:fixed!important;left:12px!important;right:12px!important;bottom:76px!important;top:auto!important;width:auto!important;max-width:none!important;max-height:46vh!important;overflow:auto!important;padding:10px!important;border-radius:20px!important;z-index:99990!important}
-  .admin-shell .vt-time-head{padding:4px 8px!important;font-size:17px!important;line-height:1.1!important}
-  .admin-shell .vt-time-close{width:30px!important;height:30px!important;min-height:30px!important;padding:0!important;font-size:18px!important}
-  .admin-shell .vt-time-grid{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:6px!important}
-  .admin-shell .vt-time-slot{min-height:38px!important;height:38px!important;padding:0 2px!important;font-size:12px!important;border-radius:14px!important}
-  .admin-shell .vt-custom-row{position:sticky!important;bottom:0!important;background:white!important;grid-template-columns:auto 1fr 1fr 1fr auto!important;gap:5px!important;padding:7px 0 0!important;margin-top:6px!important;font-size:11px!important}
-  .admin-shell .vt-custom-row select{height:32px!important;min-height:32px!important;font-size:12px!important}
-  .admin-shell .vt-custom-row button{height:32px!important;min-height:32px!important;padding:0 8px!important;font-size:12px!important}
+  .admin-shell .vt-time-picker.open .vt-time-menu{position:fixed!important;left:12px!important;right:12px!important;bottom:76px!important;top:auto!important;width:auto!important;max-width:none!important;max-height:42vh!important;overflow:auto!important;padding:8px!important;border-radius:18px!important;z-index:99990!important}
+  .admin-shell .vt-time-head{padding:2px 6px!important;font-size:16px!important;line-height:1.1!important;margin-bottom:6px!important}
+  .admin-shell .vt-time-close{width:28px!important;height:28px!important;min-height:28px!important;padding:0!important;font-size:18px!important}
+  .admin-shell .vt-time-grid{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:5px!important}
+  .admin-shell .vt-time-slot{min-height:34px!important;height:34px!important;padding:0 2px!important;font-size:11px!important;border-radius:12px!important}
+  .admin-shell .vt-custom-row{position:sticky!important;bottom:0!important;background:white!important;display:grid!important;grid-template-columns:auto 1fr 1fr 1fr auto!important;gap:5px!important;align-items:center!important;padding:6px 0 0!important;margin-top:5px!important;font-size:11px!important}
+  .admin-shell .vt-custom-row select{display:none!important;visibility:hidden!important;position:absolute!important;left:-9999px!important;pointer-events:none!important}
+  .admin-shell .vt-mini-time-btn{height:30px!important;min-height:30px!important;border:1px solid #cbd5e1!important;background:#f8fafc!important;color:#0f172a!important;border-radius:10px!important;padding:0 7px!important;font-size:11px!important;font-weight:900!important;box-shadow:none!important}
+  .admin-shell .vt-mini-ap-btn{background:#eff6ff!important;color:#0b2d6b!important}
+  .admin-shell .vt-custom-done{height:30px!important;min-height:30px!important;padding:0 9px!important;font-size:11px!important;border-radius:10px!important;background:#0b2d6b!important;color:white!important;border:0!important;font-weight:900!important}
 }
 `;
   document.head.appendChild(style);
@@ -73,7 +75,7 @@ function addSupabaseSyncButton() {
   const btn = document.createElement("button");
   btn.id = "vt-supabase-sync-bottom";
   btn.type = "button";
-  btn.textContent = "↻ Supabase Sync";
+  btn.textContent = "â†» Supabase Sync";
   btn.style.cssText = "position:fixed;left:12px;right:12px;bottom:10px;z-index:99999;height:50px;border:0;border-radius:16px;background:#0b2d6b;color:#fff;font-weight:950;font-size:15px;box-shadow:0 10px 28px rgba(15,23,42,.25);";
   btn.onclick = () => {
     btn.textContent = "Syncing...";
@@ -93,7 +95,7 @@ function enhanceSelect(select: HTMLSelectElement, index: number) {
   button.type = "button";
   button.className = "vt-custom-select-btn";
   menu.className = "vt-custom-select-menu";
-  const refreshText = () => { button.innerHTML = "<span>" + (select.options[select.selectedIndex]?.text || selectLabel(select, index)) + "</span><b>⌄</b>"; };
+  const refreshText = () => { button.innerHTML = "<span>" + (select.options[select.selectedIndex]?.text || selectLabel(select, index)) + "</span><b>âŒ„</b>"; };
   refreshText();
   Array.from(select.options).forEach((option) => {
     const item = document.createElement("button");
@@ -120,7 +122,7 @@ function enhanceDate(input: HTMLInputElement) {
   button.type = "button";
   button.className = "vt-custom-select-btn";
   menu.className = "vt-picker-menu vt-cal-menu";
-  const refreshText = () => { button.innerHTML = "<span>📅 " + formatDateValue(input.value) + "</span><b>⌄</b>"; };
+  const refreshText = () => { button.innerHTML = "<span>ðŸ“… " + formatDateValue(input.value) + "</span><b>âŒ„</b>"; };
   const render = () => {
     const y = viewMonth.getFullYear();
     const m = viewMonth.getMonth();
@@ -128,7 +130,7 @@ function enhanceDate(input: HTMLInputElement) {
     const total = new Date(y, m + 1, 0).getDate();
     const today = isoDate(new Date());
     const selected = input.value;
-    menu.innerHTML = '<div class="vt-cal-head"><button type="button" data-nav="prev">‹</button><b>' + viewMonth.toLocaleDateString("en-IN", { month: "long", year: "numeric" }) + '</b><button type="button" data-nav="next">›</button></div><div class="vt-cal-week"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div><div class="vt-cal-grid"></div><button type="button" class="vt-cal-footer">📅 Today, ' + formatDateValue(today) + '</button>';
+    menu.innerHTML = '<div class="vt-cal-head"><button type="button" data-nav="prev">â€¹</button><b>' + viewMonth.toLocaleDateString("en-IN", { month: "long", year: "numeric" }) + '</b><button type="button" data-nav="next">â€º</button></div><div class="vt-cal-week"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div><div class="vt-cal-grid"></div><button type="button" class="vt-cal-footer">ðŸ“… Today, ' + formatDateValue(today) + '</button>';
     const grid = menu.querySelector(".vt-cal-grid") as HTMLDivElement;
     for (let n = 0; n < 42; n += 1) {
       const day = n - first + 1;
@@ -163,9 +165,10 @@ function enhanceTime(input: HTMLInputElement) {
   button.type = "button";
   button.className = "vt-custom-select-btn";
   menu.className = "vt-picker-menu vt-time-menu";
-  menu.innerHTML = '<div class="vt-time-head"><b>🕘 Select Time</b><button type="button" class="vt-time-close">×</button></div><div class="vt-time-grid"></div><div class="vt-custom-row"><span>Custom</span><select class="vt-h"></select><select class="vt-m"></select><select class="vt-ap"><option>AM</option><option>PM</option></select><button type="button" class="vt-custom-done">Done</button></div>';
-  const refreshText = () => { button.innerHTML = "<span>🕘 " + formatTime(input.value) + "</span><b>⌄</b>"; };
+  menu.innerHTML = '<div class="vt-time-head"><b>ðŸ•˜ Select Time</b><button type="button" class="vt-time-close">Ã—</button></div><div class="vt-time-grid"></div><div class="vt-custom-row"><span>Custom</span><button type="button" class="vt-mini-time-btn vt-hour-btn">07</button><button type="button" class="vt-mini-time-btn vt-minute-btn">00</button><button type="button" class="vt-mini-time-btn vt-mini-ap-btn vt-ap-btn">AM</button><button type="button" class="vt-custom-done">Done</button></div>';
+  const refreshText = () => { button.innerHTML = "<span>ðŸ•˜ " + formatTime(input.value) + "</span><b>âŒ„</b>"; };
   refreshText();
+
   const grid = menu.querySelector(".vt-time-grid") as HTMLDivElement;
   for (let n = 0; n < 30; n += 1) {
     const hour24 = 7 + Math.floor(n / 2);
@@ -180,13 +183,45 @@ function enhanceTime(input: HTMLInputElement) {
     item.onclick = (event) => { event.stopPropagation(); setInputValue(input, text); refreshText(); closeAll(); };
     grid.appendChild(item);
   }
-  const hourSelect = menu.querySelector(".vt-h") as HTMLSelectElement;
-  const minuteSelect = menu.querySelector(".vt-m") as HTMLSelectElement;
-  const ampmSelect = menu.querySelector(".vt-ap") as HTMLSelectElement;
-  for (let n = 1; n <= 12; n += 1) hourSelect.add(new Option(String(n).padStart(2, "0")));
-  for (let n = 0; n < 60; n += 1) minuteSelect.add(new Option(String(n).padStart(2, "0")));
-  hourSelect.value = "07"; minuteSelect.value = "40";
-  menu.onclick = (event) => { event.stopPropagation(); const target = event.target as HTMLElement; if (target.closest(".vt-time-close")) closeAll(); if (target.closest(".vt-custom-done")) { setInputValue(input, hourSelect.value + ":" + minuteSelect.value + " " + ampmSelect.value); refreshText(); closeAll(); } };
+
+  let customHour = 7;
+  let customMinute = 0;
+  let customAp = "AM";
+  const hourButton = menu.querySelector(".vt-hour-btn") as HTMLButtonElement;
+  const minuteButton = menu.querySelector(".vt-minute-btn") as HTMLButtonElement;
+  const apButton = menu.querySelector(".vt-ap-btn") as HTMLButtonElement;
+
+  const refreshCustom = () => {
+    hourButton.textContent = String(customHour).padStart(2, "0");
+    minuteButton.textContent = String(customMinute).padStart(2, "0");
+    apButton.textContent = customAp;
+  };
+  refreshCustom();
+
+  menu.onclick = (event) => {
+    event.stopPropagation();
+    const target = event.target as HTMLElement;
+    if (target.closest(".vt-time-close")) closeAll();
+    if (target.closest(".vt-hour-btn")) {
+      customHour = customHour >= 12 ? 1 : customHour + 1;
+      refreshCustom();
+    }
+    if (target.closest(".vt-minute-btn")) {
+      customMinute = (customMinute + 5) % 60;
+      refreshCustom();
+    }
+    if (target.closest(".vt-ap-btn")) {
+      customAp = customAp === "AM" ? "PM" : "AM";
+      refreshCustom();
+    }
+    if (target.closest(".vt-custom-done")) {
+      const text = String(customHour).padStart(2, "0") + ":" + String(customMinute).padStart(2, "0") + " " + customAp;
+      setInputValue(input, text);
+      refreshText();
+      closeAll();
+    }
+  };
+
   button.onclick = (event) => { event.stopPropagation(); closeAll(); wrap.classList.toggle("open"); };
   wrap.append(button, menu);
   input.parentElement?.insertBefore(wrap, input);
