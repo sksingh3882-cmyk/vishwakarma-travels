@@ -130,7 +130,7 @@ function enhanceDate(input: HTMLInputElement) {
     const total = new Date(y, m + 1, 0).getDate();
     const today = isoDate(new Date());
     const selected = input.value;
-    menu.innerHTML = '<div class="vt-cal-head"><button type="button" data-nav="prev">›</button><b>' + viewMonth.toLocaleDateString("en-IN", { month: "long", year: "numeric" }) + '</b><button type="button" data-nav="next">â€º</button></div><div class="vt-cal-week"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div><div class="vt-cal-grid"></div><button type="button" class="vt-cal-footer">ðŸ“… Today, ' + formatDateValue(today) + '</button>';
+    menu.innerHTML = '<div class="vt-cal-head"><button type="button" data-nav="prev">›</button><b>' + viewMonth.toLocaleDateString("en-IN", { month: "long", year: "numeric" }) + '</b><button type="button" data-nav="next">›</button></div><div class="vt-cal-week"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div><div class="vt-cal-grid"></div><button type="button" class="vt-cal-footer">ðŸ“… Today, ' + formatDateValue(today) + '</button>';
     const grid = menu.querySelector(".vt-cal-grid") as HTMLDivElement;
     for (let n = 0; n < 42; n += 1) {
       const day = n - first + 1;
@@ -166,7 +166,7 @@ function enhanceTime(input: HTMLInputElement) {
   button.className = "vt-custom-select-btn";
   menu.className = "vt-picker-menu vt-time-menu";
   menu.innerHTML = '<div class="vt-time-head"><b>🕒 Select Time</b><button type="button" class="vt-time-close">×</button></div><div class="vt-time-grid"></div><div class="vt-custom-row"><span>Custom</span><button type="button" class="vt-mini-time-btn vt-hour-btn">07</button><button type="button" class="vt-mini-time-btn vt-minute-btn">00</button><button type="button" class="vt-mini-time-btn vt-mini-ap-btn vt-ap-btn">AM</button><button type="button" class="vt-custom-done">Done</button></div>';
-  const refreshText = () => { button.innerHTML = "<span>🕒 " + formatTime(input.value) + "</span><b>âŒ„</b>"; };
+  const refreshText = () => { button.innerHTML = "<span>🕒 " + formatTime(input.value) + "</span><b>▼</b>"; };
   refreshText();
 
   const grid = menu.querySelector(".vt-time-grid") as HTMLDivElement;
