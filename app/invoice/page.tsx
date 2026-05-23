@@ -120,7 +120,7 @@ function InvoiceContent() {
       </section>
 
       <style jsx global>{`
-        @page { size: A4 portrait; margin: 2mm; }
+        @page { size: A4 portrait; margin: 0; }
         * { box-sizing: border-box; }
         html, body { margin: 0; padding: 0; }
         .screen { background: #e5e7eb; font-family: Arial, Helvetica, sans-serif; color: #111; padding: 0; }
@@ -173,11 +173,13 @@ function InvoiceContent() {
         .footerLine { display: flex; align-items: center; gap: 10px; margin-top: 7px; color: #0b2d6b; font-weight: 900; text-align: center; font-size: 12.5px; }
         .footerLine:before, .footerLine:after { content: ""; flex: 1; border-top: 1px solid #333; }
         @media print {
-          html, body { width: auto; min-height: auto; margin: 0; padding: 0; overflow: hidden; background: white !important; }
+          @page { size: letter portrait; margin: 0; }
+          html, body { width: auto; min-height: auto; margin: 0 !important; padding: 0 !important; overflow: hidden; background: white !important; }
           body * { visibility: hidden !important; }
           .screen, .screen * { visibility: visible !important; }
-          .screen { background: white; width: 100%; min-height: auto; overflow: hidden; }
-          .invoice { position: absolute; top: 0; left: 50%; transform: translateX(-50%); margin: 0 auto; width: 190mm; min-height: auto; padding: 3mm 6mm; page-break-after: avoid; break-after: avoid; }
+          .screen { background: white; width: 100%; min-height: auto; overflow: hidden; margin: 0 !important; padding: 0 !important; }
+          .invoice { position: absolute; top: 0 !important; left: 50%; transform: translateX(-50%); margin: 0 auto !important; width: 190mm; min-height: auto; padding: 1.5mm 6mm 3mm; page-break-after: avoid; break-after: avoid; }
+          .top { padding-top: 0 !important; margin-top: 0 !important; }
           .topLogo, .topLogoImg { box-shadow: none !important; filter: none !important; border: none !important; border-radius: 0 !important; background: transparent !important; }
           .topLogoImg { width: 108px; }
           .printBtn, .printBtn *, button:not(.keep-print) { display: none !important; visibility: hidden !important; }
