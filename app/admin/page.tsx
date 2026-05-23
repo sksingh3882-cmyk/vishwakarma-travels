@@ -254,7 +254,7 @@ export default function AdminPage() {
     setDeletingBookingId("");
   }
   function edit(b: Booking) {
-    setForm({ customerName: b.customer_name || "", customerPhone: b.customer_phone || "", gender: b.gender || "Mr.", service: b.service || "One Way Drop Pickup", pickup: b.pickup || "", drop: b.drop_location || "", journeyDate: b.journey_date || "", journeyTime: b.journey_time || "", vehicleType: b.vehicle_type || "Sedan", vehicleModel: b.vehicle_model || "Desire", vehicleNumber: b.vehicle_number || "", fare: String(b.fare || ""), advance: String(b.advance || "0"), driverName: b.driver_name || "", driverMobile: b.driver_mobile || "" }); setLastBookingId(b.booking_id || ""); window.scrollTo({ top: 0, behavior: "smooth" });
+    setForm({ customerName: b.customer_name || "", customerPhone: b.customer_phone || "", gender: b.gender || "👋 Hii", service: b.service || "One Way Drop Pickup", pickup: b.pickup || "", drop: b.drop_location || "", journeyDate: b.journey_date || "", journeyTime: b.journey_time || "", vehicleType: b.vehicle_type || "Sedan", vehicleModel: b.vehicle_model || "Desire", vehicleNumber: b.vehicle_number || "", fare: String(b.fare || ""), advance: String(b.advance || "0"), driverName: b.driver_name || "", driverMobile: b.driver_mobile || "" }); setLastBookingId(b.booking_id || ""); window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   const filtered = bookings.filter((b) => `${b.booking_id || ""} ${b.customer_name || ""} ${b.customer_phone || ""} ${b.pickup || ""} ${b.drop_location || ""}`.toLowerCase().includes(searchBooking.toLowerCase()));
