@@ -24,28 +24,16 @@ export default function WelcomePage() {
           100% { transform: translateX(120%); opacity: 0; }
         }
 
-        @keyframes travelDrop {
+        @keyframes travelSlide {
           0% { opacity: 0; transform: translateX(-120vw); }
-          52% { opacity: 1; transform: translateX(0); }
+          72% { opacity: 1; transform: translateX(0); }
           100% { opacity: 1; transform: translateX(0); }
         }
 
-        @keyframes madeDrop {
+        @keyframes madeSlide {
           0%, 12% { opacity: 0; transform: translateX(120vw); }
-          64% { opacity: 1; transform: translateX(0); }
+          78% { opacity: 1; transform: translateX(0); }
           100% { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes carLeftRun {
-          0% { opacity: 1; transform: translateX(-72vw) scaleX(1); }
-          50% { opacity: 1; transform: translateX(calc(-50% + 170px)) scaleX(1); }
-          100% { opacity: 0; transform: translateX(72vw) scaleX(1); }
-        }
-
-        @keyframes carRightRun {
-          0%, 10% { opacity: 1; transform: translateX(72vw) scaleX(-1); }
-          60% { opacity: 1; transform: translateX(calc(50% - 170px)) scaleX(-1); }
-          100% { opacity: 0; transform: translateX(-72vw) scaleX(-1); }
         }
 
         .welcomePage {
@@ -157,61 +145,40 @@ export default function WelcomePage() {
           z-index: 2;
           width: min(92vw, 760px);
           text-align: center;
-          font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+          font-family: 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
           font-style: italic;
-          font-weight: 1000;
-          letter-spacing: 1px;
+          font-weight: 900;
+          letter-spacing: -1px;
         }
 
         .titleLine {
-          position: relative;
           display: flex;
           justify-content: center;
           align-items: center;
           min-height: clamp(42px, 8vw, 68px);
-          overflow: visible;
         }
 
         .travelWord,
         .madeWord {
           display: inline-block;
-          font-size: clamp(30px, 7vw, 60px);
-          line-height: 1;
+          font-size: clamp(34px, 8vw, 68px);
+          line-height: 1.02;
           text-shadow:
             -2px -2px 0 #000,
              2px -2px 0 #000,
             -2px  2px 0 #000,
              2px  2px 0 #000,
-             0 10px 34px rgba(0,0,0,.38);
+             0 12px 34px rgba(0,0,0,.42);
         }
 
         .travelWord {
           color: #ffffff;
-          animation: travelDrop 2.8s ease-out both;
+          animation: travelSlide 1.75s cubic-bezier(.16,1,.3,1) both;
         }
 
         .madeWord {
           color: #7dd3fc;
-          animation: madeDrop 3.1s ease-out both;
-        }
-
-        .sportsCar {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          font-size: clamp(24px, 5.5vw, 48px);
-          line-height: 1;
-          margin-top: -0.5em;
-          filter: drop-shadow(0 8px 16px rgba(0,0,0,.45));
-          pointer-events: none;
-        }
-
-        .carFromLeft {
-          animation: carLeftRun 2.8s ease-in-out both;
-        }
-
-        .carFromRight {
-          animation: carRightRun 3.1s ease-in-out both;
+          animation: madeSlide 2s cubic-bezier(.16,1,.3,1) both;
         }
 
         @media (max-width: 520px) {
@@ -254,11 +221,9 @@ export default function WelcomePage() {
 
       <div className="travelTitle">
         <div className="titleLine">
-          <span className="sportsCar carFromLeft">🏎️</span>
           <span className="travelWord">Travel</span>
         </div>
         <div className="titleLine">
-          <span className="sportsCar carFromRight">🏎️</span>
           <span className="madeWord">Made Easy</span>
         </div>
       </div>
