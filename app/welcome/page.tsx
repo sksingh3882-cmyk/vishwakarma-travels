@@ -107,48 +107,17 @@ export default function WelcomePage() {
           animation: shineLine 2.4s ease-in-out infinite;
         }
 
-        .menuBtn {
-          position: absolute;
-          top: 24px;
-          right: 20px;
-          z-index: 2;
-          width: 56px;
-          height: 56px;
-          border: 0;
-          border-radius: 18px;
-          background: rgba(6,43,104,.92);
-          display: grid;
-          place-content: center;
-          gap: 6px;
-          box-shadow: 0 16px 36px rgba(0,0,0,.20);
-        }
-
-        .menuBtn span {
-          width: 28px;
-          height: 3px;
-          border-radius: 999px;
-          background: white;
-          display: block;
-        }
-
         @media (max-width: 520px) {
           .brandOverlay {
             top: 18px;
             left: 14px;
-            max-width: calc(100vw - 92px);
+            max-width: calc(100vw - 40px);
             padding: 8px 12px 8px 8px;
           }
 
           .brandLogo {
             width: 48px;
             height: 48px;
-          }
-
-          .menuBtn {
-            top: 18px;
-            right: 14px;
-            width: 52px;
-            height: 52px;
           }
         }
       `}</style>
@@ -161,12 +130,6 @@ export default function WelcomePage() {
         </div>
         <span className="brandLine" />
       </div>
-
-      <button className="menuBtn" aria-label="Menu">
-        <span />
-        <span />
-        <span />
-      </button>
     </main>
   )
 }
