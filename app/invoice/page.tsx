@@ -120,12 +120,12 @@ function InvoiceContent() {
       </section>
 
       <style jsx global>{`
-        @page { size: A4 portrait; margin: 0; }
+        @page { size: auto; margin: 0; }
         * { box-sizing: border-box; }
         html, body { margin: 0; padding: 0; }
         .screen { background: #e5e7eb; font-family: Arial, Helvetica, sans-serif; color: #111; padding: 0; }
         .printBtn { position: fixed; right: 14px; top: 14px; z-index: 10; border: 0; border-radius: 10px; background: #16a34a; color: white; padding: 10px 16px; font-weight: 900; }
-        .invoice { width: 205mm; margin: 0 auto; background: white; padding: 3mm 6mm 2mm; overflow: hidden; }
+        .invoice { width: 190mm; margin: 0 auto; background: white; padding: 3mm 6mm 2mm; overflow: hidden; }
         .top { display: grid; grid-template-columns: 1.18fr .92fr .9fr; align-items: center; gap: 8px; border-bottom: 1px solid #333; padding-bottom: 4px; }
         .invoiceTitle { text-align: center; font-size: 38px; font-weight: 900; color: #0b2d6b; border-bottom: 2px solid #0b2d6b; padding-bottom: 2px; }
         .topLogo { display: flex; justify-content: flex-end; }
@@ -134,13 +134,13 @@ function InvoiceContent() {
         .company p { margin: 0; font-size: 13px; }
         .company b { display: block; margin-top: 2px; font-size: 13px; }
         .detailsGrid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 14px; margin-top: 6px; }
-        .leftInfo, .rightInfo { font-size: 13px; line-height: 1.25; }
+        .leftInfo, .rightInfo { font-size: 15px; line-height: 1.25; }
         .rightInfo { border-left: 1px solid #333; padding-left: 18px; }
         .blueHead { background: #0b2d6b; color: white; text-align: center; font-weight: 900; padding: 4px; border-radius: 4px; margin-bottom: 6px; }
         .info { display: grid; grid-template-columns: 140px 10px 1fr; gap: 4px; }
         .info label { font-weight: 700; }
         .strongValue { font-weight: 900; }
-        .serviceTable { width: 100%; border-collapse: collapse; margin-top: 7px; font-size: 13px; }
+        .serviceTable { width: 100%; border-collapse: collapse; margin-top: 7px; font-size: 14px; }
         .serviceTable th,.serviceTable td { border: 1px solid #555; padding: 6px 8px; }
         .serviceTable th { background: #f1f5f9; color: #0b2d6b; }
         .amount { text-align: right; font-weight: 900; }
@@ -154,30 +154,56 @@ function InvoiceContent() {
         .cutLine { display: flex; align-items: center; gap: 10px; margin: 5px 0; }
         .cutLine:before,.cutLine:after { content:""; flex:1; border-top:1px dashed #333; }
         .copyHead { background: #0b2d6b; color: white; text-align: center; font-weight: 900; padding: 4px; border-radius: 4px; margin-bottom: 5px; }
-        .copyGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 11px; }
+        .copyGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 13px; }
         .copyVehicle { border-left: 1px solid #333; padding-left: 14px; }
         .copyVehicle h3 { margin: 0 0 4px; color: #0b2d6b; }
         .declaration { border: 1px solid #777; border-radius: 4px; margin-top: 5px; padding: 5px 8px; font-size: 10px; }
         .declaration p { margin: 2px 0; }
         .footerLine { display: flex; align-items: center; gap: 10px; margin-top: 5px; color: #0b2d6b; font-weight: 900; font-size: 11px; }
         .footerLine:before,.footerLine:after { content:""; flex:1; border-top:1px solid #333; }
-
         @media print {
-          html, body { margin: 0 !important; padding: 0 !important; background: white !important; overflow: hidden !important; }
-          .printBtn { display: none !important; }
-          .screen { padding: 0 !important; margin: 0 !important; background: white !important; }
-          .invoice {
-            width: 100%;
-            max-width: 205mm;
-            margin: 0 auto !important;
-            padding: 2mm 5mm 1mm !important;
-            transform: none !important;
-            min-height: auto !important;
-            page-break-after: avoid !important;
-            break-after: avoid !important;
-          }
-          .top { margin-top: 0 !important; padding-top: 0 !important; }
-          .footerLine { margin-bottom: 0 !important; padding-bottom: 0 !important; }
+  button,
+  svg,
+  [role="button"],
+  .printBtn,
+  .topLogo button {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    overflow: hidden !important;
+  }
+
+  .screen {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+  }
+
+  .invoice {
+    width: 100%;
+    max-width: 190mm;
+    margin: 0 auto !important;
+    padding: 2mm 5mm 1mm !important;
+    transform: none !important;
+    min-height: auto !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  .top {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  .footerLine {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    
         }
       `}</style>
     </main>
