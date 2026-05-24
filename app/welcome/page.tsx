@@ -24,6 +24,16 @@ export default function WelcomePage() {
           100% { transform: translateX(120%); opacity: 0; }
         }
 
+        @keyframes leftText {
+          0% { transform: translateX(-120px); opacity: 0; }
+          100% { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes rightText {
+          0% { transform: translateX(120px); opacity: 0; }
+          100% { transform: translateX(0); opacity: 1; }
+        }
+
         .welcomePage {
           min-height: 100vh;
           position: relative;
@@ -125,6 +135,33 @@ export default function WelcomePage() {
           box-shadow: 0 2px 10px rgba(0,0,0,.25);
         }
 
+        .travelTitle {
+          position: absolute;
+          top: 120px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 2;
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          font-size: clamp(28px, 7vw, 54px);
+          font-weight: 1000;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          color: white;
+          text-shadow: 0 8px 30px rgba(0,0,0,.35);
+        }
+
+        .travelLeft {
+          color: #ffffff;
+          animation: leftText 1s ease both;
+        }
+
+        .travelRight {
+          color: #ff9f1c;
+          animation: rightText 1s ease both;
+        }
+
         @media (max-width: 520px) {
           .brandOverlay {
             top: 18px;
@@ -142,6 +179,13 @@ export default function WelcomePage() {
             top: 22px;
             right: 16px;
           }
+
+          .travelTitle {
+            top: 120px;
+            gap: 8px;
+            flex-direction: column;
+            font-size: 34px;
+          }
         }
       `}</style>
 
@@ -152,6 +196,11 @@ export default function WelcomePage() {
           <p>TRAVELS</p>
         </div>
         <span className="brandLine" />
+      </div>
+
+      <div className="travelTitle">
+        <span className="travelLeft">Travel</span>
+        <span className="travelRight">Made Easy</span>
       </div>
 
       <div className="menuIcon">
