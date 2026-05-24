@@ -93,11 +93,11 @@ export default function WelcomePage() {
         .travelWord{
           display:block;
           color:#ffffff;
-          font-size:62px;
+          font-size:50px;
           font-family:Poppins,sans-serif;
           font-style:italic;
           font-weight:900;
-          letter-spacing:-2px;
+          letter-spacing:-1px;
           animation:leftIn 1.4s ease forwards;
           text-shadow:
             -1px -1px 0 #000,
@@ -110,11 +110,11 @@ export default function WelcomePage() {
         .madeWord{
           display:block;
           color:#8fd3ff;
-          font-size:62px;
+          font-size:50px;
           font-family:Poppins,sans-serif;
           font-style:italic;
           font-weight:900;
-          letter-spacing:-2px;
+          letter-spacing:-1px;
           animation:rightIn 1.6s ease forwards;
           text-shadow:
             -1px -1px 0 #000,
@@ -132,26 +132,6 @@ export default function WelcomePage() {
         @keyframes rightIn{
           from{opacity:0;transform:translateX(120vw)}
           to{opacity:1;transform:translateX(0)}
-        }
-
-        .userForm{
-          position:absolute;
-          top:340px;
-          left:50%;
-          transform:translateX(-50%);
-          width:min(92vw,430px);
-          background:rgba(255,255,255,.9);
-          backdrop-filter:blur(18px);
-          border-radius:28px;
-          padding:18px;
-          z-index:3;
-          box-shadow:0 20px 60px rgba(0,0,0,.35);
-          animation:formUp 1s cubic-bezier(.16,1,.3,1) forwards;
-        }
-
-        @keyframes formUp{
-          from{opacity:0;transform:translate(-50%,140px)}
-          to{opacity:1;transform:translate(-50%,0)}
         }
       `}</style>
 
