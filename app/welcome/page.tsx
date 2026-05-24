@@ -13,13 +13,12 @@ export default function WelcomePage() {
 
         .mainHeading{
           position:absolute;
-          top:28px;
+          top:70px;
           left:50%;
           transform:translateX(-50%);
           width:100%;
           text-align:center;
           z-index:5;
-          animation:headingGlow 2s ease forwards;
         }
 
         .mainHeading h1{
@@ -27,8 +26,12 @@ export default function WelcomePage() {
           font-family:Poppins,sans-serif;
           font-size:40px;
           font-weight:900;
-          line-height:.95;
+          line-height:1;
           letter-spacing:-1px;
+        }
+
+        .headingWhite{
+          display:inline-block;
           color:#ffffff;
           text-shadow:
             -1px -1px 0 #000,
@@ -36,16 +39,34 @@ export default function WelcomePage() {
             -1px 1px 0 #000,
              1px 1px 0 #000,
              0 10px 30px rgba(0,0,0,.45);
+          animation:leftIn 1.5s ease forwards;
         }
 
-        .mainHeading span{
-          display:block;
+        .headingRed{
+          display:inline-block;
+          margin-left:10px;
           color:#7a0000;
+          text-shadow:
+            -1px -1px 0 #000,
+             1px -1px 0 #000,
+            -1px 1px 0 #000,
+             1px 1px 0 #000,
+             0 10px 30px rgba(0,0,0,.45);
+          animation:rightIn 1.5s ease forwards;
         }
 
-        @keyframes headingGlow{
-          from{opacity:0;transform:translateX(-50%) translateY(-40px)}
-          to{opacity:1;transform:translateX(-50%) translateY(0)}
+        .tagline{
+          margin-top:8px;
+          font-size:13px;
+          font-style:italic;
+          font-weight:700;
+          color:#ffffff;
+          text-shadow:
+            -1px -1px 0 #0b3aa4,
+             1px -1px 0 #0b3aa4,
+            -1px 1px 0 #0b3aa4,
+             1px 1px 0 #0b3aa4;
+          letter-spacing:.3px;
         }
 
         .travelTitle{
@@ -165,9 +186,13 @@ export default function WelcomePage() {
 
       <div className="mainHeading">
         <h1>
-          VISHWAKARMA
-          <span>TRAVELS</span>
+          <span className="headingWhite">VISHWAKARMA</span>
+          <span className="headingRed">TRAVELS</span>
         </h1>
+
+        <div className="tagline">
+          most Reliable and Affordable Cab Service Of Jamshedpur
+        </div>
       </div>
 
       <div className="travelTitle">
