@@ -1,360 +1,47 @@
 "use client";
 
 import Link from "next/link";
-import type { CSSProperties } from "react";
 
 export default function WelcomePage() {
   return (
-    <main style={page}>
+    <main className="page">
       <style jsx global>{`
-        @keyframes introFade {
-          from { opacity: 0; transform: translateY(18px) scale(.985); }
-          to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        @keyframes cardRise {
-          from { opacity: 0; transform: translateY(34px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes cityDrift {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
-        }
-        @keyframes forestDrift {
-          from { transform: translateX(-50%); }
-          to { transform: translateX(0); }
-        }
-        @keyframes carRide {
-          0% { transform: translateX(-35vw) translateY(0) scale(.96); }
-          45% { transform: translateX(18vw) translateY(-3px) scale(1.02); }
-          100% { transform: translateX(92vw) translateY(0) scale(.98); }
-        }
-        @keyframes wheelSpin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        @keyframes laneMove {
-          from { background-position-x: 0; }
-          to { background-position-x: -220px; }
-        }
-        @keyframes glowPulse {
-          0%, 100% { box-shadow: 0 16px 42px rgba(249,115,22,.34); }
-          50% { box-shadow: 0 20px 70px rgba(249,115,22,.62); }
-        }
-        @keyframes textShine {
-          from { background-position: 0% 50%; }
-          to { background-position: 200% 50%; }
-        }
-        @keyframes softFloat {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-6px); }
-        }
-        .vt-scene { animation: introFade .85s ease both; }
-        .vt-card { animation: cardRise .9s ease .25s both; }
-        .vt-city { animation: cityDrift 18s linear infinite; }
-        .vt-forest { animation: forestDrift 22s linear infinite; }
-        .vt-car { animation: carRide 6.8s ease-in-out infinite; }
-        .vt-wheel { animation: wheelSpin .7s linear infinite; transform-origin: center; }
-        .vt-road { animation: laneMove 1.2s linear infinite; }
-        .vt-cta { animation: glowPulse 2.1s ease-in-out infinite; }
-        .vt-shine {
-          background: linear-gradient(90deg, #fff7ed, #fed7aa, #ffffff, #fff7ed);
-          background-size: 200% 100%;
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-          animation: textShine 3.3s linear infinite;
-        }
-        .vt-logo { animation: softFloat 3.4s ease-in-out infinite; }
-        @media (prefers-reduced-motion: reduce) {
-          .vt-scene, .vt-card, .vt-city, .vt-forest, .vt-car, .vt-wheel, .vt-road, .vt-cta, .vt-shine, .vt-logo { animation: none !important; }
-        }
+        *{box-sizing:border-box} body{margin:0}
+        @keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes clouds{from{transform:translateX(-8%)}to{transform:translateX(8%)}}
+        @keyframes road{from{background-position:0 0,0 56%}to{background-position:0 0,-260px 56%}}
+        @keyframes car{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-8px) scale(1.02)}}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+        @keyframes shine{from{transform:translateX(-120%) skewX(-18deg)}to{transform:translateX(180%) skewX(-18deg)}}
+        @keyframes leaf{0%{transform:translateY(-40px) rotate(0);opacity:0}12%,82%{opacity:.85}100%{transform:translateY(700px) translateX(-60px) rotate(280deg);opacity:0}}
+        .page{min-height:100vh;font-family:Arial,sans-serif;background:linear-gradient(180deg,#eaf7ff,#fff 70%,#eef7ff);color:#0b2d6b;overflow-x:hidden}
+        .hero{min-height:54vh;position:relative;overflow:hidden;padding:22px 24px 0;background:linear-gradient(135deg,#fff 0%,#dff4ff 36%,#7cc7ff 100%)}
+        .hero:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 8% 14%,rgba(255,255,255,.98),transparent 30%),radial-gradient(circle at 80% 17%,rgba(255,255,255,.72),transparent 24%);z-index:0}
+        .clouds{position:absolute;inset:18px -120px auto -120px;height:130px;z-index:1;opacity:.9;background:radial-gradient(ellipse at 18% 42%,rgba(255,255,255,.9) 0 20%,transparent 21%),radial-gradient(ellipse at 43% 36%,rgba(255,255,255,.76) 0 16%,transparent 17%),radial-gradient(ellipse at 67% 46%,rgba(255,255,255,.85) 0 19%,transparent 20%);animation:clouds 15s ease-in-out infinite alternate}
+        .leaf{position:absolute;top:-20px;z-index:8;font-size:24px;animation:leaf 8s linear infinite;pointer-events:none}
+        .top{position:relative;z-index:10;max-width:980px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;animation:up .75s ease both}
+        .brand{display:flex;align-items:center;gap:10px}.logo{width:58px;height:58px;object-fit:contain;border-radius:16px;background:rgba(255,255,255,.86);padding:4px}.brand h1{margin:0;color:#f97316;font-size:clamp(19px,4.6vw,32px);font-weight:1000;line-height:1;letter-spacing:.6px}.brand p{margin:4px 0 0;color:#0b2d6b;font-size:clamp(13px,3.2vw,20px);font-weight:1000;letter-spacing:5px}
+        .support{color:#0053d6;background:rgba(255,255,255,.94);border:1px solid rgba(0,82,212,.12);border-radius:999px;padding:12px 17px;text-decoration:none;font-weight:900;box-shadow:0 12px 30px rgba(0,83,214,.10);white-space:nowrap}
+        .copy{position:relative;z-index:10;max-width:980px;margin:42px auto 0;animation:up .8s ease .12s both}.welcome{display:flex;align-items:center;gap:12px;margin:0;color:#0b2d6b;font-weight:1000;letter-spacing:5px;font-size:14px}.welcome span{width:46px;height:2px;background:#f97316;display:inline-block}.title{margin:12px 0 10px;font-size:clamp(48px,9vw,78px);line-height:.94;font-weight:1000;letter-spacing:-2px}.title b{display:block;color:#0b2d6b}.title strong{display:block;color:#f97316}.sub{margin:0;max-width:370px;color:#1e3a5f;font-size:clamp(19px,4vw,25px);line-height:1.35}.safety{display:inline-flex;margin-top:20px;padding:12px 18px;border-radius:999px;background:rgba(255,255,255,.92);color:#15803d;font-weight:1000;box-shadow:0 12px 26px rgba(21,128,61,.13)}
+        .city{position:absolute;right:0;bottom:116px;width:58%;height:190px;z-index:2;opacity:.42;background:linear-gradient(to top,rgba(11,45,107,.32),rgba(11,45,107,.06));clip-path:polygon(0 100%,0 78%,6% 78%,6% 50%,12% 50%,12% 82%,18% 82%,18% 42%,25% 42%,25% 70%,31% 70%,31% 34%,39% 34%,39% 78%,45% 78%,45% 28%,53% 28%,53% 82%,60% 82%,60% 45%,68% 45%,68% 72%,75% 72%,75% 20%,83% 20%,83% 78%,91% 78%,91% 52%,100% 52%,100% 100%)}.hill{position:absolute;right:-8%;bottom:95px;width:62%;height:170px;z-index:3;background:linear-gradient(180deg,rgba(58,142,72,.60),rgba(28,105,55,.72));clip-path:ellipse(58% 44% at 58% 62%)}.water{position:absolute;left:-8%;bottom:103px;width:54%;height:110px;z-index:3;background:linear-gradient(90deg,rgba(110,190,230,.42),rgba(255,255,255,.18));clip-path:ellipse(64% 42% at 28% 62%)}
+        .roadWrap{position:absolute;left:0;right:0;bottom:-14px;height:240px;z-index:5;overflow:hidden}.road{position:absolute;inset:0 -80px;transform:perspective(500px) rotateX(58deg) translateY(46px);transform-origin:bottom center;background:linear-gradient(90deg,rgba(3,7,18,.8),#475569 28%,#111827 51%,#475569 74%,rgba(3,7,18,.8)),repeating-linear-gradient(90deg,transparent 0 82px,rgba(255,255,255,.86) 82px 132px,transparent 132px 260px);background-size:auto,260px 8px;background-repeat:no-repeat,repeat-x;background-position:0 0,0 56%;animation:road 1.15s linear infinite;box-shadow:inset 0 30px 38px rgba(255,255,255,.18),0 -16px 60px rgba(13,71,161,.22)}
+        .car{position:absolute;right:9%;bottom:62px;width:min(330px,42vw);height:132px;z-index:7;animation:car 3.4s ease-in-out infinite;filter:drop-shadow(0 20px 22px rgba(15,23,42,.30))}.carBody{position:absolute;left:0;right:0;bottom:20px;height:70px;border-radius:36px 48px 26px 24px;background:linear-gradient(180deg,#fff,#dbeafe);border:2px solid rgba(255,255,255,.9)}.carTop{position:absolute;left:24%;top:0;width:42%;height:58px;border-radius:48px 48px 8px 8px;background:linear-gradient(180deg,#f8fbff,#bfdbfe);border:2px solid rgba(255,255,255,.9)}.window{position:absolute;left:32%;top:14px;width:24%;height:30px;border-radius:28px 28px 4px 4px;background:linear-gradient(135deg,#93c5fd,#1d4ed8)}.carLogo{position:absolute;left:49%;bottom:43px;transform:translateX(-50%);color:#f97316;font-weight:1000;font-size:18px}.tail{position:absolute;right:6%;bottom:58px;width:38px;height:11px;border-radius:999px;background:#ef4444;box-shadow:0 0 18px #ef4444}.wheel{position:absolute;bottom:0;width:42px;height:42px;border-radius:50%;background:radial-gradient(circle,#cbd5e1 0 20%,#020617 21% 100%);border:5px solid #111827}.wheel.a{left:18%}.wheel.b{right:18%}
+        .content{position:relative;z-index:20;max-width:980px;margin:-34px auto 0;padding:0 24px 24px}.cards{display:grid;grid-template-columns:1fr 1fr;gap:28px}.card{position:relative;min-height:360px;border-radius:28px;padding:66px 32px 32px;text-align:center;border:3px solid rgba(255,255,255,.96);box-shadow:0 22px 48px rgba(15,23,42,.13);backdrop-filter:blur(10px);overflow:hidden;animation:up .78s ease both,float 4.6s ease-in-out infinite}.card.orange{color:#f97316;background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,237,213,.88))}.card.blue{color:#0053d6;background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(219,234,254,.9));animation-delay:.12s}.avatar{position:absolute;top:-46px;left:50%;transform:translateX(-50%);width:92px;height:92px;border-radius:50%;display:grid;place-items:center;color:white;font-size:42px;border:8px solid rgba(255,255,255,.82);box-shadow:0 16px 36px rgba(15,23,42,.16)}.avatar.orange{background:linear-gradient(135deg,#ffb343,#f97316)}.avatar.blue{background:linear-gradient(135deg,#60a5fa,#0053d6)}.card h3{margin:0 0 14px;font-size:clamp(28px,4.8vw,36px);font-weight:1000}.card p{margin:0 auto 26px;color:#1f3b5d;font-size:17px;line-height:1.5;max-width:230px}.list{list-style:none;padding:0;margin:0 0 28px;display:grid;gap:15px;text-align:left;color:#0f2e57;font-size:16px;font-weight:800}.list li{display:flex;align-items:center;gap:10px}.list span{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;border:2px solid currentColor;font-size:14px;flex:0 0 auto}.btn{position:relative;display:flex;align-items:center;justify-content:center;min-height:58px;border-radius:14px;text-decoration:none;color:white;font-weight:1000;font-size:18px;overflow:hidden}.btn:after{content:"";position:absolute;top:-40%;bottom:-40%;left:-50%;width:40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:shine 3.2s ease-in-out infinite}.btn.orange{background:linear-gradient(135deg,#ff8a00,#f45b00);box-shadow:0 14px 34px rgba(249,115,22,.34)}.btn.blue{background:linear-gradient(135deg,#0b72ff,#003ea5);box-shadow:0 14px 34px rgba(0,82,212,.30)}
+        .features{margin-top:34px;background:rgba(255,255,255,.90);border:1px solid rgba(203,213,225,.68);border-radius:28px;padding:24px 18px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;box-shadow:0 18px 42px rgba(15,23,42,.08);animation:up .8s ease .25s both}.feature{text-align:center;padding:8px 10px;border-right:1px solid #dbeafe;color:#0b2d6b}.feature:last-child{border-right:0}.feature i{width:58px;height:58px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;font-style:normal;font-size:28px;background:#eaf4ff}.feature b{display:block;font-size:16px;margin-bottom:7px}.feature p{margin:0;color:#45617f;font-size:14px;line-height:1.35}.footer{text-align:center;color:#60738f;font-size:14px;padding:20px 0 0;margin:0}.dots{display:flex;justify-content:center;gap:12px;margin-top:20px}.dots span{width:10px;height:10px;border-radius:50%;background:#cbd5e1}.dots span:first-child{background:#0053d6}
+        @media(max-width:700px){.hero{min-height:55vh;padding:18px 16px 0}.support{font-size:0;padding:12px;width:46px;height:46px;display:grid;place-items:center}.support:before{content:"?";font-size:20px}.copy{margin-top:34px}.title{font-size:clamp(42px,13vw,58px)}.sub{max-width:260px;font-size:19px}.city{width:78%;bottom:105px}.car{width:210px;right:3%;bottom:64px}.content{padding:0 12px 20px;margin-top:-18px}.cards{gap:12px}.card{min-height:330px;border-radius:22px;padding:52px 12px 16px}.avatar{width:74px;height:74px;top:-38px;font-size:32px;border-width:6px}.card h3{font-size:25px}.card p{font-size:13px;margin-bottom:18px}.list{gap:11px;font-size:12px;margin-bottom:22px}.list span{width:20px;height:20px;font-size:11px}.btn{min-height:52px;font-size:15px}.features{grid-template-columns:repeat(2,1fr);padding:18px 10px;margin-top:24px}.feature{border-right:0;border-bottom:1px solid #dbeafe}.feature:nth-last-child(-n+2){border-bottom:0}}
       `}</style>
 
-      <section style={scene} className="vt-scene">
-        <div style={skyGlow} />
-        <div style={sun} />
-
-        <div style={cityLayer} className="vt-city" aria-hidden="true">
-          <span style={buildingTall} />
-          <span style={buildingMid} />
-          <span style={buildingSmall} />
-          <span style={buildingWide} />
-          <span style={buildingMid} />
-          <span style={buildingSmall} />
-          <span style={buildingTall} />
-          <span style={buildingWide} />
-          <span style={buildingSmall} />
-          <span style={buildingMid} />
-          <span style={buildingTall} />
-          <span style={buildingWide} />
-        </div>
-
-        <div style={forestLayer} className="vt-forest" aria-hidden="true">
-          {Array.from({ length: 28 }).map((_, i) => (
-            <span key={i} style={{ ...tree, height: 36 + (i % 5) * 9 }} />
-          ))}
-        </div>
-
-        <div style={topBar}>
-          <div style={brandPill}>
-            <img src="/cars/vt-logo.png" alt="Vishwakarma Travels" style={smallLogo} />
-            <div>
-              <h1 style={brandMain}>VISHWAKARMA</h1>
-              <p style={brandSub}>TRAVELS</p>
-            </div>
-          </div>
-          <Link href="/admin" style={adminTop}>Admin</Link>
-        </div>
-
-        <div style={messagePanel}>
-          <p style={overline}>Premium Cab Booking Experience</p>
-          <h2 style={heroText} className="vt-shine">Travel Made Easy</h2>
-          <p style={heroSub}>with Vishwakarma Travels</p>
-        </div>
-
-        <div style={roadWrap}>
-          <div style={road} className="vt-road" />
-          <div style={carWrap} className="vt-car" aria-hidden="true">
-            <div style={carBody}>
-              <span style={carTop} />
-              <span style={carWindow} />
-              <span style={headLight} />
-              <span style={tailLight} />
-              <span style={wheelLeft} className="vt-wheel" />
-              <span style={wheelRight} className="vt-wheel" />
-            </div>
-          </div>
-        </div>
-
-        <div style={bookingCard} className="vt-card">
-          <div style={logoWrap}>
-            <img src="/cars/vt-logo.png" alt="Vishwakarma Travels Logo" style={logo} className="vt-logo" />
-          </div>
-          <h3 style={headline}>Welcome to Vishwakarma Travels</h3>
-          <p style={subtitle}>Safe rides, clean cars and quick booking support for every journey.</p>
-
-          <div style={trustGrid}>
-            <span style={trustItem}>🛡️ Safe & Secure</span>
-            <span style={trustItem}>🚕 Clean Cars</span>
-            <span style={trustItem}>⏱️ On-Time Service</span>
-          </div>
-
-          <Link href="/" style={continueBtn} className="vt-cta">
-            Continue Booking →
-          </Link>
-          <Link href="/admin" style={adminBtn}>Admin Login</Link>
-        </div>
-
-        <p style={footerText}>Jamshedpur • Jharkhand • Vishwakarma Travels</p>
+      <section className="hero">
+        <div className="clouds" />
+        <span className="leaf" style={{ left: "8%", animationDelay: "0s" }}>◦</span>
+        <span className="leaf" style={{ left: "78%", animationDelay: "2s" }}>◦</span>
+        <span className="leaf" style={{ left: "55%", animationDelay: "4s" }}>◦</span>
+        <header className="top"><div className="brand"><img src="/cars/vt-logo.png" alt="Vishwakarma Travels" className="logo" /><div><h1>VISHWAKARMA</h1><p>TRAVELS</p></div></div><Link href="/admin" className="support">Help & Support</Link></header>
+        <div className="copy"><p className="welcome"><span />WELCOME TO<span /></p><h2 className="title"><b>Vishwakarma</b><strong>Travels</strong></h2><p className="sub">Safe, comfortable and reliable cab booking for your journey.</p><div className="safety">Your Safety, Our Priority</div></div>
+        <div className="water" /><div className="hill" /><div className="city" />
+        <div className="roadWrap"><div className="road" /><div className="car"><div className="carTop" /><div className="window" /><div className="carBody" /><div className="carLogo">VT</div><div className="tail" /><div className="wheel a" /><div className="wheel b" /></div></div>
       </section>
+      <section className="content"><div className="cards"><article className="card orange"><div className="avatar orange">+</div><h3>New User</h3><p>Create a new account to get started</p><ul className="list"><li><span>✓</span>Quick & Easy Booking</li><li><span>✓</span>Secure & Reliable</li><li><span>✓</span>Best Prices Guaranteed</li></ul><Link href="/" className="btn orange">Register Now →</Link></article><article className="card blue"><div className="avatar blue">•</div><h3>Existing User</h3><p>Login to your account to continue</p><ul className="list"><li><span>✓</span>Manage Your Bookings</li><li><span>✓</span>Exclusive Offers</li><li><span>✓</span>24/7 Support</li></ul><Link href="/" className="btn blue">Login →</Link></article></div><div className="features"><div className="feature"><i>✓</i><b>Trusted Service</b><p>Your safety is our top priority</p></div><div className="feature"><i>🚘</i><b>Clean & Safe Cabs</b><p>Well maintained and sanitized cabs</p></div><div className="feature"><i>24</i><b>24/7 Support</b><p>We're here for you anytime</p></div><div className="feature"><i>⌖</i><b>Pan India Coverage</b><p>Book cabs in 100+ cities</p></div></div><div className="dots"><span /><span /><span /></div><p className="footer">© 2025 Vishwakarma Travels. All Rights Reserved.</p></section>
     </main>
   );
 }
-
-const page: CSSProperties = {
-  minHeight: "100vh",
-  margin: 0,
-  overflow: "hidden",
-  fontFamily: "Arial, sans-serif",
-  background: "#061126",
-};
-
-const scene: CSSProperties = {
-  minHeight: "100vh",
-  position: "relative",
-  overflow: "hidden",
-  padding: "18px 14px 12px",
-  boxSizing: "border-box",
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "space-between",
-  background: "linear-gradient(180deg, #071b44 0%, #0b2d6b 36%, #07152d 68%, #030815 100%)",
-};
-
-const skyGlow: CSSProperties = {
-  position: "absolute",
-  inset: "-20% -30% auto -30%",
-  height: "55%",
-  background: "radial-gradient(circle at 22% 20%, rgba(255,202,138,.65), transparent 28%), radial-gradient(circle at 78% 12%, rgba(85,150,255,.36), transparent 32%)",
-  pointerEvents: "none",
-};
-
-const sun: CSSProperties = {
-  position: "absolute",
-  right: 44,
-  top: 86,
-  width: 70,
-  height: 70,
-  borderRadius: "50%",
-  background: "linear-gradient(135deg, #fed7aa, #fb923c)",
-  boxShadow: "0 0 70px rgba(251,146,60,.55)",
-  opacity: .85,
-};
-
-const topBar: CSSProperties = {
-  position: "relative",
-  zIndex: 5,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  gap: 10,
-};
-
-const brandPill: CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: 9,
-  padding: "8px 12px 8px 8px",
-  borderRadius: 22,
-  background: "rgba(255,255,255,.12)",
-  border: "1px solid rgba(255,255,255,.16)",
-  backdropFilter: "blur(10px)",
-};
-
-const smallLogo: CSSProperties = {
-  width: 44,
-  height: 44,
-  borderRadius: 14,
-  objectFit: "contain",
-  background: "white",
-  padding: 4,
-  boxSizing: "border-box",
-};
-
-const brandMain: CSSProperties = { margin: 0, color: "#fb923c", fontSize: 16, fontWeight: 900, letterSpacing: .6, lineHeight: 1 };
-const brandSub: CSSProperties = { margin: 0, color: "white", fontSize: 12, fontWeight: 900, letterSpacing: 3 };
-
-const adminTop: CSSProperties = {
-  color: "white",
-  textDecoration: "none",
-  fontWeight: 900,
-  fontSize: 13,
-  padding: "10px 14px",
-  borderRadius: 999,
-  background: "rgba(255,255,255,.13)",
-  border: "1px solid rgba(255,255,255,.18)",
-};
-
-const messagePanel: CSSProperties = {
-  position: "relative",
-  zIndex: 4,
-  marginTop: 24,
-  textAlign: "center",
-};
-
-const overline: CSSProperties = { margin: 0, color: "#fed7aa", fontSize: 12, fontWeight: 900, letterSpacing: .8 };
-const heroText: CSSProperties = { margin: "7px 0 2px", fontSize: "clamp(38px, 11vw, 58px)", lineHeight: .95, fontWeight: 1000, textShadow: "0 14px 32px rgba(0,0,0,.38)" };
-const heroSub: CSSProperties = { margin: 0, color: "rgba(255,255,255,.9)", fontSize: 17, fontWeight: 800 };
-
-const cityLayer: CSSProperties = {
-  position: "absolute",
-  left: 0,
-  right: 0,
-  bottom: "38%",
-  width: "200%",
-  height: 118,
-  display: "flex",
-  alignItems: "flex-end",
-  gap: 10,
-  opacity: .34,
-  zIndex: 1,
-};
-
-const buildingBase: CSSProperties = { display: "block", width: 42, borderRadius: "8px 8px 0 0", background: "linear-gradient(180deg, rgba(255,255,255,.42), rgba(255,255,255,.08))", border: "1px solid rgba(255,255,255,.12)" };
-const buildingTall: CSSProperties = { ...buildingBase, height: 102 };
-const buildingMid: CSSProperties = { ...buildingBase, height: 74 };
-const buildingSmall: CSSProperties = { ...buildingBase, height: 52 };
-const buildingWide: CSSProperties = { ...buildingBase, width: 72, height: 64 };
-
-const forestLayer: CSSProperties = {
-  position: "absolute",
-  left: 0,
-  right: 0,
-  bottom: "32%",
-  width: "200%",
-  height: 94,
-  display: "flex",
-  alignItems: "flex-end",
-  gap: 12,
-  zIndex: 2,
-  opacity: .7,
-};
-
-const tree: CSSProperties = {
-  width: 0,
-  borderLeft: "16px solid transparent",
-  borderRight: "16px solid transparent",
-  borderBottom: "58px solid rgba(17,94,48,.88)",
-  filter: "drop-shadow(0 10px 10px rgba(0,0,0,.22))",
-};
-
-const roadWrap: CSSProperties = {
-  position: "absolute",
-  left: 0,
-  right: 0,
-  bottom: "24%",
-  height: 118,
-  zIndex: 3,
-};
-
-const road: CSSProperties = {
-  position: "absolute",
-  inset: "34px -40px 0",
-  transform: "skewY(-3deg)",
-  background: "linear-gradient(180deg, #1f2937 0%, #111827 100%)",
-  borderTop: "5px solid rgba(255,255,255,.24)",
-  boxShadow: "0 -18px 40px rgba(0,0,0,.24)",
-  backgroundImage: "linear-gradient(90deg, transparent 0 52px, rgba(255,255,255,.72) 52px 94px, transparent 94px 150px)",
-  backgroundSize: "220px 5px",
-  backgroundRepeat: "repeat-x",
-  backgroundPosition: "0 51px",
-};
-
-const carWrap: CSSProperties = { position: "absolute", bottom: 40, left: 0, width: 170, height: 72 };
-const carBody: CSSProperties = { position: "relative", width: 166, height: 54, marginTop: 16, borderRadius: "28px 38px 22px 18px", background: "linear-gradient(135deg, #f97316, #ffbd59)", boxShadow: "0 18px 28px rgba(0,0,0,.35)" };
-const carTop: CSSProperties = { position: "absolute", left: 38, top: -24, width: 72, height: 34, borderRadius: "28px 30px 0 0", background: "linear-gradient(135deg, #fef3c7, #fdba74)" };
-const carWindow: CSSProperties = { position: "absolute", left: 53, top: -16, width: 42, height: 19, borderRadius: "16px 18px 3px 3px", background: "linear-gradient(135deg, #dbeafe, #60a5fa)", border: "2px solid rgba(255,255,255,.7)" };
-const headLight: CSSProperties = { position: "absolute", right: -8, top: 21, width: 18, height: 9, borderRadius: 999, background: "#fef9c3", boxShadow: "18px 0 32px #fef9c3" };
-const tailLight: CSSProperties = { position: "absolute", left: 4, top: 23, width: 10, height: 12, borderRadius: 999, background: "#ef4444" };
-const wheelLeft: CSSProperties = { position: "absolute", left: 28, bottom: -13, width: 29, height: 29, borderRadius: "50%", background: "radial-gradient(circle, #cbd5e1 0 23%, #0f172a 24% 100%)", border: "4px solid #020617" };
-const wheelRight: CSSProperties = { ...wheelLeft, left: 112 };
-
-const bookingCard: CSSProperties = {
-  position: "relative",
-  zIndex: 6,
-  marginTop: "auto",
-  width: "100%",
-  maxWidth: 430,
-  alignSelf: "center",
-  boxSizing: "border-box",
-  textAlign: "center",
-  padding: "18px 16px 16px",
-  borderRadius: 28,
-  background: "linear-gradient(180deg, rgba(255,255,255,.96), rgba(241,245,249,.92))",
-  border: "1px solid rgba(255,255,255,.74)",
-  boxShadow: "0 26px 80px rgba(0,0,0,.42)",
-  backdropFilter: "blur(16px)",
-};
-
-const logoWrap: CSSProperties = { display: "grid", placeItems: "center", marginBottom: 6 };
-const logo: CSSProperties = { width: 82, height: 82, objectFit: "contain", borderRadius: 22, background: "white", padding: 8, boxSizing: "border-box", boxShadow: "0 12px 28px rgba(11,45,107,.18)" };
-const headline: CSSProperties = { margin: "6px 0 7px", color: "#0b2d6b", fontSize: "clamp(26px, 7.2vw, 34px)", lineHeight: 1.05, fontWeight: 1000 };
-const subtitle: CSSProperties = { margin: "0 auto 12px", maxWidth: 330, color: "#475569", fontSize: 14, lineHeight: 1.45, fontWeight: 700 };
-const trustGrid: CSSProperties = { display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 7, margin: "12px 0 14px" };
-const trustItem: CSSProperties = { minHeight: 48, display: "grid", placeItems: "center", padding: "8px 4px", borderRadius: 15, background: "#ffffff", color: "#0f172a", fontWeight: 900, fontSize: 12, border: "1px solid #e2e8f0", boxShadow: "0 8px 18px rgba(15,23,42,.06)" };
-
-const continueBtn: CSSProperties = {
-  display: "block",
-  width: "100%",
-  boxSizing: "border-box",
-  padding: "15px 16px",
-  borderRadius: 18,
-  background: "linear-gradient(135deg, #f97316, #fb923c)",
-  color: "white",
-  textDecoration: "none",
-  fontWeight: 1000,
-  fontSize: 17,
-};
-
-const adminBtn: CSSProperties = { display: "inline-block", marginTop: 12, color: "#0b2d6b", textDecoration: "none", fontWeight: 900, fontSize: 13 };
-const footerText: CSSProperties = { position: "relative", zIndex: 6, textAlign: "center", color: "rgba(255,255,255,.78)", fontWeight: 800, fontSize: 12, margin: "10px 0 0" };
