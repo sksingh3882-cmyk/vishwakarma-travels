@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+const STORAGE_KEY = "vishwakarma_customer_profile";
 
 export default function WelcomePage() {
   const [mode, setMode] = useState<"new" | "existing">("new");
@@ -9,9 +11,39 @@ export default function WelcomePage() {
   const [address, setAddress] = useState("");
   const [alert, setAlert] = useState(false);
 
+  useEffect(() => {
+    if (mode !== "existing") return;
+
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+
+      const profile = JSON.parse(saved);
+      const savedName = String(profile.name || "");
+      const typedName = name.trim().toLowerCase();
+
+      if (!typedName || savedName.toLowerCase().includes(typedName) || typedName.includes(savedName.toLowerCase())) {
+        if (savedName && !name.trim()) setName(savedName);
+        setMobile(String(profile.mobile || ""));
+        setAddress(String(profile.address || ""));
+      }
+    } catch {}
+  }, [mode, name]);
+
   const switchMode = (nextMode: "new" | "existing") => {
     setMode(nextMode);
     setAlert(false);
+
+    if (nextMode === "existing") {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) return;
+        const profile = JSON.parse(saved);
+        setName(String(profile.name || ""));
+        setMobile(String(profile.mobile || ""));
+        setAddress(String(profile.address || ""));
+      } catch {}
+    }
   };
 
   const continueBooking = () => {
@@ -26,8 +58,8 @@ export default function WelcomePage() {
       }
 
       localStorage.setItem(
-        "vishwakarma_customer_profile",
-        JSON.stringify({ name: cleanName, mobile: "", address: "", mode })
+        STORAGE_KEY,
+        JSON.stringify({ name: cleanName, mobile: cleanMobile, address: cleanAddress, mode })
       );
 
       window.location.href = "/?booking=1";
@@ -40,7 +72,7 @@ export default function WelcomePage() {
     }
 
     localStorage.setItem(
-      "vishwakarma_customer_profile",
+      STORAGE_KEY,
       JSON.stringify({ name: cleanName, mobile: cleanMobile, address: cleanAddress, mode })
     );
 
@@ -97,8 +129,8 @@ export default function WelcomePage() {
         </div>
         <div className="inputWrap">
           <input className="input" placeholder="Enter Your Name" value={name} onChange={(e) => setName(e.target.value)} />
-          {mode === "new" && <input className="input" placeholder="Mobile Number" value={mobile} inputMode="tel" onChange={(e) => setMobile(e.target.value)} />}
-          {mode === "new" && <input className="input" placeholder="Complete Address" value={address} onChange={(e) => setAddress(e.target.value)} />}
+          <input className="input" placeholder="Mobile Number" value={mobile} inputMode="tel" onChange={(e) => setMobile(e.target.value)} />
+          <input className="input" placeholder="Complete Address" value={address} onChange={(e) => setAddress(e.target.value)} />
         </div>
         <button type="button" className="continueBtn" onClick={continueBooking}>Continue Booking</button>
         {alert && <div className="smallAlert">{mode === "existing" ? "Please enter your name before continuing" : "Please fill name, mobile and address before continuing"}</div>}
