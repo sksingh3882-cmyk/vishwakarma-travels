@@ -60,12 +60,7 @@ export default function WelcomePage() {
         .headingWhite{
           display:inline-block;
           color:#ffffff;
-          text-shadow:
-            -1px -1px 0 #000,
-             1px -1px 0 #000,
-            -1px 1px 0 #000,
-             1px 1px 0 #000,
-             0 10px 30px rgba(0,0,0,.45);
+          text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 10px 30px rgba(0,0,0,.45);
           animation:leftIn 1.5s ease forwards;
         }
 
@@ -73,12 +68,7 @@ export default function WelcomePage() {
           display:inline-block;
           margin-left:8px;
           color:#7a0000;
-          text-shadow:
-            -1px -1px 0 #000,
-             1px -1px 0 #000,
-            -1px 1px 0 #000,
-             1px 1px 0 #000,
-             0 10px 30px rgba(0,0,0,.45);
+          text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 10px 30px rgba(0,0,0,.45);
           animation:rightIn 1.5s ease forwards;
         }
 
@@ -88,11 +78,7 @@ export default function WelcomePage() {
           font-style:italic;
           font-weight:700;
           color:#ffffff;
-          text-shadow:
-            -1px -1px 0 #0b3aa4,
-             1px -1px 0 #0b3aa4,
-            -1px 1px 0 #0b3aa4,
-             1px 1px 0 #0b3aa4;
+          text-shadow:-1px -1px 0 #0b3aa4,1px -1px 0 #0b3aa4,-1px 1px 0 #0b3aa4,1px 1px 0 #0b3aa4;
           letter-spacing:.3px;
         }
 
@@ -106,22 +92,36 @@ export default function WelcomePage() {
 
         .travelWord{
           display:block;
-          color:#fff;
-          font-size:58px;
+          color:#ffffff;
+          font-size:62px;
+          font-family:Poppins,sans-serif;
           font-style:italic;
           font-weight:900;
+          letter-spacing:-2px;
           animation:leftIn 1.4s ease forwards;
-          text-shadow:0 10px 30px rgba(0,0,0,.45);
+          text-shadow:
+            -1px -1px 0 #000,
+             1px -1px 0 #000,
+            -1px 1px 0 #000,
+             1px 1px 0 #000,
+             0 14px 34px rgba(0,0,0,.5);
         }
 
         .madeWord{
           display:block;
           color:#8fd3ff;
-          font-size:58px;
+          font-size:62px;
+          font-family:Poppins,sans-serif;
           font-style:italic;
           font-weight:900;
+          letter-spacing:-2px;
           animation:rightIn 1.6s ease forwards;
-          text-shadow:0 10px 30px rgba(0,0,0,.45);
+          text-shadow:
+            -1px -1px 0 #000,
+             1px -1px 0 #000,
+            -1px 1px 0 #000,
+             1px 1px 0 #000,
+             0 14px 34px rgba(0,0,0,.5);
         }
 
         @keyframes leftIn{
@@ -153,62 +153,6 @@ export default function WelcomePage() {
           from{opacity:0;transform:translate(-50%,140px)}
           to{opacity:1;transform:translate(-50%,0)}
         }
-
-        .tabs{
-          display:grid;
-          grid-template-columns:1fr 1fr;
-          gap:10px;
-          margin-bottom:16px;
-        }
-
-        .tab{
-          height:52px;
-          border:none;
-          border-radius:16px;
-          font-size:18px;
-          font-weight:800;
-          background:#eef4ff;
-          color:#0f172a;
-        }
-
-        .active{
-          background:#0b3aa4;
-          color:#fff;
-        }
-
-        .grid{
-          display:grid;
-          gap:12px;
-        }
-
-        .input{
-          height:54px;
-          border-radius:16px;
-          border:1px solid #dbe4f0;
-          padding:0 16px;
-          font-size:16px;
-          font-weight:600;
-        }
-
-        .btn{
-          margin-top:14px;
-          width:100%;
-          height:58px;
-          border:none;
-          border-radius:18px;
-          background:linear-gradient(135deg,#0b3aa4,#1459ff);
-          color:#fff;
-          font-size:24px;
-          font-weight:900;
-        }
-
-        .alert{
-          margin-top:10px;
-          text-align:center;
-          font-size:11px;
-          color:#dc2626;
-          font-weight:700;
-        }
       `}</style>
 
       <div className="mainHeading">
@@ -231,25 +175,6 @@ export default function WelcomePage() {
       <div className="travelTitle">
         <span className="travelWord">Travel</span>
         <span className="madeWord">Made Easy</span>
-      </div>
-
-      <div className="userForm">
-        <div className="tabs">
-          <button className="tab active">New User</button>
-          <button className="tab">Existing User</button>
-        </div>
-
-        <div className="grid">
-          <input className="input" placeholder="Your Name" />
-          <input className="input" placeholder="Mobile Number" />
-          <input className="input" placeholder="Complete Address" />
-        </div>
-
-        <button className="btn">Continue →</button>
-
-        <div className="alert">
-          Please fill all details before continuing
-        </div>
       </div>
     </main>
   )
