@@ -3,6 +3,7 @@ import AdminCustomDropdowns from "./AdminCustomDropdowns";
 import AdminCalendarStyle from "./AdminCalendarStyle";
 import AdminRecentPdfFix from "./AdminRecentPdfFix";
 import AdminCustomerAutofill from "./AdminCustomerAutofill";
+import AdminCustomerActions from "./AdminCustomerActions";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
@@ -13,7 +14,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           <span style={menuBadge}>Admin Panel</span>
         </div>
       </div>
-      <div className="admin-shell"><AdminCustomDropdowns /><AdminRecentPdfFix /><AdminCustomerAutofill />{children}</div>
+      <div className="admin-shell"><AdminCustomDropdowns /><AdminRecentPdfFix /><AdminCustomerAutofill /><AdminCustomerActions />{children}</div>
       <style>{adminCss}</style>
       <AdminCalendarStyle />
     </>
