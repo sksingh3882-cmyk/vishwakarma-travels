@@ -25,15 +25,27 @@ export default function WelcomePage() {
           display:flex;
           align-items:center;
           justify-content:center;
-          gap:10px;
+          gap:4px;
+        }
+
+        .vtLogoWrap{
+          width:42px;
+          height:42px;
+          border-radius:50%;
+          background:linear-gradient(135deg,#ff7a00,#0b3aa4);
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          animation:leftIn 1.4s ease forwards;
+          box-shadow:0 8px 18px rgba(0,0,0,.35);
         }
 
         .vtLogo{
-          width:44px;
-          height:44px;
-          object-fit:contain;
-          animation:leftIn 1.4s ease forwards;
-          filter:drop-shadow(0 6px 12px rgba(0,0,0,.35));
+          color:#fff;
+          font-size:20px;
+          font-weight:900;
+          font-family:Poppins,sans-serif;
+          letter-spacing:-1px;
         }
 
         .mainHeading h1{
@@ -59,7 +71,7 @@ export default function WelcomePage() {
 
         .headingRed{
           display:inline-block;
-          margin-left:10px;
+          margin-left:8px;
           color:#7a0000;
           text-shadow:
             -1px -1px 0 #000,
@@ -201,7 +213,9 @@ export default function WelcomePage() {
 
       <div className="mainHeading">
         <div className="headingRow">
-          <img src="/cars/vt-logo.png" alt="VT" className="vtLogo" />
+          <div className="vtLogoWrap">
+            <div className="vtLogo">VT</div>
+          </div>
 
           <h1>
             <span className="headingWhite">VISHWAKARMA</span>
