@@ -143,13 +143,13 @@ export default function WelcomePage() {
           z-index: 2;
           display: flex;
           align-items: center;
-          gap: 14px;
-          font-size: clamp(28px, 7vw, 54px);
+          gap: 16px;
+          font-size: clamp(30px, 7vw, 60px);
           font-weight: 1000;
           letter-spacing: 1px;
-          text-transform: uppercase;
-          color: white;
-          text-shadow: 0 8px 30px rgba(0,0,0,.35);
+          text-shadow: 0 10px 34px rgba(0,0,0,.38);
+          font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+          font-style: italic;
         }
 
         .travelLeft {
@@ -158,7 +158,7 @@ export default function WelcomePage() {
         }
 
         .travelRight {
-          color: #ff9f1c;
+          color: #7dd3fc;
           animation: rightText 1s ease both;
         }
 
@@ -182,9 +182,9 @@ export default function WelcomePage() {
 
           .travelTitle {
             top: 120px;
-            gap: 8px;
+            gap: 6px;
             flex-direction: column;
-            font-size: 34px;
+            font-size: 36px;
           }
         }
       `}</style>
