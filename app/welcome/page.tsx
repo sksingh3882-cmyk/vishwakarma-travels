@@ -34,17 +34,6 @@ export default function WelcomePage() {
           100% { transform: translateX(0); opacity: 1; }
         }
 
-        @keyframes riseUp {
-          0% {
-            opacity: 0;
-            transform: translate(-50%, 120px);
-          }
-          100% {
-            opacity: 1;
-            transform: translate(-50%, 0);
-          }
-        }
-
         .welcomePage {
           min-height: 100vh;
           position: relative;
@@ -178,68 +167,6 @@ export default function WelcomePage() {
           animation: rightText 1s ease both;
         }
 
-        .userPanel {
-          position: absolute;
-          top: 260px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(92%, 920px);
-          z-index: 2;
-          padding: 24px;
-          border-radius: 34px;
-          background: rgba(255,255,255,.16);
-          border: 1px solid rgba(255,255,255,.30);
-          backdrop-filter: blur(16px);
-          box-shadow: 0 25px 60px rgba(0,0,0,.22);
-          animation: riseUp 1s ease both;
-        }
-
-        .userGrid {
-          display: grid;
-          grid-template-columns: repeat(2,1fr);
-          gap: 22px;
-        }
-
-        .userBox {
-          padding: 28px;
-          border-radius: 26px;
-          background: rgba(255,255,255,.12);
-          border: 1px solid rgba(255,255,255,.22);
-          text-align: center;
-        }
-
-        .userBox h2 {
-          margin: 0 0 12px;
-          font-size: 34px;
-          font-weight: 1000;
-          color: white;
-          text-shadow: 0 5px 18px rgba(0,0,0,.45);
-        }
-
-        .userBox p {
-          margin: 0 0 22px;
-          color: #e2e8f0;
-          font-size: 16px;
-          line-height: 1.5;
-        }
-
-        .glassBtn {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
-          height: 54px;
-          border-radius: 16px;
-          text-decoration: none;
-          color: white;
-          font-size: 18px;
-          font-weight: 900;
-          background: rgba(255,255,255,.18);
-          border: 1px solid rgba(255,255,255,.28);
-          backdrop-filter: blur(10px);
-          box-shadow: 0 10px 30px rgba(0,0,0,.18);
-        }
-
         @media (max-width: 520px) {
           .brandOverlay {
             top: 18px;
@@ -264,20 +191,6 @@ export default function WelcomePage() {
             flex-direction: column;
             font-size: 36px;
           }
-
-          .userPanel {
-            top: 260px;
-            width: calc(100% - 28px);
-            padding: 18px;
-          }
-
-          .userGrid {
-            grid-template-columns: 1fr;
-          }
-
-          .userBox {
-            padding: 22px 18px;
-          }
         }
       `}</style>
 
@@ -293,22 +206,6 @@ export default function WelcomePage() {
       <div className="travelTitle">
         <span className="travelLeft">Travel</span>
         <span className="travelRight">Made Easy</span>
-      </div>
-
-      <div className="userPanel">
-        <div className="userGrid">
-          <div className="userBox">
-            <h2>New User</h2>
-            <p>Create your account and start booking premium rides with Vishwakarma Travels.</p>
-            <a href="/" className="glassBtn">Register Now</a>
-          </div>
-
-          <div className="userBox">
-            <h2>Existing User</h2>
-            <p>Login to manage your bookings, view trips and continue your journey.</p>
-            <a href="/" className="glassBtn">Login</a>
-          </div>
-        </div>
       </div>
 
       <div className="menuIcon">
