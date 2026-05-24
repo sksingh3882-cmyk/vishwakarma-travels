@@ -25,10 +25,10 @@ export default function WelcomePage() {
         .mainHeading h1{
           margin:0;
           font-family:Poppins,sans-serif;
-          font-size:clamp(60px,8vw,80px);
+          font-size:40px;
           font-weight:900;
           line-height:.95;
-          letter-spacing:-2px;
+          letter-spacing:-1px;
           color:#ffffff;
           text-shadow:
             -1px -1px 0 #000,
