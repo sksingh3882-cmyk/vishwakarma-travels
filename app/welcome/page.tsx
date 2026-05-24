@@ -24,14 +24,28 @@ export default function WelcomePage() {
           100% { transform: translateX(120%); opacity: 0; }
         }
 
-        @keyframes leftText {
-          0% { transform: translateX(-120px); opacity: 0; }
-          100% { transform: translateX(0); opacity: 1; }
+        @keyframes travelDrop {
+          0% { opacity: 0; transform: translateX(-120vw); }
+          52% { opacity: 1; transform: translateX(0); }
+          100% { opacity: 1; transform: translateX(0); }
         }
 
-        @keyframes rightText {
-          0% { transform: translateX(120px); opacity: 0; }
-          100% { transform: translateX(0); opacity: 1; }
+        @keyframes madeDrop {
+          0%, 12% { opacity: 0; transform: translateX(120vw); }
+          64% { opacity: 1; transform: translateX(0); }
+          100% { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes carLeftRun {
+          0% { opacity: 1; transform: translateX(-72vw) scaleX(1); }
+          50% { opacity: 1; transform: translateX(calc(-50% + 170px)) scaleX(1); }
+          100% { opacity: 0; transform: translateX(72vw) scaleX(1); }
+        }
+
+        @keyframes carRightRun {
+          0%, 10% { opacity: 1; transform: translateX(72vw) scaleX(-1); }
+          60% { opacity: 1; transform: translateX(calc(50% - 170px)) scaleX(-1); }
+          100% { opacity: 0; transform: translateX(-72vw) scaleX(-1); }
         }
 
         .welcomePage {
@@ -141,30 +155,63 @@ export default function WelcomePage() {
           left: 50%;
           transform: translateX(-50%);
           z-index: 2;
-          display: flex;
-          align-items: center;
-          gap: 16px;
-          font-size: clamp(30px, 7vw, 60px);
+          width: min(92vw, 760px);
+          text-align: center;
+          font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+          font-style: italic;
           font-weight: 1000;
           letter-spacing: 1px;
+        }
+
+        .titleLine {
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: clamp(42px, 8vw, 68px);
+          overflow: visible;
+        }
+
+        .travelWord,
+        .madeWord {
+          display: inline-block;
+          font-size: clamp(30px, 7vw, 60px);
+          line-height: 1;
           text-shadow:
             -2px -2px 0 #000,
              2px -2px 0 #000,
             -2px  2px 0 #000,
              2px  2px 0 #000,
              0 10px 34px rgba(0,0,0,.38);
-          font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
-          font-style: italic;
         }
 
-        .travelLeft {
+        .travelWord {
           color: #ffffff;
-          animation: leftText 1s ease both;
+          animation: travelDrop 2.8s ease-out both;
         }
 
-        .travelRight {
+        .madeWord {
           color: #7dd3fc;
-          animation: rightText 1s ease both;
+          animation: madeDrop 3.1s ease-out both;
+        }
+
+        .sportsCar {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          font-size: clamp(24px, 5.5vw, 48px);
+          line-height: 1;
+          margin-top: -0.5em;
+          filter: drop-shadow(0 8px 16px rgba(0,0,0,.45));
+          pointer-events: none;
+        }
+
+        .carFromLeft {
+          animation: carLeftRun 2.8s ease-in-out both;
+        }
+
+        .carFromRight {
+          animation: carRightRun 3.1s ease-in-out both;
         }
 
         @media (max-width: 520px) {
@@ -186,10 +233,12 @@ export default function WelcomePage() {
           }
 
           .travelTitle {
-            top: 120px;
-            gap: 6px;
-            flex-direction: column;
-            font-size: 36px;
+            top: 122px;
+            width: 96vw;
+          }
+
+          .titleLine {
+            min-height: 48px;
           }
         }
       `}</style>
@@ -204,8 +253,14 @@ export default function WelcomePage() {
       </div>
 
       <div className="travelTitle">
-        <span className="travelLeft">Travel</span>
-        <span className="travelRight">Made Easy</span>
+        <div className="titleLine">
+          <span className="sportsCar carFromLeft">🏎️</span>
+          <span className="travelWord">Travel</span>
+        </div>
+        <div className="titleLine">
+          <span className="sportsCar carFromRight">🏎️</span>
+          <span className="madeWord">Made Easy</span>
+        </div>
       </div>
 
       <div className="menuIcon">
