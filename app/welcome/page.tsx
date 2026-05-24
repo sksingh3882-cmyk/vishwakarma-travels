@@ -21,6 +21,21 @@ export default function WelcomePage() {
           z-index:5;
         }
 
+        .headingRow{
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          gap:10px;
+        }
+
+        .vtLogo{
+          width:44px;
+          height:44px;
+          object-fit:contain;
+          animation:leftIn 1.4s ease forwards;
+          filter:drop-shadow(0 6px 12px rgba(0,0,0,.35));
+        }
+
         .mainHeading h1{
           margin:0;
           font-family:Poppins,sans-serif;
@@ -185,10 +200,14 @@ export default function WelcomePage() {
       `}</style>
 
       <div className="mainHeading">
-        <h1>
-          <span className="headingWhite">VISHWAKARMA</span>
-          <span className="headingRed">TRAVELS</span>
-        </h1>
+        <div className="headingRow">
+          <img src="/cars/vt-logo.png" alt="VT" className="vtLogo" />
+
+          <h1>
+            <span className="headingWhite">VISHWAKARMA</span>
+            <span className="headingRed">TRAVELS</span>
+          </h1>
+        </div>
 
         <div className="tagline">
           most Reliable and Affordable Cab Service Of Jamshedpur
