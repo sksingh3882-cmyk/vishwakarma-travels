@@ -107,6 +107,24 @@ export default function WelcomePage() {
           animation: shineLine 2.4s ease-in-out infinite;
         }
 
+        .menuIcon {
+          position: absolute;
+          top: 28px;
+          right: 24px;
+          z-index: 2;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .menuIcon span {
+          width: 30px;
+          height: 3px;
+          border-radius: 999px;
+          background: #ffffff;
+          box-shadow: 0 2px 10px rgba(0,0,0,.25);
+        }
+
         @media (max-width: 520px) {
           .brandOverlay {
             top: 18px;
@@ -119,6 +137,11 @@ export default function WelcomePage() {
             width: 48px;
             height: 48px;
           }
+
+          .menuIcon {
+            top: 22px;
+            right: 16px;
+          }
         }
       `}</style>
 
@@ -129,6 +152,12 @@ export default function WelcomePage() {
           <p>TRAVELS</p>
         </div>
         <span className="brandLine" />
+      </div>
+
+      <div className="menuIcon">
+        <span />
+        <span />
+        <span />
       </div>
     </main>
   )
