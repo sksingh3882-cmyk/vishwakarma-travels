@@ -167,6 +167,60 @@ export default function WelcomePage() {
           animation: rightText 1s ease both;
         }
 
+        .userCards {
+          position: absolute;
+          top: 260px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: min(92%, 900px);
+          display: grid;
+          grid-template-columns: repeat(2,1fr);
+          gap: 24px;
+          z-index: 2;
+        }
+
+        .glassCard {
+          padding: 34px 28px;
+          border-radius: 28px;
+          background: rgba(255,255,255,.16);
+          border: 1px solid rgba(255,255,255,.28);
+          backdrop-filter: blur(14px);
+          box-shadow: 0 18px 45px rgba(0,0,0,.18);
+          text-align: center;
+        }
+
+        .glassCard h2 {
+          margin: 0 0 14px;
+          font-size: 34px;
+          font-weight: 1000;
+          color: white;
+          text-shadow: 0 4px 16px rgba(0,0,0,.45);
+        }
+
+        .glassCard p {
+          margin: 0 0 24px;
+          color: #e2e8f0;
+          font-size: 17px;
+          line-height: 1.5;
+        }
+
+        .glassBtn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 54px;
+          border-radius: 16px;
+          text-decoration: none;
+          color: white;
+          font-size: 18px;
+          font-weight: 900;
+          background: rgba(255,255,255,.18);
+          border: 1px solid rgba(255,255,255,.28);
+          backdrop-filter: blur(10px);
+          box-shadow: 0 10px 30px rgba(0,0,0,.18);
+        }
+
         @media (max-width: 520px) {
           .brandOverlay {
             top: 18px;
@@ -191,6 +245,16 @@ export default function WelcomePage() {
             flex-direction: column;
             font-size: 36px;
           }
+
+          .userCards {
+            top: 270px;
+            grid-template-columns: 1fr;
+            gap: 18px;
+          }
+
+          .glassCard {
+            padding: 26px 20px;
+          }
         }
       `}</style>
 
@@ -206,6 +270,20 @@ export default function WelcomePage() {
       <div className="travelTitle">
         <span className="travelLeft">Travel</span>
         <span className="travelRight">Made Easy</span>
+      </div>
+
+      <div className="userCards">
+        <div className="glassCard">
+          <h2>New User</h2>
+          <p>Create your account and start booking premium rides with Vishwakarma Travels.</p>
+          <a href="/" className="glassBtn">Register Now</a>
+        </div>
+
+        <div className="glassCard">
+          <h2>Existing User</h2>
+          <p>Login to manage your bookings, view trips and continue your journey.</p>
+          <a href="/" className="glassBtn">Login</a>
+        </div>
       </div>
 
       <div className="menuIcon">
