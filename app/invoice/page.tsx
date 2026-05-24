@@ -115,8 +115,8 @@ function InvoiceContent() {
           <div><Info label="Trip Detail" value={service} /><Info label="Pickup Location" value={pickup} /><Info label="Drop Location" value={drop} /><Info label="Client Name" value={customerName} /><Info label="Address" value={pickup} /><Info label="Contact No." value={customerPhone} /><Info label="Booking Date" value={journeyDate} /></div>
           <div className="copyVehicle"><h3>VEHICLE DETAILS</h3><Info label="Vehicle Requirement" value={vehicleType} /><Info label="Vehicle Model" value={vehicleModel} /><Info label="Vehicle No." value={vehicleNumber} /><Info label="Driver Name" value={driverName} /><Info label="Contact No." value={driverMobile} /></div>
         </div>
-        <div className="declaration"><b>DECLARATION</b><p>• Book A Cab Atleast 24 Hour Before Travelling Otherwise Booking May Not Be Confirmed</p><p>• After the booking is Confirmed, Customer will have to make the Advance Payment</p><p>• Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances</p></div>
-        <div className="footerLine">{"THANK YOU & WISH YOU A VERY HAPPY JOURNEY"}</div>
+        <div className="declaration"><b>DECLARATION</b><p>• Book a cab at least 24 hours before travelling; otherwise, booking may not be confirmed.</p><p>• After the booking is confirmed, the customer must make the advance payment.</p><p>• A Rs. 500 cancellation charge applies if the booking is cancelled.</p></div>
+        <div className="footerLine">THANK YOU & WISH YOU A VERY HAPPY JOURNEY</div>
       </section>
 
       <style jsx global>{`
@@ -124,93 +124,60 @@ function InvoiceContent() {
         * { box-sizing: border-box; }
         html, body { margin: 0; padding: 0; }
         .screen { background: #e5e7eb; font-family: Arial, Helvetica, sans-serif; color: #111; padding: 0; }
-        .printBtn { position: fixed; right: 14px; top: 14px; z-index: 10; border: 0; border-radius: 10px; background: #16a34a; color: white; padding: 10px 16px; font-weight: 900; box-shadow: 0 8px 22px rgba(0,0,0,.18); }
-        .invoice { width: 200mm; min-height: 282mm; margin: 0 auto; background: white; padding: 4mm 7mm; overflow: hidden; page-break-after: avoid; break-after: avoid; }
-        .top { display: grid; grid-template-columns: 1.18fr .92fr .9fr; align-items: center; gap: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
-        .invoiceTitle { text-align: center; font-size: 36px; font-weight: 900; color: #0b2d6b; border-bottom: 2px solid #0b2d6b; padding-bottom: 4px; letter-spacing: .5px; }
-        .topLogo { display: flex; align-items: center; justify-content: flex-end; background: transparent !important; border: none !important; box-shadow: none !important; filter: none !important; border-radius: 0 !important; }
-        .topLogoImg { width: 126px; height: auto; display: block; object-fit: contain; background: transparent !important; border: none !important; box-shadow: none !important; filter: none !important; border-radius: 0 !important; mix-blend-mode: normal !important; }
-        .company { color: #0b2d6b; line-height: 1.24; }
-        .leftCompany { text-align: left; }
-        .company h2 { margin: 0 0 2px; font-size: 22px; }
+        .printBtn { position: fixed; right: 14px; top: 14px; z-index: 10; border: 0; border-radius: 10px; background: #16a34a; color: white; padding: 10px 16px; font-weight: 900; }
+        .invoice { width: 205mm; margin: 0 auto; background: white; padding: 3mm 6mm 2mm; overflow: hidden; }
+        .top { display: grid; grid-template-columns: 1.18fr .92fr .9fr; align-items: center; gap: 8px; border-bottom: 1px solid #333; padding-bottom: 4px; }
+        .invoiceTitle { text-align: center; font-size: 38px; font-weight: 900; color: #0b2d6b; border-bottom: 2px solid #0b2d6b; padding-bottom: 2px; }
+        .topLogo { display: flex; justify-content: flex-end; }
+        .topLogoImg { width: 120px; height: auto; }
+        .company h2 { margin: 0 0 2px; font-size: 24px; color: #0b2d6b; }
         .company p { margin: 0; font-size: 13px; }
-        .company b { display: block; margin-top: 2px; font-size: 14px; }
-        .detailsGrid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; margin-top: 8px; }
-        .leftInfo, .rightInfo { font-size: 12.8px; line-height: 1.33; }
-        .rightInfo { border-left: 1px solid #333; padding-left: 28px; }
-        .blueHead { width: 210px; background: #0b2d6b; color: white; text-align: center; font-weight: 900; padding: 5px; border-radius: 4px; margin: 0 auto 7px; font-size: 15px; }
-        .info { display: grid; grid-template-columns: 150px 11px 1fr; gap: 4px; margin: 1px 0; align-items: start; }
+        .company b { display: block; margin-top: 2px; font-size: 13px; }
+        .detailsGrid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 14px; margin-top: 6px; }
+        .leftInfo, .rightInfo { font-size: 13px; line-height: 1.25; }
+        .rightInfo { border-left: 1px solid #333; padding-left: 18px; }
+        .blueHead { background: #0b2d6b; color: white; text-align: center; font-weight: 900; padding: 4px; border-radius: 4px; margin-bottom: 6px; }
+        .info { display: grid; grid-template-columns: 140px 10px 1fr; gap: 4px; }
         .info label { font-weight: 700; }
-        .info .strongValue { font-weight: 900; font-size: 14px; }
-        .serviceTable { width: 100%; border-collapse: collapse; margin-top: 9px; font-size: 13px; }
-        .serviceTable th { background: #f1f5f9; color: #0b2d6b; text-align: left; padding: 6px 10px; border: 1px solid #555; font-size: 15px; }
-        .serviceTable th:last-child { width: 27%; text-align: center; }
-        .serviceTable td { border: 1px solid #555; padding: 7px 10px; vertical-align: top; }
-        .serviceRow td { height: 64px; }
-        .serviceRow b { display: block; margin-bottom: 5px; }
-        .serviceRow span { display: block; }
-        .amount { text-align: right; font-weight: 900; font-size: 15px; }
-        .totalRow td { height: auto; font-size: 16px; font-weight: 900; }
-        .payGrid { display: grid; grid-template-columns: 1.1fr 1.25fr; gap: 14px; margin-top: 8px; align-items: stretch; }
-        .payableBox { display: grid; grid-template-columns: 1.25fr .85fr; align-items: center; border: 1px solid #333; border-radius: 4px; overflow: hidden; width: 100%; min-height: 37px; }
-        .payableBox span { background: #f8fafc; color: #777; font-size: 15px; line-height: 1; font-weight: 900; padding: 10px 12px; white-space: nowrap; }
-        .payableBox b { text-align: center; font-size: 22px; padding: 8px 10px; white-space: nowrap; }
-        .thanksText { margin-top: 8px; line-height: 1.26; font-size: 12.5px; }
+        .strongValue { font-weight: 900; }
+        .serviceTable { width: 100%; border-collapse: collapse; margin-top: 7px; font-size: 13px; }
+        .serviceTable th,.serviceTable td { border: 1px solid #555; padding: 6px 8px; }
+        .serviceTable th { background: #f1f5f9; color: #0b2d6b; }
+        .amount { text-align: right; font-weight: 900; }
+        .payGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
+        .payableBox { display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; padding: 8px 10px; font-weight: 900; }
+        .payableBox span { font-size: 14px; }
+        .payableBox b { font-size: 24px; }
+        .thanksText { margin-top: 5px; font-size: 12px; }
         .thanksText p { margin: 0; }
-        .adjustments { font-size: 12.5px; line-height: 1.35; padding-top: 2px; }
-        .adjustments .info { grid-template-columns: 115px 11px 1fr; }
-        .cutLine { display: flex; align-items: center; gap: 10px; margin: 7px 0 7px; color: #333; }
-        .cutLine:before, .cutLine:after { content: ""; flex: 1; border-top: 1px dashed #333; }
-        .cutLine span { font-size: 18px; }
-        .copyHead { width: 390px; margin: 0 auto 7px; background: #0b2d6b; color: white; text-align: center; font-weight: 900; border-radius: 4px; padding: 5px; font-size: 14px; }
-        .copyGrid { display: grid; grid-template-columns: 1.08fr .92fr; gap: 20px; font-size: 11.4px; line-height: 1.25; }
-        .copyGrid .info { grid-template-columns: 125px 11px 1fr; }
-        .copyVehicle { border-left: 1px solid #333; padding-left: 26px; min-height: 84px; }
-        .copyVehicle h3 { color: #0b2d6b; margin: 0 0 5px; font-size: 15px; }
-        .declaration { border: 1px solid #777; border-radius: 4px; margin-top: 7px; padding: 5px 9px; font-size: 10.4px; line-height: 1.18; }
-        .declaration b { color: #0b2d6b; font-size: 14px; }
-        .declaration p { margin: 1px 0; }
-        .footerLine { display: flex; align-items: center; gap: 10px; margin-top: 7px; color: #0b2d6b; font-weight: 900; text-align: center; font-size: 12.5px; }
-        .footerLine:before, .footerLine:after { content: ""; flex: 1; border-top: 1px solid #333; }
+        .adjustments { font-size: 12px; }
+        .cutLine { display: flex; align-items: center; gap: 10px; margin: 5px 0; }
+        .cutLine:before,.cutLine:after { content:""; flex:1; border-top:1px dashed #333; }
+        .copyHead { background: #0b2d6b; color: white; text-align: center; font-weight: 900; padding: 4px; border-radius: 4px; margin-bottom: 5px; }
+        .copyGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 11px; }
+        .copyVehicle { border-left: 1px solid #333; padding-left: 14px; }
+        .copyVehicle h3 { margin: 0 0 4px; color: #0b2d6b; }
+        .declaration { border: 1px solid #777; border-radius: 4px; margin-top: 5px; padding: 5px 8px; font-size: 10px; }
+        .declaration p { margin: 2px 0; }
+        .footerLine { display: flex; align-items: center; gap: 10px; margin-top: 5px; color: #0b2d6b; font-weight: 900; font-size: 11px; }
+        .footerLine:before,.footerLine:after { content:""; flex:1; border-top:1px solid #333; }
+
         @media print {
-          @page { size: A4 portrait; margin: 0; }
-          html, body { width: auto; min-height: auto; margin: 0 !important; padding: 0 !important; overflow: hidden; background: white !important; }
-          body * { visibility: hidden !important; }
-          .screen, .screen * { visibility: visible !important; }
-          .screen { background: white; width: 100%; min-height: auto; overflow: hidden; margin: 0 !important; padding: 0 !important; }
-          .invoice { position: absolute; top: 0 !important; left: 50%; transform: translateX(-50%) scale(.965); transform-origin: top center; margin: 0 auto !important; width: 190mm; min-height: auto; max-height: 296mm; padding: .8mm 5.5mm 2mm; page-break-after: avoid; break-after: avoid; overflow: hidden; }
-          .printBtn, .printBtn *, button:not(.keep-print) { display: none !important; visibility: hidden !important; }
-          .top { padding-top: 0 !important; margin-top: 0 !important; padding-bottom: 3px; }
-          .topLogoImg { width: 88px; }
-          .invoiceTitle { font-size: 32px; padding-bottom: 2px; }
-          .company h2 { font-size: 20px; }
-          .company p { font-size: 11.5px; }
-          .company b { font-size: 12px; }
-          .detailsGrid { margin-top: 5px; gap: 12px; }
-          .leftInfo, .rightInfo { font-size: 11.4px; line-height: 1.2; }
-          .rightInfo { padding-left: 18px; }
-          .blueHead { font-size: 13px; padding: 3px; margin-bottom: 4px; }
-          .info { grid-template-columns: 132px 9px 1fr; margin: 0; gap: 3px; }
-          .serviceTable { margin-top: 5px; font-size: 11.5px; }
-          .serviceTable th { padding: 4px 8px; font-size: 13px; }
-          .serviceTable td { padding: 5px 8px; }
-          .serviceRow td { height: 48px; }
-          .totalRow td { font-size: 14px; }
-          .payGrid { margin-top: 5px; gap: 10px; }
-          .payableBox { min-height: 32px; }
-          .payableBox span { font-size: 12.5px; padding: 7px 9px; }
-          .payableBox b { font-size: 18px; padding: 6px 8px; }
-          .thanksText { margin-top: 5px; font-size: 11px; }
-          .adjustments { font-size: 11px; }
-          .cutLine { margin: 4px 0; }
-          .copyHead { padding: 3px; margin-bottom: 4px; font-size: 12px; }
-          .copyGrid { font-size: 10px; gap: 14px; line-height: 1.13; }
-          .copyGrid .info { grid-template-columns: 112px 8px 1fr; }
-          .copyVehicle { padding-left: 18px; min-height: 72px; }
-          .copyVehicle h3 { font-size: 13px; margin-bottom: 3px; }
-          .declaration { margin-top: 4px; padding: 4px 7px; font-size: 9px; line-height: 1.08; }
-          .declaration b { font-size: 12px; }
-          .footerLine { margin-top: 4px; font-size: 10.5px; }
+          html, body { margin: 0 !important; padding: 0 !important; background: white !important; overflow: hidden !important; }
+          .printBtn { display: none !important; }
+          .screen { padding: 0 !important; margin: 0 !important; background: white !important; }
+          .invoice {
+            width: 100%;
+            max-width: 205mm;
+            margin: 0 auto !important;
+            padding: 2mm 5mm 1mm !important;
+            transform: none !important;
+            min-height: auto !important;
+            page-break-after: avoid !important;
+            break-after: avoid !important;
+          }
+          .top { margin-top: 0 !important; padding-top: 0 !important; }
+          .footerLine { margin-bottom: 0 !important; padding-bottom: 0 !important; }
         }
       `}</style>
     </main>
