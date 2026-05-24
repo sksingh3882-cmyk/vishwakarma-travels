@@ -9,10 +9,30 @@ export default function WelcomePage() {
   const [address, setAddress] = useState("");
   const [alert, setAlert] = useState(false);
 
+  const switchMode = (nextMode: "new" | "existing") => {
+    setMode(nextMode);
+    setAlert(false);
+  };
+
   const continueBooking = () => {
     const cleanName = name.trim();
     const cleanMobile = mobile.replace(/\D/g, "").slice(-10);
     const cleanAddress = address.trim();
+
+    if (mode === "existing") {
+      if (!cleanName) {
+        setAlert(true);
+        return;
+      }
+
+      localStorage.setItem(
+        "vishwakarma_customer_profile",
+        JSON.stringify({ name: cleanName, mobile: "", address: "", mode })
+      );
+
+      window.location.href = "/?booking=1";
+      return;
+    }
 
     if (!cleanName || !cleanMobile || !cleanAddress) {
       setAlert(true);
@@ -72,16 +92,16 @@ export default function WelcomePage() {
 
       <div className="userForm">
         <div className="formTop">
-          <button type="button" className={`topBtn ${mode === "new" ? "active" : ""}`} onClick={() => setMode("new")}>New User</button>
-          <button type="button" className={`topBtn ${mode === "existing" ? "active" : ""}`} onClick={() => setMode("existing")}>Existing User</button>
+          <button type="button" className={`topBtn ${mode === "new" ? "active" : ""}`} onClick={() => switchMode("new")}>New User</button>
+          <button type="button" className={`topBtn ${mode === "existing" ? "active" : ""}`} onClick={() => switchMode("existing")}>Existing User</button>
         </div>
         <div className="inputWrap">
           <input className="input" placeholder="Enter Your Name" value={name} onChange={(e) => setName(e.target.value)} />
-          <input className="input" placeholder="Mobile Number" value={mobile} inputMode="tel" onChange={(e) => setMobile(e.target.value)} />
-          <input className="input" placeholder="Complete Address" value={address} onChange={(e) => setAddress(e.target.value)} />
+          {mode === "new" && <input className="input" placeholder="Mobile Number" value={mobile} inputMode="tel" onChange={(e) => setMobile(e.target.value)} />}
+          {mode === "new" && <input className="input" placeholder="Complete Address" value={address} onChange={(e) => setAddress(e.target.value)} />}
         </div>
         <button type="button" className="continueBtn" onClick={continueBooking}>Continue Booking</button>
-        {alert && <div className="smallAlert">Please fill name, mobile and address before continuing</div>}
+        {alert && <div className="smallAlert">{mode === "existing" ? "Please enter your name before continuing" : "Please fill name, mobile and address before continuing"}</div>}
       </div>
     </main>
   );
