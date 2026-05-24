@@ -147,7 +147,12 @@ export default function WelcomePage() {
           font-size: clamp(30px, 7vw, 60px);
           font-weight: 1000;
           letter-spacing: 1px;
-          text-shadow: 0 10px 34px rgba(0,0,0,.38);
+          text-shadow:
+            -2px -2px 0 #000,
+             2px -2px 0 #000,
+            -2px  2px 0 #000,
+             2px  2px 0 #000,
+             0 10px 34px rgba(0,0,0,.38);
           font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
           font-style: italic;
         }
