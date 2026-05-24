@@ -11,9 +11,46 @@ export default function WelcomePage() {
           font-family:Inter,sans-serif;
         }
 
+        .mainHeading{
+          position:absolute;
+          top:28px;
+          left:50%;
+          transform:translateX(-50%);
+          width:100%;
+          text-align:center;
+          z-index:5;
+          animation:headingGlow 2s ease forwards;
+        }
+
+        .mainHeading h1{
+          margin:0;
+          font-family:Poppins,sans-serif;
+          font-size:clamp(60px,8vw,80px);
+          font-weight:900;
+          line-height:.95;
+          letter-spacing:-2px;
+          color:#ffffff;
+          text-shadow:
+            -1px -1px 0 #000,
+             1px -1px 0 #000,
+            -1px 1px 0 #000,
+             1px 1px 0 #000,
+             0 10px 30px rgba(0,0,0,.45);
+        }
+
+        .mainHeading span{
+          display:block;
+          color:#7a0000;
+        }
+
+        @keyframes headingGlow{
+          from{opacity:0;transform:translateX(-50%) translateY(-40px)}
+          to{opacity:1;transform:translateX(-50%) translateY(0)}
+        }
+
         .travelTitle{
           position:absolute;
-          top:120px;
+          top:190px;
           width:100%;
           text-align:center;
           z-index:2;
@@ -51,7 +88,7 @@ export default function WelcomePage() {
 
         .userForm{
           position:absolute;
-          top:270px;
+          top:340px;
           left:50%;
           transform:translateX(-50%);
           width:min(92vw,430px);
@@ -125,6 +162,13 @@ export default function WelcomePage() {
           font-weight:700;
         }
       `}</style>
+
+      <div className="mainHeading">
+        <h1>
+          VISHWAKARMA
+          <span>TRAVELS</span>
+        </h1>
+      </div>
 
       <div className="travelTitle">
         <span className="travelWord">Travel</span>
