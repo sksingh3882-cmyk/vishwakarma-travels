@@ -123,9 +123,15 @@ function InvoiceContent() {
         @page { size: auto; margin: 0; }
         * { box-sizing: border-box; }
         html, body { margin: 0; padding: 0; }
-        .screen { background: #e5e7eb; font-family: Arial, Helvetica, sans-serif; color: #111; padding: 0; }
+        .screen { 
+  background: #e5e7eb; 
+  font-family: Arial, Helvetica, sans-serif; 
+  color: #111; 
+  padding: 16px 0; 
+  overflow-x: auto;
+}
         .printBtn { position: fixed; right: 14px; top: 14px; z-index: 10; border: 0; border-radius: 10px; background: #16a34a; color: white; padding: 10px 16px; font-weight: 900; }
-        .invoice { width: 190mm; margin: 0 auto; background: white; padding: 3mm 6mm 2mm; overflow: hidden; }
+        .invoice { width: 190mm; margin: 0 auto; background: white; padding: 3mm 6mm 2mm; overflow: visible; }
         .top { display: grid; grid-template-columns: 1.18fr .92fr .9fr; align-items: center; gap: 8px; margin-bottom: 6px; border-bottom: 1px solid #333; padding-bottom: 4px; }
         .invoiceTitle { text-align: center; font-size: 29px; font-weight: 900; color: #0b2d6b; border-bottom: 2px solid #0b2d6b; padding-bottom: 2px; }
         .topLogo { display: flex; justify-content: flex-end; }
@@ -175,7 +181,7 @@ function InvoiceContent() {
     margin: 0 !important;
     padding: 0 !important;
     background: white !important;
-    overflow: hidden !important;
+    
   }
 
   .screen {
