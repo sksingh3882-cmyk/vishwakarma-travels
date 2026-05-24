@@ -126,10 +126,10 @@ function InvoiceContent() {
         .screen { background: #e5e7eb; font-family: Arial, Helvetica, sans-serif; color: #111; padding: 0; }
         .printBtn { position: fixed; right: 14px; top: 14px; z-index: 10; border: 0; border-radius: 10px; background: #16a34a; color: white; padding: 10px 16px; font-weight: 900; }
         .invoice { width: 190mm; margin: 0 auto; background: white; padding: 3mm 6mm 2mm; overflow: hidden; }
-        .top { display: grid; grid-template-columns: 1.18fr .92fr .9fr; align-items: center; gap: 8px; border-bottom: 1px solid #333; padding-bottom: 4px; }
-        .invoiceTitle { text-align: center; font-size: 38px; font-weight: 900; color: #0b2d6b; border-bottom: 2px solid #0b2d6b; padding-bottom: 2px; }
+        .top { display: grid; grid-template-columns: 1.18fr .92fr .9fr; align-items: center; gap: 8px; margin-bottom: 6px; border-bottom: 1px solid #333; padding-bottom: 4px; }
+        .invoiceTitle { text-align: center; font-size: 29px; font-weight: 900; color: #0b2d6b; border-bottom: 2px solid #0b2d6b; padding-bottom: 2px; }
         .topLogo { display: flex; justify-content: flex-end; }
-        .topLogoImg { width: 120px; height: auto; }
+        .topLogoImg { width: 97px; height: auto; }
         .company h2 { margin: 0 0 2px; font-size: 24px; color: #0b2d6b; }
         .company p { margin: 0; font-size: 13px; }
         .company b { display: block; margin-top: 2px; font-size: 13px; }
