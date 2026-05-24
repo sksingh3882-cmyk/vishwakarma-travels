@@ -4,24 +4,67 @@ import Link from "next/link";
 
 export default function WelcomePage() {
   return (
-    <main className="page">
-      <style jsx global>{`
-        *{box-sizing:border-box}body{margin:0}
-        @keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes flow{from{background-position:0 50%}to{background-position:200% 50%}}
-        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-        @keyframes shine{from{transform:translateX(-140%) skewX(-18deg)}to{transform:translateX(170%) skewX(-18deg)}}
-        .page{min-height:100vh;font-family:Arial,sans-serif;color:#082d6d;background:linear-gradient(180deg,#eaf7ff,#fff 70%,#eef7ff);overflow-x:hidden}
-        .hero{position:relative;min-height:620px;padding:18px 18px 0;overflow:hidden;background:linear-gradient(135deg,#fff 0%,#e6f7ff 42%,#9ed8ff 100%)}
-        .hero:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 8% 12%,rgba(255,255,255,.95),transparent 30%),radial-gradient(circle at 80% 12%,rgba(255,255,255,.7),transparent 25%)}
-        .top{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;animation:up .7s ease both}.brand{display:flex;align-items:center;gap:10px}.brand img{width:58px;height:58px;object-fit:contain;border-radius:15px;background:rgba(255,255,255,.88);padding:4px}.brand h1{margin:0;color:#f97316;font-size:24px;line-height:1;font-weight:1000}.brand p{margin:4px 0 0;color:#082d6d;font-size:13px;font-weight:1000;letter-spacing:5px}.menu{width:48px;height:48px;border:0;border-radius:16px;background:rgba(255,255,255,.78);display:grid;gap:5px;place-content:center;box-shadow:0 10px 25px rgba(8,45,109,.14)}.menu span{width:27px;height:3px;border-radius:99px;background:#082d6d;display:block}
-        .copy{position:relative;z-index:4;margin-top:58px;animation:up .75s ease .1s both}.welcome{display:flex;align-items:center;gap:12px;margin:0 0 13px;color:#082d6d;font-size:13px;font-weight:1000;letter-spacing:5px}.welcome span{width:44px;height:2px;background:#f97316;display:block}.title{margin:0;font-size:clamp(46px,13vw,64px);line-height:.92;font-weight:1000;letter-spacing:-1.5px}.title b{display:block;color:#082d6d}.title strong{display:block;color:#f97316}.made{margin:15px 0 16px;font-family:cursive;font-size:clamp(32px,8vw,46px);line-height:1;background:linear-gradient(90deg,#082d6d,#f97316,#ffb703,#f97316,#082d6d);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 3.5s linear infinite}.made:after{content:"";display:block;width:min(320px,82vw);height:4px;border-radius:99px;background:linear-gradient(90deg,#082d6d,#f97316,#ffb703)}.sub{margin:0;max-width:340px;color:#153a63;font-size:20px;line-height:1.38;font-weight:600}.safety{display:inline-flex;margin-top:18px;padding:11px 17px;border-radius:999px;background:#fff;color:#15803d;font-weight:1000;box-shadow:0 12px 26px rgba(21,128,61,.12)}
-        .city{position:absolute;right:0;bottom:135px;width:72%;height:150px;opacity:.34;background:linear-gradient(to top,rgba(8,45,109,.36),rgba(8,45,109,.04));z-index:1}.hill{position:absolute;right:-10%;bottom:118px;width:78%;height:125px;border-radius:55% 45% 0 0;background:linear-gradient(180deg,rgba(53,158,94,.62),rgba(22,101,52,.72));z-index:2}.road{position:absolute;left:-60px;right:-60px;bottom:-15px;height:160px;background:linear-gradient(90deg,#111827,#64748b 28%,#111827 50%,#64748b 72%,#111827);transform:perspective(520px) rotateX(55deg);transform-origin:bottom center;z-index:3;box-shadow:0 -20px 55px rgba(15,23,42,.20)}.car{position:absolute;right:4%;bottom:88px;width:245px;height:92px;border-radius:38px 46px 24px 22px;background:linear-gradient(180deg,#fff,#dbeafe);border:2px solid rgba(255,255,255,.9);z-index:4;box-shadow:0 22px 30px rgba(15,23,42,.28);animation:float 3.2s ease-in-out infinite}.car:before{content:"";position:absolute;left:26%;top:-44px;width:43%;height:52px;border-radius:46px 46px 6px 6px;background:linear-gradient(180deg,#fff,#bfdbfe);border:2px solid rgba(255,255,255,.9)}.car:after{content:"VT";position:absolute;left:50%;top:36px;transform:translateX(-50%);color:#f97316;font-size:20px;font-weight:1000}.tail{position:absolute;right:8%;top:35px;width:36px;height:10px;border-radius:99px;background:#ef4444;box-shadow:0 0 18px #ef4444}.wheel{position:absolute;bottom:-20px;width:43px;height:43px;border-radius:50%;background:radial-gradient(circle,#cbd5e1 0 20%,#020617 21%);border:5px solid #111827}.w1{left:22%}.w2{right:18%}
-        .content{position:relative;z-index:8;margin-top:-24px;padding:0 12px 24px}.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{position:relative;min-height:332px;border-radius:24px;padding:52px 14px 17px;text-align:center;border:3px solid rgba(255,255,255,.96);box-shadow:0 20px 44px rgba(15,23,42,.13);animation:up .75s ease both,float 4.5s ease-in-out infinite}.orange{color:#f97316;background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(255,237,213,.90))}.blue{color:#0053d6;background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(219,234,254,.92));animation-delay:.12s}.avatar{position:absolute;top:-39px;left:50%;transform:translateX(-50%);width:76px;height:76px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:32px;border:6px solid rgba(255,255,255,.84);box-shadow:0 16px 34px rgba(15,23,42,.16)}.orange .avatar{background:linear-gradient(135deg,#ffb343,#f97316)}.blue .avatar{background:linear-gradient(135deg,#60a5fa,#0053d6)}.card h3{margin:0 0 12px;font-size:27px;font-weight:1000}.card p{margin:0 auto 18px;color:#1f3b5d;font-size:13px;line-height:1.48;max-width:190px}.list{list-style:none;padding:0;margin:0 0 22px;display:grid;gap:12px;text-align:left;color:#0f2e57;font-size:12px;font-weight:900}.list li{display:flex;align-items:center;gap:8px}.list span{width:20px;height:20px;display:grid;place-items:center;border-radius:50%;border:2px solid currentColor;font-size:11px}.btn{position:relative;display:flex;align-items:center;justify-content:center;min-height:53px;border-radius:15px;text-decoration:none;color:#fff;font-weight:1000;font-size:15px;overflow:hidden}.btn:after{content:"";position:absolute;top:-40%;bottom:-40%;left:-50%;width:40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:shine 3.2s ease-in-out infinite}.btn.orange{background:linear-gradient(135deg,#ff8a00,#f45b00)}.btn.blue{background:linear-gradient(135deg,#0b72ff,#003ea5)}.features{margin-top:24px;background:rgba(255,255,255,.92);border:1px solid rgba(203,213,225,.7);border-radius:24px;padding:18px 10px;display:grid;grid-template-columns:repeat(2,1fr);box-shadow:0 18px 42px rgba(15,23,42,.08)}.feature{text-align:center;padding:10px 8px;border-bottom:1px solid #dbeafe}.feature:nth-last-child(-n+2){border-bottom:0}.feature b{display:block;font-size:14px;margin-bottom:6px}.feature p{margin:0;color:#45617f;font-size:12px;line-height:1.35}.feature i{width:48px;height:48px;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;font-style:normal;font-size:22px;background:#eaf4ff}.footer{text-align:center;color:#60738f;font-size:13px;padding:18px 0 0;margin:0}
-        @media(min-width:760px){.hero{min-height:690px}.content{max-width:980px;margin:-36px auto 0;padding:0 22px 28px}.cards{gap:28px}.card{min-height:365px;padding:66px 32px 30px;border-radius:30px}.avatar{width:94px;height:94px;top:-48px;font-size:42px}.card h3{font-size:36px}.card p{font-size:17px}.list{font-size:16px}.btn{font-size:18px}.features{grid-template-columns:repeat(4,1fr)}.feature{border-bottom:0;border-right:1px solid #dbeafe}.feature:last-child{border-right:0}.car{width:350px;height:105px}.brand img{width:72px;height:72px}}
-      `}</style>
-      <section className="hero"><header className="top"><div className="brand"><img src="/cars/vt-logo.png" alt="Vishwakarma Travels"/><div><h1>VISHWAKARMA</h1><p>TRAVELS</p></div></div><button className="menu" aria-label="Menu"><span/><span/><span/></button></header><div className="copy"><p className="welcome"><span/>WELCOME TO<span/></p><h2 className="title"><b>Vishwakarma</b><strong>Travels</strong></h2><div className="made">Travel Made Easy</div><p className="sub">Safe, Comfortable and Reliable Cab booking for your journey</p><div className="safety">Your Safety, Our Priority</div></div><div className="city"/><div className="hill"/><div className="road"/><div className="car"><span className="tail"/><span className="wheel w1"/><span className="wheel w2"/></div></section>
-      <section className="content"><div className="cards"><article className="card orange"><div className="avatar">+</div><h3>New User</h3><p>Create a new account to get started</p><ul className="list"><li><span>✓</span>Quick and Easy Booking</li><li><span>✓</span>Secure and Reliable</li><li><span>✓</span>Best Prices Guaranteed</li></ul><Link href="/" className="btn orange">Register Now</Link></article><article className="card blue"><div className="avatar">•</div><h3>Existing User</h3><p>Login to your account to continue</p><ul className="list"><li><span>✓</span>Manage Your Bookings</li><li><span>✓</span>Exclusive Offers</li><li><span>✓</span>24/7 Support</li></ul><Link href="/" className="btn blue">Login</Link></article></div><div className="features"><div className="feature"><i>✓</i><b>Trusted Service</b><p>Your safety is our top priority</p></div><div className="feature"><i>24</i><b>24/7 Support</b><p>We're here for you anytime</p></div></div><p className="footer">© 2025 Vishwakarma Travels. All Rights Reserved.</p></section>
+    <main style={{minHeight:'100vh',background:'linear-gradient(180deg,#eef8ff,#ffffff)',fontFamily:'Arial,sans-serif',overflow:'hidden'}}>
+      <section style={{padding:'20px',paddingBottom:'120px',position:'relative'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          <div style={{display:'flex',alignItems:'center',gap:'12px'}}>
+            <img src='/cars/vt-logo.png' alt='VT Logo' style={{width:'64px',height:'64px',borderRadius:'18px',background:'#fff',padding:'4px'}} />
+            <div>
+              <h1 style={{margin:0,fontSize:'30px',fontWeight:900,color:'#f97316'}}>VISHWAKARMA</h1>
+              <p style={{margin:'4px 0 0',letterSpacing:'6px',fontWeight:800,color:'#082d6d'}}>TRAVELS</p>
+            </div>
+          </div>
+
+          <button style={{width:'50px',height:'50px',borderRadius:'16px',border:'none',background:'#082d6d',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',gap:'5px'}}>
+            <span style={{width:'26px',height:'3px',background:'#fff',borderRadius:'20px'}}></span>
+            <span style={{width:'26px',height:'3px',background:'#fff',borderRadius:'20px'}}></span>
+            <span style={{width:'26px',height:'3px',background:'#fff',borderRadius:'20px'}}></span>
+          </button>
+        </div>
+
+        <div style={{marginTop:'70px'}}>
+          <div style={{display:'flex',alignItems:'center',gap:'12px',fontWeight:800,letterSpacing:'5px',color:'#082d6d'}}>
+            <span style={{width:'45px',height:'2px',background:'#f97316'}}></span>
+            WELCOME TO
+            <span style={{width:'45px',height:'2px',background:'#f97316'}}></span>
+          </div>
+
+          <h2 style={{fontSize:'64px',lineHeight:'0.95',margin:'18px 0 0',fontWeight:900}}>
+            <span style={{display:'block',color:'#082d6d'}}>Vishwakarma</span>
+            <span style={{display:'block',color:'#f97316'}}>Travels</span>
+          </h2>
+
+          <div style={{fontSize:'42px',fontStyle:'italic',marginTop:'12px',background:'linear-gradient(90deg,#082d6d,#f97316)',WebkitBackgroundClip:'text',color:'transparent',fontWeight:700}}>
+            Travel Made Easy
+          </div>
+
+          <p style={{maxWidth:'420px',fontSize:'24px',lineHeight:'1.4',color:'#163b65',fontWeight:600}}>
+            Safe, Comfortable and Reliable Cab booking for your journey
+          </p>
+
+          <div style={{display:'inline-block',padding:'12px 18px',borderRadius:'999px',background:'#fff',color:'#15803d',fontWeight:800,boxShadow:'0 10px 20px rgba(0,0,0,0.08)'}}>
+            Your Safety, Our Priority
+          </div>
+        </div>
+      </section>
+
+      <section style={{padding:'0 14px 40px',marginTop:'-40px'}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'14px'}}>
+          <div style={{background:'linear-gradient(180deg,#fff,#fff3e7)',borderRadius:'28px',padding:'55px 18px 24px',position:'relative',boxShadow:'0 20px 40px rgba(0,0,0,0.08)'}}>
+            <div style={{position:'absolute',top:'-35px',left:'50%',transform:'translateX(-50%)',width:'74px',height:'74px',borderRadius:'50%',background:'#ff8a00'}}></div>
+            <h3 style={{textAlign:'center',fontSize:'32px',color:'#f97316',marginBottom:'12px'}}>New User</h3>
+            <p style={{textAlign:'center',color:'#163b65'}}>Create a new account to get started</p>
+            <Link href='/' style={{marginTop:'30px',display:'flex',justifyContent:'center',alignItems:'center',height:'54px',borderRadius:'16px',background:'linear-gradient(135deg,#ff8a00,#f45b00)',color:'#fff',textDecoration:'none',fontWeight:800,fontSize:'18px'}}>Register Now</Link>
+          </div>
+
+          <div style={{background:'linear-gradient(180deg,#fff,#eaf2ff)',borderRadius:'28px',padding:'55px 18px 24px',position:'relative',boxShadow:'0 20px 40px rgba(0,0,0,0.08)'}}>
+            <div style={{position:'absolute',top:'-35px',left:'50%',transform:'translateX(-50%)',width:'74px',height:'74px',borderRadius:'50%',background:'#0b72ff'}}></div>
+            <h3 style={{textAlign:'center',fontSize:'32px',color:'#0b72ff',marginBottom:'12px'}}>Existing User</h3>
+            <p style={{textAlign:'center',color:'#163b65'}}>Login to your account to continue</p>
+            <Link href='/' style={{marginTop:'30px',display:'flex',justifyContent:'center',alignItems:'center',height:'54px',borderRadius:'16px',background:'linear-gradient(135deg,#0b72ff,#003ea5)',color:'#fff',textDecoration:'none',fontWeight:800,fontSize:'18px'}}>Login</Link>
+          </div>
+        </div>
+      </section>
     </main>
-  );
+  )
 }
