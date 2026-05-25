@@ -52,10 +52,10 @@ export default function DriverDutyFloatingActions() {
         background: "rgba(255,255,255,.96)",
         boxShadow: "0 8px 20px rgba(0,0,0,.18)",
         border: "1px solid rgba(15,23,42,.08)",
-        width: 210,
+        width: 170,
       }}
     >
-      <DriverDutyActions compact data={data} onSync={() => window.location.reload()} />
+      <DriverDutyActions compact data={data} />
     </div>
   );
 }
