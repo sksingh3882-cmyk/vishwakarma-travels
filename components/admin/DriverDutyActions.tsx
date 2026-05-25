@@ -70,10 +70,11 @@ export default function DriverDutyActions({ data, compact = false, onSync }: Pro
     const x = c.getContext("2d");
     if (!x) return;
 
-    const rr = (a: number, b: number, w: number, h: number, r: number) => {
+    const rr = (a: number, b: number, w: number, h: number, r: number, stroke = false) => {
       x.beginPath();
       x.roundRect(a, b, w, h, r);
-      x.fill();
+      if (stroke) x.stroke();
+      else x.fill();
     };
 
     const wrap = (t: string, xx: number, y: number, w: number, lh: number) => {
@@ -98,21 +99,24 @@ export default function DriverDutyActions({ data, compact = false, onSync }: Pro
       x.fillStyle = "#111827";
       x.font = "34px 'Times New Roman', Times, serif";
       const ly = wrap(value || "-", 370, y, 625, 40);
-      return Math.max(y + 58, ly + 36);
+      return Math.max(y + 56, ly + 34);
     };
 
     const drawDetails = () => {
       x.fillStyle = "#0b2d6b";
-      x.font = "bold 56px 'Times New Roman', Times, serif";
-      x.fillText("Driver Duty Assignment", 75, 635);
+      x.font = "bold 30px 'Times New Roman', Times, serif";
+      x.textAlign = "center";
+      x.fillText("Driver Duty Assignment", 540, 635);
+      x.textAlign = "left";
 
-      x.fillStyle = "#fff7ed";
-      rr(75, 665, 930, 66, 18);
-      x.fillStyle = "#ea580c";
-      x.font = "bold 34px 'Times New Roman', Times, serif";
-      x.fillText(`Hello ${data.driverName || "Driver"}, this is your upcoming duty.`, 105, 708);
+      x.strokeStyle = "#111111";
+      x.lineWidth = 2;
+      rr(90, 665, 900, 78, 10, true);
+      x.fillStyle = "#000000";
+      x.font = "bold 43px 'Times New Roman', Times, serif";
+      x.fillText(`🚨 Hello ${data.driverName || "Driver"}, this is your Upcoming Duty.`, 145, 716);
 
-      let y = 790;
+      let y = 792;
       y = row("Client Name", data.customerName || "-", y);
       y = row("Client Mobile", cleanPhone(data.customerPhone) || "-", y);
       y = row("Pickup Location", data.pickup || "-", y);
@@ -125,13 +129,13 @@ export default function DriverDutyActions({ data, compact = false, onSync }: Pro
       y = row("Driver Mobile", cleanPhone(data.driverMobile) || "-", y);
 
       x.fillStyle = "#ecfdf5";
-      rr(75, y + 45, 930, 330, 26);
+      rr(75, y + 62, 930, 315, 26);
       x.fillStyle = "#087a31";
       x.font = "bold 36px 'Times New Roman', Times, serif";
-      x.fillText("Important Instructions", 105, y + 95);
+      x.fillText("Important Instructions", 105, y + 112);
       x.fillStyle = "#111";
       x.font = "30px 'Times New Roman', Times, serif";
-      let yy = y + 145;
+      let yy = y + 162;
       for (const t of [
         "Please report on time",
         "Vehicle must be neat and clean",
@@ -142,15 +146,15 @@ export default function DriverDutyActions({ data, compact = false, onSync }: Pro
       ]) {
         x.fillText("•", 112, yy);
         x.fillText(t, 150, yy);
-        yy += 40;
+        yy += 38;
       }
 
       x.textAlign = "center";
       x.fillStyle = "#0b2d6b";
       x.font = "bold 30px 'Times New Roman', Times, serif";
-      x.fillText("✨ Thank you for your support ✨", 540, 1772);
+      x.fillText("✨ Thank you for your support ✨", 540, 1805);
       x.font = "bold 44px 'Times New Roman', Times, serif";
-      x.fillText("Vishwakarma Travels", 540, 1830);
+      x.fillText("Vishwakarma Travels", 540, 1864);
       x.textAlign = "left";
 
       const a = document.createElement("a");
