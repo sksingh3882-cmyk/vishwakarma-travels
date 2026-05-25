@@ -110,13 +110,15 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   }
 
     function msg(id: string) {
-  return `🚨 *BOOKING CONFIRMATION MESSAGE* 🚨
+      const serviceText = form.service?.trim() || "One Way Drop Pickup";
+      
+  return `🚨 *BOOKING CONFIRMATION MESSAGE* 
 
 ${form.gender} *${form.customerName}*
 Namaste! Here are your upcoming trip details.
 
 ✏️ *Booking ID:* ${id}
-⚠️ *Service:* ${form.service}
+⚠️ *Service:* ${serviceText}
 📞 *Contact No:* +91 ${cleanPhone(form.customerPhone)}
 
 📍 *Pickup:* ${form.pickup}
@@ -140,12 +142,11 @@ Namaste! Here are your upcoming trip details.
 🔹 Net Payable: Rs ${net}
 
 ⚠️ *Important Information*
-🔹 Your cab has been reserved successfully.
-🔹 Please verify all travel details before departure.
-🔹 We wish you a safe and comfortable journey.
+🔹 Please verify all travel details.
+🔹 Wish you a safe and comfortable journey.
 
-✨ *Thank You For Choosing Vishwakarma Travels* ✨
-         😊 *Wish You A Very Happy Journey* 😊
+✨ *Thank You For Choosing Vishwakarma Travels* 
+         😊 *Wish You A Very Happy Journey* 
                      🙏🙏🙏`;
     }
   
