@@ -14,8 +14,9 @@ type DutyData = {
   vehicleNumber?: string;
   driverName?: string;
   driverMobile?: string;
-  feedback?: string;
 };
+
+type Props = { data: DutyData; compact?: boolean; onSync?: () => void };
 
 function cleanPhone(v?: string) {
   let p = String(v || "").replace(/\D/g, "");
@@ -31,8 +32,12 @@ function formatDate(v?: string) {
   return v && v.includes("-") ? v.split("-").reverse().join("-") : v || "";
 }
 
+function reportingTime(d: DutyData) {
+  return `${formatDate(d.journeyDate)} ${d.journeyTime || ""}`.trim() || "-";
+}
+
 function driverMessage(d: DutyData) {
-  return `🚨 *UPCOMING DUTY ASSIGNMENT* 🚨\n\nHello *${d.driverName || "Driver"}*,\n\nThis is your upcoming duty message from *Vishwakarma Travels*.\n\n━━━━━━━━━━━━━━━\n\n👤 *Client Name:* ${d.customerName || "-"}\n📞 *Client Mobile:* ${cleanPhone(d.customerPhone) || "-"}\n\n📍 *Pickup Location:*\n${d.pickup || "-"}\n\n📍 *Drop Location:*\n${d.drop || "-"}\n\n🕒 *Reporting Time:*\n${formatDate(d.journeyDate)} ${d.journeyTime || ""}\n\n━━━━━━━━━━━━━━━\n\n🚖 *Vehicle Details*\n🔹 Vehicle No: ${vehicleNo(d.vehicleNumber) || "-"}\n🔹 Model: ${d.vehicleModel || "-"}\n🔹 Type: ${d.vehicleType || "-"}\n\n👨‍✈️ *Driver Details*\n🛂 Driver Name: ${d.driverName || "-"}\n📲 Mobile No: ${cleanPhone(d.driverMobile) || "-"}\n\n━━━━━━━━━━━━━━━\n\n⚠️ *Important Instructions*\n\n✅ Please report on time\n✅ Vehicle must be neat and clean\n🔇 Do not play loud music\n📵 Do not use mobile phone while driving\n🚨 Drive safely and avoid overspeeding\n😊 Maintain good customer behaviour\n\n━━━━━━━━━━━━━━━\n\n📝 *Customer Feedback / Special Instructions:*\n${d.feedback || "-"}\n\n━━━━━━━━━━━━━━━\n\n✨ Thank you for your support ✨\n\n           *Vishwakarma Travels*`;
+  return `🚨 *UPCOMING DUTY ASSIGNMENT* 🚨\nHello *${d.driverName || "Driver"}*,\nThis is your upcoming duty message from *Vishwakarma Travels*.\n\n👤 *Client Name:* ${d.customerName || "-"}\n📞 *Client Mobile:* ${cleanPhone(d.customerPhone) || "-"}\n📍 *Pickup Location:* ${d.pickup || "-"}\n📍 *Drop Location:* ${d.drop || "-"}\n🕒 *Reporting Time:* ${reportingTime(d)}\n\n🚖 *Vehicle Details*\n🔹 Vehicle No: ${vehicleNo(d.vehicleNumber) || "-"}\n🔹 Model: ${d.vehicleModel || "-"}\n🔹 Type: ${d.vehicleType || "-"}\n\n👨‍✈️ *Driver Details*\n🛂 Driver Name: ${d.driverName || "-"}\n📲 Mobile No: ${cleanPhone(d.driverMobile) || "-"}\n\n⚠️ *Important Instructions*\n✅ Please report on time\n✅ Vehicle must be neat and clean\n🔇 Do not play loud music\n📵 Do not use mobile phone while driving\n🚨 Drive safely and avoid overspeeding\n😊 Maintain good customer behaviour\n\n✨ Thank you for your support ✨\n*Vishwakarma Travels*`;
 }
 
 function validateDriver(d: DutyData) {
@@ -47,7 +52,7 @@ function validateDriver(d: DutyData) {
   return true;
 }
 
-export default function DriverDutyActions({ data }: { data: DutyData }) {
+export default function DriverDutyActions({ data, compact = false, onSync }: Props) {
   function sendDriverWhatsApp() {
     if (!validateDriver(data)) return;
     window.open(
@@ -87,45 +92,46 @@ export default function DriverDutyActions({ data }: { data: DutyData }) {
 
     const row = (label: string, value: string, y: number) => {
       x.fillStyle = "#0b2d6b";
-      x.font = "bold 33px 'Times New Roman', Times, serif";
+      x.font = "bold 34px 'Times New Roman', Times, serif";
       x.fillText(label, 75, y);
+      x.fillText(":", 310, y);
       x.fillStyle = "#111827";
-      x.font = "32px 'Times New Roman', Times, serif";
-      const ly = wrap(value || "-", 430, y, 575, 38);
+      x.font = "34px 'Times New Roman', Times, serif";
+      const ly = wrap(value || "-", 370, y, 625, 40);
       return Math.max(y + 58, ly + 36);
     };
 
     const drawDetails = () => {
       x.fillStyle = "#0b2d6b";
-      x.font = "bold 48px 'Times New Roman', Times, serif";
-      x.fillText("Driver Duty Assignment", 75, 620);
+      x.font = "bold 56px 'Times New Roman', Times, serif";
+      x.fillText("Driver Duty Assignment", 75, 635);
 
       x.fillStyle = "#fff7ed";
-      rr(75, 650, 930, 64, 20);
+      rr(75, 665, 930, 66, 18);
       x.fillStyle = "#ea580c";
-      x.font = "bold 32px 'Times New Roman', Times, serif";
-      x.fillText(`Hello ${data.driverName || "Driver"}, this is your upcoming duty.`, 105, 692);
+      x.font = "bold 34px 'Times New Roman', Times, serif";
+      x.fillText(`Hello ${data.driverName || "Driver"}, this is your upcoming duty.`, 105, 708);
 
-      let y = 765;
+      let y = 790;
       y = row("Client Name", data.customerName || "-", y);
       y = row("Client Mobile", cleanPhone(data.customerPhone) || "-", y);
       y = row("Pickup Location", data.pickup || "-", y);
       y = row("Drop Location", data.drop || "-", y);
-      y = row("Reporting Time", `${formatDate(data.journeyDate)} ${data.journeyTime || ""}`, y);
-      y = row("Vehicle No.", vehicleNo(data.vehicleNumber) || "-", y);
+      y = row("Reporting Time", reportingTime(data), y);
+      y = row("Vehicle No.", vehicleNo(data.vehicleNumber) || "-", y + 14);
       y = row("Model", data.vehicleModel || "-", y);
       y = row("Type", data.vehicleType || "-", y);
-      y = row("Driver Name", data.driverName || "-", y);
+      y = row("Driver Name", data.driverName || "-", y + 14);
       y = row("Driver Mobile", cleanPhone(data.driverMobile) || "-", y);
 
       x.fillStyle = "#ecfdf5";
-      rr(75, y + 10, 930, 345, 26);
+      rr(75, y + 45, 930, 330, 26);
       x.fillStyle = "#087a31";
-      x.font = "bold 34px 'Times New Roman', Times, serif";
-      x.fillText("Important Instructions", 105, y + 58);
+      x.font = "bold 36px 'Times New Roman', Times, serif";
+      x.fillText("Important Instructions", 105, y + 95);
       x.fillStyle = "#111";
-      x.font = "29px 'Times New Roman', Times, serif";
-      let yy = y + 110;
+      x.font = "30px 'Times New Roman', Times, serif";
+      let yy = y + 145;
       for (const t of [
         "Please report on time",
         "Vehicle must be neat and clean",
@@ -134,24 +140,17 @@ export default function DriverDutyActions({ data }: { data: DutyData }) {
         "Drive safely and avoid overspeeding",
         "Maintain good customer behaviour",
       ]) {
-        x.fillText("•", 110, yy);
-        x.fillText(t, 145, yy);
-        yy += 38;
+        x.fillText("•", 112, yy);
+        x.fillText(t, 150, yy);
+        yy += 40;
       }
-
-      x.fillStyle = "#0b2d6b";
-      x.font = "bold 30px 'Times New Roman', Times, serif";
-      x.fillText("Customer Feedback / Special Instructions", 75, y + 420);
-      x.fillStyle = "#111";
-      x.font = "28px 'Times New Roman', Times, serif";
-      wrap(data.feedback || "-", 75, y + 465, 900, 34);
 
       x.textAlign = "center";
       x.fillStyle = "#0b2d6b";
-      x.font = "bold 28px 'Times New Roman', Times, serif";
-      x.fillText("Thank You For Your Support", 540, 1800);
-      x.font = "bold 36px 'Times New Roman', Times, serif";
-      x.fillText("Vishwakarma Travels", 540, 1848);
+      x.font = "bold 30px 'Times New Roman', Times, serif";
+      x.fillText("✨ Thank you for your support ✨", 540, 1772);
+      x.font = "bold 44px 'Times New Roman', Times, serif";
+      x.fillText("Vishwakarma Travels", 540, 1830);
       x.textAlign = "left";
 
       const a = document.createElement("a");
@@ -176,14 +175,17 @@ export default function DriverDutyActions({ data }: { data: DutyData }) {
   }
 
   return (
-    <div style={wrap}>
-      <button type="button" onClick={downloadDriverDutyJpg} style={downloadBtn}>Driver Duty JPG</button>
-      <button type="button" onClick={sendDriverWhatsApp} style={waBtn}>Driver WhatsApp</button>
+    <div style={compact ? compactWrap : wrap}>
+      <button type="button" onClick={downloadDriverDutyJpg} style={downloadBtn}>{compact ? "Download" : "Download Copy"}</button>
+      <button type="button" onClick={sendDriverWhatsApp} style={waBtn}>{compact ? "Driver WA" : "Driver WhatsApp"}</button>
+      {onSync && <button type="button" onClick={onSync} style={syncBtn}>Sync</button>}
     </div>
   );
 }
 
 const wrap: CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 10 };
-const baseBtn: CSSProperties = { minWidth: 0, padding: "11px 6px", color: "white", border: 0, borderRadius: 12, fontWeight: 900, fontSize: 13, lineHeight: 1.1 };
-const downloadBtn: CSSProperties = { ...baseBtn, background: "#7c3aed" };
-const waBtn: CSSProperties = { ...baseBtn, background: "#128C7E" };
+const compactWrap: CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 };
+const baseBtn: CSSProperties = { minWidth: 0, padding: "10px 6px", color: "white", border: 0, borderRadius: 12, fontWeight: 900, fontSize: 12, lineHeight: 1.1 };
+const downloadBtn: CSSProperties = { ...baseBtn, background: "#2563eb" };
+const waBtn: CSSProperties = { ...baseBtn, background: "#16a34a" };
+const syncBtn: CSSProperties = { ...baseBtn, background: "#f97316" };
