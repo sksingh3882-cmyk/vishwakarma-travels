@@ -4,8 +4,6 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import DriverDutyActions from "./DriverDutyActions";
 
-type FieldNode = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-
 function byPlaceholder(key: string) {
   if (typeof document === "undefined") return "";
   const fields = Array.from(document.getElementsByTagName("input")) as HTMLInputElement[];
@@ -32,7 +30,6 @@ function readForm() {
     vehicleModel: selectAt(2),
     driverName: byPlaceholder("Driver Name"),
     driverMobile: byPlaceholder("Driver Mobile"),
-    feedback: "Please provide safe, clean and comfortable service.",
   };
 }
 
@@ -45,9 +42,20 @@ export default function DriverDutyFloatingActions() {
   return (
     <div
       onClick={() => setData(readForm())}
-      style={{ position: "fixed", left: 16, right: 16, bottom: 78, zIndex: 9998, padding: 10, borderRadius: 18, background: "rgba(255,255,255,.96)", boxShadow: "0 12px 30px rgba(0,0,0,.22)", border: "1px solid rgba(15,23,42,.12)" }}
+      style={{
+        position: "fixed",
+        top: 84,
+        left: 80,
+        zIndex: 9998,
+        padding: 6,
+        borderRadius: 16,
+        background: "rgba(255,255,255,.96)",
+        boxShadow: "0 8px 20px rgba(0,0,0,.18)",
+        border: "1px solid rgba(15,23,42,.08)",
+        width: 210,
+      }}
     >
-      <DriverDutyActions data={data} />
+      <DriverDutyActions compact data={data} onSync={() => window.location.reload()} />
     </div>
   );
 }
