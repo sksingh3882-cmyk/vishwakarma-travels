@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import AppMenu from "./components/AppMenu";
 import PublicBookingValidation from "./components/PublicBookingValidation";
+import DriverDutyFloatingActions from "@/components/admin/DriverDutyFloatingActions";
 import "../compact-booking.css";
 import "../ui-banner-override.css";
 
@@ -53,6 +54,7 @@ export default function RootLayout({
         <AppMenu />
         <PublicBookingValidation />
         {children}
+        <DriverDutyFloatingActions />
         <style dangerouslySetInnerHTML={{ __html: `#booking-form > div:first-of-type > div{display:none!important;visibility:hidden!important;pointer-events:none!important;}` }} />
       </body>
     </html>
