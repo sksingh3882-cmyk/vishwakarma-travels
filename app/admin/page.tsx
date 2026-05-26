@@ -108,7 +108,13 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     const found = vehicles.find((v) => vehicleNo(v.vehicle_number || v.vehicleNumber || "") === no);
     if (no.length > 3 && found) applyVehicle(found);
   }
-
+    function formatTime(t:string){
+ if(!t)return "";
+ const [h,m]=t.split(":");
+ const hour=Number(h);
+ return `${hour%12||12}:${m} ${hour>=12?"PM":"AM"}`;
+    }
+   
     function msg(id: string) {
       const serviceText = form.service?.trim() || "One Way Drop Pickup";
       
@@ -125,7 +131,7 @@ Namaste! Here are your upcoming trip details.
 📍 *Drop:* ${form.drop}
 
 📆 *Journey Date:* ${formatDate(form.journeyDate)}
-⌚ *Reporting Time:* ${form.journeyTime}
+⌚ *Reporting Time:* ${formatTime(form.journeyTime)}
 
 🚖 *Vehicle Details*
 🔹 Type: ${form.vehicleType}
