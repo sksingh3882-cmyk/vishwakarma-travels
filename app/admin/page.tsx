@@ -205,79 +205,163 @@ Namaste! Here are your upcoming trip details.
   }
 
 function downloadBookingCopy() {
-    if (!validateDownload()) return;
-    const c = document.createElement("canvas");
-    c.width = 1080;
-    c.height = 1920;
-    const x = c.getContext("2d");
-    if (!x) return;
+  if (!validateDownload()) return;
 
-    const wrap = (t: string, xx: number, y: number, w: number, lh: number) => {
-      let line = "";
-      for (const word of String(t || "-").split(" ")) {
-        const test = line + word + " ";
-        if (x.measureText(test).width > w && line) { x.fillText(line.trim(), xx, y); line = word + " "; y += lh; }
-        else line = test;
-      }
-      x.fillText(line.trim(), xx, y);
-      return y;
-    };
-    const rr = (a: number, b: number, w: number, h: number, r: number) => { x.beginPath(); x.roundRect(a, b, w, h, r); x.fill(); };
-    const row = (l: string, v: string, y: number) => {
-      x.fillStyle = "#111"; x.font = "bold 34px 'Times New Roman', Times, serif"; x.fillText(l, 75, y);
-      x.fillStyle = "#111"; x.font = "34px 'Times New Roman', Times, serif";
-      const ly = wrap(v || "-", 430, y, 560, 38);
-      return Math.max(y + 56, ly + 34);
-    };
-    const drawDetails = () => {
-      x.fillStyle = "#0b2d6b"; x.font = "bold 46px 'Times New Roman', Times, serif"; x.fillText("Confirm Booking Details", 75, 640);
-      let y = 705;
-      y = row("Customer Name", form.customerName, y);
-      y = row("Mobile No.", cleanPhone(form.customerPhone), y);
-      y = row("Pickup", form.pickup, y);
-      y = row("Drop", form.drop, y);
-            y = row("Date", formatDate(form.journeyDate), y);
-      y = row("Time", formatTime(form.journeyTime), y);
-      y = row("Vehicle No.", vehicleNo(form.vehicleNumber), y);
-      y = row("Vehicle Type", form.vehicleType, y);
-      y = row("Vehicle Model", form.vehicleModel, y);
-      y = row("Driver Name", form.driverName, y);
-      y = row("Driver Mobile", cleanPhone(form.driverMobile), y);
-      y = row("Fare", `Rs ${fare}`, y);
-      y = row("Advance", `Rs ${advance}`, y);
-      x.fillStyle = "#ecfdf5"; rr(75, y + 10, 930, 82, 24);
-      x.fillStyle = "#15803d"; x.font = "bold 36px 'Times New Roman', Times, serif"; x.fillText("Net Payable", 105, y + 62);
-      x.textAlign = "right"; x.fillText(`Rs ${net}`, 970, y + 62); x.textAlign = "left";
-      x.fillStyle = "#087a31"; x.font = "bold 34px 'Times New Roman', Times, serif"; x.fillText("Declaration", 75, y + 165);
-      x.strokeStyle = "#087a31"; x.lineWidth = 5; x.beginPath(); x.moveTo(75, y + 190); x.lineTo(1005, y + 190); x.stroke();
-      x.fillStyle = "#111"; x.font = "29px 'Times New Roman', Times, serif";
-      let yy = y + 245;
-      for (const t of ["Book A Cab Atleast 24 Hour Before Travelling Otherwise Booking May Not Be Confirmed", "After the booking is Confirmed, Customer will have to make the Advance Payment", "Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances"]) {
-        x.fillText("*", 95, yy); yy = wrap(t, 135, yy, 845, 36) + 34;
-      }
-      const footerY = yy + 120;
-      x.fillStyle = "#0b2d6b"; x.textAlign = "center";
-      x.font = "bold 26px 'Times New Roman', Times, serif";
-      x.fillText("Thank You And Wish You A Very Happy Journey", 540, footerY);
-      x.font = "bold 34px 'Times New Roman', Times, serif";
-      x.fillText("Vishwakarma Travels", 540, footerY + 42);
-      x.textAlign = "left";
-      const a = document.createElement("a");
-      a.href = c.toDataURL("image/jpeg", .95);
-      a.download = `Vishwakarma-Booking-${Date.now()}.jpg`;
-      a.click();
-      setDownloadNotice(true);
-      setTimeout(() => setDownloadNotice(false), 3500);
-    };
-      x.fillStyle = "#f4f7fb"; x.fillRect(0, 0, 1080, 1920);
-    x.fillStyle = "#fff"; rr(18, 18, 1044, 1884, 28);
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => { x.drawImage(img, 42, 42, 996, 480); drawDetails(); };
-    img.onerror = drawDetails;
-    img.src = "/cars/popup_banner.png";
-  }
+  const c = document.createElement("canvas");
+  c.width = 1080;
+  c.height = 1920;
 
+  const x = c.getContext("2d");
+  if (!x) return;
+
+  const wrap = (t: string, xx: number, y: number, w: number, lh: number) => {
+    let line = "";
+    for (const word of String(t || "-").split(" ")) {
+      const test = line + word + " ";
+      if (x.measureText(test).width > w && line) {
+        x.fillText(line.trim(), xx, y);
+        line = word + " ";
+        y += lh;
+      } else line = test;
+    }
+    x.fillText(line.trim(), xx, y);
+    return y;
+  };
+
+  const rr = (a: number, b: number, w: number, h: number, r: number) => {
+    x.beginPath();
+    x.roundRect(a, b, w, h, r);
+    x.fill();
+  };
+
+  const row = (l: string, v: string, y: number) => {
+    x.fillStyle = "#111";
+    x.font = "bold 30px 'Times New Roman', Times, serif";
+    x.fillText(l, 110, y);
+
+    x.font = "30px 'Times New Roman', Times, serif";
+    const ly = wrap(v || "-", 480, y, 500, 34);
+
+    x.strokeStyle = "#e5e7eb";
+    x.lineWidth = 1;
+    x.beginPath();
+    x.moveTo(110, y + 18);
+    x.lineTo(965, y + 18);
+    x.stroke();
+
+    return Math.max(y + 48, ly + 30);
+  };
+
+  const drawDetails = () => {
+    x.textAlign = "center";
+    x.fillStyle = "#0b2d6b";
+    x.font = "bold 34px 'Times New Roman', Times, serif";
+    x.fillText("Confirm Booking Details", 540, 610);
+    x.textAlign = "left";
+
+    x.fillStyle = "#eff6ff";
+    rr(95, 640, 890, 100, 14);
+    x.strokeStyle = "#0b2d6b";
+    x.lineWidth = 3;
+    x.strokeRect(95, 640, 890, 100);
+
+    x.fillStyle = "#0b2d6b";
+    x.font = "bold 32px 'Times New Roman', Times, serif";
+    x.fillText(`👋 Namaste ${form.customerName}`, 135, 685);
+
+    x.font = "28px 'Times New Roman', Times, serif";
+    x.fillText("Here is Your Upcoming Trip Details", 190, 720);
+
+    let y = 790;
+    y = row("Mobile No.", cleanPhone(form.customerPhone), y);
+    y = row("Pickup", form.pickup, y);
+    y = row("Drop", form.drop, y);
+    y = row("Date", formatDate(form.journeyDate), y);
+    y = row("Time", formatTime(form.journeyTime), y);
+    y = row("Vehicle No.", vehicleNo(form.vehicleNumber), y);
+    y = row("Vehicle Type", form.vehicleType, y);
+    y = row("Vehicle Model", form.vehicleModel, y);
+    y = row("Driver Name", form.driverName, y);
+    y = row("Driver Mobile", cleanPhone(form.driverMobile), y);
+    y = row("Fare", `Rs ${fare}`, y);
+    y = row("Advance", `Rs ${advance}`, y);
+
+    x.fillStyle = "#ecfdf5";
+    rr(95, y + 18, 890, 82, 12);
+    x.strokeStyle = "#15803d";
+    x.lineWidth = 2;
+    x.strokeRect(95, y + 18, 890, 82);
+
+    x.fillStyle = "#15803d";
+    x.font = "bold 34px 'Times New Roman', Times, serif";
+    x.fillText("Net Payable", 125, y + 70);
+
+    x.textAlign = "right";
+    x.fillText(`Rs ${net}`, 955, y + 70);
+    x.textAlign = "left";
+
+    x.fillStyle = "#087a31";
+    x.font = "bold 32px 'Times New Roman', Times, serif";
+    x.fillText("Declaration", 95, y + 150);
+
+    x.strokeStyle = "#087a31";
+    x.lineWidth = 5;
+    x.beginPath();
+    x.moveTo(95, y + 180);
+    x.lineTo(985, y + 180);
+    x.stroke();
+
+    x.fillStyle = "#111";
+    x.font = "24px 'Times New Roman', Times, serif";
+
+    let yy = y + 225;
+    for (const t of [
+      "Book A Cab Atleast 24 Hour Before Travelling Otherwise Booking May Not Be Confirmed",
+      "After the booking is Confirmed, Customer will have to make the Advance Payment",
+      "Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances",
+    ]) {
+      x.fillText("*", 100, yy);
+      yy = wrap(t, 135, yy, 830, 30) + 30;
+    }
+
+    x.fillStyle = "#0b2d6b";
+    rr(25, 1840, 1030, 58, 8);
+
+    x.fillStyle = "#fff";
+    x.textAlign = "left";
+    x.font = "22px Arial";
+    x.fillText("🌐 www.vishwakarmatravels.in", 90, 1877);
+
+    x.textAlign = "right";
+    x.font = "italic 28px 'Times New Roman', Times, serif";
+    x.fillText("Thank You! Have a Safe Journey", 990, 1878);
+
+    x.textAlign = "left";
+
+    const a = document.createElement("a");
+    a.href = c.toDataURL("image/jpeg", 0.95);
+    a.download = `Vishwakarma-Booking-${Date.now()}.jpg`;
+    a.click();
+
+    setDownloadNotice(true);
+    setTimeout(() => setDownloadNotice(false), 3500);
+  };
+
+  x.fillStyle = "#f4f7fb";
+  x.fillRect(0, 0, 1080, 1920);
+
+  x.fillStyle = "#fff";
+  rr(18, 18, 1044, 1884, 28);
+
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.onload = () => {
+    x.drawImage(img, 42, 42, 996, 480);
+    drawDetails();
+  };
+  img.onerror = drawDetails;
+  img.src = "/cars/popup_banner.png";
+      }
   async function confirm() {
     const id = pendingBookingId || lastBookingId || `VT-${Date.now()}`;
     setLoading(true);
