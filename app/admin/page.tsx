@@ -116,7 +116,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     }
    
     function msg(id: string) {
-      const serviceText = form.service?.trim() || "Service Not Selected";
+      const serviceText = form.service || "Service Not Selected";
       
   return `🚨 *BOOKING CONFIRMATION MESSAGE* 
 
