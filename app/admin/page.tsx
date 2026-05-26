@@ -237,7 +237,7 @@ function downloadBookingCopy() {
       y = row("Pickup", form.pickup, y);
       y = row("Drop", form.drop, y);
             y = row("Date", formatDate(form.journeyDate), y);
-      y = row("Time", form.journeyTime, y);
+      y = row("Time", formatTime(form.journeyTime), y);
       y = row("Vehicle No.", vehicleNo(form.vehicleNumber), y);
       y = row("Vehicle Type", form.vehicleType, y);
       y = row("Vehicle Model", form.vehicleModel, y);
