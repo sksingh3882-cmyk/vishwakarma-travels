@@ -4,7 +4,7 @@ import CustomerCover from "@/components/CustomerCover";
 const phone="917667989203";
 type F={name:string;mobile:string;service:string;vehicle:string;pickup:string;drop:string;bookingDate:string;bookingTime:string};
 const empty:F={name:"",mobile:"",service:"",vehicle:"",pickup:"",drop:"",bookingDate:"",bookingTime:""};
-const serviceOptions=["One Way Drop Pickup","Ranchi Airport to Jamshedpur Drop","Jamshedpur to Kolkata Airport Drop","Kolkata Airport to Jamshedpur Drop","Local Movement","Outstation Movement","Short Time Booking","Marriage Function Booking"];
+const serviceOptions=["One Way Drop Pickup","Jamshedpur to Ranchi Airport Drop","Ranchi Airport to Jamshedpur Drop","Jamshedpur to Kolkata Airport Drop","Kolkata Airport to Jamshedpur Drop","Local Movement","Outstation Movement","Short Time Booking","Marriage Function Booking"];
 const vehicleOptions=["Dzire","Ertiga","Innova","Innova Crysta","Traveller"];
 const cleanPhone=(v:string)=>{let p=String(v||"").replace(/\D/g,"");if((p.startsWith("91")||p.startsWith("0"))&&p.length>10)p=p.slice(-10);return p.slice(-10)};
 const fmt=(v:string)=>v&&v.includes("-")?v.split("-").reverse().join("-"):v||"";
