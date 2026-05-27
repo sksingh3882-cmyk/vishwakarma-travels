@@ -49,7 +49,7 @@ export default function AdminPage() {
   const [showVehicleSuggestions, setShowVehicleSuggestions] = useState(false);
   const [downloadNotice, setDownloadNotice] = useState(false);
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
   const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "admin";
   const headers = useMemo(() => ({ apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}`, "Content-Type": "application/json", Prefer: "return=representation" }), [supabaseKey]);
@@ -93,7 +93,7 @@ export default function AdminPage() {
   function applyVehicle(v: Vehicle) {
     setForm((p) => ({
       ...p,
-      vehicleNumber: vehicleNo(v.vehicle_number || v.vehicleNumber || p.vehicleNumber),
+    vehicleNumber: vehicleNo(v.vehicle_number || v.vehicleNumber || p.vehicleNumber),
       vehicleType: v.vehicle_type || v.vehicleType || p.vehicleType,
       vehicleModel: v.vehicle_model || v.vehicleModel || p.vehicleModel,
       driverName: v.driver_name || v.driverName || p.driverName,
@@ -108,10 +108,54 @@ export default function AdminPage() {
     const found = vehicles.find((v) => vehicleNo(v.vehicle_number || v.vehicleNumber || "") === no);
     if (no.length > 3 && found) applyVehicle(found);
   }
+    function formatTime(t:string){
+ if(!t)return "";
+ const [h,m]=t.split(":");
+ const hour=Number(h);
+ return `${hour%12||12}:${m} ${hour>=12?"PM":"AM"}`;
+    }
+   
+    function msg(id: string) {
+      const serviceText = form.service || "Service Not Selected";
+      
+  return `🚨 *BOOKING CONFIRMATION MESSAGE* 
 
-  function msg(id: string) {
-    return `Booking Confirmation\n\n${form.gender} ${form.customerName},\nNamaste Your booking is confirmed.\n\nBooking ID: ${id}\nService: ${form.service}\nContact No: +91${cleanPhone(form.customerPhone)}\n\nPickup: ${form.pickup}\nDrop: ${form.drop}\nDate: ${formatDate(form.journeyDate)}\nTime: ${form.journeyTime}\n\nVehicle Type: ${form.vehicleType}\nVehicle Model: ${form.vehicleModel}\nVehicle No: ${vehicleNo(form.vehicleNumber)}\nDriver Name: ${form.driverName}\nDriver Mobile: ${form.driverMobile}\n\nFare: Rs ${fare}\nAdvance: Rs ${advance}\nNet Payable Amount: Rs ${net}\n\nThank You For Choosing Vishwakarma Travels\nWish You A Very Happy Journey\n🙏🙏🙏`;
-  }
+${form.gender} *${form.customerName}*
+Namaste! Here are your upcoming trip details.
+
+✏️ *Booking ID:* ${id}
+⚠️ *Service:* ${serviceText}
+📞 *Contact No:* +91 ${cleanPhone(form.customerPhone)}
+
+📍 *Pickup:* ${form.pickup}
+📍 *Drop:* ${form.drop}
+
+📆 *Journey Date:* ${formatDate(form.journeyDate)}
+⌚ *Reporting Time:* ${formatTime(form.journeyTime)}
+
+🚖 *Vehicle Details*
+🔹 Type: ${form.vehicleType}
+🔹 Model: ${form.vehicleModel}
+🔹 Vehicle No: ${vehicleNo(form.vehicleNumber)}
+
+👨‍✈️ *Driver Details*
+🛂 Driver Name: ${form.driverName}
+📲 Driver Mobile: +91 ${cleanPhone(form.driverMobile)}
+
+💵 *Payment Details*
+🔹 Total Fare: Rs ${fare}
+🔹 Advance Paid: Rs ${advance}
+🔹 Net Payable: Rs ${net}
+
+⚠️ *Important Information*
+🔹 Please verify all travel details.
+🔹 Wish you a safe and comfortable journey.
+
+✨ *Thank You For Choosing Vishwakarma Travels* 
+         😊 *Wish You A Very Happy Journey* 
+                     🙏🙏🙏`;
+    }
+  
   function validate() {
     if (!supabaseUrl || !supabaseKey) return alert("Supabase URL/KEY missing hai."), false;
     if (cleanPhone(form.customerPhone).length !== 10) return alert("Customer WhatsApp number 10 digit ka hona chahiye."), false;
@@ -160,80 +204,164 @@ export default function AdminPage() {
     w.document.close();
   }
 
-  function downloadBookingCopy() {
-    if (!validateDownload()) return;
-    const c = document.createElement("canvas");
-    c.width = 1080;
-    c.height = 1920;
-    const x = c.getContext("2d");
-    if (!x) return;
+function downloadBookingCopy() {
+  if (!validateDownload()) return;
 
-    const wrap = (t: string, xx: number, y: number, w: number, lh: number) => {
-      let line = "";
-      for (const word of String(t || "-").split(" ")) {
-        const test = line + word + " ";
-        if (x.measureText(test).width > w && line) { x.fillText(line.trim(), xx, y); line = word + " "; y += lh; }
-        else line = test;
-      }
-      x.fillText(line.trim(), xx, y);
-      return y;
-    };
-    const rr = (a: number, b: number, w: number, h: number, r: number) => { x.beginPath(); x.roundRect(a, b, w, h, r); x.fill(); };
-    const row = (l: string, v: string, y: number) => {
-      x.fillStyle = "#111"; x.font = "bold 34px 'Times New Roman', Times, serif"; x.fillText(l, 75, y);
-      x.fillStyle = "#111"; x.font = "34px 'Times New Roman', Times, serif";
-      const ly = wrap(v || "-", 430, y, 560, 38);
-      return Math.max(y + 56, ly + 34);
-    };
-    const drawDetails = () => {
-      x.fillStyle = "#0b2d6b"; x.font = "bold 46px 'Times New Roman', Times, serif"; x.fillText("Confirm Booking Details", 75, 640);
-      let y = 705;
-      y = row("Customer Name", form.customerName, y);
-      y = row("Mobile No.", cleanPhone(form.customerPhone), y);
-      y = row("Pickup", form.pickup, y);
-      y = row("Drop", form.drop, y);
-      y = row("Date", formatDate(form.journeyDate), y);
-      y = row("Time", form.journeyTime, y);
-      y = row("Vehicle No.", vehicleNo(form.vehicleNumber), y);
-      y = row("Vehicle Type", form.vehicleType, y);
-      y = row("Vehicle Model", form.vehicleModel, y);
-      y = row("Driver Name", form.driverName, y);
-      y = row("Driver Mobile", cleanPhone(form.driverMobile), y);
-      y = row("Fare", `Rs ${fare}`, y);
-      y = row("Advance", `Rs ${advance}`, y);
-      x.fillStyle = "#ecfdf5"; rr(75, y + 10, 930, 82, 24);
-      x.fillStyle = "#15803d"; x.font = "bold 36px 'Times New Roman', Times, serif"; x.fillText("Net Payable", 105, y + 62);
-      x.textAlign = "right"; x.fillText(`Rs ${net}`, 970, y + 62); x.textAlign = "left";
-      x.fillStyle = "#087a31"; x.font = "bold 34px 'Times New Roman', Times, serif"; x.fillText("Declaration", 75, y + 165);
-      x.strokeStyle = "#087a31"; x.lineWidth = 5; x.beginPath(); x.moveTo(75, y + 190); x.lineTo(1005, y + 190); x.stroke();
-      x.fillStyle = "#111"; x.font = "29px 'Times New Roman', Times, serif";
-      let yy = y + 245;
-      for (const t of ["Book A Cab Atleast 24 Hour Before Travelling Otherwise Booking May Not Be Confirmed", "After the booking is Confirmed, Customer will have to make the Advance Payment", "Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances"]) {
-        x.fillText("*", 95, yy); yy = wrap(t, 135, yy, 845, 36) + 34;
-      }
-      const footerY = yy + 120;
-      x.fillStyle = "#0b2d6b"; x.textAlign = "center";
-      x.font = "bold 26px 'Times New Roman', Times, serif";
-      x.fillText("Thank You And Wish You A Very Happy Journey", 540, footerY);
-      x.font = "bold 34px 'Times New Roman', Times, serif";
-      x.fillText("Vishwakarma Travels", 540, footerY + 42);
-      x.textAlign = "left";
-      const a = document.createElement("a");
-      a.href = c.toDataURL("image/jpeg", .95);
-      a.download = `Vishwakarma-Booking-${Date.now()}.jpg`;
-      a.click();
-      setDownloadNotice(true);
-      setTimeout(() => setDownloadNotice(false), 3500);
-    };
-    x.fillStyle = "#f4f7fb"; x.fillRect(0, 0, 1080, 1920);
-    x.fillStyle = "#fff"; rr(18, 18, 1044, 1884, 28);
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => { x.drawImage(img, 42, 42, 996, 480); drawDetails(); };
-    img.onerror = drawDetails;
-    img.src = "/cars/popup_banner.png";
-  }
+  const c = document.createElement("canvas");
+  c.width = 1080;
+  c.height = 1920;
 
+  const x = c.getContext("2d");
+  if (!x) return;
+
+  const wrap = (t: string, xx: number, y: number, w: number, lh: number) => {
+    let line = "";
+    for (const word of String(t || "-").split(" ")) {
+      const test = line + word + " ";
+      if (x.measureText(test).width > w && line) {
+        x.fillText(line.trim(), xx, y);
+        line = word + " ";
+        y += lh;
+      } else line = test;
+    }
+    x.fillText(line.trim(), xx, y);
+    return y;
+  };
+
+  const rr = (a: number, b: number, w: number, h: number, r: number) => {
+    x.beginPath();
+    x.roundRect(a, b, w, h, r);
+    x.fill();
+  };
+
+  const row = (l: string, v: string, y: number) => {
+    x.fillStyle = "#111";
+    x.font = "bold 30px 'Times New Roman', Times, serif";
+    x.fillText(l, 110, y);
+
+    x.font = "30px 'Times New Roman', Times, serif";
+    const ly = wrap(v || "-", 480, y, 500, 34);
+
+    x.strokeStyle = "#e5e7eb";
+    x.lineWidth = 1;
+    x.beginPath();
+    x.moveTo(110, y + 18);
+    x.lineTo(965, y + 18);
+    x.stroke();
+
+    return Math.max(y + 48, ly + 30);
+  };
+
+  const drawDetails = () => {
+    x.textAlign = "center";
+    x.fillStyle = "#0b2d6b";
+    x.font = "bold 34px 'Times New Roman', Times, serif";
+    x.fillText("Confirm Booking Details", 540, 610);
+    x.textAlign = "left";
+
+    x.fillStyle = "#eff6ff";
+    rr(95, 640, 890, 100, 14);
+    x.strokeStyle = "#0b2d6b";
+    x.lineWidth = 3;
+    x.strokeRect(95, 640, 890, 100);
+
+    x.fillStyle = "#0b2d6b";
+    x.font = "bold 32px 'Times New Roman', Times, serif";
+    x.fillText(`👋 Namaste ${form.customerName}`, 135, 685);
+
+    x.font = "28px 'Times New Roman', Times, serif";
+    x.fillText("Here is Your Upcoming Trip Details", 190, 720);
+
+    let y = 790;
+    y = row("Mobile No.", cleanPhone(form.customerPhone), y);
+    y = row("Pickup", form.pickup, y);
+    y = row("Drop", form.drop, y);
+    y = row("Date", formatDate(form.journeyDate), y);
+    y = row("Time", formatTime(form.journeyTime), y);
+    y = row("Vehicle No.", vehicleNo(form.vehicleNumber), y);
+    y = row("Vehicle Type", form.vehicleType, y);
+    y = row("Vehicle Model", form.vehicleModel, y);
+    y = row("Driver Name", form.driverName, y);
+    y = row("Driver Mobile", cleanPhone(form.driverMobile), y);
+    y = row("Fare", `Rs ${fare}`, y);
+    y = row("Advance", `Rs ${advance}`, y);
+
+    x.fillStyle = "#ecfdf5";
+    rr(95, y + 18, 890, 82, 12);
+    x.strokeStyle = "#15803d";
+    x.lineWidth = 2;
+    x.strokeRect(95, y + 18, 890, 82);
+
+    x.fillStyle = "#15803d";
+    x.font = "bold 34px 'Times New Roman', Times, serif";
+    x.fillText("Net Payable", 125, y + 70);
+
+    x.textAlign = "right";
+    x.fillText(`Rs ${net}`, 955, y + 70);
+    x.textAlign = "left";
+
+    x.fillStyle = "#087a31";
+    x.font = "bold 32px 'Times New Roman', Times, serif";
+    x.fillText("Declaration", 95, y + 150);
+
+    x.strokeStyle = "#087a31";
+    x.lineWidth = 5;
+    x.beginPath();
+    x.moveTo(95, y + 180);
+    x.lineTo(985, y + 180);
+    x.stroke();
+
+    x.fillStyle = "#111";
+    x.font = "24px 'Times New Roman', Times, serif";
+
+    let yy = y + 225;
+    for (const t of [
+      "Book A Cab Atleast 24 Hour Before Travelling Otherwise Booking May Not Be Confirmed",
+      "After the booking is Confirmed, Customer will have to make the Advance Payment",
+      "Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances",
+    ]) {
+      x.fillText("*", 100, yy);
+      yy = wrap(t, 135, yy, 830, 30) + 30;
+    }
+
+    x.fillStyle = "#0b2d6b";
+    rr(25, 1840, 1030, 58, 8);
+
+    x.fillStyle = "#fff";
+    x.textAlign = "left";
+    x.font = "22px Arial";
+    x.fillText("🌐 http://vishwakrma-travel-nine.vercel.app", 90, 1877);
+
+    x.textAlign = "right";
+    x.font = "italic 28px 'Times New Roman', Times, serif";
+    x.fillText("Thank You! Have a Safe Journey", 990, 1878);
+
+    x.textAlign = "left";
+
+    const a = document.createElement("a");
+    a.href = c.toDataURL("image/jpeg", 0.95);
+    a.download = `Vishwakarma-Booking-${Date.now()}.jpg`;
+    a.click();
+
+    setDownloadNotice(true);
+    setTimeout(() => setDownloadNotice(false), 3500);
+  };
+
+  x.fillStyle = "#f4f7fb";
+  x.fillRect(0, 0, 1080, 1920);
+
+  x.fillStyle = "#fff";
+  rr(18, 18, 1044, 1884, 28);
+
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.onload = () => {
+    x.drawImage(img, 42, 42, 996, 480);
+    drawDetails();
+  };
+  img.onerror = drawDetails;
+  img.src = "/cars/popup_banner.png";
+      }
   async function confirm() {
     const id = pendingBookingId || lastBookingId || `VT-${Date.now()}`;
     setLoading(true);
@@ -246,7 +374,7 @@ export default function AdminPage() {
       setShowConfirmPopup(false);
     } finally { setLoading(false); }
   }
-  async function removeBooking(id?: string) {
+   async function removeBooking(id?: string) {
     if (!id || !window.confirm("Delete booking?")) return;
     setDeletingBookingId(id);
     const r = await fetch(`${supabaseUrl}/rest/v1/bookings?booking_id=eq.${encodeURIComponent(id)}`, { method: "DELETE", headers });
@@ -256,7 +384,8 @@ export default function AdminPage() {
   function edit(b: Booking) {
     setForm({ customerName: b.customer_name || "", customerPhone: b.customer_phone || "", gender: "👋 Hii", service: b.service || "One Way Drop Pickup", pickup: b.pickup || "", drop: b.drop_location || "", journeyDate: b.journey_date || "", journeyTime: b.journey_time || "", vehicleType: b.vehicle_type || "Sedan", vehicleModel: b.vehicle_model || "Desire", vehicleNumber: b.vehicle_number || "", fare: String(b.fare || ""), advance: String(b.advance || "0"), driverName: b.driver_name || "", driverMobile: b.driver_mobile || "" }); setLastBookingId(b.booking_id || ""); window.scrollTo({ top: 0, behavior: "smooth" });
   }
-
+function editCustomer(c: Customer){setForm((p)=>({...p,customerName:c.name||"",customerPhone:cleanPhone(c.mobile||c.phone||""),pickup:c.address||""}));setActiveView("");window.scrollTo({top:0,behavior:"smooth"});}async function deleteCustomer(c: Customer){const phone=cleanPhone(c.mobile||c.phone||"");if(!phone||!window.confirm("Delete customer?"))return;const r=await fetch(`${supabaseUrl}/rest/v1/customers?mobile=eq.${encodeURIComponent(phone)}`,{method:"DELETE",headers});if(r.ok)setCustomers((p)=>p.filter((x)=>cleanPhone(x.mobile||x.phone||"")!==phone));else alert("Customer delete nahi hua.");}
+  
   const filtered = bookings.filter((b) => `${b.booking_id || ""} ${b.customer_name || ""} ${b.customer_phone || ""} ${b.pickup || ""} ${b.drop_location || ""}`.toLowerCase().includes(searchBooking.toLowerCase()));
   const customerSearch = `${form.customerName} ${form.customerPhone}`.toLowerCase().trim();
   const customerSuggestions = customerSearch.length < 2 ? [] : customers.filter((c) => `${c.name || ""} ${c.mobile || c.phone || ""} ${c.address || ""}`.toLowerCase().includes(customerSearch) || cleanPhone(c.mobile || c.phone || "").includes(cleanPhone(form.customerPhone))).slice(0, 6);
@@ -267,12 +396,12 @@ export default function AdminPage() {
 
   if (!isLogin) return <main style={loginPage}><form onSubmit={login} style={card}><h1>Vishwakarma Travels</h1><p>Admin Login</p><input type="password" placeholder="Admin password" value={password} onChange={(e) => setPassword(e.target.value)} style={input} /><button style={blueBtn}>Login</button></form></main>;
 
-  return <main style={page}>
+  return <main style={page}> 
     {showConfirmPopup && <div style={overlay}><div style={modal}><button onClick={() => setShowConfirmPopup(false)} style={close}>x</button><img src="/cars/popup_banner.png" style={banner} alt="Vishwakarma Travels" /><div style={body}><h2 style={title}>Confirm Booking Details</h2><Row l="Customer Name" v={form.customerName} /><Row l="Mobile No." v={form.customerPhone} /><Row l="Pickup" v={form.pickup} /><Row l="Drop" v={form.drop} /><Row l="Date" v={formatDate(form.journeyDate)} /><Row l="Time" v={form.journeyTime} /><Row l="Vehicle No." v={vehicleNo(form.vehicleNumber)} /><Row l="Vehicle Type" v={form.vehicleType} /><Row l="Vehicle Model" v={form.vehicleModel} /><Row l="Driver Name" v={form.driverName} /><Row l="Driver Mobile" v={form.driverMobile} /><Row l="Fare" v={`Rs ${fare}`} /><Row l="Advance" v={`Rs ${advance}`} /><div style={netRow}><b>Net Payable</b><b>Rs {net}</b></div></div><div style={actions}><button onClick={() => setShowConfirmPopup(false)} style={cancelBtn}>Cancel</button><button disabled={loading} onClick={confirm} style={greenBtn}>{loading ? "Please wait..." : "Confirm & Submit"}</button></div></div></div>}
 
     <div style={{ maxWidth: 1200, margin: "0 auto" }}><header style={header}><h1>Vishwakarma Travels Admin Dashboard</h1><p>Booking, Bill, WhatsApp aur Database Management</p><button onClick={logout} style={whiteBtn}>Logout</button></header>
     <section style={stats}><Stat title="Customers" value={customers.length} onClick={() => setActiveView("customers")} /><Stat title="Vehicles" value={vehicles.length} onClick={() => setActiveView("vehicles")} /><Stat title="Bookings" value={bookings.length} onClick={() => setActiveView("bookings")} /></section>
-    {activeView && <section style={panel}><button onClick={() => setActiveView("")} style={whiteBtn}>Close</button>{activeView === "customers" && customers.map((c, i) => <p key={i}><b>{c.name || "-"}</b> - {c.mobile || "-"} - {c.address || "-"}</p>)}{activeView === "vehicles" && vehicles.map((v, i) => <p key={i}><b>{v.vehicle_number || v.vehicleNumber || "-"}</b> - {v.vehicle_model || v.vehicleModel || "-"} - {v.driver_name || v.driverName || "-"}</p>)}{activeView === "bookings" && bookings.map((b, i) => <p key={i}><b>{b.booking_id || "-"}</b> - {b.customer_name || "-"} - Rs {b.fare || 0}</p>)}</section>}
+    {activeView && <section style={panel}><button onClick={() => setActiveView("")} style={whiteBtn}>Close</button>{activeView === "customers" && customers.map((c, i) => <div key={i} style={{display:"grid",gridTemplateColumns:"1fr auto auto",gap:8,alignItems:"center",padding:"10px 0",borderBottom:"1px solid #e5e7eb"}}><p style={{margin:0}}><b>{c.name || "-"}</b> - {c.mobile || c.phone || "-"} - {c.address || "-"}</p><button onClick={()=>editCustomer(c)} style={editBtn}>Edit</button><button onClick={()=>deleteCustomer(c)} style={delBtn}>Delete</button></div>)}{activeView === "vehicles" && vehicles.map((v, i) => <p key={i}><b>{v.vehicle_number || v.vehicleNumber || "-"}</b> - {v.vehicle_model || v.vehicleModel || "-"} - {v.driver_name || v.driverName || "-"}</p>)}{activeView === "bookings" && bookings.map((b, i) => <p key={i}><b>{b.booking_id || "-"}</b> - {b.customer_name || "-"} - Rs {b.fare || 0}</p>)}</section>}
     <form onSubmit={submit} style={panel}><h2>New Booking</h2><div style={grid}><select value={form.gender} onChange={(e) => update("gender", e.target.value)} style={input}><option>👋 Hii</option><option>Mr.</option><option>Mrs.</option><option>Ms.</option></select><div style={fieldWrap}><input placeholder="Customer Name" value={form.customerName} onFocus={() => setShowCustomerSuggestions(true)} onChange={(e) => { update("customerName", e.target.value); setShowCustomerSuggestions(true); }} onBlur={() => setTimeout(() => { findCustomer(); setShowCustomerSuggestions(false); }, 180)} style={input} required />{showCustomerSuggestions && customerSuggestions.length > 0 && <div style={suggestBox}>{customerSuggestions.map((c, i) => <button key={`${c.mobile || c.phone || i}-${i}`} type="button" onMouseDown={() => applyCustomer(c)} style={suggestItem}><b>{c.name || "No Name"}</b><span>{cleanPhone(c.mobile || c.phone || "") || "No Mobile"}</span><small>{c.address || "No Address"}</small></button>)}</div>}</div><input type="text" inputMode="tel" placeholder="Customer WhatsApp Number" value={form.customerPhone} onChange={(e) => { update("customerPhone", e.target.value); setShowCustomerSuggestions(true); }} onBlur={findCustomer} style={input} required /><input placeholder="Pickup Location / Address" value={form.pickup} onChange={(e) => update("pickup", e.target.value)} style={input} required /><input placeholder="Drop Location" value={form.drop} onChange={(e) => update("drop", e.target.value)} style={input} required />{drops.length > 0 && <div style={fullRow}><b style={{ color: "#0b2d6b" }}>Old Drop Location:</b><div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>{drops.map((d) => <button key={d} type="button" onClick={() => update("drop", d)} style={chip}>{d}</button>)}</div></div>}<input type="date" value={form.journeyDate} onChange={(e) => update("journeyDate", e.target.value)} style={input} required /><input placeholder="Time e.g. 5:30 PM" value={form.journeyTime} onChange={(e) => update("journeyTime", e.target.value)} style={input} required /><div style={fieldWrap}><input placeholder="Vehicle Number" value={form.vehicleNumber} onFocus={() => setShowVehicleSuggestions(true)} onChange={(e) => fillVehicle(e.target.value)} onBlur={() => setTimeout(() => setShowVehicleSuggestions(false), 180)} style={input} />{showVehicleSuggestions && vehicleSearch.length >= 2 && <div style={suggestBox}>{vehicleSuggestions.map((v, i) => <button key={`${v.vehicle_number || v.vehicleNumber || i}-${i}`} type="button" onMouseDown={() => applyVehicle(v)} style={suggestItem}><b>{vehicleNo(v.vehicle_number || v.vehicleNumber || "")}</b><span>{v.vehicle_type || v.vehicleType || "Vehicle"} • {v.vehicle_model || v.vehicleModel || "Model"}</span><small>{v.driver_name || v.driverName || "Driver not saved"} {cleanPhone(v.phone || v.driver_mobile || v.driverMobile || "") ? `• ${cleanPhone(v.phone || v.driver_mobile || v.driverMobile || "")}` : ""}</small></button>)}{!hasExactVehicle && <div style={newHint}>+ New vehicle "{vehicleSearch}" — type, model, driver details fill karke submit karte hi save ho jayega.</div>}</div>}</div><select value={form.vehicleType} onChange={(e) => update("vehicleType", e.target.value)} style={input}><option>Sedan</option><option>SUV</option><option>SUV With Carrier</option><option>Sedan With Carrier</option><option>Mini Passenger Bus</option></select><select value={form.vehicleModel} onChange={(e) => update("vehicleModel", e.target.value)} style={input}><option>Desire</option><option>Ertiga</option><option>Innova</option><option>Innova Crysta</option><option>Ertiga With Carrier</option><option>Innova With Carrier</option><option>Crysta With Carrier</option><option>Force Traveller</option></select><input placeholder="Driver Name" value={form.driverName} onChange={(e) => update("driverName", e.target.value)} style={input} /><input type="text" inputMode="tel" placeholder="Driver Mobile" value={form.driverMobile} onChange={(e) => update("driverMobile", e.target.value)} style={input} /><select value={form.service} onChange={(e) => update("service", e.target.value)} style={input}><option>One Way Drop Pickup</option><option>Jamshedpur to Ranchi Airport Drop</option><option>Ranchi Airport to Jamshedpur Drop</option><option>Jamshedpur to Kolkata Airport Drop</option><option>Kolkata Airport to Jamshedpur Drop</option><option>Local Movment</option><option>Outstation Movment</option><option>Short Time Booking</option><option>Marriage Function Booking</option></select><input type="number" placeholder="Total Fare" value={form.fare} onChange={(e) => update("fare", e.target.value)} style={input} required /><input type="number" placeholder="Advance Paid" value={form.advance} onChange={(e) => update("advance", e.target.value)} style={input} /></div><div style={buttonRow}><button type="button" onClick={downloadBookingCopy} style={smallDownloadBtn}>Download</button><button disabled={loading} style={smallSaveBtn}>{loading ? "Saving..." : "Save + PDF"}</button><button type="button" onClick={sendWhatsApp} style={smallWaBtn}>WhatsApp</button></div>{downloadNotice && <div style={downloadOk}>✓ Booking copy downloaded successfully!</div>}</form>
     <section style={panel}><h2>Recent Bookings</h2><input placeholder="Search booking by name, phone, pickup..." value={searchBooking} onChange={(e) => setSearchBooking(e.target.value)} style={input} /><div style={{ overflowX: "auto", marginTop: 12 }}><table style={{ width: "100%", minWidth: 900, borderCollapse: "collapse" }}><thead><tr style={{ background: "#0b2d6b", color: "white" }}><th style={th}>Booking ID</th><th style={th}>Customer</th><th style={th}>Phone</th><th style={th}>Route</th><th style={th}>Date</th><th style={th}>Fare</th><th style={th}>Action</th></tr></thead><tbody>{filtered.map((b, i) => <tr key={b.booking_id || i}><td style={td}>{b.booking_id || "-"}</td><td style={td}>{b.customer_name || "-"}</td><td style={td}>{b.customer_phone || "-"}</td><td style={td}>{b.pickup || "-"} to {b.drop_location || "-"}</td><td style={td}>{b.journey_date || "-"}</td><td style={td}>Rs {b.fare || 0}</td><td style={td}><button onClick={() => edit(b)} style={editBtn}>Edit</button><button onClick={() => pdf(b.booking_id || "")} style={pdfBtn}>PDF</button><button disabled={deletingBookingId === b.booking_id} onClick={() => removeBooking(b.booking_id)} style={delBtn}>{deletingBookingId === b.booking_id ? "Deleting..." : "Delete"}</button></td></tr>)}{bookings.length === 0 && <tr><td colSpan={7} style={{ padding: 20, textAlign: "center" }}>No booking found</td></tr>}</tbody></table></div></section></div>
   </main>;
