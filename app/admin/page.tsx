@@ -330,7 +330,7 @@ function downloadBookingCopy() {
     x.fillStyle = "#fff";
     x.textAlign = "left";
     x.font = "22px Arial";
-    x.fillText("🌐 www.vishwakarmatravels.in", 90, 1877);
+    x.fillText("🌐 http://vishwakrma-travel-nine.vercel.app", 90, 1877);
 
     x.textAlign = "right";
     x.font = "italic 28px 'Times New Roman', Times, serif";
