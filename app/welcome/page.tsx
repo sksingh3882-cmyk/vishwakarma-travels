@@ -113,8 +113,7 @@ export default function WelcomePage() {
         .welcomePage{min-height:100vh;position:relative;overflow:hidden;font-family:Inter,sans-serif;background:#000}
         .mainHeading{position:absolute;top:70px;left:50%;transform:translateX(-50%);width:100%;text-align:center;z-index:3}
         .headingRow{display:flex;align-items:center;justify-content:center;gap:1px}
-        .vtLogoWrap{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#ff7a00,#0b3aa4);display:flex;align-items:center;justify-content:center;animation:leftIn 1.4s ease forwards;box-shadow:0 8px 18px rgba(0,0,0,.35);margin-right:-2px}
-        .vtLogo{color:#fff;font-size:20px;font-weight:900;font-family:Poppins,sans-serif;letter-spacing:-1px}
+        
         .scriptLogo{
   margin:0;
   text-align:center;
@@ -129,6 +128,7 @@ export default function WelcomePage() {
   color:#fff7dc;
   font-size:clamp(68px,15vw,120px);
   -webkit-text-stroke:.7px #111;
+  animation:leftIn 1.4s ease forwards;
 }
 
 .scriptTravels{
@@ -141,6 +141,8 @@ export default function WelcomePage() {
   text-shadow:
     0 4px 0 rgba(0,0,0,.35),
     0 0 18px rgba(255,122,0,.55);
+
+  animation:rightIn 1.5s ease forwards;
 }
         .tagline{margin-top:8px;font-size:13px;font-style:italic;font-weight:700;color:#ffffff;text-shadow:-1px -1px 0 #0b3aa4,1px -1px 0 #0b3aa4,-1px 1px 0 #0b3aa4,1px 1px 0 #0b3aa4}
         .travelTitle{position:absolute;top:190px;width:100%;text-align:center;z-index:3}
@@ -149,7 +151,10 @@ export default function WelcomePage() {
         .madeWord{color:#8fd3ff;animation:rightIn 1.6s ease forwards}
         @keyframes leftIn{from{opacity:0;transform:translateX(-120vw)}to{opacity:1;transform:translateX(0)}}
         @keyframes rightIn{from{opacity:0;transform:translateX(120vw)}to{opacity:1;transform:translateX(0)}}
-        @keyframes formUp{from{opacity:0;transform:translate(-50%,140px)}to{opacity:1;transform:translate(-50%,0)}}
+        @keyframes formUp{
+  from{opacity:0;transform:translate(-50%,100vh)}
+  to{opacity:1;transform:translate(-50%,0)}
+}
         .userForm{position:absolute;top:430px;left:50%;transform:translateX(-50%);width:min(88vw,360px);padding:12px;border-radius:18px;background:rgba(0,0,0,.22);border:none;box-shadow:none;z-index:3;animation:formUp 1s cubic-bezier(.16,1,.3,1) forwards}
         .formTop{display:flex;gap:8px;margin-bottom:10px}
         .topBtn{flex:1;height:40px;border:none;border-radius:13px;font-size:14px;font-weight:800;color:#fff;background:rgba(255,255,255,.18)}
@@ -162,7 +167,7 @@ export default function WelcomePage() {
 
       <div className="mainHeading">
         <div className="headingRow">
-          <div className="vtLogoWrap"><div className="vtLogo">VT</div></div>
+          
           <h1 className="scriptLogo">
   <span className="scriptVish">Vishwakarma</span>
   <span className="scriptTravels">Travels</span>
