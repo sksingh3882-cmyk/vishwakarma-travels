@@ -125,13 +125,13 @@ export default function WelcomePage() {
         @keyframes leftIn{from{opacity:0;transform:translateX(-120vw)}to{opacity:1;transform:translateX(0)}}
         @keyframes rightIn{from{opacity:0;transform:translateX(120vw)}to{opacity:1;transform:translateX(0)}}
         @keyframes formUp{from{opacity:0;transform:translate(-50%,140px)}to{opacity:1;transform:translate(-50%,0)}}
-        .userForm{position:absolute;top:300px;left:50%;transform:translateX(-50%);width:min(92vw,430px);padding:22px;border-radius:30px;background:rgba(255,255,255,.16);backdrop-filter:blur(22px);border:1px solid rgba(255,255,255,.28);box-shadow:0 25px 60px rgba(0,0,0,.35);z-index:3;animation:formUp 1s cubic-bezier(.16,1,.3,1) forwards}
-        .formTop{display:flex;gap:10px;margin-bottom:18px}
-        .topBtn{flex:1;height:52px;border:none;border-radius:18px;font-size:16px;font-weight:800;color:#fff;background:rgba(255,255,255,.14);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2)}
+        .userForm{position:absolute;top:430px;left:50%;transform:translateX(-50%);width:min(88vw,360px);padding:12px;border-radius:18px;background:rgba(0,0,0,.22);border:none;box-shadow:none;z-index:3;animation:formUp 1s cubic-bezier(.16,1,.3,1) forwards}
+        .formTop{display:flex;gap:8px;margin-bottom:10px}
+        .topBtn{flex:1;height:40px;border:none;border-radius:13px;font-size:14px;font-weight:800;color:#fff;background:rgba(255,255,255,.18)}
         .topBtn.active{background:linear-gradient(135deg,#0b3aa4,#2563eb);box-shadow:0 10px 24px rgba(37,99,235,.45)}
-        .inputWrap{display:grid;gap:14px}
-        .input{height:58px;border:none;outline:none;border-radius:18px;padding:0 18px;background:rgba(255,255,255,.92);font-size:16px;font-weight:700;color:#111827;box-shadow:0 8px 20px rgba(0,0,0,.12)}
-        .continueBtn{width:100%;height:60px;border:none;border-radius:20px;margin-top:18px;font-size:20px;font-weight:900;color:#fff;background:linear-gradient(135deg,#ff7a00,#ff4500);box-shadow:0 16px 30px rgba(255,122,0,.35)}
+        .inputWrap{display:grid;gap:8px}
+        .input{height:42px;border:none;outline:none;border-radius:13px;padding:0 14px;background:rgba(255,255,255,.92);font-size:14px;font-weight:700;color:#111827;box-shadow:none}
+        .continueBtn{width:100%;height:46px;border:none;border-radius:14px;margin-top:10px;font-size:16px;font-weight:900;color:#fff;background:linear-gradient(135deg,#ff7a00,#ff4500);box-shadow:none}
         .smallAlert{margin-top:10px;text-align:center;font-size:11px;font-weight:800;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.7)}
       `}</style>
 
