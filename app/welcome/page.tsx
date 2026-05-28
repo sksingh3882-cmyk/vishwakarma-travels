@@ -84,7 +84,7 @@ export default function WelcomePage() {
 
       <div className="videoBg">
   <video autoPlay muted loop playsInline>
-    <source src="/cars/welcome-video.mp4" type="video/mp4" />
+    <source src="/cars/welcome-road.mp4" type="video/mp4" />
   </video>
 </div>
       <style>{`
