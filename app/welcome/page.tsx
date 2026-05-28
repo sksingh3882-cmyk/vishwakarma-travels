@@ -88,6 +88,7 @@ export default function WelcomePage() {
   </video>
 </div>
       <style>{`
+      @import url('https://fonts.googleapis.com/css2?family=Yellowtail&display=swap');
       .videoBg{
   position:absolute;
   inset:0;
@@ -114,9 +115,33 @@ export default function WelcomePage() {
         .headingRow{display:flex;align-items:center;justify-content:center;gap:1px}
         .vtLogoWrap{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#ff7a00,#0b3aa4);display:flex;align-items:center;justify-content:center;animation:leftIn 1.4s ease forwards;box-shadow:0 8px 18px rgba(0,0,0,.35);margin-right:-2px}
         .vtLogo{color:#fff;font-size:20px;font-weight:900;font-family:Poppins,sans-serif;letter-spacing:-1px}
-        .mainHeading h1{margin:0;font-family:Poppins,sans-serif;font-size:40px;font-weight:900;line-height:1;letter-spacing:-1px}
-        .headingWhite{display:inline-block;color:#ffffff;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 10px 30px rgba(0,0,0,.45);animation:leftIn 1.5s ease forwards}
-        .headingRed{display:inline-block;margin-left:8px;color:#7a0000;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 10px 30px rgba(0,0,0,.45);animation:rightIn 1.5s ease forwards}
+        .scriptLogo{
+  margin:0;
+  text-align:center;
+  font-family:'Yellowtail',cursive;
+  font-weight:400;
+  line-height:.78;
+  text-shadow:0 8px 22px rgba(0,0,0,.65);
+}
+
+.scriptVish{
+  display:block;
+  color:#fff7dc;
+  font-size:clamp(68px,15vw,120px);
+  -webkit-text-stroke:.7px #111;
+}
+
+.scriptTravels{
+  display:block;
+  margin-top:-6px;
+  color:#ff7a00;
+  font-size:clamp(62px,14vw,110px);
+  -webkit-text-stroke:.7px #111;
+
+  text-shadow:
+    0 4px 0 rgba(0,0,0,.35),
+    0 0 18px rgba(255,122,0,.55);
+}
         .tagline{margin-top:8px;font-size:13px;font-style:italic;font-weight:700;color:#ffffff;text-shadow:-1px -1px 0 #0b3aa4,1px -1px 0 #0b3aa4,-1px 1px 0 #0b3aa4,1px 1px 0 #0b3aa4}
         .travelTitle{position:absolute;top:190px;width:100%;text-align:center;z-index:3}
         .travelWord,.madeWord{display:block;font-size:38px;font-family:Poppins,sans-serif;font-style:italic;font-weight:900;letter-spacing:0;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 12px 26px rgba(0,0,0,.45)}
@@ -138,7 +163,10 @@ export default function WelcomePage() {
       <div className="mainHeading">
         <div className="headingRow">
           <div className="vtLogoWrap"><div className="vtLogo">VT</div></div>
-          <h1><span className="headingWhite">VISHWAKARMA</span><span className="headingRed">TRAVELS</span></h1>
+          <h1 className="scriptLogo">
+  <span className="scriptVish">Vishwakarma</span>
+  <span className="scriptTravels">Travels</span>
+</h1>
         </div>
         <div className="tagline">most Reliable and Affordable Cab Service Of Jamshedpur</div>
       </div>
