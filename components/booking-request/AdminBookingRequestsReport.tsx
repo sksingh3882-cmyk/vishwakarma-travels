@@ -6,6 +6,44 @@ import { fromDb, type BookingRequestRecord, type BookingRequestStatus } from "@/
 type Filter = "all" | BookingRequestStatus;
 
 type Props = {
+  function showDate(value?: string) {
+  const v = String(value || "").trim();
+  if (!v) return "-";
+
+  // 2026-05-31 → 31/05/2026
+  const iso = v.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) return `${iso[3]}/${iso[2]}/${iso[1]}`;
+
+  // 31-05-2026 → 31/05/2026
+  const old = v.match(/^(\d{2})-(\d{2})-(\d{4})/);
+  if (old) return `${old[1]}/${old[2]}/${old[3]}`;
+
+  return v;
+}
+
+function showTime(value?: string) {
+  const v = String(value || "").trim();
+  if (!v) return "-";
+
+  // Agar already AM/PM hai
+  if (/\b(AM|PM)\b/i.test(v)) {
+    return v.toUpperCase();
+  }
+
+  // 07:00 → 07:00 AM
+  const match = v.match(/^(\d{1,2}):(\d{2})/);
+  if (!match) return v;
+
+  const hour = Number(match[1]);
+  const minute = match[2];
+
+  if (Number.isNaN(hour)) return v;
+
+  const ampm = hour >= 12 ? "PM" : "AM";
+  const hour12 = hour % 12 || 12;
+
+  return `${String(hour12).padStart(2, "0")}:${minute} ${ampm}`;
+}
   onAcceptRequest?: (request: BookingRequestRecord) => void;
 };
 
@@ -156,7 +194,7 @@ export default function AdminBookingRequestsReport({ onAcceptRequest }: Props) {
                     <div style={smallGrid}>
                       <span>Mobile: {request.customerPhone || "-"}</span>
                       <span>Date: {formatDate(request.journeyDate)}</span>
-                      <span>Time: {request.journeyTime || "-"}</span>
+                      <span>Time: {formatTime(selected.journeyTime)}</span>
                       <span>Vehicle: {request.requestedVehicle || request.vehicleModel || "-"}</span>
                     </div>
                     {request.status === "confirmed" ? (
@@ -180,7 +218,7 @@ export default function AdminBookingRequestsReport({ onAcceptRequest }: Props) {
                 <div style={actionInfo}>
                   <span>Mobile: {selected.customerPhone || "-"}</span>
                   <span>Date: {formatDate(selected.journeyDate)}</span>
-                  <span>Time: {selected.journeyTime || "-"}</span>
+                  <span>Time: {formatTime(request.journeyTime)}</span>
                   <span>Status: {statusText(selected.status)}</span>
                 </div>
 
@@ -207,10 +245,38 @@ function statusText(status: BookingRequestStatus) {
 }
 
 function formatDate(value?: string) {
-  if (!value) return "-";
-  if (!value.includes("-")) return value;
-  const [y, m, d] = value.split("-");
-  return `${d}/${m}/${y}`;
+  const v = String(value || "").trim();
+  if (!v) return "-";
+
+  const iso = v.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) return `${iso[3]}/${iso[2]}/${iso[1]}`;
+
+  const old = v.match(/^(\d{2})-(\d{2})-(\d{4})/);
+  if (old) return `${old[1]}/${old[2]}/${old[3]}`;
+
+  return v;
+}
+
+function formatTime(value?: string) {
+  const v = String(value || "").trim();
+  if (!v) return "-";
+
+  if (/\b(AM|PM)\b/i.test(v)) {
+    return v.toUpperCase();
+  }
+
+  const match = v.match(/^(\d{1,2}):(\d{2})/);
+  if (!match) return v;
+
+  const hour = Number(match[1]);
+  const minute = match[2];
+
+  if (Number.isNaN(hour)) return v;
+
+  const ampm = hour >= 12 ? "PM" : "AM";
+  const hour12 = hour % 12 || 12;
+
+  return `${String(hour12).padStart(2, "0")}:${minute} ${ampm}`;
 }
 
 const viewBtn = { gridColumn: "1/-1", width: "100%", minHeight: 44, border: 0, borderRadius: 14, background: "#0b2d6b", color: "#fff", fontWeight: 900, fontSize: 15, marginTop: 4 } as const;
