@@ -7,10 +7,11 @@ export default function AppMenu() {
   const [open, setOpen] = useState(false);
   const [adminLoggedIn, setAdminLoggedIn] = useState(false);
 
+  const pathname = usePathname();
 useEffect(() => {
   setAdminLoggedIn(localStorage.getItem("vt_admin_login") === "yes");
 }, [pathname, open]);
-  const pathname = usePathname();
+  
 
   const isAdmin = pathname?.startsWith("/admin");
   const isReports = pathname?.startsWith("/reports");
