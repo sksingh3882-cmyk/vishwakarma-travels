@@ -403,6 +403,7 @@ function downloadBookingCopy() {
 
     setDownloadNotice(true);
     setTimeout(() => setDownloadNotice(false), 3500);
+    releaseDriverDetailsToCustomer();
   };
 
   x.fillStyle = "#f4f7fb";
@@ -455,6 +456,10 @@ function editCustomer(c: Customer){setForm((p)=>({...p,customerName:c.name||"",c
   if (!isLogin) return <main style={loginPage}><form onSubmit={login} style={card}><h1>Vishwakarma Travels</h1><p>Admin Login</p><input type="password" placeholder="Admin password" value={password} onChange={(e) => setPassword(e.target.value)} style={input} /><button style={blueBtn}>Login</button></form></main>;
 
   return <main style={page}> 
+    <AdminIncomingBookingRequests
+  isActive={isLogin}
+  onAcceptBooking={(request) => acceptIncomingBookingRequest(request)}
+/>
     {showConfirmPopup && <div style={overlay}><div style={modal}><button onClick={() => setShowConfirmPopup(false)} style={close}>x</button><img src="/cars/popup_banner.png" style={banner} alt="Vishwakarma Travels" /><div style={body}><h2 style={title}>Confirm Booking Details</h2><Row l="Customer Name" v={form.customerName} /><Row l="Mobile No." v={form.customerPhone} /><Row l="Pickup" v={form.pickup} /><Row l="Drop" v={form.drop} /><Row l="Date" v={formatDate(form.journeyDate)} /><Row l="Time" v={form.journeyTime} /><Row l="Vehicle No." v={vehicleNo(form.vehicleNumber)} /><Row l="Vehicle Type" v={form.vehicleType} /><Row l="Vehicle Model" v={form.vehicleModel} /><Row l="Driver Name" v={form.driverName} /><Row l="Driver Mobile" v={form.driverMobile} /><Row l="Fare" v={`Rs ${fare}`} /><Row l="Advance" v={`Rs ${advance}`} /><div style={netRow}><b>Net Payable</b><b>Rs {net}</b></div></div><div style={actions}><button onClick={() => setShowConfirmPopup(false)} style={cancelBtn}>Cancel</button><button disabled={loading} onClick={confirm} style={greenBtn}>{loading ? "Please wait..." : "Confirm & Submit"}</button></div></div></div>}
 
     <div style={{ maxWidth: 1200, margin: "0 auto" }}><header style={header}><h1>Vishwakarma Travels Admin Dashboard</h1><p>Booking, Bill, WhatsApp aur Database Management</p><button onClick={logout} style={whiteBtn}>Logout</button></header>
