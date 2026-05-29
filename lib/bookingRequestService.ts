@@ -104,6 +104,19 @@ export async function fetchBookingRequestById(params: { supabaseUrl: string; sup
   return rows?.[0] ? fromDb(rows[0]) : null;
 }
 
+export async function fetchBookingRequestsByPhone(params: { supabaseUrl: string; supabaseKey: string; customerPhone: string }) {
+  const phone = cleanPhone(params.customerPhone);
+  if (!phone) return [];
+
+  const res = await fetch(
+    `${params.supabaseUrl}/rest/v1/booking_requests?select=*&customer_phone=eq.${phone}&order=created_at.desc&limit=20`,
+    { headers: headers(params.supabaseKey, "return=minimal") }
+  );
+  if (!res.ok) throw new Error("Unable to load your bookings.");
+  const rows = await res.json();
+  return Array.isArray(rows) ? rows.map(fromDb) : [];
+}
+
 export async function fetchPendingBookingRequests(params: { supabaseUrl: string; supabaseKey: string }) {
   const res = await fetch(
     `${params.supabaseUrl}/rest/v1/booking_requests?select=*&status=eq.pending&order=created_at.asc`,
