@@ -14,6 +14,12 @@ type Props = {
   onWhatsAppRequest?: () => void;
 };
 
+function cleanPhone(value: string) {
+  let phone = String(value || "").replace(/\D/g, "");
+  if ((phone.startsWith("91") || phone.startsWith("0")) && phone.length > 10) phone = phone.slice(-10);
+  return phone.slice(-10);
+}
+
 export default function CustomerBookNowSection({ bookingData, onDownloadCopy, onWhatsAppRequest }: Props) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -23,20 +29,39 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
   const [listError, setListError] = useState("");
   const [bookings, setBookings] = useState<BookingRequestRecord[]>([]);
   const [selectedRequest, setSelectedRequest] = useState<BookingRequestRecord | null>(null);
+  const [lookupPhone, setLookupPhone] = useState("");
+  const [searched, setSearched] = useState(false);
 
-  async function openYourBookings() {
+  function openYourBookings() {
     setListOpen(true);
+    setListError("");
+    setBookings([]);
+    setSearched(false);
+    setLookupPhone(cleanPhone(bookingData.customerPhone || lookupPhone));
+  }
+
+  async function viewBookings() {
+    const phone = cleanPhone(lookupPhone);
+    if (phone.length !== 10) {
+      setListError("Please enter a valid 10 digit mobile number.");
+      setBookings([]);
+      setSearched(true);
+      return;
+    }
+
     setListLoading(true);
     setListError("");
+    setSearched(true);
     try {
       const rows = await fetchBookingRequestsByPhone({
         supabaseUrl,
         supabaseKey,
-        customerPhone: bookingData.customerPhone,
+        customerPhone: phone,
       });
       setBookings(rows);
     } catch (err: any) {
       setListError(err?.message || "Unable to load your bookings.");
+      setBookings([]);
     } finally {
       setListLoading(false);
     }
@@ -78,14 +103,29 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
             <div style={listHead}>
               <div>
                 <h2 style={listTitle}>Your Bookings</h2>
-                <p style={listSub}>Tap any booking to view current status and driver details.</p>
+                <p style={listSub}>Enter your mobile number to view your booking requests.</p>
               </div>
               <button type="button" style={xBtn} onClick={() => setListOpen(false)}>×</button>
             </div>
 
-            {listLoading && <p style={message}>Loading your bookings...</p>}
+            <div style={lookupBox}>
+              <input
+                type="tel"
+                inputMode="numeric"
+                maxLength={10}
+                placeholder="Enter Mobile Number"
+                value={lookupPhone}
+                onChange={(e) => setLookupPhone(cleanPhone(e.target.value))}
+                style={phoneInput}
+              />
+              <button type="button" style={viewBtn} onClick={viewBookings} disabled={listLoading}>
+                {listLoading ? "Loading..." : "View Bookings"}
+              </button>
+            </div>
+
             {listError && <p style={errorText}>{listError}</p>}
-            {!listLoading && !listError && bookings.length === 0 && (
+            {listLoading && <p style={message}>Loading your bookings...</p>}
+            {!listLoading && !listError && searched && bookings.length === 0 && (
               <p style={message}>No booking request found for this mobile number.</p>
             )}
 
@@ -156,9 +196,12 @@ const listHead = { display: "flex", justifyContent: "space-between", gap: 12, al
 const listTitle = { margin: 0, color: "#0f172a", fontSize: 20 } as const;
 const listSub = { margin: "6px 0 0", color: "#64748b", fontSize: 13, lineHeight: 1.35 } as const;
 const xBtn = { border: "1px solid #e2e8f0", background: "#fff", borderRadius: 12, width: 38, height: 38, fontSize: 24, lineHeight: 1, color: "#0f172a" } as const;
+const lookupBox = { display: "grid", gridTemplateColumns: "1fr", gap: 9, margin: "12px 0 10px" } as const;
+const phoneInput = { width: "100%", minHeight: 44, border: "1px solid #cbd5e1", borderRadius: 14, padding: "0 12px", fontSize: 15, fontWeight: 800, outline: "none", color: "#0f172a" } as const;
+const viewBtn = { width: "100%", minHeight: 42, border: 0, borderRadius: 14, background: "#0b2d6b", color: "#fff", fontWeight: 900, fontSize: 14 } as const;
 const message = { margin: "18px 0", color: "#64748b", textAlign: "center", fontSize: 14 } as const;
-const errorText = { margin: "18px 0", color: "#b91c1c", textAlign: "center", fontSize: 14, fontWeight: 800 } as const;
-const bookingList = { display: "grid", gap: 9 } as const;
+const errorText = { margin: "12px 0", color: "#b91c1c", textAlign: "center", fontSize: 14, fontWeight: 800 } as const;
+const bookingList = { display: "grid", gap: 9, marginTop: 12 } as const;
 const bookingItem = { width: "100%", textAlign: "left", border: "1px solid #e2e8f0", borderRadius: 14, background: "#f8fafc", padding: 12, display: "grid", gap: 6 } as const;
 const routeText = { color: "#0f172a", fontWeight: 900, fontSize: 14, lineHeight: 1.3 } as const;
 const dateText = { color: "#475569", fontWeight: 700, fontSize: 13 } as const;
