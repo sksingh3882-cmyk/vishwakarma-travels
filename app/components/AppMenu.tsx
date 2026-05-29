@@ -2,28 +2,32 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
 export default function AppMenu() {
   const [open, setOpen] = useState(false);
+  const [adminLoggedIn, setAdminLoggedIn] = useState(false);
+
+useEffect(() => {
+  setAdminLoggedIn(localStorage.getItem("vt_admin_login") === "yes");
+}, [pathname, open]);
   const pathname = usePathname();
 
   const isAdmin = pathname?.startsWith("/admin");
   const isReports = pathname?.startsWith("/reports");
 
-  const links = isAdmin
-    ? [
-        { href: "/reports", label: "Sales Report" },
+  const links = adminLoggedIn && isAdmin
+  ? [
+      { href: "/reports", label: "Sales Report" },
       { href: "/vehicle-reports", label: "Vehicle Reports" },
       { href: "/total-bookings", label: "Total Bookings" },
-        { href: "/", label: "Customer Page" },
-      ]
-    : isReports
-    ? [
-        { href: "/admin", label: "Admin Dashboard" },
-        { href: "/", label: "Customer Page" },
-      ]
-    : [{ href: "/admin", label: "Admin Login" }];
+      { href: "/", label: "Customer Page" },
+    ]
+  : adminLoggedIn && isReports
+  ? [
+      { href: "/admin", label: "Admin Dashboard" },
+      { href: "/", label: "Customer Page" },
+    ]
+  : [{ href: "/admin", label: "Admin Login" }];
 
   return (
     <div style={{ position: "fixed", top: 14, right: 14, zIndex: 9999 }}>
