@@ -32,11 +32,11 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose 
 
   async function sendRequest() {
     if (!supabaseUrl || !supabaseKey) {
-      setError("Supabase URL/KEY missing hai.");
+      setError("Supabase URL or key is missing.");
       return;
     }
     if (!bookingData.customerName || !bookingData.customerPhone || !bookingData.pickup || !bookingData.drop) {
-      setError("Name, mobile, pickup aur drop required hai.");
+      setError("Name, mobile number, pickup and drop are required.");
       return;
     }
 
@@ -46,7 +46,7 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose 
       const created = await createBookingRequest({ supabaseUrl, supabaseKey, input: bookingData });
       setRequest(created);
     } catch (err: any) {
-      setError(err?.message || "Booking request send nahi ho paya.");
+      setError(err?.message || "Unable to send booking request.");
     } finally {
       setLoading(false);
     }
@@ -80,7 +80,7 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose 
       <div style={card}>
         <div style={handle} />
 
-        {loading && <StatusHeader icon="⏳" title="Booking Request Sending..." subtitle="Please wait" />}
+        {loading && <StatusHeader icon="⏳" title="Sending Booking Request..." subtitle="Please wait" />}
 
         {error && (
           <>
@@ -93,7 +93,7 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose 
           <>
             {isPending && (
               <>
-                <StatusHeader icon="🕘" title="Waiting for Admin Confirmation" subtitle="Aapki booking request admin ko send ho gayi hai." />
+                <StatusHeader icon="🕘" title="Waiting for Admin Confirmation" subtitle="Your booking request has been sent to the admin." />
                 <TripDetails request={request} />
                 <div style={btnRow}>
                   <button type="button" style={ghostBtn} onClick={sendRequest}>Resend</button>
@@ -104,7 +104,7 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose 
 
             {isAccepted && (
               <>
-                <StatusHeader icon="✅" title="Admin has accepted your booking request" subtitle="Vehicle details assign ho rahi hai. Please wait." />
+                <StatusHeader icon="✅" title="Admin has accepted your booking request" subtitle="Vehicle and driver details are being assigned. Please wait." />
                 <TripDetails request={request} />
                 <button type="button" style={ghostBtn} onClick={onClose}>Close</button>
               </>
@@ -112,11 +112,11 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose 
 
             {isConfirmed && (
               <>
-                <StatusHeader icon="🚖" title="Booking Confirmed" subtitle="Driver aur vehicle details assign ho gayi hai." />
+                <StatusHeader icon="🚖" title="Booking Confirmed" subtitle="Vehicle and driver details have been assigned." />
                 <TripDetails request={request} />
                 <DriverDetails request={request} />
                 {callDriverHref ? (
-                  <a href={callDriverHref} style={callBtn}>📞 Call Now Driver</a>
+                  <a href={callDriverHref} style={callBtn}>📞 Call Driver Now</a>
                 ) : null}
                 <button type="button" style={ghostBtn} onClick={onClose}>Close</button>
               </>
@@ -124,7 +124,7 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose 
 
             {request.status === "cancelled" && (
               <>
-                <StatusHeader icon="❌" title="Request Cancelled" subtitle="Booking request cancel ho gayi hai." />
+                <StatusHeader icon="❌" title="Request Cancelled" subtitle="Your booking request has been cancelled." />
                 <button type="button" style={ghostBtn} onClick={onClose}>Close</button>
               </>
             )}
