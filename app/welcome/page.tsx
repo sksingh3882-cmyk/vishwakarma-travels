@@ -208,8 +208,6 @@ export default function WelcomePage() {
       <div className="travelTitle">
         <span className="travelWord">Travel</span>
         <span className="madeWord">Made Easy</span>
-        <div className="featureStrip">
-
       </div>
 
       <div className="userForm">
