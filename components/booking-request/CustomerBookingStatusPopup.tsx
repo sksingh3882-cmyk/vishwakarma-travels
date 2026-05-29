@@ -92,6 +92,7 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose,
   return (
     <div style={overlay}>
       <div style={card}>
+        <button type="button" aria-label="Close" style={closeBtn} onClick={closePopup}>×</button>
         <div style={handle} />
 
         {loading && <StatusHeader icon="⏳" title="Sending Booking Request..." subtitle="Please wait" />}
@@ -127,12 +128,11 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose,
             {isConfirmed && (
               <>
                 <StatusHeader icon="🚖" title="Booking Confirmed" subtitle="Vehicle and driver details have been assigned." />
-                <TripDetails request={request} />
+                <TripDetails request={request} compact />
                 <DriverDetails request={request} />
                 {callDriverHref ? (
                   <a href={callDriverHref} style={callBtn}>📞 Call Driver Now</a>
                 ) : null}
-                <button type="button" style={ghostBtn} onClick={closePopup}>Close</button>
               </>
             )}
 
@@ -159,9 +159,9 @@ function StatusHeader({ icon, title, subtitle }: { icon: string; title: string; 
   );
 }
 
-function TripDetails({ request }: { request: BookingRequestRecord }) {
+function TripDetails({ request, compact = false }: { request: BookingRequestRecord; compact?: boolean }) {
   return (
-    <div style={section}>
+    <div style={compact ? compactSection : section}>
       <h3 style={sectionTitle}>Trip Details</h3>
       <Info label="Name" value={request.customerName} />
       <Info label="Mobile" value={request.customerPhone} />
@@ -196,21 +196,23 @@ function Info({ label, value }: { label: string; value: string }) {
   );
 }
 
-const overlay = { position: "fixed", inset: 0, background: "rgba(15,23,42,.55)", zIndex: 9999, display: "flex", alignItems: "flex-end", justifyContent: "center", padding: 12 } as const;
-const card = { width: "100%", maxWidth: 460, maxHeight: "88vh", overflowY: "auto", background: "#fff", borderRadius: "24px 24px 16px 16px", padding: 16, boxShadow: "0 24px 80px rgba(0,0,0,.28)", fontFamily: "Arial, sans-serif" } as const;
-const handle = { width: 52, height: 5, borderRadius: 99, background: "#cbd5e1", margin: "0 auto 14px" } as const;
-const headerBox = { textAlign: "center", padding: "8px 6px 12px" } as const;
-const iconBox = { width: 62, height: 62, borderRadius: 18, background: "#eff6ff", display: "grid", placeItems: "center", fontSize: 32, margin: "0 auto 10px" } as const;
-const titleStyle = { margin: 0, color: "#0f172a", fontSize: 20, lineHeight: 1.2 } as const;
-const subStyle = { margin: "8px 0 0", color: "#64748b", fontSize: 14, lineHeight: 1.35 } as const;
-const section = { border: "1px solid #e2e8f0", background: "#f8fafc", borderRadius: 16, padding: 12, marginTop: 12 } as const;
-const sectionGreen = { border: "1px solid #bbf7d0", background: "#f0fdf4", borderRadius: 16, padding: 12, marginTop: 12 } as const;
-const sectionTitle = { margin: "0 0 10px", fontSize: 15, color: "#0f172a" } as const;
-const infoRow = { display: "flex", justifyContent: "space-between", gap: 12, padding: "8px 0", borderTop: "1px dashed #dbe3ee" } as const;
-const infoLabel = { color: "#64748b", fontSize: 13, minWidth: 96 } as const;
-const infoValue = { color: "#0f172a", fontSize: 13, textAlign: "right", wordBreak: "break-word" } as const;
-const btnRow = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 14 } as const;
-const primaryBtn = { width: "100%", border: 0, borderRadius: 14, padding: "12px 14px", background: "#2563eb", color: "#fff", fontWeight: 800, fontSize: 15 } as const;
-const ghostBtn = { width: "100%", border: "1px solid #cbd5e1", borderRadius: 14, padding: "12px 14px", background: "#fff", color: "#0f172a", fontWeight: 800, fontSize: 15, marginTop: 12 } as const;
-const dangerBtn = { width: "100%", border: "1px solid #fecaca", borderRadius: 14, padding: "12px 14px", background: "#fff1f2", color: "#b91c1c", fontWeight: 800, fontSize: 15 } as const;
-const callBtn = { display: "block", textAlign: "center", textDecoration: "none", borderRadius: 16, padding: "14px 16px", background: "#16a34a", color: "#fff", fontWeight: 900, fontSize: 16, marginTop: 14 } as const;
+const overlay = { position: "fixed", inset: 0, background: "rgba(15,23,42,.55)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: "72px 10px 18px" } as const;
+const card = { width: "100%", maxWidth: 460, maxHeight: "calc(100vh - 95px)", overflowY: "auto", background: "#fff", borderRadius: 22, padding: "12px 12px 14px", boxShadow: "0 24px 80px rgba(0,0,0,.28)", fontFamily: "Arial, sans-serif", position: "relative" } as const;
+const closeBtn = { position: "absolute", top: 10, right: 10, width: 38, height: 38, borderRadius: 14, border: "1px solid #e2e8f0", background: "#fff", color: "#0f172a", fontSize: 28, lineHeight: 1, fontWeight: 700, zIndex: 2 } as const;
+const handle = { width: 52, height: 5, borderRadius: 99, background: "#cbd5e1", margin: "0 auto 10px" } as const;
+const headerBox = { textAlign: "center", padding: "4px 44px 8px" } as const;
+const iconBox = { width: 52, height: 52, borderRadius: 16, background: "#eff6ff", display: "grid", placeItems: "center", fontSize: 28, margin: "0 auto 8px" } as const;
+const titleStyle = { margin: 0, color: "#0f172a", fontSize: 18, lineHeight: 1.2 } as const;
+const subStyle = { margin: "6px 0 0", color: "#64748b", fontSize: 13, lineHeight: 1.3 } as const;
+const section = { border: "1px solid #e2e8f0", background: "#f8fafc", borderRadius: 16, padding: 10, marginTop: 10 } as const;
+const compactSection = { border: "1px solid #e2e8f0", background: "#f8fafc", borderRadius: 16, padding: 9, marginTop: 8 } as const;
+const sectionGreen = { border: "1px solid #bbf7d0", background: "#f0fdf4", borderRadius: 16, padding: 10, marginTop: 10 } as const;
+const sectionTitle = { margin: "0 0 8px", fontSize: 14, color: "#0f172a" } as const;
+const infoRow = { display: "flex", justifyContent: "space-between", gap: 10, padding: "6px 0", borderTop: "1px dashed #dbe3ee" } as const;
+const infoLabel = { color: "#64748b", fontSize: 12, minWidth: 92 } as const;
+const infoValue = { color: "#0f172a", fontSize: 12, textAlign: "right", wordBreak: "break-word" } as const;
+const btnRow = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 12 } as const;
+const primaryBtn = { width: "100%", border: 0, borderRadius: 14, padding: "11px 14px", background: "#2563eb", color: "#fff", fontWeight: 800, fontSize: 14 } as const;
+const ghostBtn = { width: "100%", border: "1px solid #cbd5e1", borderRadius: 14, padding: "11px 14px", background: "#fff", color: "#0f172a", fontWeight: 800, fontSize: 14, marginTop: 10 } as const;
+const dangerBtn = { width: "100%", border: "1px solid #fecaca", borderRadius: 14, padding: "11px 14px", background: "#fff1f2", color: "#b91c1c", fontWeight: 800, fontSize: 14 } as const;
+const callBtn = { display: "block", textAlign: "center", textDecoration: "none", borderRadius: 16, padding: "12px 14px", background: "#16a34a", color: "#fff", fontWeight: 900, fontSize: 15, marginTop: 12 } as const;
