@@ -111,6 +111,23 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     const found = vehicles.find((v) => vehicleNo(v.vehicle_number || v.vehicleNumber || "") === no);
     if (no.length > 3 && found) applyVehicle(found);
   }
+  function acceptIncomingBookingRequest(request: BookingRequestRecord) {
+  setActiveBookingRequest(request);
+
+  setForm((p) => ({
+    ...p,
+    customerName: request.customerName || p.customerName,
+    customerPhone: cleanPhone(request.customerPhone || p.customerPhone),
+    service: request.service || p.service,
+    pickup: request.pickup || p.pickup,
+    drop: request.drop || p.drop,
+    journeyDate: request.journeyDate || p.journeyDate,
+    journeyTime: request.journeyTime || p.journeyTime,
+    vehicleModel: request.requestedVehicle || p.vehicleModel,
+  }));
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  }
     function formatTime(t:string){
 
     }
@@ -226,7 +243,25 @@ Namaste! Here are your upcoming trip details.
     w.document.write(html);
     w.document.close();
   }
+  
+async function releaseDriverDetailsToCustomer() {
+  if (!activeBookingRequest?.id) return;
 
+  try {
+    await confirmBookingRequestAfterDownload({
+      supabaseUrl,
+      supabaseKey,
+      requestId: activeBookingRequest.id,
+      vehicleNo: vehicleNo(form.vehicleNumber),
+      vehicleType: form.vehicleType,
+      vehicleModel: form.vehicleModel,
+      driverName: form.driverName,
+      driverMobile: form.driverMobile,
+    });
+  } catch (err) {
+    console.log("Booking request confirm update failed:", err);
+  }
+}
 function downloadBookingCopy() {
   if (!validateDownload()) return;
 
