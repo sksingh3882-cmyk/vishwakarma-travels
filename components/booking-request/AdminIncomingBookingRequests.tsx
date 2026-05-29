@@ -4,9 +4,7 @@ import { useEffect, useState } from "react";
 import {
   acceptBookingRequest,
   cancelBookingRequest,
-  createBookingRequestsChannelName,
   fetchPendingBookingRequests,
-  fromDb,
   type BookingRequestRecord,
 } from "@/lib/bookingRequestService";
 
@@ -38,53 +36,25 @@ export default function AdminIncomingBookingRequests({ isActive = true, onAccept
     if (!isActive || !supabaseUrl || !supabaseKey) return;
 
     let stopped = false;
-    let channel: any = null;
 
     async function loadPending() {
       try {
         const pending = await fetchPendingBookingRequests({ supabaseUrl, supabaseKey });
-        if (!stopped) setRequests(pending);
+        if (stopped) return;
+        setRequests(pending);
+        setSelected((current) => current || (pending.length === 1 ? pending[0] : null));
+        setError("");
       } catch (err: any) {
-        if (!stopped) setError(err?.message || "Pending requests load nahi ho paya.");
+        if (!stopped) setError(err?.message || "Unable to load pending requests.");
       }
     }
 
-    async function startRealtime() {
-      const { createClient } = await import("@supabase/supabase-js");
-      if (stopped) return;
-      const supabase = createClient(supabaseUrl, supabaseKey);
-      channel = supabase
-        .channel(createBookingRequestsChannelName())
-        .on(
-          "postgres_changes",
-          { event: "INSERT", schema: "public", table: "booking_requests" },
-          (payload: any) => {
-            const next = fromDb(payload.new);
-            if (next.status !== "pending") return;
-            setRequests((prev) => (prev.some((item) => item.id === next.id) ? prev : [...prev, next]));
-            setSelected((current) => current || next);
-          }
-        )
-        .on(
-          "postgres_changes",
-          { event: "UPDATE", schema: "public", table: "booking_requests" },
-          (payload: any) => {
-            const next = fromDb(payload.new);
-            setRequests((prev) => {
-              if (next.status !== "pending") return prev.filter((item) => item.id !== next.id);
-              return prev.map((item) => (item.id === next.id ? next : item));
-            });
-          }
-        )
-        .subscribe();
-    }
-
     loadPending();
-    startRealtime().catch(console.log);
+    const intervalId = window.setInterval(loadPending, 5000);
 
     return () => {
       stopped = true;
-      if (channel) channel.unsubscribe();
+      window.clearInterval(intervalId);
     };
   }, [isActive, supabaseUrl, supabaseKey]);
 
@@ -111,7 +81,7 @@ export default function AdminIncomingBookingRequests({ isActive = true, onAccept
         vehicleModel: accepted.requestedVehicle || "",
       });
     } catch (err: any) {
-      setError(err?.message || "Accept nahi ho paya.");
+      setError(err?.message || "Unable to accept this request.");
     } finally {
       setBusy(false);
     }
@@ -126,7 +96,7 @@ export default function AdminIncomingBookingRequests({ isActive = true, onAccept
       setRequests((prev) => prev.filter((item) => item.id !== selected.id));
       setSelected(null);
     } catch (err: any) {
-      setError(err?.message || "Cancel nahi ho paya.");
+      setError(err?.message || "Unable to cancel this request.");
     } finally {
       setBusy(false);
     }
@@ -164,7 +134,7 @@ export default function AdminIncomingBookingRequests({ isActive = true, onAccept
               {requests.length > 1 ? <button type="button" style={miniClose} onClick={() => setSelected(null)}>List</button> : null}
             </div>
             <h2 style={title}>{selected.customerName || "Customer"}</h2>
-            <p style={subtitle}>Customer ko ye service / vehicle chahiye:</p>
+            <p style={subtitle}>Requested service and vehicle details</p>
 
             <div style={section}>
               <Info label="Mobile" value={selected.customerPhone} />
