@@ -109,13 +109,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     if (no.length > 3 && found) applyVehicle(found);
   }
     function formatTime(t:string){
- const s=String(t||"").trim();
- if(!s)return "";
- if(/\b(AM|PM)\b/i.test(s))return s.replace(/\s+/g," ").replace(/\b(am|pm)\b/i,(m)=>m.toUpperCase());
- const [h,m="00"]=s.split(":");
- const hour=Number(h);
- if(Number.isNaN(hour))return s;
- return `${hour%12||12}:${String(m).slice(0,2).padStart(2,"0")} ${hour>=12?"PM":"AM"}`;
+
     }
    
     function msg(id: string) {
@@ -150,13 +144,14 @@ Namaste! Here are your upcoming trip details.
 🔹 Advance Paid: Rs ${advance}
 🔹 Net Payable: Rs ${net}
 
-⚠️ *Important Information*
-🔹 Please verify all travel details.
-🔹 Wish you a safe and comfortable journey.
+⚠️ *Declaration*
+🔹 Please Check all the Details before Start Travling. 
+🔹 Final Fare May Vary Depending on Final Km.
+🔹 Toll Charges,Night Hold and Extra Running.
 
 ✨ *Thank You For Choosing Vishwakarma Travels* 
-         😊 *Wish You A Very Happy Journey* 
-                     🙏🙏🙏`;
+       😊 *Wish You A Very Happy Journey* 
+                    🙏🙏🙏`;
     }
   
   function validate() {
@@ -341,7 +336,7 @@ function downloadBookingCopy() {
 
     let yy = y + 225;
     for (const t of [
-      "Book A Cab Atleast 24 Hour Before Travelling Otherwise Booking May Not Be Confirmed",
+      "Final Fare may vary Depending on Final Km. Waiting Time . Extra Km and Night Hold",
       "After the booking is Confirmed, Customer will have to make the Advance Payment",
       "Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances",
     ]) {
