@@ -147,8 +147,8 @@ export default function WelcomePage() {
         .tagline{margin-top:8px;font-size:13px;font-style:italic;font-weight:700;color:#ffffff;text-shadow:-1px -1px 0 #0b3aa4,1px -1px 0 #0b3aa4,-1px 1px 0 #0b3aa4,1px 1px 0 #0b3aa4}
         .travelTitle{position:absolute;top:190px;width:100%;text-align:center;z-index:3}
         .travelWord,.madeWord{display:block;font-family:'Yellowtail',cursive;font-style:normal;font-weight:900;letter-spacing:1px;text-shadow:-2px -2px 0 #111,2px -2px 0 #111,-2px 2px 0 #111,2px 2px 0 #111,0 10px 22px rgba(0,0,0,.45)}
-        .travelWord{font-size:48px;color:#fff;animation:leftIn 1.4s ease forwards}
-        .madeWord{margin-top:-12px;font-size:58px;color:#8fd3ff;animation:rightIn 1.6s ease forwards}
+        .travelWord{font-size:38px;color:#fff;animation:leftIn 1.4s ease forwards}
+        .madeWord{margin-top:-8px;font-size:34px;color:#8fd3ff;animation:rightIn 1.6s ease forwards}
         @keyframes leftIn{from{opacity:0;transform:translateX(-120vw)}to{opacity:1;transform:translateX(0)}}
         @keyframes rightIn{from{opacity:0;transform:translateX(120vw)}to{opacity:1;transform:translateX(0)}}
         @keyframes formUp{
@@ -163,10 +163,35 @@ export default function WelcomePage() {
         .input{height:42px;border:none;outline:none;border-radius:13px;padding:0 14px;background:rgba(255,255,255,.92);font-size:14px;font-weight:700;color:#111827;box-shadow:none}
         .continueBtn{width:100%;height:46px;border:none;border-radius:14px;margin-top:10px;font-size:16px;font-weight:900;color:#fff;background:linear-gradient(135deg,#ff7a00,#ff4500);box-shadow:none}
         .smallAlert{margin-top:10px;text-align:center;font-size:11px;font-weight:800;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.7)}
-      .featureStrip{margin:10px auto 0;width:min(96vw,760px);display:grid;grid-template-columns:repeat(5,1fr);gap:4px;background:rgba(255,255,255,.9);border-radius:14px;padding:6px;color:#08245c;box-shadow:0 8px 22px rgba(0,0,0,.25)}
-.featureStrip div{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px}
-.featureStrip span{font-size:18px}
-.featureStrip b{font-size:8px;line-height:1.1}
+      .featureStrip{
+  margin:10px auto 0;
+  width:min(96vw,760px);
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:4px;
+  background:rgba(255,255,255,.9);
+  border-radius:14px;
+  padding:6px;
+  color:#08245c;
+  box-shadow:0 8px 22px rgba(0,0,0,.25);
+}
+
+.featureStrip div{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  gap:2px;
+}
+
+.featureStrip span{
+  font-size:18px;
+}
+
+.featureStrip b{
+  font-size:8px;
+  line-height:1.1;
+}
       `}</style>
 
       <div className="mainHeading">
@@ -184,12 +209,7 @@ export default function WelcomePage() {
         <span className="travelWord">Travel</span>
         <span className="madeWord">Made Easy</span>
         <div className="featureStrip">
-  <div><span>🛡️</span><b>Safe & Secure</b></div>
-  <div><span>👨‍✈️</span><b>Professional Drivers</b></div>
-  <div><span>🕘</span><b>24/7 Service</b></div>
-  <div><span>₹</span><b>Best Prices</b></div>
-  <div><span>🚘</span><b>Wide Range Cars</b></div>
-</div>
+
       </div>
 
       <div className="userForm">
@@ -203,6 +223,13 @@ export default function WelcomePage() {
           <input className="input" placeholder="Complete Address" value={address} onChange={(e) => setAddress(e.target.value)} />
         </div>
         <button type="button" className="continueBtn" onClick={continueBooking}>Continue Booking</button>
+        <div className="featureStrip">
+  <div><span>🛡️</span><b>Safe & Secure</b></div>
+  <div><span>👨‍✈️</span><b>Professional Drivers</b></div>
+  <div><span>🕘</span><b>24/7 Service</b></div>
+  <div><span>₹</span><b>Best Prices</b></div>
+  <div><span>🚘</span><b>Wide Range Cars</b></div>
+</div>
         {alert && <div className="smallAlert">{mode === "existing" ? "Please enter your name before continuing" : "Please fill name, mobile and address before continuing"}</div>}
       </div>
     </main>
