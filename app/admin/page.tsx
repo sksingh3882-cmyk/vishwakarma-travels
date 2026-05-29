@@ -109,10 +109,20 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     if (no.length > 3 && found) applyVehicle(found);
   }
     function formatTime(t:string){
- if(!t)return "";
- const [h,m]=t.split(":");
- const hour=Number(h);
- return `${hour%12||12}:${m} ${hour>=12?"PM":"AM"}`;
+  if(!t) return "";
+
+  const raw = String(t).trim();
+
+  if (/\b(AM|PM)\b/i.test(raw)) {
+    return raw.replace(/\s+/g, " ").toUpperCase();
+  }
+
+  const [h, m = "00"] = raw.split(":");
+  const hour = Number(h);
+
+  if (Number.isNaN(hour)) return raw;
+
+  return `${hour % 12 || 12}:${m.slice(0,2)} ${hour >= 12 ? "PM" : "AM"}`;
     }
    
     function msg(id: string) {
