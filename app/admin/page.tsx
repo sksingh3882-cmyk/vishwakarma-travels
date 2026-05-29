@@ -109,20 +109,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     if (no.length > 3 && found) applyVehicle(found);
   }
     function formatTime(t:string){
-  if(!t) return "";
 
-  const raw = String(t).trim();
-
-  if (/\b(AM|PM)\b/i.test(raw)) {
-    return raw.replace(/\s+/g, " ").toUpperCase();
-  }
-
-  const [h, m = "00"] = raw.split(":");
-  const hour = Number(h);
-
-  if (Number.isNaN(hour)) return raw;
-
-  return `${hour % 12 || 12}:${m.slice(0,2)} ${hour >= 12 ? "PM" : "AM"}`;
     }
    
     function msg(id: string) {
@@ -200,10 +187,32 @@ Namaste! Here are your upcoming trip details.
   }
   async function saveVehicle() {
     const no = vehicleNo(form.vehicleNumber);
-    if (!no || vehicles.some((v) => vehicleNo(v.vehicle_number || v.vehicleNumber || "") === no)) return;
-    const payload = { vehicle_number: no, vehicle_type: form.vehicleType, vehicle_model: form.vehicleModel, driver_name: form.driverName, phone: cleanPhone(form.driverMobile), route: `${form.pickup} to ${form.drop}`, status: "Active" };
-    const r = await fetch(`${supabaseUrl}/rest/v1/vehicles`, { method: "POST", headers, body: JSON.stringify(payload) });
-    if (r.ok) setVehicles((p) => [payload, ...p]);
+    if (!no) return alert("Vehicle number is blank, so the vehicle data will not be saved.");
+    if (vehicles.some((v) => vehicleNo(v.vehicle_number || v.vehicleNumber || "") === no)) return;
+
+    const payload = {
+      vehicle_number: no,
+      vehicle_type: form.vehicleType,
+      vehicle_model: form.vehicleModel,
+      driver_name: form.driverName,
+      phone: cleanPhone(form.driverMobile),
+      route: `${form.pickup} to ${form.drop}`,
+      status: "Active"
+    };
+
+    const r = await fetch(`${supabaseUrl}/rest/v1/vehicles`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload)
+    });
+
+    if (r.ok) {
+      setVehicles((p) => [payload, ...p]);
+    } else {
+      const err = await r.text();
+      alert("Vehicle data could not be saved: " + err);
+      console.log("Vehicle save error:", err);
+    }
   }
   function pdf(id: string) {
     const w = window.open("", "_blank"); if (!w) return alert("Popup allow karo.");
