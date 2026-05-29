@@ -3,8 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   createBookingRequest,
-  createBookingRequestsChannelName,
-  fromDb,
+  fetchBookingRequestById,
   type BookingRequestInput,
   type BookingRequestRecord,
 } from "@/lib/bookingRequestService";
@@ -62,35 +61,16 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose 
   useEffect(() => {
     if (!open || !request?.id || !supabaseUrl || !supabaseKey) return;
 
-    let stopped = false;
-    let channel: any = null;
+    const intervalId = window.setInterval(async () => {
+      try {
+        const latest = await fetchBookingRequestById({ supabaseUrl, supabaseKey, requestId: request.id });
+        if (latest) setRequest(latest);
+      } catch (err) {
+        console.log(err);
+      }
+    }, 4000);
 
-    async function startRealtime() {
-      const { createClient } = await import("@supabase/supabase-js");
-      if (stopped) return;
-
-      const supabase = createClient(supabaseUrl, supabaseKey);
-      channel = supabase
-        .channel(createBookingRequestsChannelName(request.id))
-        .on(
-          "postgres_changes",
-          {
-            event: "UPDATE",
-            schema: "public",
-            table: "booking_requests",
-            filter: `id=eq.${request.id}`,
-          },
-          (payload: any) => setRequest(fromDb(payload.new))
-        )
-        .subscribe();
-    }
-
-    startRealtime().catch(console.log);
-
-    return () => {
-      stopped = true;
-      if (channel) channel.unsubscribe();
-    };
+    return () => window.clearInterval(intervalId);
   }, [open, request?.id, supabaseUrl, supabaseKey]);
 
   if (!open) return null;
