@@ -12,9 +12,10 @@ type Props = {
   open: boolean;
   bookingData: BookingRequestInput;
   onClose: () => void;
+  existingRequest?: BookingRequestRecord | null;
 };
 
-export default function CustomerBookingStatusPopup({ open, bookingData, onClose }: Props) {
+export default function CustomerBookingStatusPopup({ open, bookingData, onClose, existingRequest = null }: Props) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
   const [request, setRequest] = useState<BookingRequestRecord | null>(null);
@@ -53,10 +54,16 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose 
   }
 
   useEffect(() => {
-    if (!open || request || loading) return;
-    sendRequest();
+    if (!open) return;
+    setError("");
+    if (existingRequest?.id) {
+      setRequest(existingRequest);
+      setLoading(false);
+      return;
+    }
+    if (!request && !loading) sendRequest();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [open, existingRequest?.id]);
 
   useEffect(() => {
     if (!open || !request?.id || !supabaseUrl || !supabaseKey) return;
@@ -72,6 +79,13 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose 
 
     return () => window.clearInterval(intervalId);
   }, [open, request?.id, supabaseUrl, supabaseKey]);
+
+  function closePopup() {
+    setRequest(null);
+    setError("");
+    setLoading(false);
+    onClose();
+  }
 
   if (!open) return null;
 
@@ -97,7 +111,7 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose 
                 <TripDetails request={request} />
                 <div style={btnRow}>
                   <button type="button" style={ghostBtn} onClick={sendRequest}>Resend</button>
-                  <button type="button" style={dangerBtn} onClick={onClose}>Cancel</button>
+                  <button type="button" style={dangerBtn} onClick={closePopup}>Cancel</button>
                 </div>
               </>
             )}
@@ -106,7 +120,7 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose 
               <>
                 <StatusHeader icon="✅" title="Admin has accepted your booking request" subtitle="Vehicle and driver details are being assigned. Please wait." />
                 <TripDetails request={request} />
-                <button type="button" style={ghostBtn} onClick={onClose}>Close</button>
+                <button type="button" style={ghostBtn} onClick={closePopup}>Close</button>
               </>
             )}
 
@@ -118,14 +132,14 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose 
                 {callDriverHref ? (
                   <a href={callDriverHref} style={callBtn}>📞 Call Driver Now</a>
                 ) : null}
-                <button type="button" style={ghostBtn} onClick={onClose}>Close</button>
+                <button type="button" style={ghostBtn} onClick={closePopup}>Close</button>
               </>
             )}
 
             {request.status === "cancelled" && (
               <>
                 <StatusHeader icon="❌" title="Request Cancelled" subtitle="Your booking request has been cancelled." />
-                <button type="button" style={ghostBtn} onClick={onClose}>Close</button>
+                <button type="button" style={ghostBtn} onClick={closePopup}>Close</button>
               </>
             )}
           </>
