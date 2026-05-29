@@ -147,13 +147,14 @@ Namaste! Here are your upcoming trip details.
 🔹 Advance Paid: Rs ${advance}
 🔹 Net Payable: Rs ${net}
 
-⚠️ *Important Information*
-🔹 Please verify all travel details.
-🔹 Wish you a safe and comfortable journey.
+⚠️ *Declaration*
+🔹 Please Check all the Details before Start Travling. 
+🔹 Final Fare May Vary Depending on Final Km.
+🔹 Toll Charges,Night Hold and Extra Running.
 
 ✨ *Thank You For Choosing Vishwakarma Travels* 
-         😊 *Wish You A Very Happy Journey* 
-                     🙏🙏🙏`;
+       😊 *Wish You A Very Happy Journey* 
+                    🙏🙏🙏`;
     }
   
   function validate() {
@@ -316,7 +317,7 @@ function downloadBookingCopy() {
 
     let yy = y + 225;
     for (const t of [
-      "Book A Cab Atleast 24 Hour Before Travelling Otherwise Booking May Not Be Confirmed",
+      "Final Fare may vary Depending on Final Km. Waiting Time . Extra Km and Night Hold",
       "After the booking is Confirmed, Customer will have to make the Advance Payment",
       "Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances",
     ]) {
