@@ -164,33 +164,34 @@ export default function WelcomePage() {
         .continueBtn{width:100%;height:46px;border:none;border-radius:14px;margin-top:10px;font-size:16px;font-weight:900;color:#fff;background:linear-gradient(135deg,#ff7a00,#ff4500);box-shadow:none}
         .smallAlert{margin-top:10px;text-align:center;font-size:11px;font-weight:800;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.7)}
       .featureStrip{
-  margin:10px auto 0;
-  width:min(96vw,760px);
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:4px;
-  background:rgba(255,255,255,.9);
-  border-radius:14px;
-  padding:6px;
-  color:#08245c;
-  box-shadow:0 8px 22px rgba(0,0,0,.25);
+  margin:12px auto 0;
+  width:100%;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:2px;
+  background:rgba(255,255,255,.92);
+  border-radius:12px;
+  padding:6px 4px;
+  color:#08245c;
 }
 
 .featureStrip div{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  text-align:center;
-  gap:2px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
 }
 
 .featureStrip span{
-  font-size:18px;
+  font-size:16px;
+  line-height:1;
 }
 
 .featureStrip b{
-  font-size:8px;
-  line-height:1.1;
+  font-size:7px;
+  line-height:1.1;
+  color:#08245c;
 }
       `}</style>
 
