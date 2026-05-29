@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState, type CSSProperties, type FormEvent } from "react";
+import AdminIncomingBookingRequests from "@/components/booking-request/AdminIncomingBookingRequests";
+import { confirmBookingRequestAfterDownload, type BookingRequestRecord } from "@/lib/bookingRequestService";
 
 type Booking = Record<string, any>;
 type Customer = Record<string, any>;
@@ -48,6 +50,7 @@ export default function AdminPage() {
   const [showCustomerSuggestions, setShowCustomerSuggestions] = useState(false);
   const [showVehicleSuggestions, setShowVehicleSuggestions] = useState(false);
   const [downloadNotice, setDownloadNotice] = useState(false);
+  const [activeBookingRequest, setActiveBookingRequest] = useState<BookingRequestRecord | null>(null);
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
