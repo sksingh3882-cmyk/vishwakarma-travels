@@ -10,19 +10,26 @@ export default function AdminBookingRequestsReport() {
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState("");
   const [requests, setRequests] = useState<BookingRequestRecord[]>([]);
   const [filter, setFilter] = useState<Filter>("all");
+  const [selected, setSelected] = useState<BookingRequestRecord | null>(null);
 
-  const counts = useMemo(() => {
-    return {
-      total: requests.length,
-      pending: requests.filter((r) => r.status === "pending").length,
-      accepted: requests.filter((r) => r.status === "accepted").length,
-      confirmed: requests.filter((r) => r.status === "confirmed").length,
-      cancelled: requests.filter((r) => r.status === "cancelled").length,
-    };
-  }, [requests]);
+  const headers = useMemo(() => ({
+    apikey: supabaseKey,
+    Authorization: `Bearer ${supabaseKey}`,
+    "Content-Type": "application/json",
+    Prefer: "return=representation",
+  }), [supabaseKey]);
+
+  const counts = useMemo(() => ({
+    total: requests.length,
+    pending: requests.filter((r) => r.status === "pending").length,
+    accepted: requests.filter((r) => r.status === "accepted").length,
+    confirmed: requests.filter((r) => r.status === "confirmed").length,
+    cancelled: requests.filter((r) => r.status === "cancelled").length,
+  }), [requests]);
 
   const visible = useMemo(() => {
     if (filter === "all") return requests;
@@ -40,12 +47,7 @@ export default function AdminBookingRequestsReport() {
     setError("");
     try {
       const res = await fetch(`${supabaseUrl}/rest/v1/booking_requests?select=*&order=created_at.desc&limit=100`, {
-        headers: {
-          apikey: supabaseKey,
-          Authorization: `Bearer ${supabaseKey}`,
-          "Content-Type": "application/json",
-          Prefer: "return=minimal",
-        },
+        headers: { ...headers, Prefer: "return=minimal" },
       });
       if (!res.ok) throw new Error("Unable to load booking requests.");
       const rows = await res.json();
@@ -55,6 +57,50 @@ export default function AdminBookingRequestsReport() {
       setRequests([]);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function updateRequestStatus(status: BookingRequestStatus) {
+    if (!selected?.id) return;
+    setActionLoading(true);
+    setError("");
+    try {
+      const payload: Record<string, string> = { status };
+      if (status === "accepted") payload.accepted_at = new Date().toISOString();
+      const res = await fetch(`${supabaseUrl}/rest/v1/booking_requests?id=eq.${selected.id}`, {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Request update failed.");
+      const rows = await res.json();
+      const updated = fromDb(rows?.[0] || rows);
+      setRequests((prev) => prev.map((item) => item.id === updated.id ? updated : item));
+      setSelected(updated);
+    } catch (err: any) {
+      setError(err?.message || "Request update failed.");
+    } finally {
+      setActionLoading(false);
+    }
+  }
+
+  async function deleteSelectedRequest() {
+    if (!selected?.id) return;
+    if (!window.confirm("Delete this booking request permanently?")) return;
+    setActionLoading(true);
+    setError("");
+    try {
+      const res = await fetch(`${supabaseUrl}/rest/v1/booking_requests?id=eq.${selected.id}`, {
+        method: "DELETE",
+        headers: { ...headers, Prefer: "return=minimal" },
+      });
+      if (!res.ok) throw new Error("Request delete failed.");
+      setRequests((prev) => prev.filter((item) => item.id !== selected.id));
+      setSelected(null);
+    } catch (err: any) {
+      setError(err?.message || "Request delete failed.");
+    } finally {
+      setActionLoading(false);
     }
   }
 
@@ -71,7 +117,7 @@ export default function AdminBookingRequestsReport() {
             <div style={head}>
               <div>
                 <h2 style={title}>Booking Requests Report</h2>
-                <p style={sub}>Pending, accepted, confirmed and cancelled requests</p>
+                <p style={sub}>Tap any request to accept, reject or delete.</p>
               </div>
               <button type="button" style={closeBtn} onClick={() => setOpen(false)}>×</button>
             </div>
@@ -91,7 +137,7 @@ export default function AdminBookingRequestsReport() {
             {!loading && !error && visible.length > 0 && (
               <div style={list}>
                 {visible.map((request) => (
-                  <div key={request.id} style={item}>
+                  <button key={request.id} type="button" style={item} onClick={() => setSelected(request)}>
                     <div style={itemTop}>
                       <b>{request.customerName || "Customer"}</b>
                       <span style={badge(request.status)}>{statusText(request.status)}</span>
@@ -109,11 +155,34 @@ export default function AdminBookingRequestsReport() {
                         <span>{request.driverName || "Driver"} • {request.driverMobile || "Mobile"}</span>
                       </div>
                     ) : null}
-                  </div>
+                  </button>
                 ))}
               </div>
             )}
           </div>
+
+          {selected && (
+            <div style={actionOverlay} onClick={() => setSelected(null)}>
+              <div style={actionCard} onClick={(e) => e.stopPropagation()}>
+                <div style={handle} />
+                <h2 style={actionTitle}>{selected.customerName || "Customer"}</h2>
+                <p style={actionRoute}>{selected.pickup || "Pickup"} → {selected.drop || "Drop"}</p>
+                <div style={actionInfo}>
+                  <span>Mobile: {selected.customerPhone || "-"}</span>
+                  <span>Date: {formatDate(selected.journeyDate)}</span>
+                  <span>Time: {selected.journeyTime || "-"}</span>
+                  <span>Status: {statusText(selected.status)}</span>
+                </div>
+
+                <div style={actionGrid}>
+                  <button type="button" style={acceptBtn} disabled={actionLoading} onClick={() => updateRequestStatus("accepted")}>Accept / Re-Accept</button>
+                  <button type="button" style={rejectBtn} disabled={actionLoading} onClick={() => updateRequestStatus("cancelled")}>Reject / Cancel</button>
+                  <button type="button" style={deleteBtn} disabled={actionLoading} onClick={deleteSelectedRequest}>Delete</button>
+                  <button type="button" style={closeActionBtn} disabled={actionLoading} onClick={() => setSelected(null)}>Close</button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </>
@@ -149,7 +218,7 @@ function statBtn(active: boolean) {
 const message = { margin: "18px 0", color: "#64748b", textAlign: "center", fontSize: 14 } as const;
 const errorText = { margin: "18px 0", color: "#b91c1c", textAlign: "center", fontSize: 14, fontWeight: 800 } as const;
 const list = { display: "grid", gap: 10, marginTop: 14 } as const;
-const item = { border: "1px solid #e2e8f0", borderRadius: 16, background: "#f8fafc", padding: 12 } as const;
+const item = { width: "100%", textAlign: "left", border: "1px solid #e2e8f0", borderRadius: 16, background: "#f8fafc", padding: 12, display: "block" } as const;
 const itemTop = { display: "flex", justifyContent: "space-between", gap: 10, alignItems: "center", color: "#0f172a", fontSize: 14 } as const;
 const route = { margin: "8px 0", color: "#0b2d6b", fontWeight: 900, fontSize: 14, lineHeight: 1.3 } as const;
 const smallGrid = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, color: "#475569", fontSize: 12, fontWeight: 700 } as const;
@@ -163,3 +232,13 @@ function badge(status: BookingRequestStatus) {
   };
   return { borderRadius: 999, background: map[status] || "#64748b", color: "#fff", padding: "5px 9px", fontSize: 11, fontWeight: 900, whiteSpace: "nowrap" } as const;
 }
+const actionOverlay = { position: "fixed", inset: 0, zIndex: 10001, background: "rgba(15,23,42,.35)", display: "flex", alignItems: "flex-end", justifyContent: "center", padding: 12 } as const;
+const actionCard = { width: "100%", maxWidth: 460, background: "#fff", borderRadius: "22px 22px 16px 16px", padding: 16, boxShadow: "0 28px 80px rgba(0,0,0,.35)", fontFamily: "Arial, sans-serif" } as const;
+const actionTitle = { margin: "0 0 6px", color: "#0f172a", fontSize: 20 } as const;
+const actionRoute = { margin: "0 0 10px", color: "#0b2d6b", fontWeight: 900, fontSize: 14, lineHeight: 1.35 } as const;
+const actionInfo = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, color: "#475569", fontSize: 13, fontWeight: 700, marginBottom: 14 } as const;
+const actionGrid = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 } as const;
+const acceptBtn = { border: 0, borderRadius: 14, minHeight: 44, background: "#16a34a", color: "#fff", fontWeight: 900, fontSize: 13 } as const;
+const rejectBtn = { border: 0, borderRadius: 14, minHeight: 44, background: "#f97316", color: "#fff", fontWeight: 900, fontSize: 13 } as const;
+const deleteBtn = { border: 0, borderRadius: 14, minHeight: 44, background: "#dc2626", color: "#fff", fontWeight: 900, fontSize: 13 } as const;
+const closeActionBtn = { border: "1px solid #cbd5e1", borderRadius: 14, minHeight: 44, background: "#fff", color: "#0f172a", fontWeight: 900, fontSize: 13 } as const;
