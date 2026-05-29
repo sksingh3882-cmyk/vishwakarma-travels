@@ -232,8 +232,8 @@ function badge(status: BookingRequestStatus) {
   };
   return { borderRadius: 999, background: map[status] || "#64748b", color: "#fff", padding: "5px 9px", fontSize: 11, fontWeight: 900, whiteSpace: "nowrap" } as const;
 }
-const actionOverlay = { position: "fixed", inset: 0, zIndex: 10001, background: "rgba(15,23,42,.35)", display: "flex", alignItems: "flex-end", justifyContent: "center", padding: 12 } as const;
-const actionCard = { width: "100%", maxWidth: 460, background: "#fff", borderRadius: "22px 22px 16px 16px", padding: 16, boxShadow: "0 28px 80px rgba(0,0,0,.35)", fontFamily: "Arial, sans-serif" } as const;
+const actionOverlay = { position: "fixed", inset: 0, zIndex: 10001, background: "rgba(15,23,42,.35)", display: "flex", alignItems: "center", justifyContent: "center", padding: "12px 12px 110px" } as const;
+const actionCard = { width: "100%", maxWidth: 460, maxHeight: "calc(100vh - 160px)", overflowY: "auto", background: "#fff", borderRadius: 22, padding: 16, boxShadow: "0 28px 80px rgba(0,0,0,.35)", fontFamily: "Arial, sans-serif" } as const;
 const actionTitle = { margin: "0 0 6px", color: "#0f172a", fontSize: 20 } as const;
 const actionRoute = { margin: "0 0 10px", color: "#0b2d6b", fontWeight: 900, fontSize: 14, lineHeight: 1.35 } as const;
 const actionInfo = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, color: "#475569", fontSize: 13, fontWeight: 700, marginBottom: 14 } as const;
