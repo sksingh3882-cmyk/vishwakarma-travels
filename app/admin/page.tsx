@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, type CSSProperties, type FormEvent } from "react";
 import AdminIncomingBookingRequests from "@/components/booking-request/AdminIncomingBookingRequests";
 import { confirmBookingRequestAfterDownload, type BookingRequestRecord } from "@/lib/bookingRequestService";
+import AdminBookingRequestsReport from "@/components/booking-request/AdminBookingRequestsReport";
 
 type Booking = Record<string, any>;
 type Customer = Record<string, any>;
