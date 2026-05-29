@@ -31,20 +31,27 @@ useEffect(() => {
   : [{ href: "/admin", label: "Admin Login" }];
 
   return (
-    <div style={{
-  width: 34,
-  height: 34,
-  border: "none",
-  background: "transparent",
-  color: "#111",
-  fontSize: 28,
-  fontWeight: 900,
-  boxShadow: "none",
-  cursor: "pointer",
-}}
-      >
-        ☰
-      </button>
+  <div style={{ position: "fixed", top: 14, right: 14, zIndex: 9999 }}>
+
+    <button
+      type="button"
+      aria-label="Open menu"
+      onClick={() => setOpen((value) => !value)}
+      style={{
+        width: 34,
+        height: 34,
+        border: "none",
+        background: "transparent",
+        color: "#111",
+        fontSize: 28,
+        fontWeight: 900,
+        boxShadow: "none",
+        cursor: "pointer",
+      }}
+    >
+      ☰
+    </button>
+    
 
       {open && (
         <div
@@ -56,8 +63,8 @@ useEffect(() => {
             border: "none",
             }}
           >
-            Vishwakarma Travels
-          </div>
+            
+        
 
           {links.map((link) => (
             <Link
