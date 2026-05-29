@@ -5,7 +5,11 @@ import { fromDb, type BookingRequestRecord, type BookingRequestStatus } from "@/
 
 type Filter = "all" | BookingRequestStatus;
 
-export default function AdminBookingRequestsReport() {
+type Props = {
+  onAcceptRequest?: (request: BookingRequestRecord) => void;
+};
+
+export default function AdminBookingRequestsReport({ onAcceptRequest }: Props) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
   const [open, setOpen] = useState(false);
@@ -60,7 +64,7 @@ export default function AdminBookingRequestsReport() {
     }
   }
 
-  async function updateRequestStatus(status: BookingRequestStatus) {
+  async function updateRequestStatus(status: BookingRequestStatus, openInForm = false) {
     if (!selected?.id) return;
     setActionLoading(true);
     setError("");
@@ -77,6 +81,12 @@ export default function AdminBookingRequestsReport() {
       const updated = fromDb(rows?.[0] || rows);
       setRequests((prev) => prev.map((item) => item.id === updated.id ? updated : item));
       setSelected(updated);
+
+      if (openInForm && status === "accepted") {
+        onAcceptRequest?.(updated);
+        setSelected(null);
+        setOpen(false);
+      }
     } catch (err: any) {
       setError(err?.message || "Request update failed.");
     } finally {
@@ -175,7 +185,7 @@ export default function AdminBookingRequestsReport() {
                 </div>
 
                 <div style={actionGrid}>
-                  <button type="button" style={acceptBtn} disabled={actionLoading} onClick={() => updateRequestStatus("accepted")}>Accept / Re-Accept</button>
+                  <button type="button" style={acceptBtn} disabled={actionLoading} onClick={() => updateRequestStatus("accepted", true)}>Accept & Open Form</button>
                   <button type="button" style={rejectBtn} disabled={actionLoading} onClick={() => updateRequestStatus("cancelled")}>Reject / Cancel</button>
                   <button type="button" style={deleteBtn} disabled={actionLoading} onClick={deleteSelectedRequest}>Delete</button>
                   <button type="button" style={closeActionBtn} disabled={actionLoading} onClick={() => setSelected(null)}>Close</button>
