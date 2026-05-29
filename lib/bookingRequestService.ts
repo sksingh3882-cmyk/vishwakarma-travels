@@ -94,6 +94,16 @@ export async function createBookingRequest(params: {
   return fromDb(rows?.[0] || rows);
 }
 
+export async function fetchBookingRequestById(params: { supabaseUrl: string; supabaseKey: string; requestId: string }) {
+  const res = await fetch(
+    `${params.supabaseUrl}/rest/v1/booking_requests?select=*&id=eq.${params.requestId}&limit=1`,
+    { headers: headers(params.supabaseKey, "return=minimal") }
+  );
+  if (!res.ok) throw new Error("Booking request status fetch nahi ho paya.");
+  const rows = await res.json();
+  return rows?.[0] ? fromDb(rows[0]) : null;
+}
+
 export async function fetchPendingBookingRequests(params: { supabaseUrl: string; supabaseKey: string }) {
   const res = await fetch(
     `${params.supabaseUrl}/rest/v1/booking_requests?select=*&status=eq.pending&order=created_at.asc`,
@@ -152,8 +162,4 @@ export async function confirmBookingRequestAfterDownload(params: {
   if (!res.ok) throw new Error("Booking request final confirm nahi ho paya.");
   const rows = await res.json();
   return fromDb(rows?.[0] || rows);
-}
-
-export function createBookingRequestsChannelName(requestId?: string) {
-  return requestId ? `booking-request-${requestId}` : "booking-requests-admin";
 }
