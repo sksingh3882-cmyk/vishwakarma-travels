@@ -129,8 +129,29 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 
   window.scrollTo({ top: 0, behavior: "smooth" });
   }
-    function formatTime(t:string){
+    
+    function formatTime(t:any){
+  if(t === undefined || t === null) return "";
 
+  const raw = String(t).trim();
+  if(!raw) return "";
+
+  // Agar already AM/PM hai, duplicate AM/PM clean karo
+  const cleaned = raw
+    .replace(/\s+/g, " ")
+    .replace(/\b(am|pm)\s+\1\b/ig, "$1")
+    .toUpperCase();
+
+  if(/\b(AM|PM)\b/.test(cleaned)){
+    return cleaned;
+  }
+
+  const [h, m = "00"] = cleaned.split(":");
+  const hour = Number(h);
+
+  if(Number.isNaN(hour)) return cleaned;
+
+  return `${hour % 12 || 12}:${String(m).slice(0,2).padStart(2,"0")} ${hour >= 12 ? "PM" : "AM"}`;
     }
    
     function msg(id: string) {
