@@ -47,6 +47,28 @@ function selectLabel(select: HTMLSelectElement, index: number) {
   if (options.includes("One Way Drop Pickup")) return "Select Service";
   return "Select Option " + (index + 1);
 }
+function updateButtonSpan(
+  el: HTMLInputElement | HTMLSelectElement,
+  label: string
+) {
+  const wrap = el.previousElementSibling as HTMLElement | null;
+  const span = wrap?.querySelector(".vt-custom-select-btn span") as HTMLElement | null;
+  if (!span) return;
+  if (span.textContent !== label) span.textContent = label;
+}
+
+function refreshSelectLabel(select: HTMLSelectElement, index: number) {
+  const label = select.options[select.selectedIndex]?.text || selectLabel(select, index);
+  updateButtonSpan(select, label);
+}
+
+function refreshDateLabel(input: HTMLInputElement) {
+  updateButtonSpan(input, "📅 " + formatDateValue(input.value));
+}
+
+function refreshTimeLabel(input: HTMLInputElement) {
+  updateButtonSpan(input, "🕒 " + formatTime(input.value));
+}
 
 
 function addCompactTimeStyle() {
@@ -87,7 +109,12 @@ function addSupabaseSyncButton() {
 }
 
 function enhanceSelect(select: HTMLSelectElement, index: number) {
-  if (select.dataset.customDropdownReady === "yes") { hideNative(select); return; }
+if (select.dataset.customDropdownReady === "yes") {
+  refreshSelectLabel(select, index);
+  hideNative(select);
+  return;
+}
+
   select.dataset.customDropdownReady = "yes";
   const wrap = document.createElement("div");
   const button = document.createElement("button");
@@ -113,7 +140,11 @@ function enhanceSelect(select: HTMLSelectElement, index: number) {
 }
 
 function enhanceDate(input: HTMLInputElement) {
-  if (input.dataset.customPickerReady === "yes") { hideNative(input); return; }
+if (input.dataset.customPickerReady === "yes") {
+  refreshDateLabel(input);
+  hideNative(input);
+  return;
+}
   input.dataset.customPickerReady = "yes";
   let viewMonth = input.value ? new Date(input.value + "T00:00:00") : new Date();
   const wrap = document.createElement("div");
@@ -157,7 +188,12 @@ function enhanceDate(input: HTMLInputElement) {
 }
 
 function enhanceTime(input: HTMLInputElement) {
-  if (input.dataset.customPickerReady === "yes") { hideNative(input); return; }
+if (input.dataset.customPickerReady === "yes") {
+  refreshTimeLabel(input);
+  hideNative(input);
+  return;
+}
+
   input.dataset.customPickerReady = "yes";
   const wrap = document.createElement("div");
   const button = document.createElement("button");
