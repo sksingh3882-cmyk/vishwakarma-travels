@@ -47,42 +47,7 @@ function selectLabel(select: HTMLSelectElement, index: number) {
   if (options.includes("One Way Drop Pickup")) return "Select Service";
   return "Select Option " + (index + 1);
 }
-function syncCustomLabels() {
-  document
-    .querySelectorAll<HTMLSelectElement>(".admin-shell form select[data-custom-dropdown-ready='yes']")
-    .forEach((select, index) => {
-      const wrap = select.previousElementSibling as HTMLElement | null;
-      const button = wrap?.querySelector(".vt-custom-select-btn") as HTMLElement | null;
-      if (!button) return;
 
-      const label = select.options[select.selectedIndex]?.text || selectLabel(select, index);
-      button.innerHTML = "<span>" + label + "</span><b>▼</b>";
-    });
-
-  const dateInput = document.querySelector<HTMLInputElement>(
-    '.admin-shell form input[type="date"][data-custom-picker-ready="yes"]'
-  );
-
-  if (dateInput) {
-    const wrap = dateInput.previousElementSibling as HTMLElement | null;
-    const button = wrap?.querySelector(".vt-custom-select-btn") as HTMLElement | null;
-    if (button) {
-      button.innerHTML = "<span>📅 " + formatDateValue(dateInput.value) + "</span><b>▼</b>";
-    }
-  }
-
-  const timeInput = Array.from(
-    document.querySelectorAll<HTMLInputElement>('.admin-shell form input[data-custom-picker-ready="yes"]')
-  ).find((item) => (item.placeholder || "").toLowerCase().includes("time"));
-
-  if (timeInput) {
-    const wrap = timeInput.previousElementSibling as HTMLElement | null;
-    const button = wrap?.querySelector(".vt-custom-select-btn") as HTMLElement | null;
-    if (button) {
-      button.innerHTML = "<span>🕒 " + formatTime(timeInput.value) + "</span><b>▼</b>";
-    }
-  }
-}
 
 function addCompactTimeStyle() {
   if (document.getElementById("vt-compact-time-style")) return;
@@ -273,8 +238,7 @@ export default function AdminCustomDropdowns() {
       if (dateInput) enhanceDate(dateInput);
       const timeInput = Array.from(document.querySelectorAll<HTMLInputElement>(".admin-shell form input")).find((item) => (item.placeholder || "").toLowerCase().includes("time"));
       if (timeInput) enhanceTime(timeInput);
-      syncCustomLabels();
-    };
+     };
     setup();
     const interval = window.setInterval(setup, 800);
     const observer = new MutationObserver(setup);
