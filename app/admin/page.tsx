@@ -225,6 +225,169 @@ Namaste! Here are your upcoming trip details.
        😊 *Wish You A Very Happy Journey* 
                     🙏🙏🙏`;
     }
+  function driverReportingTime() {
+  const d = formatDate(form.journeyDate);
+  const t = formatTime(form.journeyTime);
+  return `${d} ${t}`.trim() || "-";
+}
+
+function driverDutyMessage() {
+  return `🚨 *UPCOMING DUTY ASSIGNMENT* 🚨
+Hello *${form.driverName || "Driver"}*,
+This is your upcoming duty message from *Vishwakarma Travels*.
+
+👤 *Client Name:* ${form.customerName || "-"}
+📞 *Client Mobile:* ${cleanPhone(form.customerPhone) || "-"}
+📍 *Pickup Location:* ${form.pickup || "-"}
+📍 *Drop Location:* ${form.drop || "-"}
+📅 *Journey Date:* ${formatDate(form.journeyDate) || "-"}
+🕒 *Reporting Time:* ${formatTime(form.journeyTime) || "-"}
+
+🚖 *Vehicle Details*
+🔹 Vehicle No: ${vehicleNo(form.vehicleNumber) || "-"}
+🔹 Model: ${form.vehicleModel || "-"}
+🔹 Type: ${form.vehicleType || "-"}
+
+👨‍✈️ *Driver Details*
+🛂 Driver Name: ${form.driverName || "-"}
+📲 Mobile No: ${cleanPhone(form.driverMobile) || "-"}
+
+⚠️ *Important Instructions*
+✅ Please report on time
+✅ Vehicle must be neat and clean
+🔇 Do not play loud music
+📵 Do not use mobile phone while driving
+🚨 Drive safely and avoid overspeeding
+😊 Maintain good customer behaviour
+
+✨ Thank you for your support ✨
+*Vishwakarma Travels*`;
+}
+
+function downloadDriverDutyCopyFromForm() {
+  const c = document.createElement("canvas");
+  c.width = 1080;
+  c.height = 1920;
+  const x = c.getContext("2d");
+  if (!x) return;
+
+  const rr = (a: number, b: number, w: number, h: number, r: number, stroke = false) => {
+    x.beginPath();
+    x.roundRect(a, b, w, h, r);
+    if (stroke) x.stroke();
+    else x.fill();
+  };
+
+  const wrap = (t: string, xx: number, y: number, w: number, lh: number) => {
+    let line = "";
+    for (const word of String(t || "-").split(" ")) {
+      const test = line + word + " ";
+      if (x.measureText(test).width > w && line) {
+        x.fillText(line.trim(), xx, y);
+        line = word + " ";
+        y += lh;
+      } else {
+        line = test;
+      }
+    }
+    x.fillText(line.trim(), xx, y);
+    return y;
+  };
+
+  const row = (label: string, value: string, y: number) => {
+    x.fillStyle = "#0b2d6b";
+    x.font = "bold 34px 'Times New Roman', Times, serif";
+    x.fillText(label, 75, y);
+    x.fillText(":", 310, y);
+    x.fillStyle = "#111827";
+    x.font = "34px 'Times New Roman', Times, serif";
+    const ly = wrap(value || "-", 370, y, 625, 40);
+    return Math.max(y + 56, ly + 34);
+  };
+
+  const drawDetails = () => {
+    x.fillStyle = "#0b2d6b";
+    x.font = "bold 30px 'Times New Roman', Times, serif";
+    x.textAlign = "center";
+    x.fillText("Driver Duty Assignment", 540, 635);
+
+    x.strokeStyle = "#111111";
+    x.lineWidth = 2;
+    rr(75, 665, 930, 78, 10, true);
+
+    const helloText = `🚨 Hello ${form.driverName || "Driver"}, this is your Upcoming Duty.`;
+    x.fillStyle = "#000000";
+    x.font = "bold 38px 'Times New Roman', Times, serif";
+    x.textAlign = "center";
+    x.fillText(helloText, 540, 716, 850);
+    x.textAlign = "left";
+
+    let y = 792;
+    y = row("Client Name", form.customerName || "-", y);
+    y = row("Client Mobile", cleanPhone(form.customerPhone) || "-", y);
+    y = row("Pickup Location", form.pickup || "-", y);
+    y = row("Drop Location", form.drop || "-", y);
+    y = row("Journey Date", formatDate(form.journeyDate) || "-", y);
+    y = row("Reporting Time", formatTime(form.journeyTime) || "-", y);
+    y = row("Vehicle No.", vehicleNo(form.vehicleNumber) || "-", y + 14);
+    y = row("Model", form.vehicleModel || "-", y);
+    y = row("Type", form.vehicleType || "-", y);
+    y = row("Driver Name", form.driverName || "-", y + 14);
+    y = row("Driver Mobile", cleanPhone(form.driverMobile) || "-", y);
+
+    x.fillStyle = "#ecfdf5";
+    rr(75, y + 62, 930, 315, 26);
+    x.fillStyle = "#087a31";
+    x.font = "bold 36px 'Times New Roman', Times, serif";
+    x.fillText("Important Instructions", 105, y + 112);
+
+    x.fillStyle = "#111";
+    x.font = "30px 'Times New Roman', Times, serif";
+    let yy = y + 162;
+    for (const t of [
+      "Please report on time",
+      "Vehicle must be neat and clean",
+      "Do not play loud music",
+      "Do not use mobile phone while driving",
+      "Drive safely and avoid overspeeding",
+      "Maintain good customer behaviour",
+    ]) {
+      x.fillText("•", 112, yy);
+      x.fillText(t, 150, yy);
+      yy += 38;
+    }
+
+    x.textAlign = "center";
+    x.fillStyle = "#0b2d6b";
+    x.font = "bold 30px 'Times New Roman', Times, serif";
+    x.fillText("✨ Thank you for your support ✨", 540, 1805);
+    x.font = "bold 44px 'Times New Roman', Times, serif";
+    x.fillText("Vishwakarma Travels", 540, 1864);
+
+    const a = document.createElement("a");
+    a.href = c.toDataURL("image/jpeg", 0.95);
+    a.download = `Driver-Duty-${form.driverName || "Vishwakarma"}-${Date.now()}.jpg`;
+    a.click();
+  };
+
+  x.fillStyle = "#f4f7fb";
+  x.fillRect(0, 0, 1080, 1920);
+  x.fillStyle = "#fff";
+  rr(18, 18, 1044, 1884, 28);
+
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.onload = () => {
+    x.drawImage(img, 42, 42, 996, 480);
+    drawDetails();
+  };
+  img.onerror = drawDetails;
+  img.src = "/cars/popup_banner.png";
+}
+
+function openDriverWhatsAppFromForm() {
+  window.location.href = `https://api.whatsapp.com/send?phone=91${cleanPhone(form.driverMobile)}&text=${encodeURIComponent(driverDutyMessage())}`;
+}
   
   function validate() {
     if (!supabaseUrl || !supabaseKey) return alert("Supabase URL/KEY missing hai."), false;
@@ -284,25 +447,8 @@ Namaste! Here are your upcoming trip details.
   try {
     await releaseDriverDetailsToCustomer();
 
-    const allButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("button"));
-
-    const driverWaBtn = allButtons.find(
-      (btn) => (btn.textContent || "").trim().toLowerCase() === "driver wa"
-    );
-
-    const driverPanel = driverWaBtn?.parentElement;
-
-    const driverDownloadBtn = Array.from(
-      driverPanel?.querySelectorAll<HTMLButtonElement>("button") || []
-    ).find((btn) => (btn.textContent || "").trim().toLowerCase() === "download");
-
-    if (!driverDownloadBtn || !driverWaBtn) {
-      alert("Driver top buttons nahi mile. Page refresh karke dobara try karo.");
-      return;
-    }
-
-    driverDownloadBtn.click();
-    driverWaBtn.click();
+    downloadDriverDutyCopyFromForm();
+    openDriverWhatsAppFromForm();
 
     setShowDriverSendPopup(false);
   } finally {
