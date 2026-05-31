@@ -51,10 +51,17 @@ function updateButtonSpan(
   el: HTMLInputElement | HTMLSelectElement,
   label: string
 ) {
-  const wrap = el.previousElementSibling as HTMLElement | null;
+  const customId = el.dataset.customWrapId || "";
+  const wrap =
+    (customId ? document.getElementById(customId) : null) ||
+    (el.previousElementSibling as HTMLElement | null);
+
   const span = wrap?.querySelector(".vt-custom-select-btn span") as HTMLElement | null;
   if (!span) return;
-  if (span.textContent !== label) span.textContent = label;
+
+  if (span.textContent !== label) {
+    span.textContent = label;
+  }
 }
 
 function refreshSelectLabel(select: HTMLSelectElement, index: number) {
@@ -131,6 +138,9 @@ if (select.dataset.customDropdownReady === "yes") {
   const button = document.createElement("button");
   const menu = document.createElement("div");
   wrap.className = "vt-custom-select";
+  const customWrapId = "vt-custom-select-" + Math.random().toString(36).slice(2);
+wrap.id = customWrapId;
+select.dataset.customWrapId = customWrapId;
   button.type = "button";
   button.className = "vt-custom-select-btn";
   menu.className = "vt-custom-select-menu";
@@ -162,6 +172,9 @@ if (input.dataset.customPickerReady === "yes") {
   const button = document.createElement("button");
   const menu = document.createElement("div");
   wrap.className = "vt-picker vt-date-picker";
+  const customWrapId = "vt-date-picker-" + Math.random().toString(36).slice(2);
+wrap.id = customWrapId;
+input.dataset.customWrapId = customWrapId;
   button.type = "button";
   button.className = "vt-custom-select-btn";
   menu.className = "vt-picker-menu vt-cal-menu";
@@ -210,6 +223,9 @@ if (input.dataset.customPickerReady === "yes") {
   const button = document.createElement("button");
   const menu = document.createElement("div");
   wrap.className = "vt-picker vt-time-picker";
+  const customWrapId = "vt-time-picker-" + Math.random().toString(36).slice(2);
+wrap.id = customWrapId;
+input.dataset.customWrapId = customWrapId;
   button.type = "button";
   button.className = "vt-custom-select-btn";
   menu.className = "vt-picker-menu vt-time-menu";
