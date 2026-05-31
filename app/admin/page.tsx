@@ -398,7 +398,7 @@ function downloadBookingCopy() {
     for (const t of [
       "Final Fare may vary Depending on Final Km. Waiting Time . Extra Km and Night Hold",
       "After the booking is Confirmed, Customer will have to make the Advance Payment",
-      "Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances",t
+      "Rs.500 Cancellation Charge will have to be paid on Cancellation of Booking under any Circumtances",
     ]) {
       x.fillText("*", 100, yy);
       yy = wrap(t, 135, yy, 830, 30) + 30;
