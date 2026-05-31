@@ -72,6 +72,8 @@ export default function AdminPage() {
   const [pendingBookingId, setPendingBookingId] = useState("");
   const [confirmMode, setConfirmMode] = useState<"save" | "whatsapp">("save");
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
+  const [showCustomerSendPopup, setShowCustomerSendPopup] = useState(false);
+const [customerSendLoading, setCustomerSendLoading] = useState(false);
   const [deletingBookingId, setDeletingBookingId] = useState("");
   const [showCustomerSuggestions, setShowCustomerSuggestions] = useState(false);
   const [showVehicleSuggestions, setShowVehicleSuggestions] = useState(false);
@@ -237,6 +239,31 @@ Namaste! Here are your upcoming trip details.
   }
   function submit(e: FormEvent<HTMLFormElement>) { e.preventDefault(); if (!validate()) return; setPendingBookingId(`VT-${Date.now()}`); setConfirmMode("save"); setShowConfirmPopup(true); }
   function sendWhatsApp() { if (!validate()) return; setPendingBookingId(lastBookingId || `VT-${Date.now()}`); setConfirmMode("whatsapp"); setShowConfirmPopup(true); }
+  async function runSendToCustomer() {
+  if (!validate()) return;
+
+  const id = lastBookingId || `VT-${Date.now()}`;
+
+  setCustomerSendLoading(true);
+
+  try {
+    downloadBookingCopy(false);
+
+    const ok = await saveBooking(id);
+    if (!ok) {
+      alert("Booking Supabase me save nahi hua.");
+      return;
+    }
+
+    await Promise.all([saveCustomer(), saveVehicle()]);
+    setLastBookingId(id);
+    setShowCustomerSendPopup(false);
+
+    window.location.href = `https://api.whatsapp.com/send?phone=91${cleanPhone(form.customerPhone)}&text=${encodeURIComponent(msg(id))}`;
+  } finally {
+    setCustomerSendLoading(false);
+  }
+  }
 
   async function saveBooking(id: string) {
     if (bookings.some((b) => b.booking_id === id)) return true;
@@ -310,7 +337,7 @@ async function releaseDriverDetailsToCustomer() {
     console.log("Booking request confirm update failed:", err);
   }
 }
-function downloadBookingCopy() {
+function downloadBookingCopy(releaseToCustomer = true) {
   if (!validateDownload()) return;
 
   const c = document.createElement("canvas");
@@ -451,7 +478,7 @@ function downloadBookingCopy() {
 
     setDownloadNotice(true);
     setTimeout(() => setDownloadNotice(false), 3500);
-    releaseDriverDetailsToCustomer();
+    if (releaseToCustomer) releaseDriverDetailsToCustomer();
   };
 
   x.fillStyle = "#f4f7fb";
@@ -510,6 +537,49 @@ function editCustomer(c: Customer){setForm((p)=>({...p,customerName:c.name||"",c
 />
     {showConfirmPopup && <div style={overlay}><div style={modal}><button onClick={() => setShowConfirmPopup(false)} style={close}>x</button><img src="/cars/popup_banner.png" style={banner} alt="Vishwakarma Travels" /><div style={body}><h2 style={title}>Confirm Booking Details</h2><Row l="Customer Name" v={form.customerName} /><Row l="Mobile No." v={form.customerPhone} /><Row l="Pickup" v={form.pickup} /><Row l="Drop" v={form.drop} /><Row l="Date" v={formatDate(form.journeyDate)} /><Row l="Time" v={form.journeyTime} /><Row l="Vehicle No." v={vehicleNo(form.vehicleNumber)} /><Row l="Vehicle Type" v={form.vehicleType} /><Row l="Vehicle Model" v={form.vehicleModel} /><Row l="Driver Name" v={form.driverName} /><Row l="Driver Mobile" v={form.driverMobile} /><Row l="Fare" v={`Rs ${fare}`} /><Row l="Advance" v={`Rs ${advance}`} /><div style={netRow}><b>Net Payable</b><b>Rs {net}</b></div></div><div style={actions}><button onClick={() => setShowConfirmPopup(false)} style={cancelBtn}>Cancel</button><button disabled={loading} onClick={confirm} style={greenBtn}>{loading ? "Please wait..." : "Confirm & Submit"}</button></div></div></div>}
 
+    {showCustomerSendPopup && (
+  <div style={overlay}>
+    <div style={modal}>
+      <button onClick={() => setShowCustomerSendPopup(false)} style={close}>x</button>
+      <img src="/cars/popup_banner.png" style={banner} alt="Vishwakarma Travels" />
+
+      <div style={body}>
+        <h2 style={title}>Send Booking to Customer?</h2>
+
+        <Row l="Customer Name" v={form.customerName} />
+        <Row l="Mobile No." v={form.customerPhone} />
+        <Row l="Pickup" v={form.pickup} />
+        <Row l="Drop" v={form.drop} />
+        <Row l="Date" v={formatDate(form.journeyDate)} />
+        <Row l="Time" v={formatTime(form.journeyTime)} />
+        <Row l="Service" v={form.service} />
+        <Row l="Vehicle No." v={vehicleNo(form.vehicleNumber)} />
+        <Row l="Vehicle Type" v={form.vehicleType} />
+        <Row l="Vehicle Model" v={form.vehicleModel} />
+        <Row l="Driver Name" v={form.driverName} />
+        <Row l="Driver Mobile" v={form.driverMobile} />
+        <Row l="Fare" v={`Rs ${fare}`} />
+        <Row l="Advance" v={`Rs ${advance}`} />
+
+        <div style={netRow}>
+          <b>Net Payable</b>
+          <b>Rs {net}</b>
+        </div>
+
+        <div style={masterInfoBox}>
+          Confirm karne par Customer Booking Copy download hogi, final booking Supabase me save hogi, aur Customer WhatsApp open hoga.
+        </div>
+      </div>
+
+      <div style={actions}>
+        <button onClick={() => setShowCustomerSendPopup(false)} style={cancelBtn}>Cancel</button>
+        <button disabled={customerSendLoading} onClick={runSendToCustomer} style={greenBtn}>
+          {customerSendLoading ? "Please wait..." : "Confirm Send to Customer"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     <div style={{ maxWidth: 1200, margin: "0 auto" }}><header style={header}><h1>Vishwakarma Travels Admin Dashboard</h1><p>Booking, Bill, WhatsApp aur Database Management</p><button onClick={logout} style={whiteBtn}>Logout</button></header>
     <section style={stats}><Stat title="Customers" value={customers.length} onClick={() => setActiveView("customers")} /><Stat title="Vehicles" value={vehicles.length} onClick={() => setActiveView("vehicles")} /><Stat title="Bookings" value={bookings.length} onClick={() => setActiveView("bookings")} /></section>
     {activeView && <section style={panel}><button onClick={() => setActiveView("")} style={whiteBtn}>Close</button>{activeView === "customers" && customers.map((c, i) => <div key={i} style={{display:"grid",gridTemplateColumns:"1fr auto auto",gap:8,alignItems:"center",padding:"10px 0",borderBottom:"1px solid #e5e7eb"}}><p style={{margin:0}}><b>{c.name || "-"}</b> - {c.mobile || c.phone || "-"} - {c.address || "-"}</p><button onClick={()=>editCustomer(c)} style={editBtn}>Edit</button><button onClick={()=>deleteCustomer(c)} style={delBtn}>Delete</button></div>)}{activeView === "vehicles" && vehicles.map((v, i) => <p key={i}><b>{v.vehicle_number || v.vehicleNumber || "-"}</b> - {v.vehicle_model || v.vehicleModel || "-"} - {v.driver_name || v.driverName || "-"}</p>)}{activeView === "bookings" && bookings.map((b, i) => <p key={i}><b>{b.booking_id || "-"}</b> - {b.customer_name || "-"} - Rs {b.fare || 0}</p>)}</section>}
@@ -519,7 +589,7 @@ function editCustomer(c: Customer){setForm((p)=>({...p,customerName:c.name||"",c
 />
 </div>
 <div style={masterButtonRow}>
-  <button type="button" onClick={() => alert("Send to Customer logic next patch me add hoga.")} style={sendCustomerBtn}>
+  <button type="button" onClick={() => setShowCustomerSendPopup(true)} style={sendCustomerBtn}>
     Send to Customer
   </button>
   <button type="button" onClick={() => alert("Send to Driver logic next patch me add hoga.")} style={sendDriverBtn}>
@@ -560,6 +630,7 @@ const smallBaseBtn: CSSProperties = { minWidth: 0, padding: "11px 6px", color: "
 const smallDownloadBtn: CSSProperties = { ...smallBaseBtn, background: "#f97316" };
 const smallSaveBtn: CSSProperties = { ...smallBaseBtn, background: "#15803d" };
 const smallWaBtn: CSSProperties = { ...smallBaseBtn, background: "#25D366" };
+const masterInfoBox: CSSProperties = { marginTop: 10, padding: "10px 12px", borderRadius: 12, background: "#eff6ff", color: "#0b2d6b", fontSize: 12, fontWeight: 800, lineHeight: 1.35 };
 const downloadOk: CSSProperties = { marginTop: 12, background: "#dcfce7", color: "#166534", padding: "12px 14px", borderRadius: 14, fontWeight: 800 };
 const th: CSSProperties = { padding: 10, textAlign: "left" };
 const td: CSSProperties = { padding: 10, borderBottom: "1px solid #e2e8f0" };
