@@ -171,12 +171,27 @@ export default function DriverDutyActions({ data, compact = false, onSync }: Pro
       }
 
       x.textAlign = "center";
-      x.fillStyle = "#0b2d6b";
-      x.font = "bold 30px 'Times New Roman', Times, serif";
-      x.fillText("✨ Thank you for your support ✨", 540, 1805);
-      x.font = "bold 44px 'Times New Roman', Times, serif";
-      x.fillText("Vishwakarma Travels", 540, 1864);
-      x.textAlign = "left";
+x.fillStyle = "#0b2d6b";
+x.font = "bold 30px 'Times New Roman', Times, serif";
+x.fillText("✨ Thank you for your support ✨", 540, 1805);
+
+// blue footer bar
+x.fillStyle = "#0b2d6b";
+rr(30, 1840, 1020, 58, 10);
+
+// left footer text
+x.textAlign = "left";
+x.fillStyle = "#ffffff";
+x.font = "28px Arial, sans-serif";
+x.fillText("🌐 http://vishwakarma-travel-nine.vercel.app", 70, 1878);
+
+// right footer text
+x.textAlign = "right";
+x.fillStyle = "#ffffff";
+x.font = "italic 34px 'Times New Roman', Times, serif";
+x.fillText("Thank You! Have a Safe Journey", 1020, 1878);
+
+x.textAlign = "left";
 
       const a = document.createElement("a");
       a.href = c.toDataURL("image/jpeg", 0.95);
