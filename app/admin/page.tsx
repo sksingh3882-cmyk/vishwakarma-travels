@@ -30,6 +30,31 @@ function cleanPhone(v: string) {
   return p.slice(-10);
 }
 function vehicleNo(v: string) { return String(v || "").replace(/[^a-zA-Z0-9]/g, "").toUpperCase(); }
+function vehicleTypeFromModel(model: any, fallback: any = "") {
+  const m = String(model || "").toLowerCase();
+
+  if (
+    m.includes("ertiga") ||
+    m.includes("innova") ||
+    m.includes("crysta")
+  ) {
+    return "SUV";
+  }
+
+  if (
+    m.includes("traveller") ||
+    m.includes("force") ||
+    m.includes("bus")
+  ) {
+    return "Mini Passenger Bus";
+  }
+
+  if (m.includes("desire") || m.includes("dzire") || m.includes("sedan")) {
+    return "Sedan";
+  }
+
+  return String(fallback || "Sedan");
+}
 function formatDate(v: string) { return v && v.includes("-") ? v.split("-").reverse().join("-") : v || ""; }
 function safe(v: string | number) { return String(v || "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"); }
 
@@ -125,6 +150,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     journeyDate: request.journeyDate || p.journeyDate,
     journeyTime: request.journeyTime || p.journeyTime,
     vehicleModel: request.requestedVehicle || p.vehicleModel,
+vehicleType: vehicleTypeFromModel(request.requestedVehicle || p.vehicleModel, p.vehicleType),
   }));
 
   window.scrollTo({ top: 0, behavior: "smooth" });
