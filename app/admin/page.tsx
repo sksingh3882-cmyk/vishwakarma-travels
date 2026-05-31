@@ -517,7 +517,16 @@ function editCustomer(c: Customer){setForm((p)=>({...p,customerName:c.name||"",c
 <AdminBookingRequestsReport
   onAcceptRequest={(request) => acceptIncomingBookingRequest(request)}
 />
-</div><div style={buttonRow}><button type="button" onClick={downloadBookingCopy} style={smallDownloadBtn}>Download</button><button disabled={loading} style={smallSaveBtn}>{loading ? "Saving..." : "Save + PDF"}</button><button type="button" onClick={sendWhatsApp} style={smallWaBtn}>WhatsApp</button></div>{downloadNotice && <div style={downloadOk}>✓ Booking copy downloaded successfully!</div>}</form>
+</div>
+<div style={masterButtonRow}>
+  <button type="button" onClick={() => alert("Send to Customer logic next patch me add hoga.")} style={sendCustomerBtn}>
+    Send to Customer
+  </button>
+  <button type="button" onClick={() => alert("Send to Driver logic next patch me add hoga.")} style={sendDriverBtn}>
+    Send to Driver
+  </button>
+</div>
+<div style={buttonRow}><button type="button" onClick={downloadBookingCopy} style={smallDownloadBtn}>Download</button><button disabled={loading} style={smallSaveBtn}>{loading ? "Saving..." : "Save + PDF"}</button><button type="button" onClick={sendWhatsApp} style={smallWaBtn}>WhatsApp</button></div>{downloadNotice && <div style={downloadOk}>✓ Booking copy downloaded successfully!</div>}</form>
     <section style={panel}><h2>Recent Bookings</h2><input placeholder="Search booking by name, phone, pickup..." value={searchBooking} onChange={(e) => setSearchBooking(e.target.value)} style={input} /><div style={{ overflowX: "auto", marginTop: 12 }}><table style={{ width: "100%", minWidth: 900, borderCollapse: "collapse" }}><thead><tr style={{ background: "#0b2d6b", color: "white" }}><th style={th}>Booking ID</th><th style={th}>Customer</th><th style={th}>Phone</th><th style={th}>Route</th><th style={th}>Date</th><th style={th}>Fare</th><th style={th}>Action</th></tr></thead><tbody>{filtered.map((b, i) => <tr key={b.booking_id || i}><td style={td}>{b.booking_id || "-"}</td><td style={td}>{b.customer_name || "-"}</td><td style={td}>{b.customer_phone || "-"}</td><td style={td}>{b.pickup || "-"} to {b.drop_location || "-"}</td><td style={td}>{b.journey_date || "-"}</td><td style={td}>Rs {b.fare || 0}</td><td style={td}><button onClick={() => edit(b)} style={editBtn}>Edit</button><button onClick={() => pdf(b.booking_id || "")} style={pdfBtn}>PDF</button><button disabled={deletingBookingId === b.booking_id} onClick={() => removeBooking(b.booking_id)} style={delBtn}>{deletingBookingId === b.booking_id ? "Deleting..." : "Delete"}</button></td></tr>)}{bookings.length === 0 && <tr><td colSpan={7} style={{ padding: 20, textAlign: "center" }}>No booking found</td></tr>}</tbody></table></div></section></div>
   </main>;
 }
@@ -543,6 +552,10 @@ const blueBtn: CSSProperties = { width: "100%", padding: 13, borderRadius: 12, b
 const whiteBtn: CSSProperties = { padding: "10px 16px", borderRadius: 10, border: 0, fontWeight: "bold" };
 const chip: CSSProperties = { padding: "8px 10px", borderRadius: 10, border: "1px solid #0b2d6b", background: "white", color: "#0b2d6b", fontWeight: "bold" };
 const buttonRow: CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginTop: 14 };
+const masterButtonRow: CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 14 };
+const masterBaseBtn: CSSProperties = { minWidth: 0, padding: "13px 8px", color: "white", border: 0, borderRadius: 14, fontWeight: 950, fontSize: 14, lineHeight: 1.15 };
+const sendCustomerBtn: CSSProperties = { ...masterBaseBtn, background: "#16a34a" };
+const sendDriverBtn: CSSProperties = { ...masterBaseBtn, background: "#0b2d6b" };
 const smallBaseBtn: CSSProperties = { minWidth: 0, padding: "11px 6px", color: "white", border: 0, borderRadius: 12, fontWeight: 900, fontSize: 13, lineHeight: 1.1 };
 const smallDownloadBtn: CSSProperties = { ...smallBaseBtn, background: "#f97316" };
 const smallSaveBtn: CSSProperties = { ...smallBaseBtn, background: "#15803d" };
