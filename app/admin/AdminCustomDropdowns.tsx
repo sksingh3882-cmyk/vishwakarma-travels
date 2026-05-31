@@ -47,6 +47,47 @@ function selectLabel(select: HTMLSelectElement, index: number) {
   if (options.includes("One Way Drop Pickup")) return "Select Service";
   return "Select Option " + (index + 1);
 }
+function updateButtonSpan(
+  el: HTMLInputElement | HTMLSelectElement,
+  label: string
+) {
+  const customId = el.dataset.customWrapId || "";
+  const wrap =
+    (customId ? document.getElementById(customId) : null) ||
+    (el.previousElementSibling as HTMLElement | null);
+
+  const span = wrap?.querySelector(".vt-custom-select-btn span") as HTMLElement | null;
+  if (!span) return;
+
+  if (span.textContent !== label) {
+    span.textContent = label;
+  }
+}
+
+function refreshSelectLabel(select: HTMLSelectElement, index: number) {
+  const label = select.options[select.selectedIndex]?.text || selectLabel(select, index);
+  updateButtonSpan(select, label);
+}
+
+function refreshDateLabel(input: HTMLInputElement) {
+  const label = "📅 " + formatDateValue(input.value);
+
+  updateButtonSpan(input, label);
+
+  const wrap = input.previousElementSibling as HTMLElement | null;
+  const button = wrap?.querySelector(".vt-custom-select-btn") as HTMLElement | null;
+  if (!button) return;
+
+  const span = button.querySelector("span") as HTMLElement | null;
+  if (span && span.textContent !== label) {
+    span.textContent = label;
+  }
+}
+
+function refreshTimeLabel(input: HTMLInputElement) {
+  updateButtonSpan(input, "🕒 " + formatTime(input.value));
+}
+
 
 function addCompactTimeStyle() {
   if (document.getElementById("vt-compact-time-style")) return;
@@ -86,12 +127,20 @@ function addSupabaseSyncButton() {
 }
 
 function enhanceSelect(select: HTMLSelectElement, index: number) {
-  if (select.dataset.customDropdownReady === "yes") { hideNative(select); return; }
+if (select.dataset.customDropdownReady === "yes") {
+  refreshSelectLabel(select, index);
+  hideNative(select);
+  return;
+}
+
   select.dataset.customDropdownReady = "yes";
   const wrap = document.createElement("div");
   const button = document.createElement("button");
   const menu = document.createElement("div");
   wrap.className = "vt-custom-select";
+  const customWrapId = "vt-custom-select-" + Math.random().toString(36).slice(2);
+wrap.id = customWrapId;
+select.dataset.customWrapId = customWrapId;
   button.type = "button";
   button.className = "vt-custom-select-btn";
   menu.className = "vt-custom-select-menu";
@@ -112,13 +161,20 @@ function enhanceSelect(select: HTMLSelectElement, index: number) {
 }
 
 function enhanceDate(input: HTMLInputElement) {
-  if (input.dataset.customPickerReady === "yes") { hideNative(input); return; }
+if (input.dataset.customPickerReady === "yes") {
+  refreshDateLabel(input);
+  hideNative(input);
+  return;
+}
   input.dataset.customPickerReady = "yes";
   let viewMonth = input.value ? new Date(input.value + "T00:00:00") : new Date();
   const wrap = document.createElement("div");
   const button = document.createElement("button");
   const menu = document.createElement("div");
   wrap.className = "vt-picker vt-date-picker";
+  const customWrapId = "vt-date-picker-" + Math.random().toString(36).slice(2);
+wrap.id = customWrapId;
+input.dataset.customWrapId = customWrapId;
   button.type = "button";
   button.className = "vt-custom-select-btn";
   menu.className = "vt-picker-menu vt-cal-menu";
@@ -156,12 +212,20 @@ function enhanceDate(input: HTMLInputElement) {
 }
 
 function enhanceTime(input: HTMLInputElement) {
-  if (input.dataset.customPickerReady === "yes") { hideNative(input); return; }
+if (input.dataset.customPickerReady === "yes") {
+  refreshTimeLabel(input);
+  hideNative(input);
+  return;
+}
+
   input.dataset.customPickerReady = "yes";
   const wrap = document.createElement("div");
   const button = document.createElement("button");
   const menu = document.createElement("div");
   wrap.className = "vt-picker vt-time-picker";
+  const customWrapId = "vt-time-picker-" + Math.random().toString(36).slice(2);
+wrap.id = customWrapId;
+input.dataset.customWrapId = customWrapId;
   button.type = "button";
   button.className = "vt-custom-select-btn";
   menu.className = "vt-picker-menu vt-time-menu";
@@ -237,7 +301,7 @@ export default function AdminCustomDropdowns() {
       if (dateInput) enhanceDate(dateInput);
       const timeInput = Array.from(document.querySelectorAll<HTMLInputElement>(".admin-shell form input")).find((item) => (item.placeholder || "").toLowerCase().includes("time"));
       if (timeInput) enhanceTime(timeInput);
-    };
+     };
     setup();
     const interval = window.setInterval(setup, 800);
     const observer = new MutationObserver(setup);

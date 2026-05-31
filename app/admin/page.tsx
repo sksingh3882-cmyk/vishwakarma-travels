@@ -30,6 +30,31 @@ function cleanPhone(v: string) {
   return p.slice(-10);
 }
 function vehicleNo(v: string) { return String(v || "").replace(/[^a-zA-Z0-9]/g, "").toUpperCase(); }
+function vehicleTypeFromModel(model: any, fallback: any = "") {
+  const m = String(model || "").toLowerCase();
+
+  if (
+    m.includes("ertiga") ||
+    m.includes("innova") ||
+    m.includes("crysta")
+  ) {
+    return "SUV";
+  }
+
+  if (
+    m.includes("traveller") ||
+    m.includes("force") ||
+    m.includes("bus")
+  ) {
+    return "Mini Passenger Bus";
+  }
+
+  if (m.includes("desire") || m.includes("dzire") || m.includes("sedan")) {
+    return "Sedan";
+  }
+
+  return String(fallback || "Sedan");
+}
 function formatDate(v: string) { return v && v.includes("-") ? v.split("-").reverse().join("-") : v || ""; }
 function safe(v: string | number) { return String(v || "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"); }
 
@@ -47,6 +72,10 @@ export default function AdminPage() {
   const [pendingBookingId, setPendingBookingId] = useState("");
   const [confirmMode, setConfirmMode] = useState<"save" | "whatsapp">("save");
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
+  const [showCustomerSendPopup, setShowCustomerSendPopup] = useState(false);
+const [customerSendLoading, setCustomerSendLoading] = useState(false);
+  const [showDriverSendPopup, setShowDriverSendPopup] = useState(false);
+const [driverSendLoading, setDriverSendLoading] = useState(false);
   const [deletingBookingId, setDeletingBookingId] = useState("");
   const [showCustomerSuggestions, setShowCustomerSuggestions] = useState(false);
   const [showVehicleSuggestions, setShowVehicleSuggestions] = useState(false);
@@ -125,6 +154,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     journeyDate: request.journeyDate || p.journeyDate,
     journeyTime: request.journeyTime || p.journeyTime,
     vehicleModel: request.requestedVehicle || p.vehicleModel,
+vehicleType: vehicleTypeFromModel(request.requestedVehicle || p.vehicleModel, p.vehicleType),
   }));
 
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -195,6 +225,169 @@ Namaste! Here are your upcoming trip details.
        😊 *Wish You A Very Happy Journey* 
                     🙏🙏🙏`;
     }
+  function driverReportingTime() {
+  const d = formatDate(form.journeyDate);
+  const t = formatTime(form.journeyTime);
+  return `${d} ${t}`.trim() || "-";
+}
+
+function driverDutyMessage() {
+  return `🚨 *UPCOMING DUTY ASSIGNMENT* 🚨
+Hello *${form.driverName || "Driver"}*,
+This is your upcoming duty message from *Vishwakarma Travels*.
+
+👤 *Client Name:* ${form.customerName || "-"}
+📞 *Client Mobile:* ${cleanPhone(form.customerPhone) || "-"}
+📍 *Pickup Location:* ${form.pickup || "-"}
+📍 *Drop Location:* ${form.drop || "-"}
+📅 *Journey Date:* ${formatDate(form.journeyDate) || "-"}
+🕒 *Reporting Time:* ${formatTime(form.journeyTime) || "-"}
+
+🚖 *Vehicle Details*
+🔹 Vehicle No: ${vehicleNo(form.vehicleNumber) || "-"}
+🔹 Model: ${form.vehicleModel || "-"}
+🔹 Type: ${form.vehicleType || "-"}
+
+👨‍✈️ *Driver Details*
+🛂 Driver Name: ${form.driverName || "-"}
+📲 Mobile No: ${cleanPhone(form.driverMobile) || "-"}
+
+⚠️ *Important Instructions*
+✅ Please report on time
+✅ Vehicle must be neat and clean
+🔇 Do not play loud music
+📵 Do not use mobile phone while driving
+🚨 Drive safely and avoid overspeeding
+😊 Maintain good customer behaviour
+
+✨ Thank you for your support ✨
+*Vishwakarma Travels*`;
+}
+
+function downloadDriverDutyCopyFromForm() {
+  const c = document.createElement("canvas");
+  c.width = 1080;
+  c.height = 1920;
+  const x = c.getContext("2d");
+  if (!x) return;
+
+  const rr = (a: number, b: number, w: number, h: number, r: number, stroke = false) => {
+    x.beginPath();
+    x.roundRect(a, b, w, h, r);
+    if (stroke) x.stroke();
+    else x.fill();
+  };
+
+  const wrap = (t: string, xx: number, y: number, w: number, lh: number) => {
+    let line = "";
+    for (const word of String(t || "-").split(" ")) {
+      const test = line + word + " ";
+      if (x.measureText(test).width > w && line) {
+        x.fillText(line.trim(), xx, y);
+        line = word + " ";
+        y += lh;
+      } else {
+        line = test;
+      }
+    }
+    x.fillText(line.trim(), xx, y);
+    return y;
+  };
+
+  const row = (label: string, value: string, y: number) => {
+    x.fillStyle = "#0b2d6b";
+    x.font = "bold 34px 'Times New Roman', Times, serif";
+    x.fillText(label, 75, y);
+    x.fillText(":", 310, y);
+    x.fillStyle = "#111827";
+    x.font = "34px 'Times New Roman', Times, serif";
+    const ly = wrap(value || "-", 370, y, 625, 40);
+    return Math.max(y + 56, ly + 34);
+  };
+
+  const drawDetails = () => {
+    x.fillStyle = "#0b2d6b";
+    x.font = "bold 30px 'Times New Roman', Times, serif";
+    x.textAlign = "center";
+    x.fillText("Driver Duty Assignment", 540, 635);
+
+    x.strokeStyle = "#111111";
+    x.lineWidth = 2;
+    rr(75, 665, 930, 78, 10, true);
+
+    const helloText = `🚨 Hello ${form.driverName || "Driver"}, this is your Upcoming Duty.`;
+    x.fillStyle = "#000000";
+    x.font = "bold 38px 'Times New Roman', Times, serif";
+    x.textAlign = "center";
+    x.fillText(helloText, 540, 716, 850);
+    x.textAlign = "left";
+
+    let y = 792;
+    y = row("Client Name", form.customerName || "-", y);
+    y = row("Client Mobile", cleanPhone(form.customerPhone) || "-", y);
+    y = row("Pickup Location", form.pickup || "-", y);
+    y = row("Drop Location", form.drop || "-", y);
+    y = row("Journey Date", formatDate(form.journeyDate) || "-", y);
+    y = row("Reporting Time", formatTime(form.journeyTime) || "-", y);
+    y = row("Vehicle No.", vehicleNo(form.vehicleNumber) || "-", y + 14);
+    y = row("Model", form.vehicleModel || "-", y);
+    y = row("Type", form.vehicleType || "-", y);
+    y = row("Driver Name", form.driverName || "-", y + 14);
+    y = row("Driver Mobile", cleanPhone(form.driverMobile) || "-", y);
+
+    x.fillStyle = "#ecfdf5";
+    rr(75, y + 62, 930, 315, 26);
+    x.fillStyle = "#087a31";
+    x.font = "bold 36px 'Times New Roman', Times, serif";
+    x.fillText("Important Instructions", 105, y + 112);
+
+    x.fillStyle = "#111";
+    x.font = "30px 'Times New Roman', Times, serif";
+    let yy = y + 162;
+    for (const t of [
+      "Please report on time",
+      "Vehicle must be neat and clean",
+      "Do not play loud music",
+      "Do not use mobile phone while driving",
+      "Drive safely and avoid overspeeding",
+      "Maintain good customer behaviour",
+    ]) {
+      x.fillText("•", 112, yy);
+      x.fillText(t, 150, yy);
+      yy += 38;
+    }
+
+    x.textAlign = "center";
+    x.fillStyle = "#0b2d6b";
+    x.font = "bold 30px 'Times New Roman', Times, serif";
+    x.fillText("✨ Thank you for your support ✨", 540, 1805);
+    x.font = "bold 44px 'Times New Roman', Times, serif";
+    x.fillText("Vishwakarma Travels", 540, 1864);
+
+    const a = document.createElement("a");
+    a.href = c.toDataURL("image/jpeg", 0.95);
+    a.download = `Driver-Duty-${form.driverName || "Vishwakarma"}-${Date.now()}.jpg`;
+    a.click();
+  };
+
+  x.fillStyle = "#f4f7fb";
+  x.fillRect(0, 0, 1080, 1920);
+  x.fillStyle = "#fff";
+  rr(18, 18, 1044, 1884, 28);
+
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.onload = () => {
+    x.drawImage(img, 42, 42, 996, 480);
+    drawDetails();
+  };
+  img.onerror = drawDetails;
+  img.src = "/cars/popup_banner.png";
+}
+
+function openDriverWhatsAppFromForm() {
+  window.location.href = `https://api.whatsapp.com/send?phone=91${cleanPhone(form.driverMobile)}&text=${encodeURIComponent(driverDutyMessage())}`;
+}
   
   function validate() {
     if (!supabaseUrl || !supabaseKey) return alert("Supabase URL/KEY missing hai."), false;
@@ -211,7 +404,57 @@ Namaste! Here are your upcoming trip details.
   }
   function submit(e: FormEvent<HTMLFormElement>) { e.preventDefault(); if (!validate()) return; setPendingBookingId(`VT-${Date.now()}`); setConfirmMode("save"); setShowConfirmPopup(true); }
   function sendWhatsApp() { if (!validate()) return; setPendingBookingId(lastBookingId || `VT-${Date.now()}`); setConfirmMode("whatsapp"); setShowConfirmPopup(true); }
+  async function runSendToCustomer() {
+  if (!validate()) return;
 
+  const id = lastBookingId || `VT-${Date.now()}`;
+
+  setCustomerSendLoading(true);
+
+  try {
+    downloadBookingCopy(false);
+
+    const ok = await saveBooking(id);
+    if (!ok) {
+      alert("Booking Supabase me save nahi hua.");
+      return;
+    }
+
+    await Promise.all([saveCustomer(), saveVehicle()]);
+    setLastBookingId(id);
+    setShowCustomerSendPopup(false);
+
+    window.location.href = `https://api.whatsapp.com/send?phone=91${cleanPhone(form.customerPhone)}&text=${encodeURIComponent(msg(id))}`;
+  } finally {
+    setCustomerSendLoading(false);
+  }
+  }
+  async function runSendToDriver() {
+  if (!validateDownload()) return;
+
+  if (!form.driverName.trim()) {
+    alert("Driver name fill karo.");
+    return;
+  }
+
+  if (cleanPhone(form.driverMobile).length !== 10) {
+    alert("Driver mobile number 10 digit ka hona chahiye.");
+    return;
+  }
+
+  setDriverSendLoading(true);
+
+  try {
+    await releaseDriverDetailsToCustomer();
+
+    downloadDriverDutyCopyFromForm();
+    openDriverWhatsAppFromForm();
+
+    setShowDriverSendPopup(false);
+  } finally {
+    setDriverSendLoading(false);
+  }
+  }
   async function saveBooking(id: string) {
     if (bookings.some((b) => b.booking_id === id)) return true;
     const payload = { booking_id: id, customer_name: form.customerName, customer_phone: cleanPhone(form.customerPhone), gender: form.gender, service: form.service, pickup: form.pickup, drop_location: form.drop, journey_date: form.journeyDate, journey_time: form.journeyTime, vehicle_type: form.vehicleType, vehicle_model: form.vehicleModel, vehicle_number: vehicleNo(form.vehicleNumber), fare, advance, net_payable: net, driver_name: form.driverName, driver_mobile: cleanPhone(form.driverMobile) };
@@ -284,7 +527,7 @@ async function releaseDriverDetailsToCustomer() {
     console.log("Booking request confirm update failed:", err);
   }
 }
-function downloadBookingCopy() {
+function downloadBookingCopy(releaseToCustomer = true) {
   if (!validateDownload()) return;
 
   const c = document.createElement("canvas");
@@ -425,7 +668,7 @@ function downloadBookingCopy() {
 
     setDownloadNotice(true);
     setTimeout(() => setDownloadNotice(false), 3500);
-    releaseDriverDetailsToCustomer();
+    if (releaseToCustomer) releaseDriverDetailsToCustomer();
   };
 
   x.fillStyle = "#f4f7fb";
@@ -484,14 +727,102 @@ function editCustomer(c: Customer){setForm((p)=>({...p,customerName:c.name||"",c
 />
     {showConfirmPopup && <div style={overlay}><div style={modal}><button onClick={() => setShowConfirmPopup(false)} style={close}>x</button><img src="/cars/popup_banner.png" style={banner} alt="Vishwakarma Travels" /><div style={body}><h2 style={title}>Confirm Booking Details</h2><Row l="Customer Name" v={form.customerName} /><Row l="Mobile No." v={form.customerPhone} /><Row l="Pickup" v={form.pickup} /><Row l="Drop" v={form.drop} /><Row l="Date" v={formatDate(form.journeyDate)} /><Row l="Time" v={form.journeyTime} /><Row l="Vehicle No." v={vehicleNo(form.vehicleNumber)} /><Row l="Vehicle Type" v={form.vehicleType} /><Row l="Vehicle Model" v={form.vehicleModel} /><Row l="Driver Name" v={form.driverName} /><Row l="Driver Mobile" v={form.driverMobile} /><Row l="Fare" v={`Rs ${fare}`} /><Row l="Advance" v={`Rs ${advance}`} /><div style={netRow}><b>Net Payable</b><b>Rs {net}</b></div></div><div style={actions}><button onClick={() => setShowConfirmPopup(false)} style={cancelBtn}>Cancel</button><button disabled={loading} onClick={confirm} style={greenBtn}>{loading ? "Please wait..." : "Confirm & Submit"}</button></div></div></div>}
 
+    {showCustomerSendPopup && (
+  <div style={overlay}>
+    <div style={modal}>
+      <button onClick={() => setShowCustomerSendPopup(false)} style={close}>x</button>
+      <img src="/cars/popup_banner.png" style={banner} alt="Vishwakarma Travels" />
+
+      <div style={body}>
+        <h2 style={title}>Send Booking to Customer?</h2>
+
+        <Row l="Customer Name" v={form.customerName} />
+        <Row l="Mobile No." v={form.customerPhone} />
+        <Row l="Pickup" v={form.pickup} />
+        <Row l="Drop" v={form.drop} />
+        <Row l="Date" v={formatDate(form.journeyDate)} />
+        <Row l="Time" v={formatTime(form.journeyTime)} />
+        <Row l="Service" v={form.service} />
+        <Row l="Vehicle No." v={vehicleNo(form.vehicleNumber)} />
+        <Row l="Vehicle Type" v={form.vehicleType} />
+        <Row l="Vehicle Model" v={form.vehicleModel} />
+        <Row l="Driver Name" v={form.driverName} />
+        <Row l="Driver Mobile" v={form.driverMobile} />
+        <Row l="Fare" v={`Rs ${fare}`} />
+        <Row l="Advance" v={`Rs ${advance}`} />
+
+        <div style={netRow}>
+          <b>Net Payable</b>
+          <b>Rs {net}</b>
+        </div>
+
+        <div style={masterInfoBox}>
+          Confirm karne par Customer Booking Copy download hogi, final booking Supabase me save hogi, aur Customer WhatsApp open hoga.
+        </div>
+      </div>
+
+      <div style={actions}>
+        <button onClick={() => setShowCustomerSendPopup(false)} style={cancelBtn}>Cancel</button>
+        <button disabled={customerSendLoading} onClick={runSendToCustomer} style={greenBtn}>
+          {customerSendLoading ? "Please wait..." : "Confirm Send to Customer"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+    {showDriverSendPopup && (
+  <div style={overlay}>
+    <div style={modal}>
+      <button onClick={() => setShowDriverSendPopup(false)} style={close}>x</button>
+      <img src="/cars/popup_banner.png" style={banner} alt="Vishwakarma Travels" />
+
+      <div style={body}>
+        <h2 style={title}>Send Booking to Driver?</h2>
+
+        <Row l="Customer Name" v={form.customerName} />
+        <Row l="Mobile No." v={form.customerPhone} />
+        <Row l="Pickup" v={form.pickup} />
+        <Row l="Drop" v={form.drop} />
+        <Row l="Date" v={formatDate(form.journeyDate)} />
+        <Row l="Time" v={formatTime(form.journeyTime)} />
+        <Row l="Service" v={form.service} />
+        <Row l="Vehicle No." v={vehicleNo(form.vehicleNumber)} />
+        <Row l="Vehicle Type" v={form.vehicleType} />
+        <Row l="Vehicle Model" v={form.vehicleModel} />
+        <Row l="Driver Name" v={form.driverName} />
+        <Row l="Driver Mobile" v={form.driverMobile} />
+
+        <div style={masterInfoBox}>
+          Confirm karne par customer page me Vehicle Details + Call Driver Now active hoga, Driver Duty Copy download hogi, aur Driver WhatsApp open hoga.
+        </div>
+      </div>
+
+      <div style={actions}>
+        <button onClick={() => setShowDriverSendPopup(false)} style={cancelBtn}>Cancel</button>
+        <button disabled={driverSendLoading} onClick={runSendToDriver} style={greenBtn}>
+          {driverSendLoading ? "Please wait..." : "Confirm Send to Driver"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     <div style={{ maxWidth: 1200, margin: "0 auto" }}><header style={header}><h1>Vishwakarma Travels Admin Dashboard</h1><p>Booking, Bill, WhatsApp aur Database Management</p><button onClick={logout} style={whiteBtn}>Logout</button></header>
     <section style={stats}><Stat title="Customers" value={customers.length} onClick={() => setActiveView("customers")} /><Stat title="Vehicles" value={vehicles.length} onClick={() => setActiveView("vehicles")} /><Stat title="Bookings" value={bookings.length} onClick={() => setActiveView("bookings")} /></section>
     {activeView && <section style={panel}><button onClick={() => setActiveView("")} style={whiteBtn}>Close</button>{activeView === "customers" && customers.map((c, i) => <div key={i} style={{display:"grid",gridTemplateColumns:"1fr auto auto",gap:8,alignItems:"center",padding:"10px 0",borderBottom:"1px solid #e5e7eb"}}><p style={{margin:0}}><b>{c.name || "-"}</b> - {c.mobile || c.phone || "-"} - {c.address || "-"}</p><button onClick={()=>editCustomer(c)} style={editBtn}>Edit</button><button onClick={()=>deleteCustomer(c)} style={delBtn}>Delete</button></div>)}{activeView === "vehicles" && vehicles.map((v, i) => <p key={i}><b>{v.vehicle_number || v.vehicleNumber || "-"}</b> - {v.vehicle_model || v.vehicleModel || "-"} - {v.driver_name || v.driverName || "-"}</p>)}{activeView === "bookings" && bookings.map((b, i) => <p key={i}><b>{b.booking_id || "-"}</b> - {b.customer_name || "-"} - Rs {b.fare || 0}</p>)}</section>}
-    <form onSubmit={submit} style={panel}><h2>New Booking</h2><div style={grid}><select value={form.gender} onChange={(e) => update("gender", e.target.value)} style={input}><option>👋 Hii</option><option>Mr.</option><option>Mrs.</option><option>Ms.</option></select><div style={fieldWrap}><input placeholder="Customer Name" value={form.customerName} onFocus={() => setShowCustomerSuggestions(true)} onChange={(e) => { update("customerName", e.target.value); setShowCustomerSuggestions(true); }} onBlur={() => setTimeout(() => { findCustomer(); setShowCustomerSuggestions(false); }, 180)} style={input} required />{showCustomerSuggestions && customerSuggestions.length > 0 && <div style={suggestBox}>{customerSuggestions.map((c, i) => <button key={`${c.mobile || c.phone || i}-${i}`} type="button" onMouseDown={() => applyCustomer(c)} style={suggestItem}><b>{c.name || "No Name"}</b><span>{cleanPhone(c.mobile || c.phone || "") || "No Mobile"}</span><small>{c.address || "No Address"}</small></button>)}</div>}</div><input type="text" inputMode="tel" placeholder="Customer WhatsApp Number" value={form.customerPhone} onChange={(e) => { update("customerPhone", e.target.value); setShowCustomerSuggestions(true); }} onBlur={findCustomer} style={input} required /><input placeholder="Pickup Location / Address" value={form.pickup} onChange={(e) => update("pickup", e.target.value)} style={input} required /><input placeholder="Drop Location" value={form.drop} onChange={(e) => update("drop", e.target.value)} style={input} required />{drops.length > 0 && <div style={fullRow}><b style={{ color: "#0b2d6b" }}>Old Drop Location:</b><div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>{drops.map((d) => <button key={d} type="button" onClick={() => update("drop", d)} style={chip}>{d}</button>)}</div></div>}<input type="date" value={form.journeyDate} onChange={(e) => update("journeyDate", e.target.value)} style={input} required /><input placeholder="Time e.g. 5:30 PM" value={form.journeyTime} onChange={(e) => update("journeyTime", e.target.value)} style={input} required /><div style={fieldWrap}><input placeholder="Vehicle Number" value={form.vehicleNumber} onFocus={() => setShowVehicleSuggestions(true)} onChange={(e) => fillVehicle(e.target.value)} onBlur={() => setTimeout(() => setShowVehicleSuggestions(false), 180)} style={input} />{showVehicleSuggestions && vehicleSearch.length >= 2 && <div style={suggestBox}>{vehicleSuggestions.map((v, i) => <button key={`${v.vehicle_number || v.vehicleNumber || i}-${i}`} type="button" onMouseDown={() => applyVehicle(v)} style={suggestItem}><b>{vehicleNo(v.vehicle_number || v.vehicleNumber || "")}</b><span>{v.vehicle_type || v.vehicleType || "Vehicle"} • {v.vehicle_model || v.vehicleModel || "Model"}</span><small>{v.driver_name || v.driverName || "Driver not saved"} {cleanPhone(v.phone || v.driver_mobile || v.driverMobile || "") ? `• ${cleanPhone(v.phone || v.driver_mobile || v.driverMobile || "")}` : ""}</small></button>)}{!hasExactVehicle && <div style={newHint}>+ New vehicle "{vehicleSearch}" — type, model, driver details fill karke submit karte hi save ho jayega.</div>}</div>}</div><select value={form.vehicleType} onChange={(e) => update("vehicleType", e.target.value)} style={input}><option>Sedan</option><option>SUV</option><option>SUV With Carrier</option><option>Sedan With Carrier</option><option>Mini Passenger Bus</option></select><select value={form.vehicleModel} onChange={(e) => update("vehicleModel", e.target.value)} style={input}><option>Desire</option><option>Ertiga</option><option>Innova</option><option>Innova Crysta</option><option>Ertiga With Carrier</option><option>Innova With Carrier</option><option>Crysta With Carrier</option><option>Force Traveller</option></select><input placeholder="Driver Name" value={form.driverName} onChange={(e) => update("driverName", e.target.value)} style={input} /><input type="text" inputMode="tel" placeholder="Driver Mobile" value={form.driverMobile} onChange={(e) => update("driverMobile", e.target.value)} style={input} /><select value={form.service} onChange={(e) => update("service", e.target.value)} style={input}><option>One Way Drop Pickup</option><option>Jamshedpur to Ranchi Airport Drop</option><option>Ranchi Airport to Jamshedpur Drop</option><option>Jamshedpur to Kolkata Airport Drop</option><option>Kolkata Airport to Jamshedpur Drop</option><option>Local Movment</option><option>Outstation Movment</option><option>Short Time Booking</option><option>Marriage Function Booking</option></select><input type="number" placeholder="Total Fare" value={form.fare} onChange={(e) => update("fare", e.target.value)} style={input} required /><input type="number" placeholder="Advance Paid" value={form.advance} onChange={(e) => update("advance", e.target.value)} style={input} />
+    <form onSubmit={submit} style={panel}><h2>New Booking</h2><div style={grid}><select value={form.gender} onChange={(e) => update("gender", e.target.value)} style={input}><option>👋 Hii</option><option>Mr.</option><option>Mrs.</option><option>Ms.</option></select><div style={fieldWrap}><input placeholder="Customer Name" value={form.customerName} onFocus={() => setShowCustomerSuggestions(true)} onChange={(e) => { update("customerName", e.target.value); setShowCustomerSuggestions(true); }} onBlur={() => setTimeout(() => { findCustomer(); setShowCustomerSuggestions(false); }, 180)} style={input} required />{showCustomerSuggestions && customerSuggestions.length > 0 && <div style={suggestBox}>{customerSuggestions.map((c, i) => <button key={`${c.mobile || c.phone || i}-${i}`} type="button" onMouseDown={() => applyCustomer(c)} style={suggestItem}><b>{c.name || "No Name"}</b><span>{cleanPhone(c.mobile || c.phone || "") || "No Mobile"}</span><small>{c.address || "No Address"}</small></button>)}</div>}</div><input type="text" inputMode="tel" placeholder="Customer WhatsApp Number" value={form.customerPhone} onChange={(e) => { update("customerPhone", e.target.value); setShowCustomerSuggestions(true); }} onBlur={findCustomer} style={input} required /><input placeholder="Pickup Location / Address" value={form.pickup} onChange={(e) => update("pickup", e.target.value)} style={input} required /><input placeholder="Drop Location" value={form.drop} onChange={(e) => update("drop", e.target.value)} style={input} required />{drops.length > 0 && <div style={fullRow}><b style={{ color: "#0b2d6b" }}>Old Drop Location:</b><div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>{drops.map((d) => <button key={d} type="button" onClick={() => update("drop", d)} style={chip}>{d}</button>)}</div></div>}<input type="date" value={form.journeyDate} onChange={(e) => update("journeyDate", e.target.value)} style={input} required /><input placeholder="Time e.g. 5:30 PM" value={form.journeyTime} onChange={(e) => update("journeyTime", e.target.value)} style={input} required /><div style={fieldWrap}><input placeholder="Vehicle Number" value={form.vehicleNumber} onFocus={() => setShowVehicleSuggestions(true)} onChange={(e) => fillVehicle(e.target.value)} onBlur={() => setTimeout(() => setShowVehicleSuggestions(false), 180)} style={input} />{showVehicleSuggestions && vehicleSearch.length >= 2 && <div style={suggestBox}>{vehicleSuggestions.map((v, i) => <button key={`${v.vehicle_number || v.vehicleNumber || i}-${i}`} type="button" onMouseDown={() => applyVehicle(v)} style={suggestItem}><b>{vehicleNo(v.vehicle_number || v.vehicleNumber || "")}</b><span>{v.vehicle_type || v.vehicleType || "Vehicle"} • {v.vehicle_model || v.vehicleModel || "Model"}</span><small>{v.driver_name || v.driverName || "Driver not saved"} {cleanPhone(v.phone || v.driver_mobile || v.driverMobile || "") ? `• ${cleanPhone(v.phone || v.driver_mobile || v.driverMobile || "")}` : ""}</small></button>)}{!hasExactVehicle && <div style={newHint}>+ New vehicle "{vehicleSearch}" — type, model, driver details fill karke submit karte hi save ho jayega.</div>}</div>}</div><select value={form.vehicleType} onChange={(e) => update("vehicleType", e.target.value)} style={input}><option>Sedan</option><option>SUV</option><option>SUV With Carrier</option><option>Sedan With Carrier</option><option>Mini Passenger Bus</option></select><select value={form.vehicleModel} onChange={(e) => update("vehicleModel", e.target.value)} style={input}><option>Desire</option><option>Ertiga</option><option>Innova</option><option>Innova Crysta</option><option>Ertiga With Carrier</option><option>Innova With Carrier</option><option>Crysta With Carrier</option><option>Force Traveller</option></select><input placeholder="Driver Name" value={form.driverName} onChange={(e) => update("driverName", e.target.value)} style={input} /><input type="text" inputMode="tel" placeholder="Driver Mobile" value={form.driverMobile} onChange={(e) => update("driverMobile", e.target.value)} style={input} /><select value={form.service} onChange={(e) => update("service", e.target.value)} style={input}><option>One Way Drop Pickup</option><option>Jamshedpur to Ranchi Airport Drop</option><option>Ranchi Airport to Jamshedpur Drop</option><option>Jamshedpur to Kolkata Airport Drop</option><option>Kolkata Airport to Jamshedpur Drop</option><option>Local Movement</option><option>Outstation Movement</option><option>Short Time Booking</option><option>Marriage Function Booking</option></select><input type="number" placeholder="Total Fare" value={form.fare} onChange={(e) => update("fare", e.target.value)} style={input} required /><input type="number" placeholder="Advance Paid" value={form.advance} onChange={(e) => update("advance", e.target.value)} style={input} />
 <AdminBookingRequestsReport
   onAcceptRequest={(request) => acceptIncomingBookingRequest(request)}
 />
-</div><div style={buttonRow}><button type="button" onClick={downloadBookingCopy} style={smallDownloadBtn}>Download</button><button disabled={loading} style={smallSaveBtn}>{loading ? "Saving..." : "Save + PDF"}</button><button type="button" onClick={sendWhatsApp} style={smallWaBtn}>WhatsApp</button></div>{downloadNotice && <div style={downloadOk}>✓ Booking copy downloaded successfully!</div>}</form>
+</div>
+<div style={masterButtonRow}>
+  <button type="button" onClick={() => setShowCustomerSendPopup(true)} style={sendCustomerBtn}>
+    Send to Customer
+  </button>
+  <button type="button" onClick={() => setShowDriverSendPopup(true)} style={sendDriverBtn}>
+    Send to Driver
+  </button>
+</div>
+<div style={buttonRow}><button type="button" onClick={downloadBookingCopy} style={smallDownloadBtn}>Download</button><button disabled={loading} style={smallSaveBtn}>{loading ? "Saving..." : "Save + PDF"}</button><button type="button" onClick={sendWhatsApp} style={smallWaBtn}>WhatsApp</button></div>{downloadNotice && <div style={downloadOk}>✓ Booking copy downloaded successfully!</div>}</form>
     <section style={panel}><h2>Recent Bookings</h2><input placeholder="Search booking by name, phone, pickup..." value={searchBooking} onChange={(e) => setSearchBooking(e.target.value)} style={input} /><div style={{ overflowX: "auto", marginTop: 12 }}><table style={{ width: "100%", minWidth: 900, borderCollapse: "collapse" }}><thead><tr style={{ background: "#0b2d6b", color: "white" }}><th style={th}>Booking ID</th><th style={th}>Customer</th><th style={th}>Phone</th><th style={th}>Route</th><th style={th}>Date</th><th style={th}>Fare</th><th style={th}>Action</th></tr></thead><tbody>{filtered.map((b, i) => <tr key={b.booking_id || i}><td style={td}>{b.booking_id || "-"}</td><td style={td}>{b.customer_name || "-"}</td><td style={td}>{b.customer_phone || "-"}</td><td style={td}>{b.pickup || "-"} to {b.drop_location || "-"}</td><td style={td}>{b.journey_date || "-"}</td><td style={td}>Rs {b.fare || 0}</td><td style={td}><button onClick={() => edit(b)} style={editBtn}>Edit</button><button onClick={() => pdf(b.booking_id || "")} style={pdfBtn}>PDF</button><button disabled={deletingBookingId === b.booking_id} onClick={() => removeBooking(b.booking_id)} style={delBtn}>{deletingBookingId === b.booking_id ? "Deleting..." : "Delete"}</button></td></tr>)}{bookings.length === 0 && <tr><td colSpan={7} style={{ padding: 20, textAlign: "center" }}>No booking found</td></tr>}</tbody></table></div></section></div>
   </main>;
 }
@@ -517,10 +848,15 @@ const blueBtn: CSSProperties = { width: "100%", padding: 13, borderRadius: 12, b
 const whiteBtn: CSSProperties = { padding: "10px 16px", borderRadius: 10, border: 0, fontWeight: "bold" };
 const chip: CSSProperties = { padding: "8px 10px", borderRadius: 10, border: "1px solid #0b2d6b", background: "white", color: "#0b2d6b", fontWeight: "bold" };
 const buttonRow: CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginTop: 14 };
+const masterButtonRow: CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 14 };
+const masterBaseBtn: CSSProperties = { minWidth: 0, padding: "13px 8px", color: "white", border: 0, borderRadius: 14, fontWeight: 950, fontSize: 14, lineHeight: 1.15 };
+const sendCustomerBtn: CSSProperties = { ...masterBaseBtn, background: "#16a34a" };
+const sendDriverBtn: CSSProperties = { ...masterBaseBtn, background: "#0b2d6b" };
 const smallBaseBtn: CSSProperties = { minWidth: 0, padding: "11px 6px", color: "white", border: 0, borderRadius: 12, fontWeight: 900, fontSize: 13, lineHeight: 1.1 };
 const smallDownloadBtn: CSSProperties = { ...smallBaseBtn, background: "#f97316" };
 const smallSaveBtn: CSSProperties = { ...smallBaseBtn, background: "#15803d" };
 const smallWaBtn: CSSProperties = { ...smallBaseBtn, background: "#25D366" };
+const masterInfoBox: CSSProperties = { marginTop: 10, padding: "10px 12px", borderRadius: 12, background: "#eff6ff", color: "#0b2d6b", fontSize: 12, fontWeight: 800, lineHeight: 1.35 };
 const downloadOk: CSSProperties = { marginTop: 12, background: "#dcfce7", color: "#166534", padding: "12px 14px", borderRadius: 14, fontWeight: 800 };
 const th: CSSProperties = { padding: 10, textAlign: "left" };
 const td: CSSProperties = { padding: 10, borderBottom: "1px solid #e2e8f0" };
