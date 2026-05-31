@@ -63,7 +63,18 @@ function refreshSelectLabel(select: HTMLSelectElement, index: number) {
 }
 
 function refreshDateLabel(input: HTMLInputElement) {
-  updateButtonSpan(input, "📅 " + formatDateValue(input.value));
+  const label = "📅 " + formatDateValue(input.value);
+
+  updateButtonSpan(input, label);
+
+  const wrap = input.previousElementSibling as HTMLElement | null;
+  const button = wrap?.querySelector(".vt-custom-select-btn") as HTMLElement | null;
+  if (!button) return;
+
+  const span = button.querySelector("span") as HTMLElement | null;
+  if (span && span.textContent !== label) {
+    span.textContent = label;
+  }
 }
 
 function refreshTimeLabel(input: HTMLInputElement) {
