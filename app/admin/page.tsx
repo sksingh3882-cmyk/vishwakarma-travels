@@ -74,6 +74,8 @@ export default function AdminPage() {
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [showCustomerSendPopup, setShowCustomerSendPopup] = useState(false);
 const [customerSendLoading, setCustomerSendLoading] = useState(false);
+  const [showDriverSendPopup, setShowDriverSendPopup] = useState(false);
+const [driverSendLoading, setDriverSendLoading] = useState(false);
   const [deletingBookingId, setDeletingBookingId] = useState("");
   const [showCustomerSuggestions, setShowCustomerSuggestions] = useState(false);
   const [showVehicleSuggestions, setShowVehicleSuggestions] = useState(false);
@@ -264,7 +266,49 @@ Namaste! Here are your upcoming trip details.
     setCustomerSendLoading(false);
   }
   }
+  async function runSendToDriver() {
+  if (!validateDownload()) return;
 
+  if (!form.driverName.trim()) {
+    alert("Driver name fill karo.");
+    return;
+  }
+
+  if (cleanPhone(form.driverMobile).length !== 10) {
+    alert("Driver mobile number 10 digit ka hona chahiye.");
+    return;
+  }
+
+  setDriverSendLoading(true);
+
+  try {
+    await releaseDriverDetailsToCustomer();
+
+    const allButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("button"));
+
+    const driverWaBtn = allButtons.find(
+      (btn) => (btn.textContent || "").trim().toLowerCase() === "driver wa"
+    );
+
+    const driverPanel = driverWaBtn?.parentElement;
+
+    const driverDownloadBtn = Array.from(
+      driverPanel?.querySelectorAll<HTMLButtonElement>("button") || []
+    ).find((btn) => (btn.textContent || "").trim().toLowerCase() === "download");
+
+    if (!driverDownloadBtn || !driverWaBtn) {
+      alert("Driver top buttons nahi mile. Page refresh karke dobara try karo.");
+      return;
+    }
+
+    driverDownloadBtn.click();
+    driverWaBtn.click();
+
+    setShowDriverSendPopup(false);
+  } finally {
+    setDriverSendLoading(false);
+  }
+  }
   async function saveBooking(id: string) {
     if (bookings.some((b) => b.booking_id === id)) return true;
     const payload = { booking_id: id, customer_name: form.customerName, customer_phone: cleanPhone(form.customerPhone), gender: form.gender, service: form.service, pickup: form.pickup, drop_location: form.drop, journey_date: form.journeyDate, journey_time: form.journeyTime, vehicle_type: form.vehicleType, vehicle_model: form.vehicleModel, vehicle_number: vehicleNo(form.vehicleNumber), fare, advance, net_payable: net, driver_name: form.driverName, driver_mobile: cleanPhone(form.driverMobile) };
@@ -580,6 +624,42 @@ function editCustomer(c: Customer){setForm((p)=>({...p,customerName:c.name||"",c
     </div>
   </div>
 )}
+    {showDriverSendPopup && (
+  <div style={overlay}>
+    <div style={modal}>
+      <button onClick={() => setShowDriverSendPopup(false)} style={close}>x</button>
+      <img src="/cars/popup_banner.png" style={banner} alt="Vishwakarma Travels" />
+
+      <div style={body}>
+        <h2 style={title}>Send Booking to Driver?</h2>
+
+        <Row l="Customer Name" v={form.customerName} />
+        <Row l="Mobile No." v={form.customerPhone} />
+        <Row l="Pickup" v={form.pickup} />
+        <Row l="Drop" v={form.drop} />
+        <Row l="Date" v={formatDate(form.journeyDate)} />
+        <Row l="Time" v={formatTime(form.journeyTime)} />
+        <Row l="Service" v={form.service} />
+        <Row l="Vehicle No." v={vehicleNo(form.vehicleNumber)} />
+        <Row l="Vehicle Type" v={form.vehicleType} />
+        <Row l="Vehicle Model" v={form.vehicleModel} />
+        <Row l="Driver Name" v={form.driverName} />
+        <Row l="Driver Mobile" v={form.driverMobile} />
+
+        <div style={masterInfoBox}>
+          Confirm karne par customer page me Vehicle Details + Call Driver Now active hoga, Driver Duty Copy download hogi, aur Driver WhatsApp open hoga.
+        </div>
+      </div>
+
+      <div style={actions}>
+        <button onClick={() => setShowDriverSendPopup(false)} style={cancelBtn}>Cancel</button>
+        <button disabled={driverSendLoading} onClick={runSendToDriver} style={greenBtn}>
+          {driverSendLoading ? "Please wait..." : "Confirm Send to Driver"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     <div style={{ maxWidth: 1200, margin: "0 auto" }}><header style={header}><h1>Vishwakarma Travels Admin Dashboard</h1><p>Booking, Bill, WhatsApp aur Database Management</p><button onClick={logout} style={whiteBtn}>Logout</button></header>
     <section style={stats}><Stat title="Customers" value={customers.length} onClick={() => setActiveView("customers")} /><Stat title="Vehicles" value={vehicles.length} onClick={() => setActiveView("vehicles")} /><Stat title="Bookings" value={bookings.length} onClick={() => setActiveView("bookings")} /></section>
     {activeView && <section style={panel}><button onClick={() => setActiveView("")} style={whiteBtn}>Close</button>{activeView === "customers" && customers.map((c, i) => <div key={i} style={{display:"grid",gridTemplateColumns:"1fr auto auto",gap:8,alignItems:"center",padding:"10px 0",borderBottom:"1px solid #e5e7eb"}}><p style={{margin:0}}><b>{c.name || "-"}</b> - {c.mobile || c.phone || "-"} - {c.address || "-"}</p><button onClick={()=>editCustomer(c)} style={editBtn}>Edit</button><button onClick={()=>deleteCustomer(c)} style={delBtn}>Delete</button></div>)}{activeView === "vehicles" && vehicles.map((v, i) => <p key={i}><b>{v.vehicle_number || v.vehicleNumber || "-"}</b> - {v.vehicle_model || v.vehicleModel || "-"} - {v.driver_name || v.driverName || "-"}</p>)}{activeView === "bookings" && bookings.map((b, i) => <p key={i}><b>{b.booking_id || "-"}</b> - {b.customer_name || "-"} - Rs {b.fare || 0}</p>)}</section>}
@@ -592,7 +672,7 @@ function editCustomer(c: Customer){setForm((p)=>({...p,customerName:c.name||"",c
   <button type="button" onClick={() => setShowCustomerSendPopup(true)} style={sendCustomerBtn}>
     Send to Customer
   </button>
-  <button type="button" onClick={() => alert("Send to Driver logic next patch me add hoga.")} style={sendDriverBtn}>
+  <button type="button" onClick={() => setShowDriverSendPopup(true)} style={sendDriverBtn}>
     Send to Driver
   </button>
 </div>
