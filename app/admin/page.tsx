@@ -335,48 +335,52 @@ function downloadDriverDutyCopyFromForm() {
     y = row("Driver Name", form.driverName || "-", y + 14);
     y = row("Driver Mobile", cleanPhone(form.driverMobile) || "-", y);
 
-    x.fillStyle = "#ecfdf5";
-    rr(75, y + 62, 930, 315, 26);
-    x.fillStyle = "#087a31";
-    x.font = "bold 36px 'Times New Roman', Times, serif";
-    x.fillText("Important Instructions", 105, y + 112);
+    const instructionsY = Math.max(1305, Math.min(y + 35, 1360));
 
-    x.fillStyle = "#111";
-    x.font = "30px 'Times New Roman', Times, serif";
-    let yy = y + 162;
-    for (const t of [
-      "Please report on time",
-      "Vehicle must be neat and clean",
-      "Do not play loud music",
-      "Do not use mobile phone while driving",
-      "Drive safely and avoid overspeeding",
-      "Maintain good customer behaviour",
-    ]) {
-      x.fillText("•", 112, yy);
-      x.fillText(t, 150, yy);
-      yy += 38;
-    }
+x.fillStyle = "#ecfdf5";
+rr(75, instructionsY, 930, 250, 24);
 
-    x.textAlign = "center";
-x.fillStyle = "#0b2d6b";
+x.fillStyle = "#087a31";
 x.font = "bold 30px 'Times New Roman', Times, serif";
-x.fillText("✨ Thank you for your support ✨", 540, 1805);
+x.fillText("Important Instructions", 105, instructionsY + 48);
+
+x.fillStyle = "#111";
+x.font = "25px 'Times New Roman', Times, serif";
+
+let yy = instructionsY + 90;
+for (const t of [
+  "Please report on time",
+  "Vehicle must be neat and clean",
+  "Do not play loud music",
+  "Do not use mobile phone while driving",
+  "Drive safely and avoid overspeeding",
+  "Maintain good customer behaviour",
+]) {
+  x.fillText("•", 112, yy);
+  x.fillText(t, 150, yy);
+  yy += 32;
+}
+
+x.textAlign = "center";
+x.fillStyle = "#0b2d6b";
+x.font = "bold 22px 'Times New Roman', Times, serif";
+x.fillText("✨ Thank you for your support ✨", 540, 1615);
 
 // blue footer bar
 x.fillStyle = "#0b2d6b";
-rr(30, 1840, 1020, 58, 10);
+rr(30, 1648, 1020, 48, 10);
 
 // left footer text
 x.textAlign = "left";
 x.fillStyle = "#ffffff";
-x.font = "28px Arial, sans-serif";
-x.fillText("🌐 http://vishwakarma-travel-nine.vercel.app", 70, 1878);
+x.font = "16px Arial, sans-serif";
+x.fillText("🌐 http://vishwakarma-travel-nine.vercel.app", 70, 1679);
 
 // right footer text
 x.textAlign = "right";
 x.fillStyle = "#ffffff";
-x.font = "italic 34px 'Times New Roman', Times, serif";
-x.fillText("Thank You! Have a Safe Journey", 1020, 1878);
+x.font = "italic 19px 'Times New Roman', Times, serif";
+x.fillText("Thank You! Have a Safe Journey", 1020, 1679);
 
 x.textAlign = "left";
     const a = document.createElement("a");
