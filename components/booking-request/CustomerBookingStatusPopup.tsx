@@ -31,6 +31,46 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose,
     return phone ? `tel:+91${phone.slice(-10)}` : "";
   }, [request?.driverMobile]);
 
+  async function subscribeCustomerForBooking(createdRequest: BookingRequestRecord) {
+  const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+
+  if (!publicKey) return;
+  if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) return;
+
+  const permission = await Notification.requestPermission();
+  if (permission !== "granted") return;
+
+  const padding = "=".repeat((4 - (publicKey.length % 4)) % 4);
+  const base64 = (publicKey + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const rawData = window.atob(base64);
+  const applicationServerKey = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; i += 1) {
+    applicationServerKey[i] = rawData.charCodeAt(i);
+  }
+
+  const registration = await navigator.serviceWorker.register("/sw.js");
+  await navigator.serviceWorker.ready;
+
+  const existing = await registration.pushManager.getSubscription();
+  const subscription =
+    existing ||
+    (await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey,
+    }));
+
+  await fetch("/api/push/customer/subscribe", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      bookingRequestId: createdRequest.id,
+      customerPhone: createdRequest.customerPhone,
+      subscription: subscription.toJSON(),
+      userAgent: navigator.userAgent,
+    }),
+  });
+  }
   async function sendRequest() {
     if (!supabaseUrl || !supabaseKey) {
       setError("Supabase URL or key is missing.");
@@ -46,6 +86,10 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose,
     try {
       const created = await createBookingRequest({ supabaseUrl, supabaseKey, input: bookingData });
 setRequest(created);
+
+subscribeCustomerForBooking(created).catch((err) =>
+  console.log("Customer push subscription failed:", err)
+);
 
 fetch("/api/push/send", {
   method: "POST",
