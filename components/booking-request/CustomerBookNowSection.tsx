@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CustomerBookingStatusPopup from "./CustomerBookingStatusPopup";
 import {
+  fetchBookingRequestById,
   fetchBookingRequestsByPhone,
   type BookingRequestInput,
   type BookingRequestRecord,
@@ -31,7 +32,29 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
   const [selectedRequest, setSelectedRequest] = useState<BookingRequestRecord | null>(null);
   const [lookupPhone, setLookupPhone] = useState("");
   const [searched, setSearched] = useState(false);
+  const [autoOpenDone, setAutoOpenDone] = useState(false);
 
+  useEffect(() => {
+  if (autoOpenDone || !supabaseUrl || !supabaseKey) return;
+
+  const requestId = new URLSearchParams(window.location.search).get("bookingRequestId");
+  if (!requestId) return;
+
+  setAutoOpenDone(true);
+
+  fetchBookingRequestById({
+    supabaseUrl,
+    supabaseKey,
+    requestId,
+  })
+    .then((latest) => {
+      if (!latest) return;
+      setSelectedRequest(latest);
+      setListOpen(false);
+      setOpen(true);
+    })
+    .catch((err) => console.log("Auto open booking status failed:", err));
+}, [autoOpenDone, supabaseUrl, supabaseKey]);
   function openYourBookings() {
     setListOpen(true);
     setListError("");
