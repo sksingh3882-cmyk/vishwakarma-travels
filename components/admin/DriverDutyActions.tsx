@@ -110,15 +110,15 @@ export default function DriverDutyActions({ data, compact = false, onSync }: Pro
     };
 
     const row = (label: string, value: string, y: number) => {
-      x.fillStyle = "#0b2d6b";
-      x.font = "bold 34px 'Times New Roman', Times, serif";
-      x.fillText(label, 75, y);
-      x.fillText(":", 310, y);
-      x.fillStyle = "#111827";
-      x.font = "34px 'Times New Roman', Times, serif";
-      const ly = wrap(value || "-", 370, y, 625, 40);
-      return Math.max(y + 56, ly + 34);
-    };
+  x.fillStyle = "#0b2d6b";
+  x.font = "bold 30px 'Times New Roman', Times, serif";
+  x.fillText(label, 75, y);
+  x.fillText(":", 310, y);
+  x.fillStyle = "#111827";
+  x.font = "30px 'Times New Roman', Times, serif";
+  const ly = wrap(value || "-", 370, y, 625, 34);
+  return Math.max(y + 48, ly + 28);
+};
 
     const drawDetails = () => {
       x.fillStyle = "#0b2d6b";
@@ -158,19 +158,19 @@ export default function DriverDutyActions({ data, compact = false, onSync }: Pro
       x.font = "30px 'Times New Roman', Times, serif";
       let yy = y + 162;
       for (const t of [
-        "Please report on time",
-        "Vehicle must be neat and clean",
-        "Do not play loud music",
-        "Do not use mobile phone while driving",
-        "Drive safely and avoid overspeeding",
-        "Maintain good customer behaviour",
-      ]) {
-        x.fillText("•", 112, yy);
-        x.fillText(t, 150, yy);
-        yy += 38;
-      }
+     "Please report on time",
+     "Vehicle must be neat and clean",
+     "Do not play loud music",
+     "Do not use mobile phone while driving",
+     "Drive safely and avoid overspeeding",
+     "Maintain good customer behaviour",
+     ]) {
+    x.fillText("•", 112, yy);
+    x.fillText(t, 150, yy);
+    yy += 38;
+   }
 
-      x.textAlign = "center";
+x.textAlign = "center";
 x.fillStyle = "#0b2d6b";
 x.font = "bold 30px 'Times New Roman', Times, serif";
 x.fillText("✨ Thank you for your support ✨", 540, 1805);
