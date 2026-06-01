@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     user_agent: body.userAgent || request.headers.get("user-agent") || "",
   };
 
-  const response = await fetch(`${supabaseUrl}/rest/v1/customer_push_subscriptions`, {
+  const response = await fetch(`${supabaseUrl}/rest/v1/customer_push_subscriptions?on_conflict=endpoint`, {
     method: "POST",
     headers: {
       apikey: supabaseKey,
