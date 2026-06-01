@@ -45,7 +45,18 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose,
     setError("");
     try {
       const created = await createBookingRequest({ supabaseUrl, supabaseKey, input: bookingData });
-      setRequest(created);
+setRequest(created);
+
+fetch("/api/push/send", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    title: "You Have New Booking Request",
+    body: `${bookingData.customerName || "Customer"} - ${bookingData.pickup || "Pickup"} to ${bookingData.drop || "Drop"}`,
+    url: "/admin",
+    tag: `vt-new-booking-${created.id || Date.now()}`,
+  }),
+}).catch((err) => console.log("Admin push notification failed:", err));
     } catch (err: any) {
       setError(err?.message || "Unable to send booking request.");
     } finally {
