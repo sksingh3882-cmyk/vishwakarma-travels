@@ -1,0 +1,10 @@
+{
+  "name": "Vishwakarma Travels Admin",
+  "short_name": "VT Admin",
+  "description": "Admin panel for Vishwakarma Travels booking notifications",
+  "start_url": "/admin",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0b2d6b"
+}
