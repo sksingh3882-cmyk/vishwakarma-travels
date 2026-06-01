@@ -62,13 +62,40 @@ export default function AdminIncomingBookingRequests({ isActive = true, onAccept
     if (!selected && requests.length === 1) setSelected(requests[0]);
   }, [requests, selected]);
 
+  function bookingSummary(request: BookingRequestRecord) {
+  return [
+    request.service || "Service",
+    request.journeyDate || "Date",
+    `${request.pickup || "Pickup"} to ${request.drop || "Drop"}`,
+  ].join(" | ");
+}
+
+async function notifyCustomerAccepted(request: BookingRequestRecord) {
+  await fetch("/api/push/customer/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      bookingRequestId: request.id,
+      customerPhone: request.customerPhone,
+      title: `Admin Accepted (${bookingSummary(request)})`,
+      body: "Your Request Tap to Check Status",
+      url: `/?bookingRequestId=${encodeURIComponent(request.id)}`,
+      tag: `vt-customer-accepted-${request.id}`,
+    }),
+  });
+}
   async function acceptSelected() {
     if (!selected) return;
     setBusy(true);
     setError("");
     try {
       const accepted = await acceptBookingRequest({ supabaseUrl, supabaseKey, requestId: selected.id });
-      setRequests((prev) => prev.filter((item) => item.id !== selected.id));
+
+notifyCustomerAccepted(accepted).catch((err) =>
+  console.log("Customer accepted notification failed:", err)
+);
+
+setRequests((prev) => prev.filter((item) => item.id !== selected.id));
       setSelected(null);
       onAcceptBooking?.(accepted, {
         customerName: accepted.customerName,
