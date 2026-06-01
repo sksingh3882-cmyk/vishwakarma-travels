@@ -335,7 +335,7 @@ function downloadDriverDutyCopyFromForm() {
     y = row("Driver Name", form.driverName || "-", y + 14);
     y = row("Driver Mobile", cleanPhone(form.driverMobile) || "-", y);
 
-    const instructionsY = Math.max(1305, Math.min(y + 35, 1360));
+    const instructionsY = y + 35;
 
 x.fillStyle = "#ecfdf5";
 rr(75, instructionsY, 930, 250, 24);
@@ -364,23 +364,23 @@ for (const t of [
 x.textAlign = "center";
 x.fillStyle = "#0b2d6b";
 x.font = "bold 22px 'Times New Roman', Times, serif";
-x.fillText("✨ Thank you for your support ✨", 540, 1615);
+x.fillText("✨ Thank you for your support ✨", 540, instructionsY + 318);
 
 // blue footer bar
 x.fillStyle = "#0b2d6b";
-rr(30, 1648, 1020, 48, 10);
+rr(30, instructionsY + 346, 1020, 46, 10);
 
 // left footer text
 x.textAlign = "left";
 x.fillStyle = "#ffffff";
 x.font = "16px Arial, sans-serif";
-x.fillText("🌐 http://vishwakarma-travel-nine.vercel.app", 70, 1679);
+x.fillText("🌐 http://vishwakarma-travel-nine.vercel.app", 70, instructionsY + 376);
 
 // right footer text
 x.textAlign = "right";
 x.fillStyle = "#ffffff";
 x.font = "italic 19px 'Times New Roman', Times, serif";
-x.fillText("Thank You! Have a Safe Journey", 1020, 1679);
+x.fillText("Thank You! Have a Safe Journey", 1020, instructionsY + 376);
 
 x.textAlign = "left";
     const a = document.createElement("a");
