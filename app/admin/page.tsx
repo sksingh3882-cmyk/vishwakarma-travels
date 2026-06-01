@@ -528,7 +528,29 @@ function openDriverWhatsAppFromForm() {
     w.document.write(html);
     w.document.close();
   }
-  
+
+  async function notifyCustomerBookingConfirmed() {
+  if (!activeBookingRequest?.id) return;
+
+  const summary = [
+    form.service || "Service",
+    formatDate(form.journeyDate) || form.journeyDate || "Date",
+    `${form.pickup || "Pickup"} to ${form.drop || "Drop"}`,
+  ].join(" | ");
+
+  await fetch("/api/push/customer/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      bookingRequestId: activeBookingRequest.id,
+      customerPhone: cleanPhone(form.customerPhone),
+      title: `Booking Confirmed (${summary})`,
+      body: "Tap To Check The Details",
+      url: `/?bookingRequestId=${encodeURIComponent(activeBookingRequest.id)}`,
+      tag: `vt-customer-confirmed-${activeBookingRequest.id}`,
+    }),
+  });
+  }
 async function releaseDriverDetailsToCustomer() {
   if (!activeBookingRequest?.id) return;
 
@@ -543,6 +565,9 @@ async function releaseDriverDetailsToCustomer() {
       driverName: form.driverName,
       driverMobile: form.driverMobile,
     });
+      notifyCustomerBookingConfirmed().catch((err) =>
+      console.log("Customer confirmed notification failed:", err)
+    );
   } catch (err) {
     console.log("Booking request confirm update failed:", err);
   }
