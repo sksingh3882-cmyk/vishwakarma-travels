@@ -36,8 +36,17 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
   const [searched, setSearched] = useState(false);
   const [autoOpenDone, setAutoOpenDone] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
-const [requestSubmitted, setRequestSubmitted] = useState(false);
+const [submittedSignature, setSubmittedSignature] = useState("");
 const [alreadySubmittedAlert, setAlreadySubmittedAlert] = useState("");
+  const currentSignature = [
+  cleanPhone(bookingData.customerPhone || ""),
+  String(bookingData.pickup || "").trim().toLowerCase(),
+  String(bookingData.drop || "").trim().toLowerCase(),
+  String(bookingData.journeyDate || "").trim(),
+  String(bookingData.journeyTime || "").trim(),
+  String(bookingData.service || "").trim().toLowerCase(),
+  String(bookingData.requestedVehicle || "").trim().toLowerCase(),
+].join("|");
 
   useEffect(() => {
   if (autoOpenDone || !supabaseUrl || !supabaseKey) return;
@@ -96,7 +105,7 @@ const [alreadySubmittedAlert, setAlreadySubmittedAlert] = useState("");
   }
 
   function openNewRequest() {
-  if (requestSubmitted) {
+  if (submittedSignature && currentSignature === submittedSignature) {
     setAlreadySubmittedAlert("Your booking request is already submitted. Please check My Booking section.");
     return;
   }
@@ -191,7 +200,7 @@ const [alreadySubmittedAlert, setAlreadySubmittedAlert] = useState("");
   onRequestSent={() => {
   setOpen(false);
   setSelectedRequest(null);
-  setRequestSubmitted(true);
+  setSubmittedSignature(currentSignature);
   setAlreadySubmittedAlert("");
   setSuccessOpen(true);
 
