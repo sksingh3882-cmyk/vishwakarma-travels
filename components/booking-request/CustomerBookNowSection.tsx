@@ -14,6 +14,7 @@ type Props = {
   bookingData: BookingRequestInput;
   onDownloadCopy?: () => void;
   onWhatsAppRequest?: () => void;
+  onRequestSentSuccess?: () => void;
 };
 
 function cleanPhone(value: string) {
@@ -22,7 +23,7 @@ function cleanPhone(value: string) {
   return phone.slice(-10);
 }
 
-export default function CustomerBookNowSection({ bookingData, onDownloadCopy, onWhatsAppRequest }: Props) {
+export default function CustomerBookNowSection({ bookingData, onDownloadCopy, onWhatsAppRequest, onRequestSentSuccess }: Props) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
   const [open, setOpen] = useState(false);
@@ -188,12 +189,16 @@ const [alreadySubmittedAlert, setAlreadySubmittedAlert] = useState("");
   bookingData={bookingData}
   existingRequest={selectedRequest}
   onRequestSent={() => {
-    setOpen(false);
-    setSelectedRequest(null);
-    setRequestSubmitted(true);
-    setAlreadySubmittedAlert("");
-    setSuccessOpen(true);
-  }}
+  setOpen(false);
+  setSelectedRequest(null);
+  setRequestSubmitted(true);
+  setAlreadySubmittedAlert("");
+  setSuccessOpen(true);
+
+  window.setTimeout(() => {
+    onRequestSentSuccess?.();
+  }, 1800);
+}}
   onClose={() => {
     setOpen(false);
     setSelectedRequest(null);
