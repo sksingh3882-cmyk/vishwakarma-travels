@@ -545,7 +545,7 @@ function openDriverWhatsAppFromForm() {
       bookingRequestId: activeBookingRequest.id,
       customerPhone: cleanPhone(form.customerPhone),
       title: `Booking Confirmed (${summary})`,
-      body: "Tap To Check The Details",
+      body: "Please Check My Booking Section to see your Booking Status",
       url: `/?bookingRequestId=${encodeURIComponent(activeBookingRequest.id)}`,
       tag: `vt-customer-confirmed-${activeBookingRequest.id}`,
     }),
