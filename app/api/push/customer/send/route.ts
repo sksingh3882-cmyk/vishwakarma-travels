@@ -78,7 +78,7 @@ export async function POST(request: Request) {
 
   const payload: PushNotificationPayload = {
     title: body.title || "Booking Status Updated",
-    body: body.body || "Tap to check your booking status.",
+    body: body.body || "Please Check My Booking Section to see your Booking Status",
     url: body.url || (bookingRequestId ? `/?bookingRequestId=${encodeURIComponent(bookingRequestId)}` : "/"),
     icon: body.icon || "/logo.png",
     badge: body.badge || "/logo.png",
