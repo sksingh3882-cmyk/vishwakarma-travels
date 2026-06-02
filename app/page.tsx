@@ -11,6 +11,10 @@ const cleanPhone=(v:string)=>{let p=String(v||"").replace(/\D/g,"");if((p.starts
 const fmt=(v:string)=>v&&v.includes("-")?v.split("-").reverse().join("-"):v||"";
 export default function Home(){
 const [showCover,setShowCover]=useState(true);
+ useEffect(() => {
+  const requestId = new URLSearchParams(window.location.search).get("bookingRequestId");
+  if (requestId) setShowCover(false);
+}, []);
  const [form,setForm]=useState<F>(empty),[customers,setCustomers]=useState<any[]>([]),[bookings,setBookings]=useState<any[]>([]),[showSug,setShowSug]=useState(false),[pending,setPending]=useState<any>(null),[notice,setNotice]=useState(false),[openDrop,setOpenDrop]=useState<"service"|"vehicle"|"date"|"time"|null>(null),[calMonth,setCalMonth]=useState(()=>new Date()),[customTime,setCustomTime]=useState({h:"07",m:"40",ap:"AM"});
  const supabaseUrl=process.env.NEXT_PUBLIC_SUPABASE_URL||"",supabaseKey=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY||"";
  const headers={apikey:supabaseKey,Authorization:`Bearer ${supabaseKey}`,"Content-Type":"application/json"};
