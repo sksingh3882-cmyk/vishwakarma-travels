@@ -78,7 +78,7 @@ async function notifyCustomerAccepted(request: BookingRequestRecord) {
       bookingRequestId: request.id,
       customerPhone: request.customerPhone,
       title: `Admin Accepted (${bookingSummary(request)})`,
-      body: "Your Request Tap to Check Status",
+      body: "Please Check My Booking Section to see your Booking Status",
       url: `/?bookingRequestId=${encodeURIComponent(request.id)}`,
       tag: `vt-customer-accepted-${request.id}`,
     }),
