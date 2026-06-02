@@ -13,9 +13,10 @@ type Props = {
   bookingData: BookingRequestInput;
   onClose: () => void;
   existingRequest?: BookingRequestRecord | null;
+  onRequestSent?: () => void;
 };
 
-export default function CustomerBookingStatusPopup({ open, bookingData, onClose, existingRequest = null }: Props) {
+export default function CustomerBookingStatusPopup({ open, bookingData, onClose, existingRequest = null, onRequestSent }: Props) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
   const [request, setRequest] = useState<BookingRequestRecord | null>(null);
@@ -86,7 +87,7 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose,
     try {
       const created = await createBookingRequest({ supabaseUrl, supabaseKey, input: bookingData });
 setRequest(created);
-
+onRequestSent?.();
 subscribeCustomerForBooking(created).catch((err) =>
   console.log("Customer push subscription failed:", err)
 );
