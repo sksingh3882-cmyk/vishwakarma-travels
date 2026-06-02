@@ -115,7 +115,7 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
           WhatsApp
         </button>
         <button type="button" style={bookingBtn} onClick={openYourBookings}>
-          Your Booking
+          My Booking
         </button>
       </div>
 
@@ -211,7 +211,15 @@ const bookNowBtn = {
 const smallRow = { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 7, width: "min(92vw, 330px)", justifySelf: "center" } as const;
 const smallBtn = { minHeight: 32, border: "1px solid #cbd5e1", borderRadius: 12, background: "#fff", color: "#0f172a", fontWeight: 800, fontSize: 11 } as const;
 const whatsBtn = { minHeight: 32, border: "1px solid #bbf7d0", borderRadius: 12, background: "#ecfdf5", color: "#047857", fontWeight: 800, fontSize: 11 } as const;
-const bookingBtn = { minHeight: 32, border: "1px solid #fed7aa", borderRadius: 12, background: "#fff7ed", color: "#c2410c", fontWeight: 800, fontSize: 11 } as const;
+const bookingBtn = {
+  minHeight: 32,
+  border: "1px solid #93c5fd",
+  borderRadius: 12,
+  background: "#eff6ff",
+  color: "#0b2d6b",
+  fontWeight: 900,
+  fontSize: 11,
+} as const;
 const overlay = { position: "fixed", inset: 0, background: "rgba(15,23,42,.55)", zIndex: 9999, display: "flex", alignItems: "flex-end", justifyContent: "center", padding: 12 } as const;
 const listCard = { width: "100%", maxWidth: 460, maxHeight: "82vh", overflowY: "auto", background: "#fff", borderRadius: "24px 24px 16px 16px", padding: 16, boxShadow: "0 24px 80px rgba(0,0,0,.28)", fontFamily: "Arial, sans-serif" } as const;
 const handle = { width: 52, height: 5, borderRadius: 99, background: "#cbd5e1", margin: "0 auto 14px" } as const;
