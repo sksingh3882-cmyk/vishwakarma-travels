@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import CustomerBookingStatusPopup from "./CustomerBookingStatusPopup";
+import RequestSentPopup from "./RequestSentPopup";
 import {
   fetchBookingRequestById,
   fetchBookingRequestsByPhone,
@@ -33,6 +34,9 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
   const [lookupPhone, setLookupPhone] = useState("");
   const [searched, setSearched] = useState(false);
   const [autoOpenDone, setAutoOpenDone] = useState(false);
+  const [successOpen, setSuccessOpen] = useState(false);
+const [requestSubmitted, setRequestSubmitted] = useState(false);
+const [alreadySubmittedAlert, setAlreadySubmittedAlert] = useState("");
 
   useEffect(() => {
   if (autoOpenDone || !supabaseUrl || !supabaseKey) return;
@@ -91,8 +95,14 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
   }
 
   function openNewRequest() {
-    setSelectedRequest(null);
-    setOpen(true);
+  if (requestSubmitted) {
+    setAlreadySubmittedAlert("Your booking request is already submitted. Please check My Booking section.");
+    return;
+  }
+
+  setAlreadySubmittedAlert("");
+  setSelectedRequest(null);
+  setOpen(true);
   }
 
   function openExistingRequest(request: BookingRequestRecord) {
@@ -103,9 +113,15 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
 
   return (
     <div style={wrap}>
-      <button type="button" style={bookNowBtn} onClick={openNewRequest}>
-        Book Now
-      </button>
+  {alreadySubmittedAlert && (
+    <div style={alreadySubmittedBox}>
+      ✅ {alreadySubmittedAlert}
+    </div>
+  )}
+
+  <button type="button" style={bookNowBtn} onClick={openNewRequest}>
+    Book Now
+  </button>
 
       <div style={smallRow}>
         <button type="button" style={smallBtn} onClick={onDownloadCopy}>
@@ -168,14 +184,30 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
       )}
 
       <CustomerBookingStatusPopup
-        open={open}
-        bookingData={bookingData}
-        existingRequest={selectedRequest}
-        onClose={() => {
-          setOpen(false);
-          setSelectedRequest(null);
-        }}
-      />
+  open={open}
+  bookingData={bookingData}
+  existingRequest={selectedRequest}
+  onRequestSent={() => {
+    setOpen(false);
+    setSelectedRequest(null);
+    setRequestSubmitted(true);
+    setAlreadySubmittedAlert("");
+    setSuccessOpen(true);
+  }}
+  onClose={() => {
+    setOpen(false);
+    setSelectedRequest(null);
+  }}
+/>
+
+<RequestSentPopup
+  open={successOpen}
+  onClose={() => setSuccessOpen(false)}
+  onMyBooking={() => {
+    setSuccessOpen(false);
+    openYourBookings();
+  }}
+/>
     </div>
   );
 }
@@ -195,6 +227,19 @@ function statusLabel(status: string) {
 }
 
 const wrap = { width: "100%", display: "grid", gap: 8, marginTop: 10 } as const;
+const alreadySubmittedBox = {
+  width: "min(92vw, 330px)",
+  justifySelf: "center",
+  border: "1px solid #bbf7d0",
+  background: "#f0fdf4",
+  color: "#166534",
+  borderRadius: 14,
+  padding: "9px 11px",
+  fontSize: 12,
+  fontWeight: 900,
+  lineHeight: 1.35,
+  textAlign: "center",
+} as const;
 const bookNowBtn = {
   width: "min(92vw, 330px)",
   minHeight: 38,
