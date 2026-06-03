@@ -4,33 +4,113 @@ import { type CSSProperties } from "react";
 import { ADMIN_CONTACT } from "@/lib/adminContact";
 
 export default function ContactAdminBox() {
-  const message = encodeURIComponent("Hello Vishwakarma Travels, I need help with my booking.");
+  const message = encodeURIComponent(
+    "Hello Vishwakarma Travels, I need assistance with my booking."
+  );
 
   return (
-    <div style={box}>
-      <div style={headRow}>
-        <div style={iconCircle}>Call</div>
-        <div>
-          <h3 style={title}>Need Help? Contact Vishwakarma Travels Admin</h3>
-          <p style={text}>For booking help, vehicle details, driver update, fare details, or trip support, you can contact our admin team directly.</p>
+    <section style={section}>
+      <div style={card}>
+        <p style={eyebrow}>Customer Support</p>
+
+        <h3 style={title}>Need Assistance?</h3>
+
+        <p style={description}>
+          For booking confirmation, vehicle details, driver update, fare information,
+          or trip support, please contact Vishwakarma Travels admin team.
+        </p>
+
+        <div style={buttonGrid}>
+          <a
+            href={`tel:${ADMIN_CONTACT.phoneCall}`}
+            style={{ ...button, background: "#2563eb" }}
+          >
+            Call Admin
+          </a>
+
+          <a
+            href={`https://wa.me/${ADMIN_CONTACT.whatsappNumber}?text=${message}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ ...button, background: "#16a34a" }}
+          >
+            WhatsApp Admin
+          </a>
         </div>
-      </div>
 
-      <div style={buttonGrid}>
-        <a href={`tel:${ADMIN_CONTACT.phoneCall}`} style={{ ...button, background: "#2563eb" }}>Call Admin</a>
-        <a href={`https://wa.me/${ADMIN_CONTACT.whatsappNumber}?text=${message}`} target="_blank" rel="noopener noreferrer" style={{ ...button, background: "#16a34a" }}>WhatsApp Admin</a>
+        <p style={supportText}>
+          Official Support: {ADMIN_CONTACT.phoneDisplay}
+        </p>
       </div>
-
-      <p style={support}>Official support number: {ADMIN_CONTACT.phoneDisplay}</p>
-    </div>
+    </section>
   );
 }
 
-const box: CSSProperties = { gridColumn: "1/-1", marginTop: 10, border: "1px solid #bfdbfe", borderRadius: 18, padding: 14, background: "#ffffff", boxShadow: "0 8px 22px rgba(15,23,42,.08)", fontFamily: "Arial, sans-serif" };
-const headRow: CSSProperties = { display: "flex", gap: 12, alignItems: "flex-start" };
-const iconCircle: CSSProperties = { width: 38, height: 38, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", background: "#dbeafe", color: "#1d4ed8", fontSize: 11, fontWeight: 900, flexShrink: 0 };
-const title: CSSProperties = { margin: 0, color: "#0b2d6b", fontSize: 16, lineHeight: 1.25, fontWeight: 900 };
-const text: CSSProperties = { margin: "6px 0 0", color: "#475569", fontSize: 13, lineHeight: 1.45 };
-const buttonGrid: CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 14 };
-const button: CSSProperties = { display: "flex", alignItems: "center", justifyContent: "center", minHeight: 44, borderRadius: 14, color: "#fff", textDecoration: "none", fontSize: 13, fontWeight: 900, boxShadow: "0 6px 14px rgba(15,23,42,.16)" };
-const support: CSSProperties = { margin: "10px 0 0", textAlign: "center", color: "#64748b", fontSize: 12 };
+const section: CSSProperties = {
+  maxWidth: 760,
+  margin: "8px auto 0",
+  padding: "0 14px",
+  boxSizing: "border-box",
+};
+
+const card: CSSProperties = {
+  border: "1px solid #dbeafe",
+  borderRadius: 20,
+  padding: 16,
+  background: "#ffffff",
+  boxShadow: "0 10px 28px rgba(15,23,42,.08)",
+  fontFamily: "Arial, sans-serif",
+  textAlign: "center",
+};
+
+const eyebrow: CSSProperties = {
+  margin: 0,
+  color: "#2563eb",
+  fontSize: 12,
+  fontWeight: 900,
+  letterSpacing: 0.4,
+  textTransform: "uppercase",
+};
+
+const title: CSSProperties = {
+  margin: "6px 0 0",
+  color: "#0b2d6b",
+  fontSize: 20,
+  lineHeight: 1.2,
+  fontWeight: 900,
+};
+
+const description: CSSProperties = {
+  margin: "8px auto 0",
+  maxWidth: 620,
+  color: "#475569",
+  fontSize: 13,
+  lineHeight: 1.55,
+};
+
+const buttonGrid: CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: 10,
+  marginTop: 14,
+};
+
+const button: CSSProperties = {
+  minHeight: 46,
+  borderRadius: 14,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  color: "#ffffff",
+  textDecoration: "none",
+  fontSize: 14,
+  fontWeight: 900,
+  boxShadow: "0 7px 16px rgba(15,23,42,.16)",
+};
+
+const supportText: CSSProperties = {
+  margin: "10px 0 0",
+  color: "#64748b",
+  fontSize: 12,
+  fontWeight: 700,
+};
