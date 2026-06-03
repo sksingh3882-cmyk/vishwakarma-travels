@@ -219,7 +219,7 @@ function TripDetails({ request, compact = false }: { request: BookingRequestReco
   return (
     <div style={compact ? compactSection : section}>
       <h3 style={sectionTitle}>Trip Details</h3>
-      <Info label="Booking ID" value={request.id} />
+      <Info label="Booking ID" value={shortBookingId(request.id)} />
       <Info label="Name" value={request.customerName} />
       <Info label="Mobile" value={request.customerPhone} />
       <Info label="Service" value={request.service || "-"} />
@@ -244,6 +244,17 @@ function DriverDetails({ request }: { request: BookingRequestRecord }) {
   );
 }
 
+function shortBookingId(id?: string) {
+  if (!id) return "-";
+
+  let hash = 0;
+
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash * 31 + id.charCodeAt(i)) % 10000;
+  }
+
+  return `VT-${String(hash).padStart(4, "0")}`;
+}
 function Info({ label, value }: { label: string; value: string }) {
   return (
     <div style={infoRow}>
