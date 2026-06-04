@@ -14,6 +14,11 @@ export default function WelcomePage() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
+    const timer = setTimeout(() => setVideoReady(true), 1800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     if (mode !== "existing") return;
 
     try {
@@ -49,14 +54,6 @@ export default function WelcomePage() {
   };
 
   const startWelcomeAnimations = () => {
-    const video = videoRef.current;
-
-    if (video) {
-      try {
-        if (video.currentTime < 1) video.currentTime = 1;
-      } catch {}
-    }
-
     setVideoReady(true);
   };
 
@@ -104,7 +101,7 @@ export default function WelcomePage() {
           loop
           playsInline
           preload="auto"
-          onLoadedMetadata={startWelcomeAnimations}
+          onCanPlay={startWelcomeAnimations}
           onPlaying={startWelcomeAnimations}
         >
           <source src="/cars/welcome-road.mp4" type="video/mp4" />
