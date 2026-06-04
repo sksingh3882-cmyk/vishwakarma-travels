@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const STORAGE_KEY = "vishwakarma_customer_profile";
 
@@ -10,6 +10,8 @@ export default function WelcomePage() {
   const [mobile, setMobile] = useState("");
   const [address, setAddress] = useState("");
   const [alert, setAlert] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     if (mode !== "existing") return;
@@ -46,6 +48,18 @@ export default function WelcomePage() {
     }
   };
 
+  const startWelcomeAnimations = () => {
+    const video = videoRef.current;
+
+    if (video) {
+      try {
+        if (video.currentTime < 1) video.currentTime = 1;
+      } catch {}
+    }
+
+    setVideoReady(true);
+  };
+
   const continueBooking = () => {
     const cleanName = name.trim();
     const cleanMobile = mobile.replace(/\D/g, "").slice(-10);
@@ -80,13 +94,22 @@ export default function WelcomePage() {
   };
 
   return (
-    <main className="welcomePage">
+    <main className={`welcomePage ${videoReady ? "videoStarted" : ""}`}>
 
       <div className="videoBg">
-  <video autoPlay muted loop playsInline>
-    <source src="/cars/welcome-road.mp4" type="video/mp4" />
-  </video>
-</div>
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          onLoadedMetadata={startWelcomeAnimations}
+          onPlaying={startWelcomeAnimations}
+        >
+          <source src="/cars/welcome-road.mp4" type="video/mp4" />
+        </video>
+      </div>
       <style>{`
       @import url('https://fonts.googleapis.com/css2?family=Yellowtail&display=swap');
       .videoBg{
@@ -117,45 +140,82 @@ export default function WelcomePage() {
         .scriptLogo{
   margin:0;
   text-align:center;
-  font-family:'Yellowtail',cursive;
-  font-weight:400;
-  line-height:.78;
-  text-shadow:0 8px 22px rgba(0,0,0,.65);
+  font-family:Arial,sans-serif;
+  font-style:normal;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:-1px;
+  line-height:.96;
+  text-shadow:0 5px 0 rgba(0,0,0,.28),0 12px 20px rgba(0,0,0,.38);
 }
 
 .scriptVish{
   display:block;
-  color:#fff7dc;
-  font-size:clamp(68px,15vw,120px);
-  -webkit-text-stroke:.7px #111;
-  animation:leftIn 1.4s ease forwards;
+  color:#ffffff;
+  font-size:clamp(31px,8vw,54px);
 }
 
 .scriptTravels{
   display:block;
-  margin-top:-6px;
+  margin-top:6px;
   color:#ff7a00;
-  font-size:clamp(62px,14vw,110px);
-  -webkit-text-stroke:.7px #111;
+  font-size:clamp(38px,10vw,66px);
+  letter-spacing:1px;
+}
 
-  text-shadow:
-    0 4px 0 rgba(0,0,0,.35),
-    0 0 18px rgba(255,122,0,.55);
-
-  animation:rightIn 1.5s ease forwards;
+.logoPopLetter{
+  display:inline-block;
+  opacity:0;
+  transform:translateY(14px) scale(.75);
 }
         .tagline{margin-top:8px;font-size:13px;font-style:italic;font-weight:700;color:#ffffff;text-shadow:-1px -1px 0 #0b3aa4,1px -1px 0 #0b3aa4,-1px 1px 0 #0b3aa4,1px 1px 0 #0b3aa4}
         .travelTitle{position:absolute;top:190px;width:100%;text-align:center;z-index:3}
-        .travelWord,.madeWord{display:block;font-family:'Yellowtail',cursive;font-style:normal;font-weight:900;letter-spacing:1px;text-shadow:-2px -2px 0 #111,2px -2px 0 #111,-2px 2px 0 #111,2px 2px 0 #111,0 10px 22px rgba(0,0,0,.45)}
-        .travelWord{font-size:38px;color:#fff;animation:leftIn 1.4s ease forwards}
-        .madeWord{margin-top:-8px;font-size:34px;color:#8fd3ff;animation:rightIn 1.6s ease forwards}
+        .travelWord,.madeWord{
+  display:block;
+  font-family:Arial,sans-serif;
+  font-style:normal;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:-1px;
+  line-height:.96;
+  text-shadow:0 5px 0 rgba(0,0,0,.28),0 12px 20px rgba(0,0,0,.38);
+}
+
+.travelWord{
+  font-size:34px;
+  color:#ffffff;
+}
+
+.madeWord{
+  margin-top:4px;
+  font-size:34px;
+  color:#ff7a00;
+}
+
+.popLetter{
+  display:inline-block;
+  opacity:0;
+  transform:translateY(14px) scale(.75);
+}
+
+.videoStarted .logoPopLetter,
+.videoStarted .popLetter{
+  animation:letterPop .5s ease forwards;
+}
+
+@keyframes letterPop{
+  0%{opacity:0;transform:translateY(14px) scale(.75)}
+  70%{opacity:1;transform:translateY(-3px) scale(1.08)}
+  100%{opacity:1;transform:translateY(0) scale(1)}
+}
         @keyframes leftIn{from{opacity:0;transform:translateX(-120vw)}to{opacity:1;transform:translateX(0)}}
         @keyframes rightIn{from{opacity:0;transform:translateX(120vw)}to{opacity:1;transform:translateX(0)}}
         @keyframes formUp{
   from{opacity:0;transform:translate(-50%,100vh)}
   to{opacity:1;transform:translate(-50%,0)}
 }
-        .userForm{position:absolute;top:430px;left:50%;transform:translateX(-50%);width:min(88vw,360px);padding:12px;border-radius:18px;background:rgba(0,0,0,.22);border:none;box-shadow:none;z-index:3;animation:formUp 1s cubic-bezier(.16,1,.3,1) forwards}
+        .userForm{position:absolute;top:430px;left:50%;transform:translate(-50%,100vh);width:min(88vw,360px);padding:12px;border-radius:18px;background:rgba(0,0,0,.22);border:none;box-shadow:none;z-index:3;opacity:0}
+        .videoStarted .userForm{animation:formUp 1s cubic-bezier(.16,1,.3,1) forwards}
         .formTop{display:flex;gap:8px;margin-bottom:10px}
         .topBtn{flex:1;height:40px;border:none;border-radius:13px;font-size:14px;font-weight:800;color:#fff;background:rgba(255,255,255,.18)}
         .topBtn.active{background:linear-gradient(135deg,#0b3aa4,#2563eb);box-shadow:0 10px 24px rgba(37,99,235,.45)}
@@ -199,16 +259,58 @@ export default function WelcomePage() {
         <div className="headingRow">
           
           <h1 className="scriptLogo">
-  <span className="scriptVish">Vishwakarma</span>
-  <span className="scriptTravels">Travels</span>
-</h1>
+            <span className="scriptVish">
+              {"Vishwakarma".split("").map((letter, index) => (
+                <span
+                  key={`logo-vish-${index}`}
+                  className="logoPopLetter"
+                  style={{ animationDelay: `${index * 0.08}s` }}
+                >
+                  {letter}
+                </span>
+              ))}
+            </span>
+
+            <span className="scriptTravels">
+              {"Travels".split("").map((letter, index) => (
+                <span
+                  key={`logo-travels-${index}`}
+                  className="logoPopLetter"
+                  style={{ animationDelay: `${(11 + index) * 0.08}s` }}
+                >
+                  {letter}
+                </span>
+              ))}
+            </span>
+          </h1>
         </div>
         <div className="tagline">most Reliable and Affordable Cab Service Of Jamshedpur</div>
       </div>
 
       <div className="travelTitle">
-        <span className="travelWord">Travel</span>
-        <span className="madeWord">Made Easy</span>
+        <span className="travelWord">
+          {"Reliable And".split("").map((letter, index) => (
+            <span
+              key={`reliable-${index}`}
+              className="popLetter"
+              style={{ animationDelay: `${(19 + index) * 0.08}s` }}
+            >
+              {letter === " " ? "\u00A0" : letter}
+            </span>
+          ))}
+        </span>
+
+        <span className="madeWord">
+          {"Comfortable".split("").map((letter, index) => (
+            <span
+              key={`comfortable-${index}`}
+              className="popLetter"
+              style={{ animationDelay: `${(31 + index) * 0.08}s` }}
+            >
+              {letter}
+            </span>
+          ))}
+        </span>
       </div>
 
       <div className="userForm">
