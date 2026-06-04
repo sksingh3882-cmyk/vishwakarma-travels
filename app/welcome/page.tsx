@@ -146,9 +146,40 @@ export default function WelcomePage() {
 }
         .tagline{margin-top:8px;font-size:13px;font-style:italic;font-weight:700;color:#ffffff;text-shadow:-1px -1px 0 #0b3aa4,1px -1px 0 #0b3aa4,-1px 1px 0 #0b3aa4,1px 1px 0 #0b3aa4}
         .travelTitle{position:absolute;top:190px;width:100%;text-align:center;z-index:3}
-        .travelWord,.madeWord{display:block;font-family:'Yellowtail',cursive;font-style:normal;font-weight:900;letter-spacing:1px;text-shadow:-2px -2px 0 #111,2px -2px 0 #111,-2px 2px 0 #111,2px 2px 0 #111,0 10px 22px rgba(0,0,0,.45)}
-        .travelWord{font-size:38px;color:#fff;animation:leftIn 1.4s ease forwards}
-        .madeWord{margin-top:-8px;font-size:34px;color:#8fd3ff;animation:rightIn 1.6s ease forwards}
+        .travelWord,.madeWord{
+  display:block;
+  font-family:Arial,sans-serif;
+  font-style:normal;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:-1px;
+  line-height:.96;
+  text-shadow:0 5px 0 rgba(0,0,0,.28),0 12px 20px rgba(0,0,0,.38);
+}
+
+.travelWord{
+  font-size:34px;
+  color:#ffffff;
+}
+
+.madeWord{
+  margin-top:4px;
+  font-size:34px;
+  color:#ff7a00;
+}
+
+.popLetter{
+  display:inline-block;
+  opacity:0;
+  transform:translateY(14px) scale(.75);
+  animation:letterPop .5s ease forwards;
+}
+
+@keyframes letterPop{
+  0%{opacity:0;transform:translateY(14px) scale(.75)}
+  70%{opacity:1;transform:translateY(-3px) scale(1.08)}
+  100%{opacity:1;transform:translateY(0) scale(1)}
+}
         @keyframes leftIn{from{opacity:0;transform:translateX(-120vw)}to{opacity:1;transform:translateX(0)}}
         @keyframes rightIn{from{opacity:0;transform:translateX(120vw)}to{opacity:1;transform:translateX(0)}}
         @keyframes formUp{
@@ -207,8 +238,29 @@ export default function WelcomePage() {
       </div>
 
       <div className="travelTitle">
-  <span className="travelWord">Reliable And</span>
-  <span className="madeWord">Comfortable</span>
+  <span className="travelWord">
+    {"Reliable And".split("").map((letter, index) => (
+      <span
+        key={`reliable-${index}`}
+        className="popLetter"
+        style={{ animationDelay: `${index * 0.08}s` }}
+      >
+        {letter === " " ? "\u00A0" : letter}
+      </span>
+    ))}
+  </span>
+
+  <span className="madeWord">
+    {"Comfortable".split("").map((letter, index) => (
+      <span
+        key={`comfortable-${index}`}
+        className="popLetter"
+        style={{ animationDelay: `${(12 + index) * 0.08}s` }}
+      >
+        {letter}
+      </span>
+    ))}
+  </span>
 </div>
 
       <div className="userForm">
