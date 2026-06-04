@@ -207,9 +207,9 @@ export default function WelcomePage() {
       </div>
 
       <div className="travelTitle">
-        <span className="travelWord">Travel</span>
-        <span className="madeWord">Made Easy</span>
-      </div>
+  <span className="travelWord">Reliable And</span>
+  <span className="madeWord">Comfortable</span>
+</div>
 
       <div className="userForm">
         <div className="formTop">
