@@ -284,7 +284,6 @@ export default function WelcomePage() {
             </span>
           </h1>
         </div>
-        <div className="tagline">most Reliable and Affordable Cab Service Of Jamshedpur</div>
       </div>
 
       <div className="travelTitle">
