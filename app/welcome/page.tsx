@@ -20,6 +20,11 @@ export default function WelcomePage() {
   };
 
   const serviceLine = "Well Maintained Cars | Professional Drivers | 24/ 7 Day & Night Service";
+  const serviceOptions = [
+    ["One Way Drop Pickup", "Same Day Trip"],
+    ["Local Movement", "Short Time Bookings"],
+    ["Wedding Functions", "Tour Package"],
+  ];
 
   return (
     <main className={`welcomePage ${videoReady ? "videoStarted" : ""}`}>
@@ -45,24 +50,28 @@ export default function WelcomePage() {
         .videoBg video{width:100%;height:100%;object-fit:cover}
         .welcomePage::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.38);z-index:1}
 
-        .mainHeading{position:absolute;top:74px;left:50%;transform:translateX(-50%);width:100%;text-align:center;z-index:3;padding:0 12px;box-sizing:border-box}
+        .mainHeading{position:absolute;top:64px;left:50%;transform:translateX(-50%);width:100%;text-align:center;z-index:3;padding:0 12px;box-sizing:border-box}
         .scriptLogo{margin:0;text-align:center;font-family:Arial,sans-serif;font-style:normal;font-weight:900;text-transform:uppercase;letter-spacing:-1px;line-height:.96;text-shadow:0 5px 0 rgba(0,0,0,.28),0 12px 20px rgba(0,0,0,.38)}
-        .scriptVish{display:block;color:#ffffff;font-size:clamp(31px,8vw,54px)}
-        .scriptTravels{display:block;margin-top:6px;color:#ff7a00;font-size:clamp(38px,10vw,66px);letter-spacing:1px}
+        .scriptVish{display:block;color:#ffffff;font-size:clamp(30px,7.8vw,54px)}
+        .scriptTravels{display:block;margin-top:6px;color:#ff7a00;font-size:clamp(37px,9.6vw,66px);letter-spacing:1px}
         .logoPopLetter{display:inline-block;opacity:0;transform:translateY(14px) scale(.75)}
 
-        .travelTitle{position:absolute;top:200px;left:50%;transform:translateX(-50%);width:min(92vw,430px);text-align:center;z-index:3}
-        .travelWord,.madeWord,.serviceLine{display:block;font-family:Arial,sans-serif;font-style:normal;font-weight:900;text-shadow:0 5px 0 rgba(0,0,0,.28),0 12px 20px rgba(0,0,0,.38)}
+        .travelTitle{position:absolute;top:188px;left:50%;transform:translateX(-50%);width:min(92vw,430px);text-align:center;z-index:3}
+        .travelWord,.madeWord,.serviceLine,.serviceOption{display:block;font-family:Arial,sans-serif;font-style:normal;font-weight:900;text-shadow:0 5px 0 rgba(0,0,0,.28),0 12px 20px rgba(0,0,0,.38)}
         .travelWord{font-size:34px;color:#ffffff;text-transform:uppercase;letter-spacing:-1px;line-height:.96}
         .madeWord{margin-top:4px;font-size:34px;color:#ff7a00;text-transform:uppercase;letter-spacing:-1px;line-height:.96}
-        .serviceLine{margin:18px auto 0;max-width:330px;color:#ffffff;font-size:clamp(12px,3.3vw,15px);line-height:1.35;letter-spacing:.1px;text-transform:none}
+        .serviceLine{margin:16px auto 0;max-width:330px;color:#ffffff;font-size:clamp(12px,3.3vw,15px);line-height:1.35;letter-spacing:.1px;text-transform:none}
 
-        .popLetter,.servicePopLetter{display:inline-block;opacity:0;transform:translateY(14px) scale(.75)}
-        .videoStarted .logoPopLetter,.videoStarted .popLetter,.videoStarted .servicePopLetter{animation:letterPop .5s ease forwards}
+        .serviceGrid{margin:20px auto 0;width:min(92vw,390px);display:grid;grid-template-columns:1fr 1fr;column-gap:18px;row-gap:9px;text-align:left}
+        .serviceOption{color:#ffffff;font-size:clamp(14px,3.8vw,17px);line-height:1.15;letter-spacing:-.2px;text-transform:none;white-space:nowrap}
+        .serviceGrid .serviceOption:nth-child(even){text-align:right}
+
+        .popLetter,.servicePopLetter,.optionPopLetter{display:inline-block;opacity:0;transform:translateY(14px) scale(.75)}
+        .videoStarted .logoPopLetter,.videoStarted .popLetter,.videoStarted .servicePopLetter,.videoStarted .optionPopLetter{animation:letterPop .5s ease forwards}
         @keyframes letterPop{0%{opacity:0;transform:translateY(14px) scale(.75)}70%{opacity:1;transform:translateY(-3px) scale(1.08)}100%{opacity:1;transform:translateY(0) scale(1)}}
 
         @keyframes actionUp{from{opacity:0;transform:translate(-50%,80px)}to{opacity:1;transform:translate(-50%,0)}}
-        .welcomeActions{position:absolute;top:470px;left:50%;transform:translate(-50%,80px);width:min(88vw,360px);z-index:3;opacity:0}
+        .welcomeActions{position:absolute;top:565px;left:50%;transform:translate(-50%,80px);width:min(88vw,360px);z-index:3;opacity:0}
         .videoStarted .welcomeActions{animation:actionUp 1s cubic-bezier(.16,1,.3,1) forwards}
         .continueBtn{width:100%;height:52px;border:none;border-radius:16px;font-size:17px;font-weight:900;color:#fff;background:linear-gradient(135deg,#ff7a00,#ff4500);box-shadow:0 14px 30px rgba(0,0,0,.35)}
       `}</style>
@@ -111,6 +120,22 @@ export default function WelcomePage() {
             </span>
           ))}
         </span>
+
+        <div className="serviceGrid">
+          {serviceOptions.flat().map((text, index) => (
+            <span key={`service-option-${index}`} className="serviceOption">
+              {text.split("").map((letter, letterIndex) => (
+                <span
+                  key={`service-option-${index}-${letterIndex}`}
+                  className="optionPopLetter"
+                  style={{ animationDelay: `${(72 + index * 4 + letterIndex * 0.55) * 0.035}s` }}
+                >
+                  {letter === " " ? "\u00A0" : letter}
+                </span>
+              ))}
+            </span>
+          ))}
+        </div>
       </div>
 
       <div className="welcomeActions">
