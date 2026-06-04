@@ -65,7 +65,6 @@ export default function WelcomePage() {
         .welcomeActions{position:absolute;top:470px;left:50%;transform:translate(-50%,80px);width:min(88vw,360px);z-index:3;opacity:0}
         .videoStarted .welcomeActions{animation:actionUp 1s cubic-bezier(.16,1,.3,1) forwards}
         .continueBtn{width:100%;height:52px;border:none;border-radius:16px;font-size:17px;font-weight:900;color:#fff;background:linear-gradient(135deg,#ff7a00,#ff4500);box-shadow:0 14px 30px rgba(0,0,0,.35)}
-        .trustNote{margin-top:10px;text-align:center;color:#ffffff;font-size:12px;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.7)}
       `}</style>
 
       <div className="mainHeading">
@@ -116,7 +115,6 @@ export default function WelcomePage() {
 
       <div className="welcomeActions">
         <button type="button" className="continueBtn" onClick={continueBooking}>Continue Booking</button>
-        <div className="trustNote">Tap to continue to the booking form</div>
       </div>
     </main>
   );
