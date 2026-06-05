@@ -150,7 +150,6 @@ export default function WelcomePage() {
     <div>+91 9155-299-939</div>
   </div>
 </div>
-      </div>
     </main>
   );
 }
