@@ -55,23 +55,25 @@ export default function WelcomePage() {
         .logoPopLetter{display:inline-block;opacity:0;transform:translateY(14px) scale(.75)}
 
         .travelTitle{position:absolute;top:188px;left:50%;transform:translateX(-50%);width:min(92vw,430px);text-align:center;z-index:3}
-        .travelWord,.madeWord,.serviceLine,.serviceOption{display:block;font-family:Arial,sans-serif;font-style:normal;font-weight:900;text-shadow:0 5px 0 rgba(0,0,0,.28),0 12px 20px rgba(0,0,0,.38)}
+        .travelWord,.madeWord,.journeyWord,.serviceLine,.serviceOption{display:block;font-family:Arial,sans-serif;font-style:normal;font-weight:900;text-shadow:0 5px 0 rgba(0,0,0,.28),0 12px 20px rgba(0,0,0,.38)}
         .travelWord{font-size:34px;color:#ffffff;text-transform:uppercase;letter-spacing:-1px;line-height:.96}
         .madeWord{margin-top:4px;font-size:34px;color:#ff7a00;text-transform:uppercase;letter-spacing:-1px;line-height:.96}
-        .serviceLine{margin:16px auto 0;max-width:330px;color:#ffffff;font-size:clamp(12px,3.3vw,15px);line-height:1.35;letter-spacing:.1px;text-transform:none}
+        .journeyWord{margin-top:4px;font-size:34px;color:#ffffff;text-transform:uppercase;letter-spacing:-1px;line-height:.96}
+        .serviceLine{margin:14px auto 0;max-width:330px;color:#ffffff;font-size:clamp(12px,3.3vw,15px);line-height:1.35;letter-spacing:.1px;text-transform:none}
 
         .serviceGrid{margin:20px auto 0;width:min(92vw,390px);display:grid;grid-template-columns:1fr 1fr;column-gap:18px;row-gap:9px;text-align:left}
         .serviceOption{color:#ffffff;font-size:clamp(14px,3.8vw,17px);line-height:1.15;letter-spacing:-.2px;text-transform:none;white-space:nowrap}
         .serviceGrid .serviceOption:nth-child(even){text-align:right}
 
-        .popLetter,.servicePopLetter,.optionPopLetter{display:inline-block;opacity:0;transform:translateY(14px) scale(.75)}
-        .videoStarted .logoPopLetter,.videoStarted .popLetter,.videoStarted .servicePopLetter,.videoStarted .optionPopLetter{animation:letterPop .5s ease forwards}
+        .popLetter,.journeyPopLetter,.servicePopLetter,.optionPopLetter{display:inline-block;opacity:0;transform:translateY(14px) scale(.75)}
+        .videoStarted .logoPopLetter,.videoStarted .popLetter,.videoStarted .journeyPopLetter,.videoStarted .servicePopLetter,.videoStarted .optionPopLetter{animation:letterPop .5s ease forwards}
         @keyframes letterPop{0%{opacity:0;transform:translateY(14px) scale(.75)}70%{opacity:1;transform:translateY(-3px) scale(1.08)}100%{opacity:1;transform:translateY(0) scale(1)}}
 
         @keyframes actionUp{from{opacity:0;transform:translate(-50%,80px)}to{opacity:1;transform:translate(-50%,0)}}
         .welcomeActions{position:absolute;top:565px;left:50%;transform:translate(-50%,80px);width:min(88vw,360px);z-index:3;opacity:0}
         .videoStarted .welcomeActions{animation:actionUp 1s cubic-bezier(.16,1,.3,1) forwards}
         .continueBtn{width:100%;height:52px;border:none;border-radius:16px;font-size:17px;font-weight:900;color:#fff;background:linear-gradient(135deg,#ff7a00,#ff4500);box-shadow:0 14px 30px rgba(0,0,0,.35)}
+        .contactInfo{margin-top:12px;text-align:center;color:#ffffff;font-size:clamp(12px,3.2vw,14px);line-height:1.45;font-weight:400;text-shadow:0 2px 8px rgba(0,0,0,.65)}
       `}</style>
       <div className="mainHeading">
         <h1 className="scriptLogo">
@@ -108,6 +110,13 @@ export default function WelcomePage() {
             </span>
           ))}
         </span>
+        <span className="journeyWord">
+  {"Journey".split("").map((letter, index) => (
+    <span key={`journey-${index}`} className="journeyPopLetter" style={{ animationDelay: `${(43 + index) * 0.08}s` }}>
+      {letter}
+    </span>
+  ))}
+</span>
 
         <span className="serviceLine">
           {serviceLine.split("").map((letter, index) => (
@@ -133,8 +142,14 @@ export default function WelcomePage() {
         </div>
       </div>
 
-      <div className="welcomeActions">
-        <button type="button" className="continueBtn" onClick={continueBooking}>Continue Booking</button>
+       <div className="welcomeActions">
+  <button type="button" className="continueBtn" onClick={continueBooking}>Continue Booking</button>
+  <div className="contactInfo">
+    <div>Jugsalai Jamshedpur</div>
+    <div>+91 7667-989-203</div>
+    <div>+91 9155-299-939</div>
+  </div>
+</div>
       </div>
     </main>
   );
