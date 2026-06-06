@@ -36,8 +36,9 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
   const [searched, setSearched] = useState(false);
   const [autoOpenDone, setAutoOpenDone] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
-const [submittedSignature, setSubmittedSignature] = useState("");
-const [alreadySubmittedAlert, setAlreadySubmittedAlert] = useState("");
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [submittedSignature, setSubmittedSignature] = useState("");
+  const [alreadySubmittedAlert, setAlreadySubmittedAlert] = useState("");
   const currentSignature = [
   cleanPhone(bookingData.customerPhone || ""),
   String(bookingData.pickup || "").trim().toLowerCase(),
@@ -112,7 +113,7 @@ const [alreadySubmittedAlert, setAlreadySubmittedAlert] = useState("");
 
   setAlreadySubmittedAlert("");
   setSelectedRequest(null);
-  setOpen(true);
+  setConfirmOpen(true);
   }
 
   function openExistingRequest(request: BookingRequestRecord) {
@@ -193,6 +194,95 @@ const [alreadySubmittedAlert, setAlreadySubmittedAlert] = useState("");
         </div>
       )}
 
+      {confirmOpen && (
+  <div style={overlay}>
+    <div style={confirmCard}>
+      <div style={handle} />
+
+      <div style={confirmHead}>
+        <div>
+          <h2 style={confirmTitle}>Review Booking Details</h2>
+          <p style={confirmSub}>
+            Please check your booking details before submitting your request.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          style={xBtn}
+          onClick={() => setConfirmOpen(false)}
+        >
+          ×
+        </button>
+      </div>
+
+      <div style={confirmDetails}>
+        <div style={confirmRow}>
+          <span style={confirmLabel}>Customer Name</span>
+          <b style={confirmValue}>{bookingData.customerName || "-"}</b>
+        </div>
+
+        <div style={confirmRow}>
+          <span style={confirmLabel}>Mobile Number</span>
+          <b style={confirmValue}>{cleanPhone(bookingData.customerPhone || "") || "-"}</b>
+        </div>
+
+        <div style={confirmRow}>
+          <span style={confirmLabel}>Service</span>
+          <b style={confirmValue}>{bookingData.service || "-"}</b>
+        </div>
+
+        <div style={confirmRow}>
+          <span style={confirmLabel}>Requested Vehicle</span>
+          <b style={confirmValue}>{bookingData.requestedVehicle || "-"}</b>
+        </div>
+
+        <div style={confirmRow}>
+          <span style={confirmLabel}>Pickup Location</span>
+          <b style={confirmValue}>{bookingData.pickup || "-"}</b>
+        </div>
+
+        <div style={confirmRow}>
+          <span style={confirmLabel}>Drop Location</span>
+          <b style={confirmValue}>{bookingData.drop || "-"}</b>
+        </div>
+
+        <div style={confirmTwoCol}>
+          <div style={confirmMiniBox}>
+            <span style={confirmLabel}>Journey Date</span>
+            <b style={confirmValue}>{formatDisplayDate(bookingData.journeyDate || "")}</b>
+          </div>
+
+          <div style={confirmMiniBox}>
+            <span style={confirmLabel}>Journey Time</span>
+            <b style={confirmValue}>{bookingData.journeyTime || "-"}</b>
+          </div>
+        </div>
+      </div>
+
+      <div style={confirmActions}>
+        <button
+          type="button"
+          style={cancelBtn}
+          onClick={() => setConfirmOpen(false)}
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          style={confirmSubmitBtn}
+          onClick={() => {
+            setConfirmOpen(false);
+            setOpen(true);
+          }}
+        >
+          Confirm and Submit
+        </button>
+      </div>
+    </div>
+  </div>
+)}
       <CustomerBookingStatusPopup
   open={open}
   bookingData={bookingData}
@@ -296,3 +386,111 @@ const bookingItem = { width: "100%", textAlign: "left", border: "1px solid #e2e8
 const routeText = { color: "#0f172a", fontWeight: 900, fontSize: 14, lineHeight: 1.3 } as const;
 const dateText = { color: "#475569", fontWeight: 700, fontSize: 13 } as const;
 const statusText = { justifySelf: "start", borderRadius: 999, background: "#eff6ff", color: "#1d4ed8", padding: "4px 9px", fontSize: 11, fontWeight: 900 } as const;
+const confirmCard = {
+  width: "100%",
+  maxWidth: 460,
+  maxHeight: "86vh",
+  overflowY: "auto",
+  background: "#fff",
+  borderRadius: "24px 24px 16px 16px",
+  padding: 16,
+  boxShadow: "0 24px 80px rgba(0,0,0,.28)",
+  fontFamily: "Arial, sans-serif",
+} as const;
+
+const confirmHead = {
+  display: "flex",
+  justifyContent: "space-between",
+  gap: 12,
+  alignItems: "flex-start",
+  marginBottom: 12,
+} as const;
+
+const confirmTitle = {
+  margin: 0,
+  color: "#0f172a",
+  fontSize: 20,
+  fontWeight: 900,
+} as const;
+
+const confirmSub = {
+  margin: "6px 0 0",
+  color: "#64748b",
+  fontSize: 13,
+  lineHeight: 1.35,
+  fontWeight: 700,
+} as const;
+
+const confirmDetails = {
+  display: "grid",
+  gap: 9,
+  marginTop: 12,
+} as const;
+
+const confirmRow = {
+  display: "grid",
+  gap: 4,
+  border: "1px solid #e2e8f0",
+  background: "#f8fafc",
+  borderRadius: 14,
+  padding: "10px 12px",
+} as const;
+
+const confirmLabel = {
+  color: "#64748b",
+  fontSize: 11,
+  fontWeight: 900,
+  textTransform: "uppercase",
+  letterSpacing: ".3px",
+} as const;
+
+const confirmValue = {
+  color: "#0f172a",
+  fontSize: 14,
+  fontWeight: 900,
+  lineHeight: 1.35,
+  wordBreak: "break-word",
+} as const;
+
+const confirmTwoCol = {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: 9,
+} as const;
+
+const confirmMiniBox = {
+  display: "grid",
+  gap: 4,
+  border: "1px solid #e2e8f0",
+  background: "#f8fafc",
+  borderRadius: 14,
+  padding: "10px 12px",
+} as const;
+
+const confirmActions = {
+  display: "grid",
+  gridTemplateColumns: "1fr 1.4fr",
+  gap: 9,
+  marginTop: 14,
+} as const;
+
+const cancelBtn = {
+  minHeight: 44,
+  border: "1px solid #cbd5e1",
+  borderRadius: 14,
+  background: "#fff",
+  color: "#0f172a",
+  fontWeight: 900,
+  fontSize: 13,
+} as const;
+
+const confirmSubmitBtn = {
+  minHeight: 44,
+  border: 0,
+  borderRadius: 14,
+  background: "linear-gradient(135deg,#f97316,#ea580c)",
+  color: "#fff",
+  fontWeight: 900,
+  fontSize: 13,
+  boxShadow: "0 12px 26px rgba(234,88,12,.22)",
+} as const;
