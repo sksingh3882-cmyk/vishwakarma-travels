@@ -7,6 +7,7 @@ export function getMockAssignmentData(
     bookingId,
     customerName: "Test Customer",
     customerMobile: "98xxxxxx12",
+    adminContact: "7667989203",
     serviceType: "Outstation / Local / Airport",
     date: "10 June 2026",
     time: "08:00 AM",
