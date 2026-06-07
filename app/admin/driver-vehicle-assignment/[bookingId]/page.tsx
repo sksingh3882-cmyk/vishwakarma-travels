@@ -1,14 +1,20 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Car, CheckCircle2, ClipboardCopy, MessageCircle, Phone, Send, Trash2 } from "lucide-react";
 
-type VehicleDetails = {
-  driverName: string;
-  driverMobile: string;
-  vehicleModel: string;
-  vehicleNumber: string;
-  vehicleType: string;
+const trip = {
+  service: "Outstation",
+  date: "10 June 2026",
+  time: "08:00 AM",
+  vehicleRequired: "Sedan",
+  pickupArea: "Sonari",
+  dropArea: "Ranchi Airport",
+  contact: "98xxxxxx12",
 };
 
-const trip
+const emptyVehicle = {
+  driverName: "",
+  driverMobile: "",
+  vehicleModel: "",
+  vehicleNumber: "",
+  vehicle
