@@ -15,3 +15,10 @@ export type AssignmentFormState = {
   pickupArea: string;
   dropArea: string;
   note: string;
+};
+
+export type DriverSubmittedDetails = {
+  driverName: string;
+  driverMobile: string;
+  vehicleNumber: string;
+  driver
