@@ -569,12 +569,6 @@ function inferVehicleTypeFromModel(value: string) {
   return "";
 }
 
-function normalizeVehicleNumber(value: string) {
-  return String(value || "")
-    .toUpperCase()
-    .replace(/[^A-Z0-9]/g, "")
-    .slice(0, 12);
-}
 function shortArea(value: string) {
   return String(value || "").split(",")[0].trim();
 }
