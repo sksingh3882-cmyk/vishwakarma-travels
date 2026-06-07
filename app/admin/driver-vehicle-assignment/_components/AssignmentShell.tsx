@@ -182,22 +182,40 @@ export default function AssignmentShell({ bookingId }: AssignmentShellProps) {
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   }
 
-  function handleDriverSubmit() {
-    const cleanedDetails: DriverVehicleSubmission = {
-      driverName: driverForm.driverName.trim(),
-      driverMobile: driverForm.driverMobile.trim(),
-      vehicleNumber: normalizeVehicleNumber(driverForm.vehicleNumber),
-      driverVehicleModel: driverForm.driverVehicleModel.trim(),
-    };
+  async function handleDriverSubmit() {
+  const cleanedDetails: DriverVehicleSubmission = {
+    driverName: driverForm.driverName.trim(),
+    driverMobile: cleanPhoneForAssignment(driverForm.driverMobile),
+    vehicleNumber: normalizeVehicleNumber(driverForm.vehicleNumber),
+    driverVehicleModel: driverForm.driverVehicleModel.trim(),
+  };
 
-    if (
-      !cleanedDetails.driverName ||
-      !cleanedDetails.driverMobile ||
-      !cleanedDetails.vehicleNumber
-    ) {
-      alert("Driver Name, Driver Mobile aur Vehicle Number required hai.");
-      return;
-    }
+  if (
+    !cleanedDetails.driverName ||
+    !cleanedDetails.driverMobile ||
+    !cleanedDetails.vehicleNumber
+  ) {
+    alert("Driver Name, Driver Mobile aur Vehicle Number required hai.");
+    return;
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+
+  if (!supabaseUrl || !supabaseKey) {
+    alert("Supabase env missing hai. Driver details save nahi ho paya.");
+    return;
+  }
+
+  try {
+    await updateBookingRequestDriverVehicle({
+      supabaseUrl,
+      supabaseKey,
+      requestId: bookingId,
+      driverName: cleanedDetails.driverName,
+      driverMobile: cleanedDetails.driverMobile,
+      vehicleNo: cleanedDetails.vehicleNumber,
+    });
 
     window.localStorage.setItem(
       getDriverStorageKey(bookingId),
@@ -205,7 +223,13 @@ export default function AssignmentShell({ bookingId }: AssignmentShellProps) {
     );
 
     setDriverForm(emptyDriverSubmission);
-    alert("Driver vehicle details submitted successfully.");
+
+    alert(
+      "Driver vehicle details submit ho gaya. Admin page refresh/open karne par details show hoga."
+    );
+  } catch {
+    alert("Driver vehicle details Supabase me save nahi ho paya. Please try again.");
+  }
   }
 
   function handleUseVehicleDetails() {
@@ -224,7 +248,19 @@ export default function AssignmentShell({ bookingId }: AssignmentShellProps) {
     alert("Assignment saved in V2 test mode. Supabase save next patch me hoga.");
   }
 
-  function handleRemoveVehicleDetails() {
+  async function handleRemoveVehicleDetails() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+
+  try {
+    if (supabaseUrl && supabaseKey) {
+      await clearBookingRequestDriverVehicle({
+        supabaseUrl,
+        supabaseKey,
+        requestId: bookingId,
+      });
+    }
+
     setReceivedDriverDetails(null);
     setSavedAssignment(null);
     window.localStorage.removeItem(getDriverStorageKey(bookingId));
@@ -232,6 +268,9 @@ export default function AssignmentShell({ bookingId }: AssignmentShellProps) {
     alert(
       "Driver Name, Driver Mobile aur Vehicle Number clear ho gaye. Vehicle Type aur Vehicle Model same rahenge."
     );
+  } catch {
+    alert("Vehicle details remove nahi ho paya. Please try again.");
+  }
   }
 
   if (isDriverMode) {
@@ -540,6 +579,22 @@ function shortArea(value: string) {
   return String(value || "").split(",")[0].trim();
 }
 
+function normalizeVehicleNumber(value: string) {
+  return String(value || "")
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "")
+    .slice(0, 12);
+}
+
+function cleanPhoneForAssignment(value: string) {
+  let phone = String(value || "").replace(/\D/g, "");
+
+  if ((phone.startsWith("91") || phone.startsWith("0")) && phone.length > 10) {
+    phone = phone.slice(-10);
+  }
+
+  return phone.slice(-10);
+}
 function getDriverStorageKey(bookingId: string) {
   return `v2-driver-vehicle-details-${bookingId}`;
 }
