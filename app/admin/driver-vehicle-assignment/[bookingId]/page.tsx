@@ -23,6 +23,4 @@ type VehicleDetails = {
   remark: string;
 };
 
-const sampleTrip = {
-  service: "Outstation",
-  date: "10 June 
+const demo
