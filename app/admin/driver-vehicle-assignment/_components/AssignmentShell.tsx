@@ -274,8 +274,10 @@ export default function AssignmentShell({ bookingId }: AssignmentShellProps) {
   }
 
   if (isDriverMode) {
-    return (
-      <main style={pageWrap}>
+  return (
+    <>
+      <style>{hideAdminChromeCss}</style>
+      <main className="vt-driver-assignment-page" style={pageWrap}>
         <section style={cardNarrow}>
           <div style={centerBlock}>
             <h1 style={smallTitle}>Vishwakarma Travels</h1>
@@ -314,7 +316,10 @@ export default function AssignmentShell({ bookingId }: AssignmentShellProps) {
               label="Vehicle Number"
               value={driverForm.vehicleNumber}
               onChange={(value) =>
-                setDriverForm((previous) => ({ ...previous, vehicleNumber: value }))
+  setDriverForm((previous) => ({
+    ...previous,
+    vehicleNumber: normalizeVehicleNumber(value),
+  }))
               }
               placeholder="JH05AB1234"
             />
@@ -325,7 +330,7 @@ export default function AssignmentShell({ bookingId }: AssignmentShellProps) {
               onChange={(value) =>
   setDriverForm((previous) => ({
     ...previous,
-    vehicleNumber: normalizeVehicleNumber(value),
+    driverVehicleModel: value,
   }))
               }
               placeholder="Dzire / Ertiga / Innova etc."
@@ -337,6 +342,7 @@ export default function AssignmentShell({ bookingId }: AssignmentShellProps) {
           </div>
         </section>
       </main>
+      </>
     );
   }
 
@@ -662,7 +668,22 @@ function Popup({ children }: { children: ReactNode }) {
     </div>
   );
 }
+const hideAdminChromeCss = `
+  body:has(.vt-driver-assignment-page) > div:first-child {
+    display: none !important;
+  }
 
+  .admin-shell > div:first-child,
+  .admin-shell > div:nth-child(2),
+  .admin-shell > div:nth-child(3),
+  .admin-shell > div:nth-child(4) {
+    display: none !important;
+  }
+
+  .admin-shell main.vt-driver-assignment-page {
+    padding-top: 0 !important;
+  }
+`;
 const pageWrap = {
   minHeight: "100vh",
   background: "#eef5fb",
