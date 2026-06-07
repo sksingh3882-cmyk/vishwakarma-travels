@@ -24,7 +24,7 @@ export function buildGroupMessage({
     `🏁 Drop Area: ${draft.dropArea}`,
     "",
     "Interested Person please Call.",
-    `📞 Contact: ${booking.customerMobile}`,
+    `📞 Contact: ${booking.adminContact}`,
     "",
     `📝 Note: ${draft.note}`,
   ].join("\n");
