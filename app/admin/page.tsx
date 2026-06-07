@@ -93,6 +93,44 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 
   useEffect(() => { if (localStorage.getItem("vt_admin_login") === "yes") setIsLogin(true); }, []);
   useEffect(() => {
+  function applyAssignedVehicleFromStorage() {
+    const raw = window.localStorage.getItem("vt-driver-assignment-autofill");
+
+    if (!raw) return;
+
+    try {
+      const data = JSON.parse(raw) as {
+        vehicleNumber?: string;
+        driverName?: string;
+        driverMobile?: string;
+        vehicleType?: string;
+        vehicleModel?: string;
+      };
+
+      setForm((previous) => ({
+        ...previous,
+        vehicleNumber: vehicleNo(data.vehicleNumber || previous.vehicleNumber),
+        driverName: data.driverName || previous.driverName,
+        driverMobile: cleanPhone(data.driverMobile || previous.driverMobile),
+        vehicleType: data.vehicleType || previous.vehicleType,
+        vehicleModel: data.vehicleModel || previous.vehicleModel,
+      }));
+
+      window.localStorage.removeItem("vt-driver-assignment-autofill");
+    } catch {
+      window.localStorage.removeItem("vt-driver-assignment-autofill");
+    }
+  }
+
+  applyAssignedVehicleFromStorage();
+
+  window.addEventListener("focus", applyAssignedVehicleFromStorage);
+
+  return () => {
+    window.removeEventListener("focus", applyAssignedVehicleFromStorage);
+  };
+}, []);
+  useEffect(() => {
     async function load() {
       if (!isLogin || !supabaseUrl || !supabaseKey) return;
       const [c, v, b] = await Promise.all([
