@@ -20,3 +20,6 @@ type DriverSubmit = {
   vehicleNumber: string;
   driverVehicleModel: string;
 };
+
+const TEST_TRIP: TripDetails = {
+  customer
