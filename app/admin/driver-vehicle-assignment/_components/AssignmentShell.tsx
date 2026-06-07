@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   fetchBookingRequestById,
+  updateBookingRequestDriverVehicle,
+  clearBookingRequestDriverVehicle,
   type BookingRequestRecord,
 } from "@/lib/bookingRequestService";
 import { buildGroupMessage } from "../_lib/buildGroupMessage";
@@ -113,6 +115,20 @@ export default function AssignmentShell({ bookingId }: AssignmentShellProps) {
           vehicleModel: mappedBooking.vehicleModel,
         }));
         setLoadStatus("Real booking loaded.");
+        if (record.driverName || record.driverMobile || record.vehicleNo) {
+  const receivedDetails: DriverVehicleSubmission = {
+    driverName: record.driverName || "",
+    driverMobile: record.driverMobile || "",
+    vehicleNumber: record.vehicleNo || "",
+    driverVehicleModel: "",
+  };
+
+  setReceivedDriverDetails(receivedDetails);
+
+  if (!driverMode) {
+    setShowDriverReceivedPopup(true);
+  }
+        }
       } catch {
         if (!stopped) {
           setLoadStatus("Booking load failed. Mock data showing.");
