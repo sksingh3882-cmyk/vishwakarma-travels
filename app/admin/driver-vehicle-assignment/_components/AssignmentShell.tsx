@@ -268,10 +268,10 @@ export default function AssignmentShell({ bookingId }: AssignmentShellProps) {
               label="Driver Vehicle Model"
               value={driverForm.driverVehicleModel}
               onChange={(value) =>
-                setDriverForm((previous) => ({
-                  ...previous,
-                  driverVehicleModel: value,
-                }))
+  setDriverForm((previous) => ({
+    ...previous,
+    vehicleNumber: normalizeVehicleNumber(value),
+  }))
               }
               placeholder="Dzire / Ertiga / Innova etc."
             />
@@ -462,13 +462,19 @@ function mapRequestToAssignmentBooking(
   fallback: AssignmentBookingDetails
 ): AssignmentBookingDetails {
   const requestedVehicle = record.requestedVehicle || "";
-  const vehicleType = record.vehicleType || requestedVehicle || fallback.vehicleType;
-  const vehicleModel = record.vehicleModel || requestedVehicle || fallback.vehicleModel;
+const inferredVehicleType = inferVehicleTypeFromModel(requestedVehicle);
+
+const vehicleType =
+  record.vehicleType || inferredVehicleType || fallback.vehicleType;
+
+const vehicleModel =
+  record.vehicleModel || requestedVehicle || fallback.vehicleModel;
 
   return {
     bookingId: record.id || fallback.bookingId,
     customerName: record.customerName || fallback.customerName,
     customerMobile: record.customerPhone || fallback.customerMobile,
+    adminContact: fallback.adminContact,
     serviceType: record.service || fallback.serviceType,
     date: record.journeyDate || fallback.date,
     time: record.journeyTime || fallback.time,
@@ -480,7 +486,40 @@ function mapRequestToAssignmentBooking(
     vehicleModel,
   };
 }
+function inferVehicleTypeFromModel(value: string) {
+  const text = String(value || "").toLowerCase();
 
+  if (
+    text.includes("dzire") ||
+    text.includes("desire") ||
+    text.includes("etios") ||
+    text.includes("sedan")
+  ) {
+    return "Sedan";
+  }
+
+  if (
+    text.includes("ertiga") ||
+    text.includes("innova") ||
+    text.includes("crysta") ||
+    text.includes("suv")
+  ) {
+    return "SUV";
+  }
+
+  if (text.includes("tempo") || text.includes("traveller")) {
+    return "Tempo Traveller";
+  }
+
+  return "";
+}
+
+function normalizeVehicleNumber(value: string) {
+  return String(value || "")
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "")
+    .slice(0, 12);
+}
 function shortArea(value: string) {
   return String(value || "").split(",")[0].trim();
 }
