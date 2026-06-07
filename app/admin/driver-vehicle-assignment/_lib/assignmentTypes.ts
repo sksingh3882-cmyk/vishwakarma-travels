@@ -2,6 +2,7 @@ export type BookingSnapshot = {
   bookingId: string;
   customerName: string;
   customerPhone: string;
+  adminContact: string;
   service: string;
   pickupLocation: string;
   dropLocation: string;
