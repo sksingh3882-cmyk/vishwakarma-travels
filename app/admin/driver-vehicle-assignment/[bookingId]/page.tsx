@@ -1,18 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  Car,
-  CheckCircle2,
-  ClipboardCopy,
-  MapPin,
-  MessageCircle,
-  Phone,
-  RefreshCcw,
-  Send,
-  Trash2,
-  UserRound,
-} from "lucide-react";
+import { Car, CheckCircle2, ClipboardCopy, MessageCircle, Phone, Send, Trash2 } from "lucide-react";
 
 type VehicleDetails = {
   driverName: string;
@@ -20,7 +9,6 @@ type VehicleDetails = {
   vehicleModel: string;
   vehicleNumber: string;
   vehicleType: string;
-  remark: string;
 };
 
-const demo
+const trip
