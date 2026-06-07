@@ -170,7 +170,7 @@ export default function AssignmentShell({ bookingId }: AssignmentShellProps) {
     const cleanedDetails: DriverVehicleSubmission = {
       driverName: driverForm.driverName.trim(),
       driverMobile: driverForm.driverMobile.trim(),
-      vehicleNumber: driverForm.vehicleNumber.trim(),
+      vehicleNumber: normalizeVehicleNumber(driverForm.vehicleNumber),
       driverVehicleModel: driverForm.driverVehicleModel.trim(),
     };
 
@@ -550,6 +550,23 @@ function InputBox({
         inputMode={inputMode}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
+        enterKeyHint="next"
+data-assignment-field="1"
+onKeyDown={(event) => {
+  if (event.key !== "Enter") return;
+
+  event.preventDefault();
+
+  const fields = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-assignment-field='1']")
+  );
+
+  const currentIndex = fields.indexOf(event.currentTarget);
+
+  if (currentIndex >= 0 && fields[currentIndex + 1]) {
+    fields[currentIndex + 1].focus();
+  }
+}}
         style={inputStyle}
       />
     </div>
@@ -795,8 +812,9 @@ const infoBox = {
   border: "1px solid #e2e8f0",
   borderRadius: 16,
   background: "#f8fafc",
-  padding: 12,
+  padding: 14,
   marginBottom: 14,
+  textAlign: "left",
 } as const;
 
 const successBox = {
@@ -830,9 +848,11 @@ const smallNote = {
 } as const;
 
 const infoLine = {
-  margin: "0 0 7px",
-  fontSize: 14,
+  margin: "0 0 10px",
+  fontSize: 16,
+  lineHeight: 1.45,
   color: "#334155",
+  textAlign: "left",
 } as const;
 
 const detailRow = {
