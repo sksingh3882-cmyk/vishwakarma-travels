@@ -232,20 +232,52 @@ export default function AssignmentShell({ bookingId }: AssignmentShellProps) {
   }
   }
 
-  function handleUseVehicleDetails() {
-    if (!receivedDriverDetails) return;
+  async function handleUseVehicleDetails() {
+  if (!receivedDriverDetails) return;
 
-    const payload: SavedAssignmentPayload = {
-      bookingId,
-      driver_name: receivedDriverDetails.driverName,
-      driver_mobile: receivedDriverDetails.driverMobile,
-      vehicle_number: receivedDriverDetails.vehicleNumber,
-    };
+  const payload: SavedAssignmentPayload = {
+    bookingId,
+    driver_name: receivedDriverDetails.driverName,
+    driver_mobile: receivedDriverDetails.driverMobile,
+    vehicle_number: receivedDriverDetails.vehicleNumber,
+  };
 
-    setSavedAssignment(payload);
-    setShowDriverReceivedPopup(false);
+  const adminAutofillPayload = {
+    bookingId,
+    vehicleNumber: receivedDriverDetails.vehicleNumber,
+    driverName: receivedDriverDetails.driverName,
+    driverMobile: receivedDriverDetails.driverMobile,
+    vehicleType: booking.vehicleType,
+    vehicleModel: booking.vehicleModel,
+  };
 
-    alert("Assignment saved in V2 test mode. Supabase save next patch me hoga.");
+  window.localStorage.setItem(
+    "vt-driver-assignment-autofill",
+    JSON.stringify(adminAutofillPayload)
+  );
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+
+  if (supabaseUrl && supabaseKey) {
+    try {
+      await saveAssignedVehicleToVehicleList({
+        supabaseUrl,
+        supabaseKey,
+        booking,
+        details: receivedDriverDetails,
+      });
+    } catch (error) {
+      console.log("Assigned vehicle list save failed:", error);
+    }
+  }
+
+  setSavedAssignment(payload);
+  setShowDriverReceivedPopup(false);
+
+  alert(
+    "Driver vehicle details have been selected. Admin form will be auto-filled. Vehicle Type and Vehicle Model were not overwritten."
+  );
   }
 
   async function handleRemoveVehicleDetails() {
@@ -594,6 +626,56 @@ function cleanPhoneForAssignment(value: string) {
   }
 
   return phone.slice(-10);
+}
+async function saveAssignedVehicleToVehicleList(params: {
+  supabaseUrl: string;
+  supabaseKey: string;
+  booking: AssignmentBookingDetails;
+  details: DriverVehicleSubmission;
+}) {
+  const vehicleNumber = normalizeVehicleNumber(params.details.vehicleNumber);
+
+  if (!vehicleNumber) return;
+
+  const headers = {
+    apikey: params.supabaseKey,
+    Authorization: `Bearer ${params.supabaseKey}`,
+    "Content-Type": "application/json",
+    Prefer: "return=representation",
+  };
+
+  const check = await fetch(
+    `${params.supabaseUrl}/rest/v1/vehicles?select=vehicle_number&vehicle_number=eq.${vehicleNumber}&limit=1`,
+    { headers }
+  );
+
+  if (check.ok) {
+    const rows = await check.json();
+
+    if (Array.isArray(rows) && rows.length > 0) {
+      return;
+    }
+  }
+
+  const payload = {
+    vehicle_number: vehicleNumber,
+    vehicle_type: params.booking.vehicleType,
+    vehicle_model: params.booking.vehicleModel,
+    driver_name: params.details.driverName,
+    phone: cleanPhoneForAssignment(params.details.driverMobile),
+    route: `${params.booking.pickupArea} to ${params.booking.dropArea}`,
+    status: "Active",
+  };
+
+  const res = await fetch(`${params.supabaseUrl}/rest/v1/vehicles`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    throw new Error("Assigned vehicle could not be saved to vehicle list.");
+  }
 }
 function getDriverStorageKey(bookingId: string) {
   return `v2-driver-vehicle-details-${bookingId}`;
