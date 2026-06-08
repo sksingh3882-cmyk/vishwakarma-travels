@@ -15,3 +15,13 @@ export type BookingSnapshot = {
 export type AssignmentFormState = {
   pickupArea: string;
   dropArea: string;
+};
+
+export type AssignmentShellProps = {
+  bookingId: string;
+  forceDriverMode?: boolean;
+};
+export type AssignmentShellProps = {
+  bookingId: string;
+  forceDriverMode?: boolean;
+};
