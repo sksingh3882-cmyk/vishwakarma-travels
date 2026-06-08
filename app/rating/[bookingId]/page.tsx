@@ -18,7 +18,7 @@ function supabaseHeaders(prefer = "return=representation") {
 
 function checkSupabaseConfig() {
   if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error("Supabase connection missing. Env keys check karo.");
+    throw new Error("Supabase connection missing.  By checking env keys.");
   }
 }
 
@@ -138,14 +138,14 @@ export default function RatingPage() {
         );
 
         if (!response.ok) {
-          throw new Error("Booking details fetch nahi ho paya.");
+          throw new Error("Could not fetch booking details.");
         }
 
         const rows = await response.json();
         const data = Array.isArray(rows) ? rows[0] : null;
 
         if (!data) {
-          setErrorMessage("Booking details nahi mile.");
+          setErrorMessage("Booking details not received.");
           return;
         }
 
@@ -184,7 +184,7 @@ export default function RatingPage() {
             checkSupabaseConfig();
 
       if (!allComplete) {
-        setErrorMessage("Please sabhi 10 rating complete karo.");
+        setErrorMessage("Please complete all 10 ratings..");
         return;
       }
 
@@ -277,12 +277,12 @@ export default function RatingPage() {
       );
 
       if (!response.ok) {
-        throw new Error("Rating submit nahi ho paya.");
+        throw new Error("The rating could not be submitted.");
       }
 
       setSuccessOpen(true);
     } catch (error: any) {
-      setErrorMessage(error?.message || "Rating submit nahi ho paya.");
+      setErrorMessage(error?.message || "The rating could not be submitted.");
     } finally {
       setSaving(false);
     }
@@ -426,7 +426,7 @@ export default function RatingPage() {
 
         {!allComplete && (
           <p style={styles.bottomNote}>
-            Submit button sabhi 10 questions complete hone ke baad active hoga.
+            The submit button will become active after all 10 questions are completed.
           </p>
         )}
       </div>
@@ -450,7 +450,7 @@ export default function RatingPage() {
             <div style={styles.successIcon}>🎉</div>
             <h2 style={styles.successTitle}>Thank You For Your Support</h2>
             <p style={styles.successText}>
-              Aapki rating successfully submit ho gayi hai.
+              Your rating has been successfully submitted.
             </p>
             <button
               type="button"
