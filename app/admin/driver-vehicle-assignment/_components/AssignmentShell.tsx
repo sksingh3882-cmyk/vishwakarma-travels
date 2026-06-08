@@ -224,7 +224,7 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
 
     alert(
   "Your vehicle details have been submitted successfully. Vishwakarma Travels will contact you if your vehicle is selected for this duty."
-);."
+);.
   
   } catch {
     alert("Driver and vehicle details could not be saved in the database. Please try again..");
