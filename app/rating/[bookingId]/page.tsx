@@ -109,6 +109,20 @@ export default function RatingPage() {
     
                 checkSupabaseConfig();
 
+                if (bookingId === "test" || bookingId === "demo") {
+          setBooking({
+            customer_name: "Demo Customer",
+            customer_mobile: "9999999999",
+            driver_name: "Demo Driver",
+            driver_mobile: "8888888888",
+            vehicle_number: "JH05AB1234",
+            vehicle_model: "Sedan",
+          });
+          return;
+        }
+
+        checkSupabaseConfig();
+
         if (!bookingId) {
           setErrorMessage("Booking ID missing hai.");
           return;
