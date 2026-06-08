@@ -335,6 +335,15 @@ export default function RatingPage() {
           <div style={styles.logoCircle}>⭐</div>
         </div>
 
+                <div style={styles.tripBox}>
+          <div style={styles.tripTitle}>Trip Details</div>
+          <div style={styles.tripLine}><b>Booking ID:</b> {bookingId}</div>
+          <div style={styles.tripLine}><b>Customer:</b> {getValue(booking, ["customer_name", "name"]) || "-"}</div>
+          <div style={styles.tripLine}><b>Route:</b> {getValue(booking, ["pickup", "pickup_location", "pickup_area"]) || "-"} to {getValue(booking, ["drop_location", "drop", "drop_area"]) || "-"}</div>
+          <div style={styles.tripLine}><b>Date/Time:</b> {getValue(booking, ["journey_date", "date", "pickup_date"]) || "-"} {getValue(booking, ["journey_time", "time", "pickup_time"]) || ""}</div>
+          <div style={styles.tripLine}><b>Driver:</b> {getValue(booking, ["driver_name", "assigned_driver_name"]) || "Not available"}</div>
+          <div style={styles.tripLine}><b>Vehicle:</b> {getValue(booking, ["vehicle_number", "vehicle_no", "car_number"]) || "Not available"} {getValue(booking, ["vehicle_model", "vehicle_type", "car_model"]) || ""}</div>
+        </div>
         <div style={styles.progressBox}>
           <div style={styles.progressText}>
             Question {currentIndex + 1} of {questions.length}
@@ -623,6 +632,9 @@ const styles: Record<string, React.CSSProperties> = {
     background: "#fff7ed",
     fontSize: "28px",
   },
+    tripBox: { marginTop: "18px", padding: "14px", borderRadius: "18px", background: "#fff7ed", border: "1px solid #fed7aa" },
+  tripTitle: { fontSize: "16px", fontWeight: 950, color: "#111827", marginBottom: "8px" },
+  tripLine: { fontSize: "13px", fontWeight: 650, color: "#334155", padding: "4px 0", borderBottom: "1px dashed rgba(15, 23, 42, 0.10)" },
   progressBox: {
     marginTop: "22px",
   },
