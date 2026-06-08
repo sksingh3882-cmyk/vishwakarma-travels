@@ -47,11 +47,20 @@ const questions: Question[] = [
   { key: "driver_communication_rating", title: "Driver Communication", group: "Driver" },
   { key: "overall_driver_rating", title: "Overall Driver Experience", group: "Driver" },
 
-  { key: "vehicle_cleanliness_rating", title: "Vehicle Cleanliness", group: "Vehicle" },
+    { key: "vehicle_cleanliness_rating", title: "Vehicle Cleanliness", group: "Vehicle" },
   { key: "vehicle_comfort_rating", title: "Vehicle Comfort", group: "Vehicle" },
   { key: "ac_cooling_rating", title: "AC / Cooling", group: "Vehicle" },
   { key: "seat_condition_rating", title: "Seat Condition", group: "Vehicle" },
   { key: "overall_vehicle_rating", title: "Overall Vehicle Experience", group: "Vehicle" },
+];
+
+const burstColors = [
+  "#f59e0b",
+  "#f97316",
+  "#22c55e",
+  "#3b82f6",
+  "#ec4899",
+  "#a855f7",
 ];
 
 function getValue(data: BookingData | null, keys: string[]) {
@@ -431,27 +440,64 @@ export default function RatingPage() {
         )}
       </div>
 
-      {successOpen && (
+            {successOpen && (
         <div style={styles.popupOverlay}>
-          <div style={styles.confettiBox}>
-            {Array.from({ length: 18 }).map((_, index) => (
-              <span
-                key={index}
-                style={{
-                  ...styles.confetti,
-                  left: `${8 + index * 5}%`,
-                  animationDelay: `${index * 0.08}s`,
-                }}
-              />
-            ))}
+          <div style={styles.burstLayer}>
+            <div style={styles.pulseRing} />
+            <div
+              style={{
+                ...styles.pulseRing,
+                animationDelay: "0.12s",
+                border: "4px solid rgba(249, 115, 22, 0.45)",
+              }}
+            />
+
+            {Array.from({ length: 30 }).map((_, index) => {
+              const angle = (360 / 30) * index;
+              const distance = 110 + (index % 4) * 18;
+              const x = Math.cos((angle * Math.PI) / 180) * distance;
+              const y = Math.sin((angle * Math.PI) / 180) * distance;
+
+              const isDot = index % 3 === 0;
+              const isSquare = index % 3 === 1;
+
+              return (
+                <span
+                  key={index}
+                  style={
+                    {
+                      ...styles.burstPiece,
+                      background: burstColors[index % burstColors.length],
+                      width: isDot ? "10px" : isSquare ? "12px" : "10px",
+                      height: isDot ? "10px" : isSquare ? "12px" : "28px",
+                      borderRadius: isDot ? "999px" : isSquare ? "3px" : "999px",
+                      animationDelay: `${index * 0.02}s`,
+                      ["--x" as any]: `${x}px`,
+                      ["--y" as any]: `${y}px`,
+                      ["--r" as any]: `${180 + index * 18}deg`,
+                    } as React.CSSProperties
+                  }
+                />
+              );
+            })}
           </div>
 
           <div style={styles.successPopup}>
-            <div style={styles.successIcon}>🎉</div>
+            <div style={styles.checkmarkWrap}>
+              <svg viewBox="0 0 80 80" style={styles.checkmarkSvg}>
+                <circle cx="40" cy="40" r="28" style={styles.checkmarkCircle} />
+                <path
+                  d="M24 41 L35 52 L57 29"
+                  style={styles.checkmarkTick}
+                />
+              </svg>
+            </div>
+
             <h2 style={styles.successTitle}>Thank You For Your Support</h2>
             <p style={styles.successText}>
-              Your rating has been successfully submitted.
+              Aapki rating successfully submit ho gayi hai.
             </p>
+
             <button
               type="button"
               onClick={() => setSuccessOpen(false)}
@@ -462,11 +508,11 @@ export default function RatingPage() {
           </div>
         </div>
       )}
-
+      
       <style jsx>{`
         @keyframes popIn {
           0% {
-            transform: scale(0.75);
+            transform: scale(0.78);
             opacity: 0;
           }
           100% {
@@ -475,17 +521,52 @@ export default function RatingPage() {
           }
         }
 
-        @keyframes confettiFall {
+        @keyframes ringPulse {
           0% {
-            transform: translateY(-80px) rotate(0deg);
+            width: 26px;
+            height: 26px;
             opacity: 1;
           }
           100% {
-            transform: translateY(340px) rotate(260deg);
+            width: 320px;
+            height: 320px;
             opacity: 0;
           }
         }
+
+        @keyframes drawCircle {
+          to {
+            stroke-dashoffset: 0;
+          }
+        }
+
+        @keyframes drawTick {
+          to {
+            stroke-dashoffset: 0;
+          }
+        }
+
+        @keyframes confettiBurst {
+          0% {
+            opacity: 1;
+            transform: translate(-50%, -50%) rotate(0deg) scale(0.25);
+          }
+          75% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 0;
+            transform:
+              translate(
+                calc(-50% + var(--x)),
+                calc(-50% + var(--y))
+              )
+              rotate(var(--r))
+              scale(1);
+          }
+        }
       `}</style>
+      
     </main>
   );
         }
@@ -697,14 +778,47 @@ const styles: Record<string, React.CSSProperties> = {
     zIndex: 2,
     animation: "popIn 0.28s ease",
   },
-  successIcon: {
-    fontSize: "54px",
+    checkmarkWrap: {
+    width: "112px",
+    height: "112px",
+    margin: "0 auto 16px",
+    borderRadius: "999px",
+    background: "#ecfdf5",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 12px 30px rgba(34, 197, 94, 0.18)",
+  },
+  checkmarkSvg: {
+    width: "78px",
+    height: "78px",
+    display: "block",
+  },
+  checkmarkCircle: {
+    fill: "none",
+    stroke: "#22c55e",
+    strokeWidth: 5,
+    strokeDasharray: 220,
+    strokeDashoffset: 220,
+    animation: "drawCircle 0.55s ease forwards",
+  },
+  checkmarkTick: {
+    fill: "none",
+    stroke: "#16a34a",
+    strokeWidth: 6,
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    strokeDasharray: 80,
+    strokeDashoffset: 80,
+    animation: "drawTick 0.42s ease forwards",
+    animationDelay: "0.5s",
   },
   successTitle: {
-    margin: "12px 0 8px",
+    margin: "8px 0 8px",
     fontSize: "24px",
     fontWeight: 950,
     color: "#111827",
+    lineHeight: 1.15,
   },
   successText: {
     margin: 0,
@@ -723,21 +837,34 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: "15px",
     fontWeight: 900,
   },
-  confettiBox: {
+  burstLayer: {
     position: "fixed",
     inset: 0,
     pointerEvents: "none",
     overflow: "hidden",
     zIndex: 1,
   },
-  confetti: {
+  pulseRing: {
     position: "absolute",
-    top: "10%",
-    width: "10px",
-    height: "18px",
-    borderRadius: "3px",
-    background: "#f59e0b",
-    animation: "confettiFall 1.6s ease-in-out infinite",
+    left: "50%",
+    top: "50%",
+    width: "26px",
+    height: "26px",
+    border: "4px solid rgba(245, 158, 11, 0.7)",
+    borderRadius: "999px",
+    transform: "translate(-50%, -50%)",
+    animation: "ringPulse 0.85s ease-out forwards",
+  },
+  burstPiece: {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    width: "12px",
+    height: "28px",
+    borderRadius: "999px",
+    transform: "translate(-50%, -50%)",
+    animation: "confettiBurst 1.2s cubic-bezier(0.08, 0.82, 0.18, 1) forwards",
+    boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
   },
 };
       
