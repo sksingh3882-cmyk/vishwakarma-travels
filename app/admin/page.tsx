@@ -68,6 +68,7 @@ export default function AdminPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [activeView, setActiveView] = useState<"customers" | "vehicles" | "bookings" | "">("");
   const [searchBooking, setSearchBooking] = useState("");
+    const [showRecentBookings, setShowRecentBookings] = useState(true);
   const [loading, setLoading] = useState(false);
   const [lastBookingId, setLastBookingId] = useState("");
   const [pendingBookingId, setPendingBookingId] = useState("");
@@ -911,7 +912,78 @@ function editCustomer(c: Customer){setForm((p)=>({...p,customerName:c.name||"",c
   </button>
 </div>
 <div style={buttonRow}><button type="button" onClick={downloadBookingCopy} style={smallDownloadBtn}>Download</button><button disabled={loading} style={smallSaveBtn}>{loading ? "Saving..." : "Save + PDF"}</button><button type="button" onClick={sendWhatsApp} style={smallWaBtn}>WhatsApp</button></div>{downloadNotice && <div style={downloadOk}>✓ Booking copy downloaded successfully!</div>}</form>
-    <section style={panel}><h2>Recent Bookings</h2><input placeholder="Search booking by name, phone, pickup..." value={searchBooking} onChange={(e) => setSearchBooking(e.target.value)} style={input} /><div style={{ overflowX: "auto", marginTop: 12 }}><table style={{ width: "100%", minWidth: 900, borderCollapse: "collapse" }}><thead><tr style={{ background: "#0b2d6b", color: "white" }}><th style={th}>Booking ID</th><th style={th}>Customer</th><th style={th}>Phone</th><th style={th}>Route</th><th style={th}>Date</th><th style={th}>Fare</th><th style={th}>Action</th></tr></thead><tbody>{filtered.map((b, i) => <tr key={b.booking_id || i}><td style={td}>{b.booking_id || "-"}</td><td style={td}>{b.customer_name || "-"}</td><td style={td}>{b.customer_phone || "-"}</td><td style={td}>{b.pickup || "-"} to {b.drop_location || "-"}</td><td style={td}>{b.journey_date || "-"}</td><td style={td}>Rs {b.fare || 0}</td><td style={td}><button onClick={() => edit(b)} style={editBtn}>Edit</button><button onClick={() => pdf(b.booking_id || "")} style={pdfBtn}>PDF</button><button disabled={deletingBookingId === b.booking_id} onClick={() => removeBooking(b.booking_id)} style={delBtn}>{deletingBookingId === b.booking_id ? "Deleting..." : "Delete"}</button></td></tr>)}{bookings.length === 0 && <tr><td colSpan={7} style={{ padding: 20, textAlign: "center" }}>No booking found</td></tr>}</tbody></table></div></section></div>
+        <section style={panel}>
+      <div style={recentBookingHeader}>
+        <h2 style={{ margin: 0 }}>Recent Bookings</h2>
+        <button
+          type="button"
+          onClick={() => setShowRecentBookings((value) => !value)}
+          style={hideRecentBtn}
+        >
+          {showRecentBookings ? "Hide" : "Show"}
+        </button>
+      </div>
+
+      {showRecentBookings && (
+        <>
+          <input
+            placeholder="Search booking by name, phone, pickup..."
+            value={searchBooking}
+            onChange={(e) => setSearchBooking(e.target.value)}
+            style={input}
+          />
+
+          <div style={{ overflowX: "auto", marginTop: 12 }}>
+            <table style={{ width: "100%", minWidth: 900, borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ background: "#0b2d6b", color: "white" }}>
+                  <th style={th}>Booking ID</th>
+                  <th style={th}>Customer</th>
+                  <th style={th}>Phone</th>
+                  <th style={th}>Route</th>
+                  <th style={th}>Date</th>
+                  <th style={th}>Fare</th>
+                  <th style={th}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((b, i) => (
+                  <tr key={b.booking_id || i}>
+                    <td style={td}>{b.booking_id || "-"}</td>
+                    <td style={td}>{b.customer_name || "-"}</td>
+                    <td style={td}>{b.customer_phone || "-"}</td>
+                    <td style={td}>{b.pickup || "-"} to {b.drop_location || "-"}</td>
+                    <td style={td}>{b.journey_date || "-"}</td>
+                    <td style={td}>Rs {b.fare || 0}</td>
+                    <td style={td}>
+                      <button onClick={() => edit(b)} style={editBtn}>Edit</button>
+                      <button onClick={() => pdf(b.booking_id || "")} style={pdfBtn}>PDF</button>
+                      <button onClick={() => sendRatingLink(b)} style={ratingBtn}>Rating</button>
+                      <button
+                        disabled={deletingBookingId === b.booking_id}
+                        onClick={() => removeBooking(b.booking_id)}
+                        style={delBtn}
+                      >
+                        {deletingBookingId === b.booking_id ? "Deleting..." : "Delete"}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+
+                {bookings.length === 0 && (
+                  <tr>
+                    <td colSpan={7} style={{ padding: 20, textAlign: "center" }}>
+                      No booking found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+    </section>
+  </div>
   </main>;
 }
 
@@ -925,6 +997,8 @@ const header: CSSProperties = { background: "#0b2d6b", color: "white", padding: 
 const stats: CSSProperties = { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12, marginBottom: 16 };
 const stat: CSSProperties = { background: "white", padding: 16, borderRadius: 16, cursor: "pointer" };
 const panel: CSSProperties = { background: "white", padding: 18, borderRadius: 18, marginBottom: 16 };
+const recentBookingHeader: CSSProperties = { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 14 };
+const hideRecentBtn: CSSProperties = { border: 0, borderRadius: 999, background: "#0b2d6b", color: "white", padding: "9px 16px", fontWeight: 900, fontSize: 14 };
 const grid: CSSProperties = { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 12 };
 const fieldWrap: CSSProperties = { position: "relative" };
 const fullRow: CSSProperties = { gridColumn: "1 / -1", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" };
