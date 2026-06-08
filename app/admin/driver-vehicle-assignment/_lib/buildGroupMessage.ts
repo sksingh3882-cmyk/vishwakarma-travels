@@ -13,7 +13,7 @@ export function buildGroupMessage({
   draft,
 }: BuildGroupMessageInput): string {
   return [
-    "🚕 *🆕 New Duty Available - Vishwakarma Travels*",
+    "⚠️ *🚨 New Booking 🚨*",
     "",
     `🧾 Service: ${booking.serviceType}`,
     `📅 Date: ${booking.date}`,
