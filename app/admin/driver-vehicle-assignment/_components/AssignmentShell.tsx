@@ -24,7 +24,7 @@ const emptyDriverSubmission: DriverVehicleSubmission = {
   driverVehicleModel: "",
 };
 
-export default function AssignmentShell({ bookingId }: AssignmentShellProps) {
+export default function AssignmentShell({ bookingId, forceDriverMode = false }: AssignmentShellProps) {
   const mockBooking = useMemo(() => getMockAssignmentData(bookingId), [bookingId]);
 
   const [booking, setBooking] = useState<AssignmentBookingDetails>(mockBooking);
@@ -53,7 +53,7 @@ export default function AssignmentShell({ bookingId }: AssignmentShellProps) {
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
-    const driverMode = searchParams.get("driver") === "1";
+    const driverMode = forceDriverMode || searchParams.get("driver") === "1";
     setIsDriverMode(driverMode);
 
     if (!driverMode) {
@@ -76,7 +76,7 @@ export default function AssignmentShell({ bookingId }: AssignmentShellProps) {
         window.localStorage.removeItem(getDriverStorageKey(bookingId));
       }
     }
-  }, [bookingId]);
+  }, [bookingId, forceDriverMode]);
 
   useEffect(() => {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -146,10 +146,8 @@ export default function AssignmentShell({ bookingId }: AssignmentShellProps) {
   const driverDutyLink = useMemo(() => {
     if (typeof window === "undefined") return "";
 
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set("driver", "1");
-    return currentUrl.toString();
-  }, []);
+    return `${window.location.origin}/driver-vehicle-assignment/${encodeURIComponent(bookingId)}`;
+  }, [bookingId]);
 
   const groupMessage = useMemo(() => {
     return buildGroupMessage({
@@ -313,7 +311,8 @@ export default function AssignmentShell({ bookingId }: AssignmentShellProps) {
         <section style={cardNarrow}>
           <div style={centerBlock}>
             <h1 style={smallTitle}>Vishwakarma Travels</h1>
-            <p style={mutedText}>Driver Vehicle Details</p>
+<p style={{ ...mutedText, fontWeight: 900, color: "#0b2d6b" }}>Vehicle Driver Assignment System</p>
+<p style={{ ...mutedText, fontSize: 12 }}>By Sanjay Singh</p>
           </div>
 
           <div style={infoBox}>
