@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type CSSProperties, type FormEvent } from "react";
 import AdminIncomingBookingRequests from "@/components/booking-request/AdminIncomingBookingRequests";
-import { confirmBookingRequestAfterDownload, type BookingRequestRecord } from "@/lib/bookingRequestService";
+import { confirmBookingRequestAfterDownload, fetchBookingRequestById, type BookingRequestRecord } from "@/lib/bookingRequestService";
 import AdminBookingRequestsReport from "@/components/booking-request/AdminBookingRequestsReport";
 import AdminPushSetup from "@/components/admin/AdminPushSetup";
 
@@ -81,7 +81,7 @@ const [driverSendLoading, setDriverSendLoading] = useState(false);
   const [showCustomerSuggestions, setShowCustomerSuggestions] = useState(false);
   const [showVehicleSuggestions, setShowVehicleSuggestions] = useState(false);
   const [downloadNotice, setDownloadNotice] = useState(false);
-  const [activeBookingRequest, setActiveBookingRequest] = useState<BookingRequestRecord | null>(null);
+  const [activeBookingRequest, setActiveBookingRequest] = useState<BookingRequestRecord | null>(null); const [driverAssignmentPopup, setDriverAssignmentPopup] = useState<BookingRequestRecord | null>(null);
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -130,6 +130,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     window.removeEventListener("focus", applyAssignedVehicleFromStorage);
   };
 }, []);
+  useEffect(() => { if (!isLogin || !supabaseUrl || !supabaseKey || !activeBookingRequest?.id) return; let stopped = false; async function checkAcceptedBookingDriverDetails() { try { const record = await fetchBookingRequestById({ supabaseUrl, supabaseKey, requestId: activeBookingRequest.id }); if (stopped || !record) return; const hasDriverDetails = Boolean(record.driverName) || Boolean(record.driverMobile) || Boolean(record.vehicleNo); if (!hasDriverDetails) return; const dismissedKey = `vt-driver-assignment-confirm-dismissed-${record.id}`; if (window.localStorage.getItem(dismissedKey) === "yes") return; setDriverAssignmentPopup(record); } catch (error) { console.log("Driver assignment confirmation popup check failed:", error); } } checkAcceptedBookingDriverDetails(); return () => { stopped = true; }; }, [isLogin, supabaseUrl, supabaseKey, activeBookingRequest]);
   useEffect(() => {
     async function load() {
       if (!isLogin || !supabaseUrl || !supabaseKey) return;
@@ -180,6 +181,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     const found = vehicles.find((v) => vehicleNo(v.vehicle_number || v.vehicleNumber || "") === no);
     if (no.length > 3 && found) applyVehicle(found);
   }
+  function useAssignedDriverVehicleOnConfirmation(record: BookingRequestRecord) { setForm((previous) => ({ ...previous, vehicleNumber: vehicleNo(record.vehicleNo || previous.vehicleNumber), driverName: record.driverName || previous.driverName, driverMobile: cleanPhone(record.driverMobile || previous.driverMobile), vehicleType: previous.vehicleType || vehicleTypeFromModel(record.vehicleModel || record.requestedVehicle || "", previous.vehicleType), vehicleModel: previous.vehicleModel || record.vehicleModel || record.requestedVehicle || "" })); if (record.id) { window.localStorage.setItem(`vt-driver-assignment-confirm-dismissed-${record.id}`, "yes"); } setDriverAssignmentPopup(null); }
   function acceptIncomingBookingRequest(request: BookingRequestRecord) {
   setActiveBookingRequest(request);
 
@@ -808,6 +810,7 @@ function editCustomer(c: Customer){setForm((p)=>({...p,customerName:c.name||"",c
   isActive={isLogin}
   onAcceptBooking={(request) => acceptIncomingBookingRequest(request)}
 />
+    {driverAssignmentPopup && <div style={overlay}><div style={modal}><button onClick={() => { if (driverAssignmentPopup.id) { window.localStorage.setItem(`vt-driver-assignment-confirm-dismissed-${driverAssignmentPopup.id}`, "yes"); } setDriverAssignmentPopup(null); }} style={close}>x</button><img src="/cars/popup_banner.png" style={banner} alt="Vishwakarma Travels" /><div style={body}><h2 style={title}>Driver Vehicle Details Received</h2><Row l="Driver Name" v={driverAssignmentPopup.driverName || "-"} /><Row l="Driver Mobile" v={driverAssignmentPopup.driverMobile || "-"} /><Row l="Vehicle Number" v={vehicleNo(driverAssignmentPopup.vehicleNo || "") || "-"} /><Row l="Vehicle Model" v={driverAssignmentPopup.vehicleModel || driverAssignmentPopup.requestedVehicle || "-"} /><Row l="Vehicle Type" v={vehicleTypeFromModel(driverAssignmentPopup.vehicleModel || driverAssignmentPopup.requestedVehicle || "", form.vehicleType)} /><div style={masterInfoBox}>Only Driver Name, Driver Mobile, and Vehicle Number will be used for this booking confirmation. Vehicle Type and Vehicle Model will not be overwritten.</div></div><div style={actions}><button onClick={() => { if (driverAssignmentPopup.id) { window.localStorage.setItem(`vt-driver-assignment-confirm-dismissed-${driverAssignmentPopup.id}`, "yes"); } setDriverAssignmentPopup(null); }} style={cancelBtn}>Close</button><button onClick={() => useAssignedDriverVehicleOnConfirmation(driverAssignmentPopup)} style={greenBtn}>OK Use This Vehicle</button></div></div></div>}
     {showConfirmPopup && <div style={overlay}><div style={modal}><button onClick={() => setShowConfirmPopup(false)} style={close}>x</button><img src="/cars/popup_banner.png" style={banner} alt="Vishwakarma Travels" /><div style={body}><h2 style={title}>Confirm Booking Details</h2><Row l="Customer Name" v={form.customerName} /><Row l="Mobile No." v={form.customerPhone} /><Row l="Pickup" v={form.pickup} /><Row l="Drop" v={form.drop} /><Row l="Date" v={formatDate(form.journeyDate)} /><Row l="Time" v={form.journeyTime} /><Row l="Vehicle No." v={vehicleNo(form.vehicleNumber)} /><Row l="Vehicle Type" v={form.vehicleType} /><Row l="Vehicle Model" v={form.vehicleModel} /><Row l="Driver Name" v={form.driverName} /><Row l="Driver Mobile" v={form.driverMobile} /><Row l="Fare" v={`Rs ${fare}`} /><Row l="Advance" v={`Rs ${advance}`} /><div style={netRow}><b>Net Payable</b><b>Rs {net}</b></div></div><div style={actions}><button onClick={() => setShowConfirmPopup(false)} style={cancelBtn}>Cancel</button><button disabled={loading} onClick={confirm} style={greenBtn}>{loading ? "Please wait..." : "Confirm & Submit"}</button></div></div></div>}
 
     {showCustomerSendPopup && (
