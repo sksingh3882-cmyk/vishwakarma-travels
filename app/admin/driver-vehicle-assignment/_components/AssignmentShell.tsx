@@ -52,31 +52,41 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     useState<SavedAssignmentPayload | null>(null);
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const driverMode = forceDriverMode || searchParams.get("driver") === "1";
-    setIsDriverMode(driverMode);
+  const searchParams = new URLSearchParams(window.location.search);
+  const driverMode = forceDriverMode || searchParams.get("driver") === "1";
+  setIsDriverMode(driverMode);
 
-    if (!driverMode) {
-      setShowTripPopup(true);
-    }
+  if (driverMode) {
+    document.body.classList.add("vt-driver-clean-page");
+  } else {
+    document.body.classList.remove("vt-driver-clean-page");
+    setShowTripPopup(true);
+  }
 
-    const storedDriverDetails = window.localStorage.getItem(
-      getDriverStorageKey(bookingId)
-    );
+  const storedDriverDetails = window.localStorage.getItem(
+    getDriverStorageKey(bookingId)
+  );
 
-    if (storedDriverDetails) {
-      try {
-        const parsedDetails = JSON.parse(
-          storedDriverDetails
-        ) as DriverVehicleSubmission;
+  if (storedDriverDetails) {
+    try {
+      const parsedDetails = JSON.parse(
+        storedDriverDetails
+      ) as DriverVehicleSubmission;
 
-        setReceivedDriverDetails(parsedDetails);
+      setReceivedDriverDetails(parsedDetails);
+
+      if (!driverMode) {
         setShowDriverReceivedPopup(true);
-      } catch {
-        window.localStorage.removeItem(getDriverStorageKey(bookingId));
       }
+    } catch {
+      window.localStorage.removeItem(getDriverStorageKey(bookingId));
     }
-  }, [bookingId, forceDriverMode]);
+  }
+
+  return () => {
+    document.body.classList.remove("vt-driver-clean-page");
+  };
+}, [bookingId, forceDriverMode]);
 
   useEffect(() => {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -751,19 +761,36 @@ function Popup({ children }: { children: ReactNode }) {
   );
 }
 const hideAdminChromeCss = `
-  body:has(.vt-driver-assignment-page) > div:first-child {
-    display: none !important;
+  body.vt-driver-clean-page {
+    overflow-x: hidden !important;
   }
 
-  .admin-shell > div:first-child,
-  .admin-shell > div:nth-child(2),
-  .admin-shell > div:nth-child(3),
-  .admin-shell > div:nth-child(4) {
+  body.vt-driver-clean-page .admin-shell > div:first-child,
+  body.vt-driver-clean-page .admin-shell > div:nth-child(2),
+  body.vt-driver-clean-page .admin-shell > div:nth-child(3),
+  body.vt-driver-clean-page .admin-shell > div:nth-child(4),
+  body.vt-driver-clean-page [aria-label*="menu" i],
+  body.vt-driver-clean-page [class*="menu" i],
+  body.vt-driver-clean-page [class*="floating" i],
+  body.vt-driver-clean-page [class*="Floating" i],
+  body.vt-driver-clean-page [style*="position: fixed"],
+  body.vt-driver-clean-page [style*="position:fixed"] {
     display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
   }
 
-  .admin-shell main.vt-driver-assignment-page {
-    padding-top: 0 !important;
+  body.vt-driver-clean-page .vt-driver-assignment-page,
+  body.vt-driver-clean-page .vt-driver-assignment-page * {
+    display: revert !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  body.vt-driver-clean-page main.vt-driver-assignment-page {
+    display: block !important;
+    min-height: 100vh !important;
+    padding-top: 14px !important;
   }
 `;
 const pageWrap = {
