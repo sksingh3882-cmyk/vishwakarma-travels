@@ -569,7 +569,7 @@ function openDriverWhatsAppFromForm() {
     w.document.write(html);
     w.document.close();
   }
-
+function sendRatingLink(b: Booking) { const bookingId = String(b.booking_id || b.id || "").trim(); const customerPhone = cleanPhone(b.customer_phone || b.mobile || b.customer_mobile || b.phone || ""); if (!bookingId) { alert("Booking ID missing hai."); return; } if (customerPhone.length !== 10) { alert("Customer mobile number missing ya invalid hai."); return; } const ratingLink = `${window.location.origin}/rating/${encodeURIComponent(bookingId)}`; const message = `🙏 Thank you for travelling with Vishwakarma Travels.\n\nPlease rate your trip experience:\n\n⭐ Rate your trip here:\n${ratingLink}\n\nYour feedback helps us improve our service.\n\n- Vishwakarma Travels`; window.location.href = `https://api.whatsapp.com/send?phone=91${customerPhone}&text=${encodeURIComponent(message)}`; }
   async function notifyCustomerBookingConfirmed() {
   if (!activeBookingRequest?.id) return;
 
@@ -1024,6 +1024,7 @@ const th: CSSProperties = { padding: 10, textAlign: "left" };
 const td: CSSProperties = { padding: 10, borderBottom: "1px solid #e2e8f0" };
 const editBtn: CSSProperties = { padding: "8px 12px", borderRadius: 10, border: 0, background: "#2563eb", color: "white", fontWeight: "bold", marginRight: 8 };
 const pdfBtn: CSSProperties = { padding: "8px 12px", borderRadius: 10, border: 0, background: "#059669", color: "white", fontWeight: "bold", marginRight: 8 };
+const ratingBtn: CSSProperties = { padding: "8px 12px", borderRadius: 10, border: 0, background: "#f59e0b", color: "white", fontWeight: "bold", marginRight: 8 };
 const delBtn: CSSProperties = { padding: "8px 12px", borderRadius: 10, border: 0, background: "#dc2626", color: "white", fontWeight: "bold" };
 const overlay: CSSProperties = { position: "fixed", inset: 0, background: "rgba(0,0,0,.68)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 8 };
 const modal: CSSProperties = { width: "96%", maxWidth: 390, maxHeight: "90vh", overflowY: "auto", background: "white", borderRadius: 20, position: "relative" };
