@@ -31,6 +31,7 @@ export default function AdminIncomingBookingRequests({ isActive = true, onAccept
   const [selected, setSelected] = useState<BookingRequestRecord | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [dismissedIds, setDismissedIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (!isActive || !supabaseUrl || !supabaseKey) return;
@@ -42,7 +43,15 @@ export default function AdminIncomingBookingRequests({ isActive = true, onAccept
         const pending = await fetchPendingBookingRequests({ supabaseUrl, supabaseKey });
         if (stopped) return;
         setRequests(pending);
-        setSelected((current) => current || (pending.length === 1 ? pending[0] : null));
+        setSelected((current) => {
+  if (current) return current;
+
+  const visiblePending = pending.filter(
+    (item) => !dismissedIds.includes(item.id)
+  );
+
+  return visiblePending.length === 1 ? visiblePending[0] : null;
+});
         setError("");
       } catch (err: any) {
         if (!stopped) setError(err?.message || "Unable to load pending requests.");
@@ -56,11 +65,19 @@ export default function AdminIncomingBookingRequests({ isActive = true, onAccept
       stopped = true;
       window.clearInterval(intervalId);
     };
-  }, [isActive, supabaseUrl, supabaseKey]);
+  }, [isActive, supabaseUrl, supabaseKey, dismissedIds]);
 
   useEffect(() => {
-    if (!selected && requests.length === 1) setSelected(requests[0]);
-  }, [requests, selected]);
+  if (selected) return;
+
+  const visiblePending = requests.filter(
+    (item) => !dismissedIds.includes(item.id)
+  );
+
+  if (visiblePending.length === 1) {
+    setSelected(visiblePending[0]);
+  }
+}, [requests, selected, dismissedIds]);
 
   function bookingSummary(request: BookingRequestRecord) {
   return [
@@ -84,6 +101,15 @@ async function notifyCustomerAccepted(request: BookingRequestRecord) {
     }),
   });
 }
+  function closeSelectedPopup() {
+  if (selected?.id) {
+    setDismissedIds((prev) =>
+      prev.includes(selected.id) ? prev : [...prev, selected.id]
+    );
+  }
+
+  setSelected(null);
+  }
   async function acceptSelected() {
     if (!selected) return;
     setBusy(true);
@@ -158,7 +184,17 @@ setRequests((prev) => prev.filter((item) => item.id !== selected.id));
           <div style={popup}>
             <div style={topLine}>
               <span style={badge}>New Booking Request</span>
-              {requests.length > 1 ? <button type="button" style={miniClose} onClick={() => setSelected(null)}>List</button> : null}
+              <div style={{ display: "flex", gap: 8 }}>
+  {requests.length > 1 ? (
+    <button type="button" style={miniClose} onClick={() => setSelected(null)}>
+      List
+    </button>
+  ) : null}
+
+  <button type="button" style={miniClose} onClick={closeSelectedPopup}>
+    Close
+  </button>
+</div>
             </div>
             <h2 style={title}>{selected.customerName || "Customer"}</h2>
             <p style={subtitle}>Requested service and vehicle details</p>
@@ -173,12 +209,19 @@ setRequests((prev) => prev.filter((item) => item.id !== selected.id));
               <Info label="Time" value={selected.journeyTime} />
             </div>
 
-            <div style={btnRow}>
-              <button type="button" style={cancelBtn} disabled={busy} onClick={cancelSelected}>Cancel</button>
-              <button type="button" style={acceptBtn} disabled={busy} onClick={acceptSelected}>
-                {busy ? "Please wait..." : "Accept Booking"}
-              </button>
-            </div>
+            <div style={btnRow3}>
+  <button type="button" style={outlineBtn} disabled={busy} onClick={closeSelectedPopup}>
+    Close
+  </button>
+
+  <button type="button" style={cancelBtn} disabled={busy} onClick={cancelSelected}>
+    Cancel
+  </button>
+
+  <button type="button" style={acceptBtn} disabled={busy} onClick={acceptSelected}>
+    {busy ? "Please wait..." : "Accept Booking"}
+  </button>
+</div>
           </div>
         </div>
       ) : null}
@@ -213,5 +256,7 @@ const infoRow = { display: "flex", justifyContent: "space-between", gap: 12, bor
 const infoLabel = { minWidth: 112, color: "#64748b", fontSize: 13 } as const;
 const infoValue = { color: "#0f172a", textAlign: "right", fontSize: 13, wordBreak: "break-word" } as const;
 const btnRow = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 14 } as const;
+const btnRow3 = { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginTop: 14 } as const;
+const outlineBtn = { border: "1px solid #cbd5e1", borderRadius: 14, background: "#ffffff", color: "#0b2d6b", fontWeight: 900, minHeight: 44 } as const;
 const cancelBtn = { border: "1px solid #fecaca", borderRadius: 14, background: "#fff1f2", color: "#b91c1c", fontWeight: 900, minHeight: 44 } as const;
 const acceptBtn = { border: 0, borderRadius: 14, background: "#16a34a", color: "#fff", fontWeight: 900, minHeight: 44 } as const;

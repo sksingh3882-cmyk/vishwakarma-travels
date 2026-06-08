@@ -176,3 +176,57 @@ export async function confirmBookingRequestAfterDownload(params: {
   const rows = await res.json();
   return fromDb(rows?.[0] || rows);
 }
+export async function updateBookingRequestDriverVehicle(params: {
+  supabaseUrl: string;
+  supabaseKey: string;
+  requestId: string;
+  driverName: string;
+  driverMobile: string;
+  vehicleNo: string;
+}) {
+  const res = await fetch(
+    `${params.supabaseUrl}/rest/v1/booking_requests?id=eq.${params.requestId}`,
+    {
+      method: "PATCH",
+      headers: headers(params.supabaseKey, "return=representation"),
+      body: JSON.stringify({
+        driver_name: params.driverName,
+        driver_mobile: cleanPhone(params.driverMobile),
+        vehicle_no: params.vehicleNo,
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Driver vehicle details save nahi ho paya.");
+  }
+
+  const rows = await res.json();
+  return fromDb(rows?.[0] || rows);
+}
+
+export async function clearBookingRequestDriverVehicle(params: {
+  supabaseUrl: string;
+  supabaseKey: string;
+  requestId: string;
+}) {
+  const res = await fetch(
+    `${params.supabaseUrl}/rest/v1/booking_requests?id=eq.${params.requestId}`,
+    {
+      method: "PATCH",
+      headers: headers(params.supabaseKey, "return=representation"),
+      body: JSON.stringify({
+        driver_name: "",
+        driver_mobile: "",
+        vehicle_no: "",
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Driver vehicle details clear nahi ho paya.");
+  }
+
+  const rows = await res.json();
+  return fromDb(rows?.[0] || rows);
+}

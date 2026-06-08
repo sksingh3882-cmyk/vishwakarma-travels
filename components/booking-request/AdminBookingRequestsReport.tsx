@@ -185,11 +185,27 @@ export default function AdminBookingRequestsReport({ onAcceptRequest }: Props) {
                 </div>
 
                 <div style={actionGrid}>
-                  <button type="button" style={acceptBtn} disabled={actionLoading} onClick={() => updateRequestStatus("accepted", true)}>Accept & Open Form</button>
-                  <button type="button" style={rejectBtn} disabled={actionLoading} onClick={() => updateRequestStatus("cancelled")}>Reject / Cancel</button>
-                  <button type="button" style={deleteBtn} disabled={actionLoading} onClick={deleteSelectedRequest}>Delete</button>
-                  <button type="button" style={closeActionBtn} disabled={actionLoading} onClick={() => setSelected(null)}>Close</button>
-                </div>
+  <button
+    type="button"
+    style={assignmentBtn}
+    disabled={actionLoading}
+    onClick={() => {
+      if (!selected?.id) return;
+
+      window.open(
+        `/admin/driver-vehicle-assignment/${encodeURIComponent(selected.id)}`,
+        "_blank"
+      );
+    }}
+  >
+    🚕 Driver Assignment
+  </button>
+
+  <button type="button" style={acceptBtn} disabled={actionLoading} onClick={() => updateRequestStatus("accepted", true)}>Accept & Open Form</button>
+  <button type="button" style={rejectBtn} disabled={actionLoading} onClick={() => updateRequestStatus("cancelled")}>Reject / Cancel</button>
+  <button type="button" style={deleteBtn} disabled={actionLoading} onClick={deleteSelectedRequest}>Delete</button>
+  <button type="button" style={closeActionBtn} disabled={actionLoading} onClick={() => setSelected(null)}>Close</button>
+</div>
               </div>
             </div>
           )}
@@ -276,6 +292,15 @@ const actionTitle = { margin: "0 0 6px", color: "#0f172a", fontSize: 20 } as con
 const actionRoute = { margin: "0 0 10px", color: "#0b2d6b", fontWeight: 900, fontSize: 14, lineHeight: 1.35 } as const;
 const actionInfo = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, color: "#475569", fontSize: 13, fontWeight: 700, marginBottom: 14 } as const;
 const actionGrid = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 } as const;
+const assignmentBtn = {
+  border: 0,
+  borderRadius: 14,
+  background: "#0b2d6b",
+  color: "#ffffff",
+  fontWeight: 900,
+  minHeight: 44,
+  fontSize: 14,
+} as const;
 const acceptBtn = { border: 0, borderRadius: 14, minHeight: 44, background: "#16a34a", color: "#fff", fontWeight: 900, fontSize: 13 } as const;
 const rejectBtn = { border: 0, borderRadius: 14, minHeight: 44, background: "#f97316", color: "#fff", fontWeight: 900, fontSize: 13 } as const;
 const deleteBtn = { border: 0, borderRadius: 14, minHeight: 44, background: "#dc2626", color: "#fff", fontWeight: 900, fontSize: 13 } as const;
