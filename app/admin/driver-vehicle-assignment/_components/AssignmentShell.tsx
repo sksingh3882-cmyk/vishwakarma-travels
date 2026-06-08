@@ -193,7 +193,7 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     !cleanedDetails.driverMobile ||
     !cleanedDetails.vehicleNumber
   ) {
-    alert("Driver Name, Driver Mobile aur Vehicle Number required hai.");
+    alert("Driver name, driver mobile number, and Vehicle number are Required..");
     return;
   }
 
@@ -201,7 +201,7 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
   if (!supabaseUrl || !supabaseKey) {
-    alert("Supabase env missing hai. Driver details save nahi ho paya.");
+    alert("Supbase and Missing: Driver details could not be saved..");
     return;
   }
 
@@ -223,10 +223,11 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     setDriverForm(emptyDriverSubmission);
 
     alert(
-      "Driver vehicle details submit ho gaya. Admin page refresh/open karne par details show hoga."
-    );
+  "Your vehicle details have been submitted successfully. Vishwakarma Travels will contact you if your vehicle is selected for this duty."
+);."
+  
   } catch {
-    alert("Driver vehicle details Supabase me save nahi ho paya. Please try again.");
+    alert("Driver and vehicle details could not be saved in the database. Please try again..");
   }
   }
 
@@ -296,10 +297,10 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     window.localStorage.removeItem(getDriverStorageKey(bookingId));
 
     alert(
-      "Driver Name, Driver Mobile aur Vehicle Number clear ho gaye. Vehicle Type aur Vehicle Model same rahenge."
+      "The driver's name, mobile number, and vehicle number have been finalized. The vehicle type and model will remain the same.."
     );
   } catch {
-    alert("Vehicle details remove nahi ho paya. Please try again.");
+    alert("Vehicle details could not be removed. Please try again..");
   }
   }
 
@@ -528,8 +529,8 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
           </div>
 
           <p style={warningBox}>
-            Save me sirf Driver Name, Driver Mobile aur Vehicle Number use hoga.
-            Vehicle Type / Vehicle Model overwrite nahi hoga.
+            Only the driver's name, driver's mobile number, and vehicle number will be used during the save operation.
+            The vehicle type and vehicle model will not be overwritten.
           </p>
 
           <button type="button" onClick={handleUseVehicleDetails} style={primaryBtn}>
