@@ -1,16 +1,26 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { createClient } from "@supabase/supabase-js";
+
 import { useParams } from "next/navigation";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
-const supabase =
-  supabaseUrl && supabaseAnonKey
-    ? createClient(supabaseUrl, supabaseAnonKey)
-    : null;
+function supabaseHeaders(prefer = "return=representation") {
+  return {
+    apikey: supabaseAnonKey,
+    Authorization: `Bearer ${supabaseAnonKey}`,
+    "Content-Type": "application/json",
+    Prefer: prefer,
+  };
+}
+
+function checkSupabaseConfig() {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error("Supabase connection missing. Env keys check karo.");
+  }
+}
 
 type BookingData = Record<string, any>;
 
@@ -96,25 +106,29 @@ export default function RatingPage() {
         setLoading(true);
         setErrorMessage("");
 
-        if (!supabase) {
-          setErrorMessage("Supabase connection missing. Env keys check karo.");
-          return;
-        }
+    
+                checkSupabaseConfig();
 
         if (!bookingId) {
           setErrorMessage("Booking ID missing hai.");
           return;
         }
-        const { data, error } = await supabase
-          .from("booking_requests")
-          .select("*")
-          .eq("id", bookingId)
-          .maybeSingle();
 
-        if (error) {
-          setErrorMessage(error.message);
-          return;
+        const response = await fetch(
+          `${supabaseUrl}/rest/v1/booking_requests?select=*&id=eq.${encodeURIComponent(
+            bookingId
+          )}&limit=1`,
+          {
+            headers: supabaseHeaders("return=minimal"),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Booking details fetch nahi ho paya.");
         }
+
+        const rows = await response.json();
+        const data = Array.isArray(rows) ? rows[0] : null;
 
         if (!data) {
           setErrorMessage("Booking details nahi mile.");
@@ -153,10 +167,7 @@ export default function RatingPage() {
       setSaving(true);
       setErrorMessage("");
 
-      if (!supabase) {
-        setErrorMessage("Supabase connection missing. Env keys check karo.");
-        return;
-      }
+            checkSupabaseConfig();
 
       if (!allComplete) {
         setErrorMessage("Please sabhi 10 rating complete karo.");
@@ -242,13 +253,17 @@ export default function RatingPage() {
         updated_at: new Date().toISOString(),
       };
 
-      const { error } = await supabase
-        .from("trip_ratings")
-        .upsert(payload, { onConflict: "booking_id" });
+            const response = await fetch(
+        `${supabaseUrl}/rest/v1/trip_ratings?on_conflict=booking_id`,
+        {
+          method: "POST",
+          headers: supabaseHeaders("resolution=merge-duplicates,return=minimal"),
+          body: JSON.stringify(payload),
+        }
+      );
 
-      if (error) {
-        setErrorMessage(error.message);
-        return;
+      if (!response.ok) {
+        throw new Error("Rating submit nahi ho paya.");
       }
 
       setSuccessOpen(true);
