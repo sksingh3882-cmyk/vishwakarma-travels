@@ -328,10 +328,10 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
 
           <div style={infoBox}>
             <InfoLine label="Date" value={booking.date} />
-            <InfoLine label="Time" value={booking.time} />
+            <InfoLine label="Time" value={formatTimeForDisplay(booking.time)} />
             <InfoLine label="Pickup" value={draft.pickupArea} />
             <InfoLine label="Drop" value={draft.dropArea} />
-            <InfoLine label="Vehicle Required" value={draft.vehicleType} />
+            <InfoLine label="Vehicle Required" value={draft.vehicleModel || draft.vehicleType} />
           </div>
 
           <div style={formStack}>
@@ -617,6 +617,33 @@ function inferVehicleTypeFromModel(value: string) {
   return "";
 }
 
+function formatTimeForDisplay(value: string) {
+  const raw = String(value || "").trim();
+
+  if (!raw) return "-";
+
+  if (/\b(am|pm)\b/i.test(raw)) {
+    return raw.toUpperCase();
+  }
+
+  const match = raw.match(/^(\d{1,2}):(\d{2})$/);
+
+  if (!match) {
+    return raw;
+  }
+
+  const hour = Number(match[1]);
+  const minute = match[2];
+
+  if (Number.isNaN(hour)) {
+    return raw;
+  }
+
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const displayHour = hour % 12 || 12;
+
+  return `${String(displayHour).padStart(2, "0")}:${minute} ${suffix}`;
+}
 function shortArea(value: string) {
   return String(value || "").split(",")[0].trim();
 }
