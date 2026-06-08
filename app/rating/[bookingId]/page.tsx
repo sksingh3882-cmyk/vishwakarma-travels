@@ -133,12 +133,12 @@ export default function RatingPage() {
         checkSupabaseConfig();
 
         if (!bookingId) {
-          setErrorMessage("Booking ID missing hai.");
+          setErrorMessage("Booking ID is missing.");
           return;
         }
 
-        const response = await fetch(
-          `${supabaseUrl}/rest/v1/booking_requests?select=*&id=eq.${encodeURIComponent(
+                const response = await fetch(
+          `${supabaseUrl}/rest/v1/bookings?select=*&booking_id=eq.${encodeURIComponent(
             bookingId
           )}&limit=1`,
           {
@@ -154,7 +154,7 @@ export default function RatingPage() {
         const data = Array.isArray(rows) ? rows[0] : null;
 
         if (!data) {
-          setErrorMessage("Booking details not received.");
+          setErrorMessage("Booking details not found.");
           return;
         }
 
@@ -226,8 +226,9 @@ export default function RatingPage() {
           "full_name",
           "customerName",
         ]),
-        customer_mobile: getValue(booking, [
+                customer_mobile: getValue(booking, [
           "customer_mobile",
+          "customer_phone",
           "mobile",
           "phone",
           "contact",
@@ -245,14 +246,17 @@ export default function RatingPage() {
           "driverMobile",
         ]),
 
-        vehicle_number: getValue(booking, [
+                vehicle_number: getValue(booking, [
           "vehicle_number",
+          "vehicle_no",
+          "car_number",
           "assigned_vehicle_number",
           "vehicleNumber",
         ]),
         vehicle_model: getValue(booking, [
           "vehicle_model",
           "vehicle_type",
+          "car_model",
           "selected_vehicle",
           "vehicleModel",
         ]),
@@ -495,7 +499,7 @@ export default function RatingPage() {
 
             <h2 style={styles.successTitle}>Thank You For Your Support</h2>
             <p style={styles.successText}>
-              Aapki rating successfully submit ho gayi hai.
+              Your rating has been successfully submitted.
             </p>
 
             <button
