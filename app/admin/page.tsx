@@ -152,7 +152,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     e.preventDefault();
     if (password === adminPassword) { localStorage.setItem("vt_admin_login", "yes"); setIsLogin(true); } else alert("Wrong admin password");
   }
-  function logout() { localStorage.removeItem("vt_admin_login"); setIsLogin(false); }
+    function logout() { localStorage.removeItem("vt_admin_login"); setIsLogin(false); }
+  function openRatingPerformance() { window.location.href = "/rating-performance"; }
 
   function applyCustomer(c: Customer) {
     setForm((p) => ({ ...p, customerName: c.name || p.customerName, customerPhone: cleanPhone(c.mobile || c.phone || p.customerPhone), pickup: c.address || p.pickup }));
@@ -894,7 +895,7 @@ function editCustomer(c: Customer){setForm((p)=>({...p,customerName:c.name||"",c
     </div>
   </div>
 )}
-    <div style={{ maxWidth: 1200, margin: "0 auto" }}><header style={header}><h1>Vishwakarma Travels Admin Dashboard</h1><p>Booking, Bill, WhatsApp aur Database Management</p><button onClick={logout} style={whiteBtn}>Logout</button></header>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}><header style={header}><h1>Vishwakarma Travels Admin Dashboard</h1><p>Booking, Bill, WhatsApp aur Database Management</p><div style={heroActionRow}><button onClick={logout} style={whiteBtn}>Logout</button><button type="button" onClick={openRatingPerformance} style={ratingPerformanceBtn}>⭐ Rating Performance</button></div></header>
     <section style={stats}><Stat title="Customers" value={customers.length} onClick={() => setActiveView("customers")} /><Stat title="Vehicles" value={vehicles.length} onClick={() => setActiveView("vehicles")} /><Stat title="Bookings" value={bookings.length} onClick={() => setActiveView("bookings")} /></section>
       <AdminPushSetup />
     {activeView && <section style={panel}><button onClick={() => setActiveView("")} style={whiteBtn}>Close</button>{activeView === "customers" && customers.map((c, i) => <div key={i} style={{display:"grid",gridTemplateColumns:"1fr auto auto",gap:8,alignItems:"center",padding:"10px 0",borderBottom:"1px solid #e5e7eb"}}><p style={{margin:0}}><b>{c.name || "-"}</b> - {c.mobile || c.phone || "-"} - {c.address || "-"}</p><button onClick={()=>editCustomer(c)} style={editBtn}>Edit</button><button onClick={()=>deleteCustomer(c)} style={delBtn}>Delete</button></div>)}{activeView === "vehicles" && vehicles.map((v, i) => <div key={i} style={{display:"grid",gridTemplateColumns:"1fr auto auto",gap:8,alignItems:"center",padding:"10px 0",borderBottom:"1px solid #e5e7eb"}}><p style={{margin:0}}><b>{vehicleNo(v.vehicle_number || v.vehicleNumber || "") || "-"}</b> - {v.vehicle_model || v.vehicleModel || "-"} - {v.driver_name || v.driverName || "-"}</p><button onClick={()=>editVehicle(v)} style={editBtn}>Edit</button><button onClick={()=>deleteVehicle(v)} style={delBtn}>Delete</button></div>)}{activeView === "bookings" && bookings.map((b, i) => <p key={i}><b>{b.booking_id || "-"}</b> - {b.customer_name || "-"} - Rs {b.fare || 0}</p>)}</section>}
@@ -994,6 +995,8 @@ const page: CSSProperties = { minHeight: "100vh", background: "#f1f5f9", padding
 const loginPage: CSSProperties = { minHeight: "100vh", background: "#f1f5f9", padding: 20, display: "flex", alignItems: "center", justifyContent: "center" };
 const card: CSSProperties = { width: "100%", maxWidth: 380, background: "white", padding: 24, borderRadius: 18, boxShadow: "0 8px 25px rgba(0,0,0,.12)" };
 const header: CSSProperties = { background: "#0b2d6b", color: "white", padding: 20, borderRadius: 18, marginBottom: 16 };
+const heroActionRow: CSSProperties = { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap", marginTop: 14 };
+const ratingPerformanceBtn: CSSProperties = { padding: "10px 14px", borderRadius: 12, border: 0, background: "#f59e0b", color: "white", fontWeight: "bold" };
 const stats: CSSProperties = { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12, marginBottom: 16 };
 const stat: CSSProperties = { background: "white", padding: 16, borderRadius: 16, cursor: "pointer" };
 const panel: CSSProperties = { background: "white", padding: 18, borderRadius: 18, marginBottom: 16 };
