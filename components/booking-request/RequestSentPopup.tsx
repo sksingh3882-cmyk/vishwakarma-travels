@@ -18,10 +18,15 @@ export default function RequestSentPopup({ open, onClose, onMyBooking }: Props) 
           from { opacity: 0; transform: translateY(24px) scale(0.92); }
           to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        @keyframes vtRequestTickBounce {
-          0% { transform: scale(0.45) rotate(-18deg); opacity: 0; }
-          60% { transform: scale(1.12) rotate(4deg); opacity: 1; }
-          100% { transform: scale(1) rotate(0deg); opacity: 1; }
+                @keyframes vtRequestTickScale {
+          0% { transform: scale(0.82); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes vtRequestDrawCircle {
+          to { stroke-dashoffset: 0; }
+        }
+        @keyframes vtRequestDrawTick {
+          to { stroke-dashoffset: 0; }
         }
         @keyframes vtRequestPulseGlow {
           0%, 100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.24); }
@@ -31,8 +36,13 @@ export default function RequestSentPopup({ open, onClose, onMyBooking }: Props) 
 
       <div style={card}>
         <div style={handle} />
-        <div style={tickWrap}>
-          <div style={tick}>✓</div>
+                <div style={tickWrap}>
+          <div style={tick}>
+            <svg viewBox="0 0 80 80" style={tickSvg} aria-hidden="true">
+              <circle cx="40" cy="40" r="28" style={tickCircle} />
+              <path d="M24 41 L35 52 L57 29" style={tickPath} />
+            </svg>
+          </div>
         </div>
 
         <h2 style={title}>Request Sent</h2>
@@ -104,11 +114,36 @@ const tick: CSSProperties = {
   height: 56,
   borderRadius: 18,
   background: "#16a34a",
-  color: "#fff",
-  fontSize: 40,
-  lineHeight: "56px",
-  fontWeight: 900,
-  animation: "vtRequestTickBounce .55s ease-out",
+  display: "grid",
+  placeItems: "center",
+  animation: "vtRequestTickScale .45s ease-out both",
+};
+
+const tickSvg: CSSProperties = {
+  width: 44,
+  height: 44,
+  display: "block",
+};
+
+const tickCircle: CSSProperties = {
+  fill: "none",
+  stroke: "rgba(255,255,255,.35)",
+  strokeWidth: 5,
+  strokeDasharray: 176,
+  strokeDashoffset: 176,
+  animation: "vtRequestDrawCircle .55s ease forwards",
+};
+
+const tickPath: CSSProperties = {
+  fill: "none",
+  stroke: "#ffffff",
+  strokeWidth: 7,
+  strokeLinecap: "round",
+  strokeLinejoin: "round",
+  strokeDasharray: 60,
+  strokeDashoffset: 60,
+  animation: "vtRequestDrawTick .38s ease forwards",
+  animationDelay: ".38s",
 };
 
 const title: CSSProperties = {
