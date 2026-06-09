@@ -339,7 +339,7 @@ const infoValue = {
 const popupOverlay = {
   position: "fixed",
   inset: 0,
-  background: "rgba(15,23,42,.62)",
+  background:"transparent",
   zIndex: 10000,
   display: "flex",
   alignItems: "center",
