@@ -361,7 +361,7 @@ export default function RatingPage() {
         <div style={styles.questionCard}>
           <span style={styles.badge}>{currentQuestion.group}</span>
           <h2 style={styles.questionTitle}>{currentQuestion.title}</h2>
-          <p style={styles.subText}>Please 1 se 5 star select karo</p>
+          <p style={styles.subText}>Please select 1 to 5 Stars</p>
 
           <div style={styles.starRow}>
             {[1, 2, 3, 4, 5].map((star) => {
