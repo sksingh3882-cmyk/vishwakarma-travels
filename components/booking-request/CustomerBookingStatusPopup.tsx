@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import CustomerAssignedDriverDetails from "./CustomerAssignedDriverDetails";
 import {
   createBookingRequest,
   fetchBookingRequestById,
@@ -185,7 +186,7 @@ fetch("/api/push/send", {
               <>
                 <StatusHeader icon="🚖" title="Booking Confirmed" subtitle="Vehicle and driver details have been assigned." />
                 <TripDetails request={request} compact />
-                <DriverDetails request={request} />
+                <CustomerAssignedDriverDetails request={request} />
                 {callDriverHref ? (
                   <a href={callDriverHref} style={callBtn}>📞 Call Driver Now</a>
                 ) : null}
