@@ -507,7 +507,7 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
             <DetailRow label="Mobile" value={booking.customerMobile} />
             <DetailRow label="Service" value={booking.serviceType} />
             <DetailRow label="Date" value={booking.date} />
-            <DetailRow label="Time" value={booking.time} />
+            <DetailRow label="Time" value={formatTimeForDisplay(booking.time)} />
             <DetailRow label="Pickup" value={booking.pickupFullAddress} />
             <DetailRow label="Drop" value={booking.dropFullAddress} />
             <DetailRow label="Vehicle Type" value={booking.vehicleType} />
