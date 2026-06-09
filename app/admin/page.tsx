@@ -797,8 +797,8 @@ function editCustomer(c: Customer){setForm((p)=>({...p,customerName:c.name||"",c
   const customerSearch = `${form.customerName} ${form.customerPhone}`.toLowerCase().trim();
   const customerSuggestions = customerSearch.length < 2 ? [] : customers.filter((c) => `${c.name || ""} ${c.mobile || c.phone || ""} ${c.address || ""}`.toLowerCase().includes(customerSearch) || cleanPhone(c.mobile || c.phone || "").includes(cleanPhone(form.customerPhone))).slice(0, 6);
   const vehicleSearch = vehicleNo(form.vehicleNumber);
-  const vehicleSuggestions = vehicleSearch.length < 2 ? [] : vehicles.filter((v) => `${v.vehicle_number || v.vehicleNumber || ""} ${v.vehicle_type || v.vehicleType || ""} ${v.vehicle_model || v.vehicleModel || ""} ${v.driver_name || v.driverName || ""}`.toUpperCase().includes(vehicleSearch)).slice(0, 6);
-  const hasExactVehicle = vehicles.some((v) => vehicleNo(v.vehicle_number || v.vehicleNumber || "") === vehicleSearch);
+  const vehicleSuggestions = vehicleSearch.length < 2 ? [] : vehicles.filter(Boolean).filter((v) => `${v?.vehicle_number || v?.vehicleNumber || ""} ${v?.vehicle_type || v?.vehicleType || ""} ${v?.vehicle_model || v?.vehicleModel || ""} ${v?.driver_name || v?.driverName || ""}`.toUpperCase().includes(vehicleSearch)).slice(0, 6);
+  const hasExactVehicle = vehicles.filter(Boolean).some((v) => vehicleNo(v?.vehicle_number || v?.vehicleNumber || "") === vehicleSearch);
   const drops = Array.from(new Set(bookings.filter((b) => cleanPhone(b.customer_phone || "") === cleanPhone(form.customerPhone) || (form.customerName && (b.customer_name || "").toLowerCase().includes(form.customerName.toLowerCase()))).map((b) => b.drop_location).filter(Boolean))).slice(0, 6);
 
   if (!isLogin) return <main style={loginPage}><form onSubmit={login} style={card}><h1>Vishwakarma Travels</h1><p>Admin Login</p><input type="password" placeholder="Admin password" value={password} onChange={(e) => setPassword(e.target.value)} style={input} /><button style={blueBtn}>Login</button></form></main>;
