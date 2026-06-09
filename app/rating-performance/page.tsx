@@ -208,6 +208,100 @@ export default function RatingPerformancePage() {
     setSelectedVehicle(null);
     setSelectedTrip(null);
   }
+    async function deleteTripRating(trip: TripRating) {
+    if (!trip.id) {
+      alert("Rating ID not found.");
+      return;
+    }
+
+    const ok = window.confirm("Are you sure you want to delete this trip rating?");
+    if (!ok) return;
+
+    try {
+      const response = await fetch(
+        `${supabaseUrl}/rest/v1/trip_ratings?id=eq.${encodeURIComponent(trip.id)}`,
+        {
+          method: "DELETE",
+          headers: supabaseHeaders(),
+        }
+      );
+
+      if (!response.ok) throw new Error("Unable to delete rating.");
+
+      setRatings((prev) => prev.filter((rating) => rating.id !== trip.id));
+      setSelectedTrip(null);
+    } catch (error: any) {
+      alert(error?.message || "Unable to delete rating.");
+    }
+  }
+
+  async function deleteDriverRatings(driver: DriverPerformance) {
+    const mobile = String(driver.driver_mobile || "").trim();
+    const name = String(driver.driver_name || "").trim();
+    const useMobile = Boolean(mobile && mobile !== "-");
+
+    const ok = window.confirm(`Delete all ratings for driver ${name || mobile}?`);
+    if (!ok) return;
+
+    try {
+      const query = useMobile
+        ? `driver_mobile=eq.${encodeURIComponent(mobile)}`
+        : `driver_name=eq.${encodeURIComponent(name)}`;
+
+      const response = await fetch(`${supabaseUrl}/rest/v1/trip_ratings?${query}`, {
+        method: "DELETE",
+        headers: supabaseHeaders(),
+      });
+
+      if (!response.ok) throw new Error("Unable to delete driver ratings.");
+
+      setRatings((prev) =>
+        prev.filter((rating) =>
+          useMobile
+            ? String(rating.driver_mobile || "").trim() !== mobile
+            : String(rating.driver_name || "").trim() !== name
+        )
+      );
+
+      setSelectedDriver(null);
+    } catch (error: any) {
+      alert(error?.message || "Unable to delete driver ratings.");
+    }
+  }
+
+  async function deleteVehicleRatings(vehicle: VehiclePerformance) {
+    const vehicleNumber = String(vehicle.vehicle_number || "").trim();
+    const vehicleModel = String(vehicle.vehicle_model || "").trim();
+    const useNumber = Boolean(vehicleNumber && vehicleNumber !== "Unknown Vehicle");
+
+    const ok = window.confirm(`Delete all ratings for vehicle ${vehicleNumber || vehicleModel}?`);
+    if (!ok) return;
+
+    try {
+      const query = useNumber
+        ? `vehicle_number=eq.${encodeURIComponent(vehicleNumber)}`
+        : `vehicle_model=eq.${encodeURIComponent(vehicleModel)}`;
+
+      const response = await fetch(`${supabaseUrl}/rest/v1/trip_ratings?${query}`, {
+        method: "DELETE",
+        headers: supabaseHeaders(),
+      });
+
+      if (!response.ok) throw new Error("Unable to delete vehicle ratings.");
+
+      setRatings((prev) =>
+        prev.filter((rating) =>
+          useNumber
+            ? String(rating.vehicle_number || "").trim() !== vehicleNumber
+            : String(rating.vehicle_model || "").trim() !== vehicleModel
+        )
+      );
+
+      setSelectedVehicle(null);
+    } catch (error: any) {
+      alert(error?.message || "Unable to delete vehicle ratings.");
+    }
+  }
 
   if (loading) {
     return (
@@ -281,8 +375,9 @@ export default function RatingPerformancePage() {
                     <p style={styles.itemSub}>Rated Trips: {driver.trips}</p>
                   </div>
                   <div style={styles.itemRight}>
-                    <div style={styles.ratingBadge}>{starText(driver.average)}</div>
-                    <button type="button" onClick={() => setSelectedDriver(driver)} style={styles.viewBtn}>View</button>
+                                         <div style={styles.ratingBadge}>{starText(driver.average)}</div>
+                     <button type="button" onClick={() => setSelectedDriver(driver)} style={styles.viewBtn}>View</button>
+                     <button type="button" onClick={() => deleteDriverRatings(driver)} style={styles.deleteBtn}>Delete</button>
                   </div>
                 </div>
               ))
@@ -304,8 +399,9 @@ export default function RatingPerformancePage() {
                     <p style={styles.itemSub}>Rated Trips: {vehicle.trips}</p>
                   </div>
                   <div style={styles.itemRight}>
-                    <div style={styles.ratingBadge}>{starText(vehicle.average)}</div>
-                    <button type="button" onClick={() => setSelectedVehicle(vehicle)} style={styles.viewBtn}>View</button>
+                                         <div style={styles.ratingBadge}>{starText(vehicle.average)}</div>
+                     <button type="button" onClick={() => setSelectedVehicle(vehicle)} style={styles.viewBtn}>View</button>
+                     <button type="button" onClick={() => deleteVehicleRatings(vehicle)} style={styles.deleteBtn}>Delete</button>
                   </div>
                 </div>
               ))
@@ -327,8 +423,9 @@ export default function RatingPerformancePage() {
                     <p style={styles.itemSub}>{trip.driver_name || "-"} · {trip.vehicle_number || "-"}</p>
                   </div>
                   <div style={styles.itemRight}>
-                    <div style={styles.ratingBadge}>{starText(numberValue(trip.overall_average_rating))}</div>
-                    <button type="button" onClick={() => setSelectedTrip(trip)} style={styles.viewBtn}>View</button>
+                                         <div style={styles.ratingBadge}>{starText(numberValue(trip.overall_average_rating))}</div>
+                     <button type="button" onClick={() => setSelectedTrip(trip)} style={styles.viewBtn}>View</button>
+                     <button type="button" onClick={() => deleteTripRating(trip)} style={styles.deleteBtn}>Delete</button>
                   </div>
                 </div>
               ))
@@ -416,6 +513,7 @@ const styles: Record<string, React.CSSProperties> = {
   itemRight: { display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px" },
   ratingBadge: { background: "#fff7ed", color: "#c2410c", border: "1px solid #fed7aa", padding: "7px 10px", borderRadius: "999px", fontSize: "13px", fontWeight: 950, whiteSpace: "nowrap" },
   viewBtn: { border: 0, background: "#111827", color: "#ffffff", padding: "8px 13px", borderRadius: "999px", fontSize: "13px", fontWeight: 900 },
+    deleteBtn: { border: "1px solid #fecaca", background: "#fff1f2", color: "#b91c1c", padding: "8px 13px", borderRadius: "999px", fontSize: "13px", fontWeight: 900 },
   error: { marginTop: "14px", padding: "12px", borderRadius: "14px", background: "#fef2f2", color: "#b91c1c", fontSize: "14px", fontWeight: 700 },
   popupOverlay: { position: "fixed", inset: 0, background: "rgba(15, 23, 42, 0.65)", display: "flex", alignItems: "center", justifyContent: "center", padding: "18px", zIndex: 9999 },
   popupCard: { width: "100%", maxWidth: "420px", background: "#ffffff", borderRadius: "24px", padding: "20px", position: "relative", boxShadow: "0 25px 70px rgba(0,0,0,0.25)" },
