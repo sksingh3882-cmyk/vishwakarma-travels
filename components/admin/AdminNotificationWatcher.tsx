@@ -86,6 +86,24 @@ function showBrowserNotification(title: string, body: string, tag: string) {
   });
 }
 
+function playNotificationTone(type: NoticeType) {
+  try {
+    const soundPath =
+      type === "rating"
+        ? "/sounds/rating-received.mp3"
+        : "/sounds/vehicle-received.mp3";
+
+    const audio = new Audio(soundPath);
+    audio.volume = 0.85;
+
+    audio.play().catch((error) => {
+      console.log("Notification tone blocked:", error);
+    });
+  } catch (error) {
+    console.log("Notification tone failed:", error);
+  }
+}
+
 export default function AdminNotificationWatcher() {
   const [notice, setNotice] = useState<Notice | null>(null);
   const seenDriverVehicleRef = useRef<Set<string>>(new Set());
@@ -178,8 +196,9 @@ export default function AdminNotificationWatcher() {
         if (!freshNotice || stopped) return;
 
         setNotice(freshNotice);
+playNotificationTone(freshNotice.type);
 
-        showBrowserNotification(
+showBrowserNotification(
           freshNotice.title,
           freshNotice.body,
           `vt-admin-${freshNotice.type}-${freshNotice.id}`
