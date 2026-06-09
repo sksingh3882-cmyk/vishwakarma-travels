@@ -20,7 +20,7 @@ type DriverVehicleRow = {
   driver_name?: string;
   driver_mobile?: string;
   vehicle_no?: string;
-  updated_at?: string;
+    created_at?: string;
   confirmed_at?: string;
 };
 
@@ -61,7 +61,7 @@ function driverVehicleKey(row: DriverVehicleRow) {
     row.driver_name || "",
     row.driver_mobile || "",
     row.vehicle_no || "",
-    row.updated_at || "",
+        row.created_at || "",
     row.confirmed_at || "",
   ].join("|");
 }
@@ -99,7 +99,7 @@ export default function AdminNotificationWatcher() {
 
     async function checkDriverVehicleDetails() {
       const response = await fetch(
-        `${supabaseUrl}/rest/v1/booking_requests?select=id,customer_name,pickup,drop_location,driver_name,driver_mobile,vehicle_no,updated_at,confirmed_at&or=(driver_name.neq.,driver_mobile.neq.,vehicle_no.neq.)&order=updated_at.desc&limit=10`,
+        `${supabaseUrl}/rest/v1/booking_requests?select=id,customer_name,pickup,drop_location,driver_name,driver_mobile,vehicle_no,created_at,confirmed_at&or=(driver_name.neq.,driver_mobile.neq.,vehicle_no.neq.)&order=created_at.desc&limit=10`,
         { headers: headers() }
       );
 
