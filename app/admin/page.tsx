@@ -5,6 +5,7 @@ import AdminIncomingBookingRequests from "@/components/booking-request/AdminInco
 import { confirmBookingRequestAfterDownload, fetchBookingRequestById, type BookingRequestRecord } from "@/lib/bookingRequestService";
 import AdminBookingRequestsReport from "@/components/booking-request/AdminBookingRequestsReport";
 import AdminPushSetup from "@/components/admin/AdminPushSetup";
+import AdminNotificationWatcher from "@/components/admin/AdminNotificationWatcher";
 
 type Booking = Record<string, any>;
 type Customer = Record<string, any>;
@@ -68,6 +69,7 @@ export default function AdminPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [activeView, setActiveView] = useState<"customers" | "vehicles" | "bookings" | "">("");
   const [searchBooking, setSearchBooking] = useState("");
+    const [showRecentBookings, setShowRecentBookings] = useState(true);
   const [loading, setLoading] = useState(false);
   const [lastBookingId, setLastBookingId] = useState("");
   const [pendingBookingId, setPendingBookingId] = useState("");
@@ -151,7 +153,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     e.preventDefault();
     if (password === adminPassword) { localStorage.setItem("vt_admin_login", "yes"); setIsLogin(true); } else alert("Wrong admin password");
   }
-  function logout() { localStorage.removeItem("vt_admin_login"); setIsLogin(false); }
+    function logout() { localStorage.removeItem("vt_admin_login"); setIsLogin(false); }
+  function openRatingPerformance() { window.location.href = "/rating-performance"; }
 
   function applyCustomer(c: Customer) {
     setForm((p) => ({ ...p, customerName: c.name || p.customerName, customerPhone: cleanPhone(c.mobile || c.phone || p.customerPhone), pickup: c.address || p.pickup }));
@@ -568,7 +571,7 @@ function openDriverWhatsAppFromForm() {
     w.document.write(html);
     w.document.close();
   }
-
+function sendRatingLink(b: Booking) { const bookingId = String(b.booking_id || b.id || "").trim(); const customerPhone = cleanPhone(b.customer_phone || b.mobile || b.customer_mobile || b.phone || ""); if (!bookingId) { alert("Booking ID missing hai."); return; } if (customerPhone.length !== 10) { alert("Customer mobile number missing ya invalid hai."); return; } const ratingLink = `${window.location.origin}/rating/${encodeURIComponent(bookingId)}`; const message = `🙏 Thank you for travelling with Vishwakarma Travels.\n\nPlease rate your trip experience:\n\n⭐ Rate your trip here:\n${ratingLink}\n\nYour feedback helps us improve our service.\n\n- Vishwakarma Travels`; window.location.href = `https://api.whatsapp.com/send?phone=91${customerPhone}&text=${encodeURIComponent(message)}`; }
   async function notifyCustomerBookingConfirmed() {
   if (!activeBookingRequest?.id) return;
 
@@ -893,9 +896,10 @@ function editCustomer(c: Customer){setForm((p)=>({...p,customerName:c.name||"",c
     </div>
   </div>
 )}
-    <div style={{ maxWidth: 1200, margin: "0 auto" }}><header style={header}><h1>Vishwakarma Travels Admin Dashboard</h1><p>Booking, Bill, WhatsApp aur Database Management</p><button onClick={logout} style={whiteBtn}>Logout</button></header>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}><header style={header}><h1>Vishwakarma Travels Admin Dashboard</h1><p>Booking, Bill, WhatsApp aur Database Management</p><div style={heroActionRow}><button onClick={logout} style={whiteBtn}>Logout</button><button type="button" onClick={openRatingPerformance} style={ratingPerformanceBtn}>⭐ Rating Performance</button></div></header>
     <section style={stats}><Stat title="Customers" value={customers.length} onClick={() => setActiveView("customers")} /><Stat title="Vehicles" value={vehicles.length} onClick={() => setActiveView("vehicles")} /><Stat title="Bookings" value={bookings.length} onClick={() => setActiveView("bookings")} /></section>
       <AdminPushSetup />
+          <AdminNotificationWatcher />
     {activeView && <section style={panel}><button onClick={() => setActiveView("")} style={whiteBtn}>Close</button>{activeView === "customers" && customers.map((c, i) => <div key={i} style={{display:"grid",gridTemplateColumns:"1fr auto auto",gap:8,alignItems:"center",padding:"10px 0",borderBottom:"1px solid #e5e7eb"}}><p style={{margin:0}}><b>{c.name || "-"}</b> - {c.mobile || c.phone || "-"} - {c.address || "-"}</p><button onClick={()=>editCustomer(c)} style={editBtn}>Edit</button><button onClick={()=>deleteCustomer(c)} style={delBtn}>Delete</button></div>)}{activeView === "vehicles" && vehicles.map((v, i) => <div key={i} style={{display:"grid",gridTemplateColumns:"1fr auto auto",gap:8,alignItems:"center",padding:"10px 0",borderBottom:"1px solid #e5e7eb"}}><p style={{margin:0}}><b>{vehicleNo(v.vehicle_number || v.vehicleNumber || "") || "-"}</b> - {v.vehicle_model || v.vehicleModel || "-"} - {v.driver_name || v.driverName || "-"}</p><button onClick={()=>editVehicle(v)} style={editBtn}>Edit</button><button onClick={()=>deleteVehicle(v)} style={delBtn}>Delete</button></div>)}{activeView === "bookings" && bookings.map((b, i) => <p key={i}><b>{b.booking_id || "-"}</b> - {b.customer_name || "-"} - Rs {b.fare || 0}</p>)}</section>}
     <form onSubmit={submit} style={panel}><h2>New Booking</h2><div style={grid}><select value={form.gender} onChange={(e) => update("gender", e.target.value)} style={input}><option>👋 Hii</option><option>Mr.</option><option>Mrs.</option><option>Ms.</option></select><div style={fieldWrap}><input placeholder="Customer Name" value={form.customerName} onFocus={() => setShowCustomerSuggestions(true)} onChange={(e) => { update("customerName", e.target.value); setShowCustomerSuggestions(true); }} onBlur={() => setTimeout(() => { findCustomer(); setShowCustomerSuggestions(false); }, 180)} style={input} required />{showCustomerSuggestions && customerSuggestions.length > 0 && <div style={suggestBox}>{customerSuggestions.map((c, i) => <button key={`${c.mobile || c.phone || i}-${i}`} type="button" onMouseDown={() => applyCustomer(c)} style={suggestItem}><b>{c.name || "No Name"}</b><span>{cleanPhone(c.mobile || c.phone || "") || "No Mobile"}</span><small>{c.address || "No Address"}</small></button>)}</div>}</div><input type="text" inputMode="tel" placeholder="Customer WhatsApp Number" value={form.customerPhone} onChange={(e) => { update("customerPhone", e.target.value); setShowCustomerSuggestions(true); }} onBlur={findCustomer} style={input} required /><input placeholder="Pickup Location / Address" value={form.pickup} onChange={(e) => update("pickup", e.target.value)} style={input} required /><input placeholder="Drop Location" value={form.drop} onChange={(e) => update("drop", e.target.value)} style={input} required />{drops.length > 0 && <div style={fullRow}><b style={{ color: "#0b2d6b" }}>Old Drop Location:</b><div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>{drops.map((d) => <button key={d} type="button" onClick={() => update("drop", d)} style={chip}>{d}</button>)}</div></div>}<input type="date" value={form.journeyDate} onChange={(e) => update("journeyDate", e.target.value)} style={input} required /><input placeholder="Time e.g. 5:30 PM" value={form.journeyTime} onChange={(e) => update("journeyTime", e.target.value)} style={input} required /><div style={fieldWrap}><input placeholder="Vehicle Number" value={form.vehicleNumber} onFocus={() => setShowVehicleSuggestions(true)} onChange={(e) => fillVehicle(e.target.value)} onBlur={() => setTimeout(() => setShowVehicleSuggestions(false), 180)} style={input} />{showVehicleSuggestions && vehicleSearch.length >= 2 && <div style={suggestBox}>{vehicleSuggestions.map((v, i) => <button key={`${v.vehicle_number || v.vehicleNumber || i}-${i}`} type="button" onMouseDown={() => applyVehicle(v)} style={suggestItem}><b>{vehicleNo(v.vehicle_number || v.vehicleNumber || "")}</b><span>{v.vehicle_type || v.vehicleType || "Vehicle"} • {v.vehicle_model || v.vehicleModel || "Model"}</span><small>{v.driver_name || v.driverName || "Driver not saved"} {cleanPhone(v.phone || v.driver_mobile || v.driverMobile || "") ? `• ${cleanPhone(v.phone || v.driver_mobile || v.driverMobile || "")}` : ""}</small></button>)}{!hasExactVehicle && <div style={newHint}>+ New vehicle "{vehicleSearch}" — type, model, driver details fill karke submit karte hi save ho jayega.</div>}</div>}</div><select value={form.vehicleType} onChange={(e) => update("vehicleType", e.target.value)} style={input}><option>Sedan</option><option>SUV</option><option>SUV With Carrier</option><option>Sedan With Carrier</option><option>Mini Passenger Bus</option></select><select value={form.vehicleModel} onChange={(e) => update("vehicleModel", e.target.value)} style={input}><option>Desire</option><option>Ertiga</option><option>Innova</option><option>Innova Crysta</option><option>Ertiga With Carrier</option><option>Innova With Carrier</option><option>Crysta With Carrier</option><option>Force Traveller</option></select><input placeholder="Driver Name" value={form.driverName} onChange={(e) => update("driverName", e.target.value)} style={input} /><input type="text" inputMode="tel" placeholder="Driver Mobile" value={form.driverMobile} onChange={(e) => update("driverMobile", e.target.value)} style={input} /><select value={form.service} onChange={(e) => update("service", e.target.value)} style={input}><option>One Way Drop Pickup</option><option>Jamshedpur to Ranchi Airport Drop</option><option>Ranchi Airport to Jamshedpur Drop</option><option>Jamshedpur to Kolkata Airport Drop</option><option>Kolkata Airport to Jamshedpur Drop</option><option>Local Movement</option><option>Outstation Movement</option><option>Short Time Booking</option><option>Marriage Function Booking</option></select><input type="number" placeholder="Total Fare" value={form.fare} onChange={(e) => update("fare", e.target.value)} style={input} required /><input type="number" placeholder="Advance Paid" value={form.advance} onChange={(e) => update("advance", e.target.value)} style={input} /><button type="button" onClick={() => { const assignmentId = activeBookingRequest?.id || lastBookingId || "test-booking-001"; window.open(`/admin/driver-vehicle-assignment/${encodeURIComponent(assignmentId)}`, "_blank"); }} style={{ width: "100%", minHeight: 48, border: "2px solid #0b2d6b", borderRadius: 12, background: "#eff6ff", color: "#0b2d6b", fontWeight: 900, fontSize: 14, cursor: "pointer" }}>🚕 Assignment</button>
 <AdminBookingRequestsReport
@@ -911,7 +915,78 @@ function editCustomer(c: Customer){setForm((p)=>({...p,customerName:c.name||"",c
   </button>
 </div>
 <div style={buttonRow}><button type="button" onClick={downloadBookingCopy} style={smallDownloadBtn}>Download</button><button disabled={loading} style={smallSaveBtn}>{loading ? "Saving..." : "Save + PDF"}</button><button type="button" onClick={sendWhatsApp} style={smallWaBtn}>WhatsApp</button></div>{downloadNotice && <div style={downloadOk}>✓ Booking copy downloaded successfully!</div>}</form>
-    <section style={panel}><h2>Recent Bookings</h2><input placeholder="Search booking by name, phone, pickup..." value={searchBooking} onChange={(e) => setSearchBooking(e.target.value)} style={input} /><div style={{ overflowX: "auto", marginTop: 12 }}><table style={{ width: "100%", minWidth: 900, borderCollapse: "collapse" }}><thead><tr style={{ background: "#0b2d6b", color: "white" }}><th style={th}>Booking ID</th><th style={th}>Customer</th><th style={th}>Phone</th><th style={th}>Route</th><th style={th}>Date</th><th style={th}>Fare</th><th style={th}>Action</th></tr></thead><tbody>{filtered.map((b, i) => <tr key={b.booking_id || i}><td style={td}>{b.booking_id || "-"}</td><td style={td}>{b.customer_name || "-"}</td><td style={td}>{b.customer_phone || "-"}</td><td style={td}>{b.pickup || "-"} to {b.drop_location || "-"}</td><td style={td}>{b.journey_date || "-"}</td><td style={td}>Rs {b.fare || 0}</td><td style={td}><button onClick={() => edit(b)} style={editBtn}>Edit</button><button onClick={() => pdf(b.booking_id || "")} style={pdfBtn}>PDF</button><button disabled={deletingBookingId === b.booking_id} onClick={() => removeBooking(b.booking_id)} style={delBtn}>{deletingBookingId === b.booking_id ? "Deleting..." : "Delete"}</button></td></tr>)}{bookings.length === 0 && <tr><td colSpan={7} style={{ padding: 20, textAlign: "center" }}>No booking found</td></tr>}</tbody></table></div></section></div>
+        <section style={panel}>
+      <div style={recentBookingHeader}>
+        <h2 style={{ margin: 0 }}>Recent Bookings</h2>
+        <button
+          type="button"
+          onClick={() => setShowRecentBookings((value) => !value)}
+          style={hideRecentBtn}
+        >
+          {showRecentBookings ? "Hide" : "Show"}
+        </button>
+      </div>
+
+      {showRecentBookings && (
+        <>
+          <input
+            placeholder="Search booking by name, phone, pickup..."
+            value={searchBooking}
+            onChange={(e) => setSearchBooking(e.target.value)}
+            style={input}
+          />
+
+          <div style={{ overflowX: "auto", marginTop: 12 }}>
+            <table style={{ width: "100%", minWidth: 900, borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ background: "#0b2d6b", color: "white" }}>
+                  <th style={th}>Booking ID</th>
+                  <th style={th}>Customer</th>
+                  <th style={th}>Phone</th>
+                  <th style={th}>Route</th>
+                  <th style={th}>Date</th>
+                  <th style={th}>Fare</th>
+                  <th style={th}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((b, i) => (
+                  <tr key={b.booking_id || i}>
+                    <td style={td}>{b.booking_id || "-"}</td>
+                    <td style={td}>{b.customer_name || "-"}</td>
+                    <td style={td}>{b.customer_phone || "-"}</td>
+                    <td style={td}>{b.pickup || "-"} to {b.drop_location || "-"}</td>
+                    <td style={td}>{b.journey_date || "-"}</td>
+                    <td style={td}>Rs {b.fare || 0}</td>
+                    <td style={td}>
+                      <button onClick={() => edit(b)} style={editBtn}>Edit</button>
+                      <button onClick={() => pdf(b.booking_id || "")} style={pdfBtn}>PDF</button>
+                      <button onClick={() => sendRatingLink(b)} style={ratingBtn}>Rating</button>
+                      <button
+                        disabled={deletingBookingId === b.booking_id}
+                        onClick={() => removeBooking(b.booking_id)}
+                        style={delBtn}
+                      >
+                        {deletingBookingId === b.booking_id ? "Deleting..." : "Delete"}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+
+                {bookings.length === 0 && (
+                  <tr>
+                    <td colSpan={7} style={{ padding: 20, textAlign: "center" }}>
+                      No booking found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+    </section>
+  </div>
   </main>;
 }
 
@@ -922,9 +997,13 @@ const page: CSSProperties = { minHeight: "100vh", background: "#f1f5f9", padding
 const loginPage: CSSProperties = { minHeight: "100vh", background: "#f1f5f9", padding: 20, display: "flex", alignItems: "center", justifyContent: "center" };
 const card: CSSProperties = { width: "100%", maxWidth: 380, background: "white", padding: 24, borderRadius: 18, boxShadow: "0 8px 25px rgba(0,0,0,.12)" };
 const header: CSSProperties = { background: "#0b2d6b", color: "white", padding: 20, borderRadius: 18, marginBottom: 16 };
+const heroActionRow: CSSProperties = { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap", marginTop: 14 };
+const ratingPerformanceBtn: CSSProperties = { padding: "10px 14px", borderRadius: 12, border: 0, background: "#f59e0b", color: "white", fontWeight: "bold" };
 const stats: CSSProperties = { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12, marginBottom: 16 };
 const stat: CSSProperties = { background: "white", padding: 16, borderRadius: 16, cursor: "pointer" };
 const panel: CSSProperties = { background: "white", padding: 18, borderRadius: 18, marginBottom: 16 };
+const recentBookingHeader: CSSProperties = { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 14 };
+const hideRecentBtn: CSSProperties = { border: 0, borderRadius: 999, background: "#0b2d6b", color: "white", padding: "9px 16px", fontWeight: 900, fontSize: 14 };
 const grid: CSSProperties = { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 12 };
 const fieldWrap: CSSProperties = { position: "relative" };
 const fullRow: CSSProperties = { gridColumn: "1 / -1", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" };
@@ -950,6 +1029,7 @@ const th: CSSProperties = { padding: 10, textAlign: "left" };
 const td: CSSProperties = { padding: 10, borderBottom: "1px solid #e2e8f0" };
 const editBtn: CSSProperties = { padding: "8px 12px", borderRadius: 10, border: 0, background: "#2563eb", color: "white", fontWeight: "bold", marginRight: 8 };
 const pdfBtn: CSSProperties = { padding: "8px 12px", borderRadius: 10, border: 0, background: "#059669", color: "white", fontWeight: "bold", marginRight: 8 };
+const ratingBtn: CSSProperties = { padding: "8px 12px", borderRadius: 10, border: 0, background: "#f59e0b", color: "white", fontWeight: "bold", marginRight: 8 };
 const delBtn: CSSProperties = { padding: "8px 12px", borderRadius: 10, border: 0, background: "#dc2626", color: "white", fontWeight: "bold" };
 const overlay: CSSProperties = { position: "fixed", inset: 0, background: "rgba(0,0,0,.68)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 8 };
 const modal: CSSProperties = { width: "96%", maxWidth: 390, maxHeight: "90vh", overflowY: "auto", background: "white", borderRadius: 20, position: "relative" };

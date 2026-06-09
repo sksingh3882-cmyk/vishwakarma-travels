@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import CustomerAssignedDriverDetails from "./CustomerAssignedDriverDetails";
 import {
   createBookingRequest,
   fetchBookingRequestById,
@@ -185,7 +186,7 @@ fetch("/api/push/send", {
               <>
                 <StatusHeader icon="🚖" title="Booking Confirmed" subtitle="Vehicle and driver details have been assigned." />
                 <TripDetails request={request} compact />
-                <DriverDetails request={request} />
+                <CustomerAssignedDriverDetails request={request} />
                 {callDriverHref ? (
                   <a href={callDriverHref} style={callBtn}>📞 Call Driver Now</a>
                 ) : null}
@@ -227,7 +228,7 @@ function TripDetails({ request, compact = false }: { request: BookingRequestReco
       <Info label="Pickup" value={request.pickup} />
       <Info label="Drop" value={request.drop} />
       <Info label="Date" value={request.journeyDate} />
-      <Info label="Time" value={request.journeyTime} />
+      <Info label="Time" value={formatTimeForDisplay(request.journeyTime)} />
     </div>
   );
 }
@@ -243,7 +244,33 @@ function DriverDetails({ request }: { request: BookingRequestRecord }) {
     </div>
   );
 }
+function formatTimeForDisplay(value: string) {
+  const raw = String(value || "").trim();
 
+  if (!raw) return "-";
+
+  if (/\b(am|pm)\b/i.test(raw)) {
+    return raw.toUpperCase();
+  }
+
+  const match = raw.match(/^(\d{1,2}):(\d{2})$/);
+
+  if (!match) {
+    return raw;
+  }
+
+  const hour = Number(match[1]);
+  const minute = match[2];
+
+  if (Number.isNaN(hour)) {
+    return raw;
+  }
+
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const displayHour = hour % 12 || 12;
+
+  return `${String(displayHour).padStart(2, "0")}:${minute} ${suffix}`;
+}
 function shortBookingId(id?: string) {
   if (!id) return "-";
 
