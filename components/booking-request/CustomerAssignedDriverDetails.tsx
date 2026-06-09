@@ -272,8 +272,8 @@ function RatingPopup({
 }
 
 const sectionGreen = {
-  border: "1px solid #bbf7d0",
-  background: "#f0fdf4",
+  border: "1px solid #e2e8f0",
+  background: "#f8fafc",
   borderRadius: 16,
   padding: 10,
   marginTop: 10,
@@ -287,7 +287,7 @@ const sectionTitle = {
 
 const infoRow = {
   display: "grid",
-  gridTemplateColumns: "92px 98px 1fr",
+  gridTemplateColumns: "92px 88px 1fr",
   alignItems: "center",
   gap: 8,
   padding: "7px 0",
@@ -304,7 +304,7 @@ const ratingWrap = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  gap: 4,
+  gap: 3,
   minWidth: 0,
 } as const;
 
@@ -321,15 +321,17 @@ const viewBtn = {
   background: "#fff7ed",
   color: "#c2410c",
   borderRadius: 999,
-  padding: "2px 7px",
+  padding: "2px 8px",
+  minHeight: 22,
   fontSize: 10,
   fontWeight: 900,
-  lineHeight: 1.3,
+  lineHeight: 1,
+  whiteSpace: "nowrap",
 } as const;
 
 const infoValue = {
   color: "#0f172a",
-  fontSize: 12,
+  fontSize: 13,
   textAlign: "right",
   wordBreak: "break-word",
 } as const;
