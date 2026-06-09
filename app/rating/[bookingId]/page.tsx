@@ -84,7 +84,33 @@ function average(values: number[]) {
     (valid.reduce((sum, value) => sum + value, 0) / valid.length).toFixed(2)
   );
 }
+function formatTimeForDisplay(value: string) {
+  const raw = String(value || "").trim();
 
+  if (!raw) return "-";
+
+  if (/\b(am|pm)\b/i.test(raw)) {
+    return raw.toUpperCase();
+  }
+
+  const match = raw.match(/^(\d{1,2}):(\d{2})$/);
+
+  if (!match) {
+    return raw;
+  }
+
+  const hour = Number(match[1]);
+  const minute = match[2];
+
+  if (Number.isNaN(hour)) {
+    return raw;
+  }
+
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const displayHour = hour % 12 || 12;
+
+  return `${String(displayHour).padStart(2, "0")}:${minute} ${suffix}`;
+}
 export default function RatingPage() {
   const params = useParams();
   const bookingIdParam = params?.bookingId;
@@ -340,7 +366,7 @@ export default function RatingPage() {
           <div style={styles.tripLine}><b>Booking ID:</b> {bookingId}</div>
           <div style={styles.tripLine}><b>Customer:</b> {getValue(booking, ["customer_name", "name"]) || "-"}</div>
           <div style={styles.tripLine}><b>Route:</b> {getValue(booking, ["pickup", "pickup_location", "pickup_area"]) || "-"} to {getValue(booking, ["drop_location", "drop", "drop_area"]) || "-"}</div>
-          <div style={styles.tripLine}><b>Date/Time:</b> {getValue(booking, ["journey_date", "date", "pickup_date"]) || "-"} {getValue(booking, ["journey_time", "time", "pickup_time"]) || ""}</div>
+          <div style={styles.tripLine}><b>Date/Time:</b> {getValue(booking, ["journey_date", "date", "pickup_date"]) || "-"} {formatTimeForDisplay(getValue(booking, ["journey_time", "time", "pickup_time"]))}</div>
           <div style={styles.tripLine}><b>Driver:</b> {getValue(booking, ["driver_name", "assigned_driver_name"]) || "Not available"}</div>
           <div style={styles.tripLine}><b>Vehicle:</b> {getValue(booking, ["vehicle_number", "vehicle_no", "car_number"]) || "Not available"} {getValue(booking, ["vehicle_model", "vehicle_type", "car_model"]) || ""}</div>
         </div>
@@ -426,7 +452,7 @@ export default function RatingPage() {
             <textarea
               value={feedback}
               onChange={(event) => setFeedback(event.target.value)}
-              placeholder="Trip ke baare me feedback likh sakte hain..."
+              placeholder="Write your feedback about this trip..."
               style={styles.textarea}
             />
           </div>
