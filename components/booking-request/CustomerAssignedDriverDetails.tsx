@@ -287,7 +287,7 @@ const sectionTitle = {
 
 const infoRow = {
   display: "grid",
-  gridTemplateColumns: "92px 88px 1fr",
+  gridTemplateColumns: "92px 82px 1fr",
   alignItems: "center",
   gap: 8,
   padding: "7px 0",
@@ -304,7 +304,7 @@ const ratingWrap = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  gap: 3,
+  gap: 4,
   minWidth: 0,
 } as const;
 
@@ -314,6 +314,7 @@ const ratingValue = {
   fontWeight: 900,
   textAlign: "center",
   whiteSpace: "nowrap",
+  lineHeight: 1,
 } as const;
 
 const viewBtn = {
@@ -321,12 +322,16 @@ const viewBtn = {
   background: "#fff7ed",
   color: "#c2410c",
   borderRadius: 999,
-  padding: "2px 8px",
-  minHeight: 22,
-  fontSize: 10,
+  padding: "0 9px",
+  height: 18,
+  minHeight: 18,
+  fontSize: 9,
   fontWeight: 900,
-  lineHeight: 1,
+  lineHeight: "18px",
   whiteSpace: "nowrap",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
 } as const;
 
 const infoValue = {
