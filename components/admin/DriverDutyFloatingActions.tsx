@@ -34,28 +34,5 @@ function readForm() {
 }
 
 export default function DriverDutyFloatingActions() {
-  const pathname = usePathname();
-  const [data, setData] = useState(readForm());
-
-  if (pathname !== "/admin") return null;
-
-  return (
-    <div
-      onClick={() => setData(readForm())}
-      style={{
-        position: "fixed",
-        top: 84,
-        left: 80,
-        zIndex: 9998,
-        padding: 6,
-        borderRadius: 16,
-        background: "rgba(255,255,255,.96)",
-        boxShadow: "0 8px 20px rgba(0,0,0,.18)",
-        border: "1px solid rgba(15,23,42,.08)",
-        width: 170,
-      }}
-    >
-      <DriverDutyActions compact data={data} />
-    </div>
-  );
+  return null;
 }
