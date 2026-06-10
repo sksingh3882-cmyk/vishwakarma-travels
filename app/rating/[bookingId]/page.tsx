@@ -319,6 +319,19 @@ export default function RatingPage() {
         throw new Error("The rating could not be submitted.");
       }
 
+            await fetch("/api/push/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: "New Customer Rating Received",
+          body: `${payload.customer_name || "Customer"} submitted a trip rating. Overall rating: ${overallAverage}`,
+          url: "/rating-performance",
+          tag: `vt-rating-${bookingId}`,
+        }),
+      }).catch((error) => {
+        console.log("Rating push notification failed:", error);
+      });
+
       setSuccessOpen(true);
     } catch (error: any) {
       setErrorMessage(error?.message || "The rating could not be submitted.");
