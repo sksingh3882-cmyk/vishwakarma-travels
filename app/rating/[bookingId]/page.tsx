@@ -41,17 +41,17 @@ type Question = {
 };
 
 const questions: Question[] = [
-  { key: "driver_behaviour_rating", title: "Driver Behaviour", group: "Driver" },
-  { key: "driving_safety_rating", title: "Driving Safety", group: "Driver" },
-  { key: "pickup_timing_rating", title: "Pickup Timing", group: "Driver" },
-  { key: "driver_communication_rating", title: "Driver Communication", group: "Driver" },
-  { key: "overall_driver_rating", title: "Overall Driver Experience", group: "Driver" },
+  { key: "driver_behaviour_rating", title: "Driver Driving Behaviour", group: "Driver" },
+  { key: "driving_safety_rating", title: "Drive Safely", group: "Driver" },
+  { key: "pickup_timing_rating", title: "On Time Reporting", group: "Driver" },
+  { key: "driver_communication_rating", title: "Driver Communication Behaviour", group: "Driver" },
+  { key: "overall_driver_rating", title: "Driver Following Traffic Rules", group: "Driver" },
 
-    { key: "vehicle_cleanliness_rating", title: "Vehicle Cleanliness", group: "Vehicle" },
+  { key: "vehicle_cleanliness_rating", title: "Vehicle Cleanliness", group: "Vehicle" },
   { key: "vehicle_comfort_rating", title: "Vehicle Comfort", group: "Vehicle" },
-  { key: "ac_cooling_rating", title: "AC / Cooling", group: "Vehicle" },
+  { key: "ac_cooling_rating", title: "AC/Cooling", group: "Vehicle" },
   { key: "seat_condition_rating", title: "Seat Condition", group: "Vehicle" },
-  { key: "overall_vehicle_rating", title: "Overall Vehicle Experience", group: "Vehicle" },
+  { key: "overall_vehicle_rating", title: "Overall Driver And Vehicle Experience", group: "Vehicle" },
 ];
 
 const burstColors = [
