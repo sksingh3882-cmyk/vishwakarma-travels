@@ -363,21 +363,9 @@ export default function RatingPage() {
     );
   }
 
-  if (successOpen) {
     return (
-      <main style={styles.page}>
-        <div style={styles.card}>
-          <div style={styles.logoCircle}>✅</div>
-          <h1 style={styles.title}>Rating Submitted Successfully</h1>
-          <p style={styles.subText}>Thank you for sharing your trip feedback.</p>
-          <p style={styles.bottomNote}>You may close this page now.</p>
-        </div>
-      </main>
-    );
-  }
-
-  return (
     <main style={styles.page}>
+      {!successOpen && (
       <div style={styles.card}>
         <div style={styles.topRow}>
           <div>
@@ -503,7 +491,8 @@ export default function RatingPage() {
             The submit button will become active after all 10 questions are completed.
           </p>
         )}
-      </div>
+            </div>
+      )}
 
             {successOpen && (
         <div style={styles.popupOverlay}>
