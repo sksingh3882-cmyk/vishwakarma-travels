@@ -233,7 +233,7 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     setDriverForm(emptyDriverSubmission);
 
     alert(
-  "Your vehicle details have been submitted successfully. Vishwakarma Travels will contact you if your vehicle is selected for this duty."
+  "Your vehicle details have been submitted successfully. Confirmation Massage will Send you On your Whatsapp Shortly."
 );
   
   } catch {
