@@ -122,7 +122,8 @@ export default function RatingPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [successOpen, setSuccessOpen] = useState(false);
+    const [successOpen, setSuccessOpen] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [feedback, setFeedback] = useState("");
 
@@ -182,8 +183,7 @@ export default function RatingPage() {
         if (!data) {
           setErrorMessage("Booking details not found.");
           return;
-        }
-
+    }
         setBooking(data);
       } catch (error: any) {
         setErrorMessage(error?.message || "Something went wrong.");
@@ -332,6 +332,7 @@ export default function RatingPage() {
         console.log("Rating push notification failed:", error);
       });
 
+            setSubmitted(true);
       setSuccessOpen(true);
     } catch (error: any) {
       setErrorMessage(error?.message || "The rating could not be submitted.");
@@ -351,7 +352,7 @@ export default function RatingPage() {
     );
   }
 
-  if (errorMessage && !booking) {
+    if (errorMessage && !booking) {
     return (
       <main style={styles.page}>
         <div style={styles.card}>
@@ -363,8 +364,9 @@ export default function RatingPage() {
     );
   }
 
-  return (
+    return (
     <main style={styles.page}>
+            {!submitted && (
       <div style={styles.card}>
         <div style={styles.topRow}>
           <div>
@@ -490,9 +492,18 @@ export default function RatingPage() {
             The submit button will become active after all 10 questions are completed.
           </p>
         )}
-      </div>
+            </div>
+      )}
 
-            {successOpen && (
+                    {submitted && !successOpen && (
+        <div style={styles.card}>
+          <div style={styles.logoCircle}>✅</div>
+          <h1 style={styles.title}>Rating Submitted Successfully</h1>
+          <p style={styles.subText}>Thank you for sharing your trip feedback.</p>
+          <p style={styles.bottomNote}>You may close this page now.</p>
+        </div>
+      )}
+               {successOpen && (
         <div style={styles.popupOverlay}>
           <div style={styles.burstLayer}>
             <div style={styles.pulseRing} />
@@ -596,9 +607,8 @@ export default function RatingPage() {
           to {
             stroke-dashoffset: 0;
           }
-        }
-
-        @keyframes confettiBurst {
+                }
+                @keyframes confettiBurst {
           0% {
             opacity: 1;
             transform: translate(-50%, -50%) rotate(0deg) scale(0.25);
@@ -922,4 +932,3 @@ const styles: Record<string, React.CSSProperties> = {
     boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
   },
 };
-      
