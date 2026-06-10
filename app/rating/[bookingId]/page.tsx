@@ -351,7 +351,7 @@ export default function RatingPage() {
     );
   }
 
-  if (errorMessage && !booking) {
+    if (errorMessage && !booking) {
     return (
       <main style={styles.page}>
         <div style={styles.card}>
@@ -362,6 +362,21 @@ export default function RatingPage() {
       </main>
     );
   }
+
+  if (successOpen) {
+    return (
+      <main style={styles.page}>
+        <div style={styles.card}>
+          <div style={styles.logoCircle}>✅</div>
+          <h1 style={styles.title}>Rating Submitted Successfully</h1>
+          <p style={styles.subText}>Thank you for sharing your trip feedback.</p>
+          <p style={styles.bottomNote}>You may close this page now.</p>
+        </div>
+      </main>
+    );
+  }
+
+  return (
 
   return (
     <main style={styles.page}>
