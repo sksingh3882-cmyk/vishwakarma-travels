@@ -13,8 +13,11 @@ useEffect(() => {
 }, [pathname, open]);
   
 
+    const isRatingPage = pathname?.startsWith("/rating/");
   const isAdmin = pathname?.startsWith("/admin");
   const isReports = pathname?.startsWith("/reports");
+
+  if (isRatingPage) return null;
 
   const links = adminLoggedIn && isAdmin
   ? [
