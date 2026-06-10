@@ -377,8 +377,6 @@ export default function RatingPage() {
   }
 
   return (
-
-  return (
     <main style={styles.page}>
       <div style={styles.card}>
         <div style={styles.topRow}>
