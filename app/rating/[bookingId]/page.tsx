@@ -122,7 +122,8 @@ export default function RatingPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [successOpen, setSuccessOpen] = useState(false);
+    const [successOpen, setSuccessOpen] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [feedback, setFeedback] = useState("");
 
@@ -332,6 +333,7 @@ export default function RatingPage() {
         console.log("Rating push notification failed:", error);
       });
 
+            setSubmitted(true);
       setSuccessOpen(true);
     } catch (error: any) {
       setErrorMessage(error?.message || "The rating could not be submitted.");
@@ -365,7 +367,7 @@ export default function RatingPage() {
 
     return (
     <main style={styles.page}>
-      {!successOpen && (
+            {!submitted && (
       <div style={styles.card}>
         <div style={styles.topRow}>
           <div>
@@ -494,7 +496,15 @@ export default function RatingPage() {
             </div>
       )}
 
-            {successOpen && (
+                    {submitted && !successOpen && (
+        <div style={styles.card}>
+          <div style={styles.logoCircle}>✅</div>
+          <h1 style={styles.title}>Rating Submitted Successfully</h1>
+          <p style={styles.subText}>Thank you for sharing your trip feedback.</p>
+          <p style={styles.bottomNote}>You may close this page now.</p>
+        </div>
+      )}
+               {successOpen && (
         <div style={styles.popupOverlay}>
           <div style={styles.burstLayer}>
             <div style={styles.pulseRing} />
