@@ -183,11 +183,11 @@ fetch("/api/push/send", {
 
             {isConfirmed && (
               <>
-                <StatusHeader icon="ðŸš–" title="Booking Confirmed" subtitle="Vehicle and driver details have been assigned." />
+                <StatusHeader icon="🚖" title="Booking Confirmed" subtitle="Vehicle and driver details have been assigned." />
                 <TripDetails request={request} compact />
                 <CustomerAssignedDriverDetails request={request} />
                 {callDriverHref ? (
-                  <a href={callDriverHref} style={callBtn}>ðŸ“ž Call Driver Now</a>
+                  <a href={callDriverHref} style={callBtn}> Call Driver Now</a>
                 ) : null}
               </>
             )}
