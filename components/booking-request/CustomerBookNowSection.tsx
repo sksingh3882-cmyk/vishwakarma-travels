@@ -213,7 +213,149 @@ useEffect(() => {
         supabaseUrl,
         supabaseKey,
         customerPhone: phone,
+
+  useEffect(() => {
+    if (autoOpenDone || !supabaseUrl || !supabaseKey) return;
+
+    const requestId = new URLSearchParams(window.location.search).get("bookingRequestId");
+    if (!requestId) return;
+
+    setAutoOpenDone(true);
+
+    fetchBookingRequestById({
+      supabaseUrl,
+      supabaseKey,
+      requestId,
+    })
+      .then((latest) => {
+        if (!latest) return;
+
+        setSelectedRequest(latest);
+        setWatchRequest(latest);
+        setListOpen(false);
+        setOpen(true);
+      })
+      .catch((err) => console.log("Auto open booking status failed:", err));
+  }, [autoOpenDone, supabaseUrl, supabaseKey]);
+
+  useEffect(() => {
+    if (!supabaseUrl || !supabaseKey) return;
+    if (typeof window === "undefined") return;
+
+    const savedRequestId = window.localStorage.getItem(LAST_CUSTOMER_BOOKING_REQUEST_KEY);
+
+    if (!savedRequestId) return;
+    if (watchRequest?.id === savedRequestId) return;
+
+    let stopped = false;
+
+    fetchBookingRequestById({
+      supabaseUrl,
+      supabaseKey,
+      requestId: savedRequestId,
+    })
+      .then((latest) => {
+        if (stopped || !latest) return;
+
+        setWatchRequest(latest);
+
+        if (latest.status === "cancelled") {
+          window.localStorage.removeItem(LAST_CUSTOMER_BOOKING_REQUEST_KEY);
+        }
+      })
+      .catch((error) => {
+        console.log("Saved booking request recovery failed:", error);
       });
+
+    return () => {
+      stopped = true;
+    };
+  }, [supabaseUrl, supabaseKey, watchRequest?.id]);
+
+  useEffect(() => {
+    if (!watchRequest?.id || !supabaseUrl || !supabaseKey) return;
+
+    let stopped = false;
+
+    async function checkConfirmedStatus() {
+      try {
+        const latest = await fetchBookingRequestById({
+          supabaseUrl,
+          supabaseKey,
+          requestId: watchRequest.id,
+        });
+
+        if (stopped || !latest) return;
+
+        setWatchRequest(latest);
+
+        if (latest.status === "cancelled") {
+          window.localStorage.removeItem(LAST_CUSTOMER_BOOKING_REQUEST_KEY);
+          return;
+        }
+
+        if (latest.status === "confirmed" && latest.id !== notifiedConfirmedId) {
+          setNotifiedConfirmedId(latest.id);
+          setSelectedRequest(latest);
+          setConfirmToast(latest);
+          playBookingConfirmedNotice(latest.customerName);
+        }
+      } catch (error) {
+        console.log("Booking confirmed watcher failed:", error);
+      }
+    }
+
+    checkConfirmedStatus();
+
+    const intervalId = window.setInterval(checkConfirmedStatus, 5000);
+
+    return () => {
+      stopped = true;
+      window.clearInterval(intervalId);
+    };
+  }, [watchRequest?.id, supabaseUrl, supabaseKey, notifiedConfirmedId]);
+
+  function openConfirmedToast() {
+    if (!confirmToast) return;
+
+    window.localStorage.removeItem(LAST_CUSTOMER_BOOKING_REQUEST_KEY);
+
+    setSelectedRequest(confirmToast);
+    setListOpen(false);
+    setSuccessOpen(false);
+    setConfirmToast(null);
+    setOpen(true);
+  }
+
+  function openYourBookings() {
+    setListOpen(true);
+    setListError("");
+    setBookings([]);
+    setSearched(false);
+    setLookupPhone(cleanPhone(bookingData.customerPhone || lookupPhone));
+  }
+
+  async function viewBookings() {
+    const phone = cleanPhone(lookupPhone);
+
+    if (phone.length !== 10) {
+      setListError("Please enter a valid 10 digit mobile number.");
+      setBookings([]);
+      setSearched(true);
+      return;
+    }
+
+    setListLoading(true);
+    setListError("");
+    setSearched(true);
+
+    try {
+      const rows = await fetchBookingRequestsByPhone({
+        supabaseUrl,
+        supabaseKey,
+        customerPhone: phone,
+      });
+
       setBookings(rows);
     } catch (err: any) {
       setListError(err?.message || "Unable to load your bookings.");
@@ -224,22 +366,22 @@ useEffect(() => {
   }
 
   function openNewRequest() {
-  if (submittedSignature && currentSignature === submittedSignature) {
-    setAlreadySubmittedAlert("Your booking request is already submitted. Please check My Booking section.");
-    return;
-  }
+    if (submittedSignature && currentSignature === submittedSignature) {
+      setAlreadySubmittedAlert("Your booking request is already submitted. Please check My Booking section.");
+      return;
+    }
+
     setAlreadySubmittedAlert("");
-  setSelectedRequest(null);
-  setConfirmOpen(true);
+    setSelectedRequest(null);
+    setConfirmOpen(true);
   }
 
-    function openExistingRequest(request: BookingRequestRecord) {
+  function openExistingRequest(request: BookingRequestRecord) {
     setSelectedRequest(request);
     setWatchRequest(request);
     setListOpen(false);
     setOpen(true);
-    }
-
+  }
     return (
     <div style={wrap}>
   {confirmToast && (
