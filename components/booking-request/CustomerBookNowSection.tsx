@@ -22,6 +22,29 @@ function cleanPhone(value: string) {
   return phone.slice(-10);
 }
 
+function playBookingConfirmedNotice() {
+  if (typeof window === "undefined") return;
+
+  try {
+    if (!("speechSynthesis" in window)) return;
+
+    window.speechSynthesis.cancel();
+
+    const message = new SpeechSynthesisUtterance(
+      "Booking confirmed. Tap to see the driver vehicle details."
+    );
+
+    message.lang = "en-IN";
+    message.rate = 0.92;
+    message.pitch = 1;
+    message.volume = 1;
+
+    window.speechSynthesis.speak(message);
+  } catch (error) {
+    console.log("Booking confirmed audio failed:", error);
+  }
+}
+
 export default function CustomerBookNowSection({ bookingData, onDownloadCopy, onWhatsAppRequest, onRequestSentSuccess }: Props) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
@@ -34,7 +57,10 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
   const [lookupPhone, setLookupPhone] = useState("");
   const [searched, setSearched] = useState(false);
   const [autoOpenDone, setAutoOpenDone] = useState(false);
-  const [successOpen, setSuccessOpen] = useState(false);
+    const [successOpen, setSuccessOpen] = useState(false);
+  const [watchRequest, setWatchRequest] = useState<BookingRequestRecord | null>(null);
+  const [confirmToast, setConfirmToast] = useState<BookingRequestRecord | null>(null);
+  const [notifiedConfirmedId, setNotifiedConfirmedId] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [submittedSignature, setSubmittedSignature] = useState("");
   const [alreadySubmittedAlert, setAlreadySubmittedAlert] = useState("");
@@ -63,12 +89,60 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
   })
     .then((latest) => {
       if (!latest) return;
-      setSelectedRequest(latest);
+            setSelectedRequest(latest);
+      setWatchRequest(latest);
       setListOpen(false);
       setOpen(true);
     })
     .catch((err) => console.log("Auto open booking status failed:", err));
 }, [autoOpenDone, supabaseUrl, supabaseKey]);
+    useEffect(() => {
+    if (!watchRequest?.id || !supabaseUrl || !supabaseKey) return;
+
+    let stopped = false;
+
+    async function checkConfirmedStatus() {
+      try {
+        const latest = await fetchBookingRequestById({
+          supabaseUrl,
+          supabaseKey,
+          requestId: watchRequest.id,
+        });
+
+        if (stopped || !latest) return;
+
+        setWatchRequest(latest);
+
+        if (latest.status === "confirmed" && latest.id !== notifiedConfirmedId) {
+          setNotifiedConfirmedId(latest.id);
+          setSelectedRequest(latest);
+          setConfirmToast(latest);
+          playBookingConfirmedNotice();
+        }
+      } catch (error) {
+        console.log("Booking confirmed watcher failed:", error);
+      }
+    }
+
+    checkConfirmedStatus();
+
+    const intervalId = window.setInterval(checkConfirmedStatus, 5000);
+
+    return () => {
+      stopped = true;
+      window.clearInterval(intervalId);
+    };
+  }, [watchRequest?.id, supabaseUrl, supabaseKey, notifiedConfirmedId]);
+
+  function openConfirmedToast() {
+    if (!confirmToast) return;
+
+    setSelectedRequest(confirmToast);
+    setListOpen(false);
+    setSuccessOpen(false);
+    setConfirmToast(null);
+    setOpen(true);
+  }
   function openYourBookings() {
     setListOpen(true);
     setListError("");
@@ -113,14 +187,25 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
   setConfirmOpen(true);
   }
 
-  function openExistingRequest(request: BookingRequestRecord) {
+    function openExistingRequest(request: BookingRequestRecord) {
     setSelectedRequest(request);
+    setWatchRequest(request);
     setListOpen(false);
     setOpen(true);
-  }
+    }
 
-  return (
+    return (
     <div style={wrap}>
+  {confirmToast && (
+    <button type="button" style={confirmToastBox} onClick={openConfirmedToast}>
+      <span style={confirmToastIcon}>🚖</span>
+      <span style={confirmToastText}>
+        <b>Booking Confirmed</b>
+        <small>Tap to see the driver vehicle details</small>
+      </span>
+    </button>
+  )}
+
   {alreadySubmittedAlert && (
     <div style={alreadySubmittedBox}>
       ✅ {alreadySubmittedAlert}
@@ -279,9 +364,15 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
   open={open}
   bookingData={bookingData}
   existingRequest={selectedRequest}
-  onRequestSent={() => {
+    onRequestSent={(createdRequest) => {
   setOpen(false);
   setSelectedRequest(null);
+
+  if (createdRequest?.id) {
+    setWatchRequest(createdRequest);
+    setNotifiedConfirmedId("");
+  }
+
   setSubmittedSignature(currentSignature);
   setAlreadySubmittedAlert("");
   setSuccessOpen(true);
@@ -289,7 +380,7 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
   window.setTimeout(() => {
     onRequestSentSuccess?.();
   }, 1800);
-}}
+ }}
         onClose={() => {
     setOpen(false);
     setSelectedRequest(null);
@@ -349,6 +440,43 @@ function statusLabel(status: string) {
   return "Waiting";
 }
 const wrap = { width: "100%", display: "grid", gap: 8, marginTop: 10 } as const;
+const confirmToastBox = {
+  position: "fixed",
+  top: 12,
+  left: "50%",
+  transform: "translateX(-50%)",
+  width: "min(92vw, 380px)",
+  zIndex: 10000,
+  border: "1px solid #bbf7d0",
+  background: "linear-gradient(135deg,#ecfdf5,#eff6ff)",
+  color: "#0f172a",
+  borderRadius: 18,
+  padding: "10px 12px",
+  boxShadow: "0 18px 45px rgba(15,23,42,.24)",
+  display: "flex",
+  alignItems: "center",
+  gap: 10,
+  textAlign: "left",
+  cursor: "pointer",
+} as const;
+
+const confirmToastIcon = {
+  width: 38,
+  height: 38,
+  borderRadius: 14,
+  display: "grid",
+  placeItems: "center",
+  background: "#dcfce7",
+  fontSize: 22,
+  flex: "0 0 auto",
+} as const;
+
+const confirmToastText = {
+  display: "grid",
+  gap: 2,
+  fontWeight: 900,
+  lineHeight: 1.2,
+} as const;
 const alreadySubmittedBox = {
   width: "min(92vw, 330px)",
   justifySelf: "center",
