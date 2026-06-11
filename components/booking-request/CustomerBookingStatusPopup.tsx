@@ -14,7 +14,7 @@ type Props = {
   bookingData: BookingRequestInput;
   onClose: () => void;
   existingRequest?: BookingRequestRecord | null;
-  onRequestSent?: () => void;
+    onRequestSent?: (createdRequest?: BookingRequestRecord) => void;
 };
 
 export default function CustomerBookingStatusPopup({ open, bookingData, onClose, existingRequest = null, onRequestSent }: Props) {
@@ -88,7 +88,7 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose,
     try {
       const created = await createBookingRequest({ supabaseUrl, supabaseKey, input: bookingData });
 setRequest(created);
-onRequestSent?.();
+onRequestSent?.(created);
 subscribeCustomerForBooking(created).catch((err) =>
   console.log("Customer push subscription failed:", err)
 );
