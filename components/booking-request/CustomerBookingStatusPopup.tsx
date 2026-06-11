@@ -14,7 +14,7 @@ type Props = {
   bookingData: BookingRequestInput;
   onClose: () => void;
   existingRequest?: BookingRequestRecord | null;
-  onRequestSent?: () => void;
+    onRequestSent?: (createdRequest?: BookingRequestRecord) => void;
 };
 
 export default function CustomerBookingStatusPopup({ open, bookingData, onClose, existingRequest = null, onRequestSent }: Props) {
@@ -88,7 +88,7 @@ export default function CustomerBookingStatusPopup({ open, bookingData, onClose,
     try {
       const created = await createBookingRequest({ supabaseUrl, supabaseKey, input: bookingData });
 setRequest(created);
-onRequestSent?.();
+onRequestSent?.(created);
 subscribeCustomerForBooking(created).catch((err) =>
   console.log("Customer push subscription failed:", err)
 );
@@ -143,20 +143,19 @@ fetch("/api/push/send", {
     setLoading(false);
     onClose();
   }
-
   if (!open) return null;
 
   return (
     <div style={overlay}>
       <div style={card}>
-        <button type="button" aria-label="Close" style={closeBtn} onClick={closePopup}>×</button>
+        <button type="button" aria-label="Close" style={closeBtn} onClick={closePopup}>Ã—</button>
         <div style={handle} />
 
-        {loading && <StatusHeader icon="⏳" title="Sending Booking Request..." subtitle="Please wait" />}
+        {loading && <StatusHeader icon="â³" title="Sending Booking Request..." subtitle="Please wait" />}
 
         {error && (
           <>
-            <StatusHeader icon="⚠️" title="Request Failed" subtitle={error} />
+            <StatusHeader icon="âš ï¸" title="Request Failed" subtitle={error} />
             <button type="button" style={primaryBtn} onClick={sendRequest}>Try Again</button>
           </>
         )}
@@ -165,7 +164,7 @@ fetch("/api/push/send", {
           <>
             {isPending && (
               <>
-                <StatusHeader icon="🕘" title="Waiting for Admin Confirmation" subtitle="Your booking request has been sent to the admin." />
+                <StatusHeader icon="ðŸ•˜" title="Waiting for Admin Confirmation" subtitle="Your booking request has been sent to the admin." />
                 <TripDetails request={request} />
                 <div style={btnRow}>
                   <button type="button" style={ghostBtn} onClick={sendRequest}>Resend</button>
@@ -176,7 +175,7 @@ fetch("/api/push/send", {
 
             {isAccepted && (
               <>
-                <StatusHeader icon="✅" title="Admin has accepted your booking request" subtitle="Vehicle and driver details are being assigned. Please wait." />
+                <StatusHeader icon="âœ…" title="Admin has accepted your booking request" subtitle="Vehicle and driver details are being assigned. Please wait." />
                 <TripDetails request={request} />
                 <button type="button" style={ghostBtn} onClick={closePopup}>Close</button>
               </>
@@ -184,18 +183,18 @@ fetch("/api/push/send", {
 
             {isConfirmed && (
               <>
-                <StatusHeader icon="🚖" title="Booking Confirmed" subtitle="Vehicle and driver details have been assigned." />
+                <StatusHeader icon="ðŸš–" title="Booking Confirmed" subtitle="Vehicle and driver details have been assigned." />
                 <TripDetails request={request} compact />
                 <CustomerAssignedDriverDetails request={request} />
                 {callDriverHref ? (
-                  <a href={callDriverHref} style={callBtn}>📞 Call Driver Now</a>
+                  <a href={callDriverHref} style={callBtn}>ðŸ“ž Call Driver Now</a>
                 ) : null}
               </>
             )}
 
             {request.status === "cancelled" && (
               <>
-                <StatusHeader icon="❌" title="Request Cancelled" subtitle="Your booking request has been cancelled." />
+                <StatusHeader icon="âŒ" title="Request Cancelled" subtitle="Your booking request has been cancelled." />
                 <button type="button" style={ghostBtn} onClick={closePopup}>Close</button>
               </>
             )}
@@ -311,3 +310,4 @@ const primaryBtn = { width: "100%", border: 0, borderRadius: 14, padding: "11px 
 const ghostBtn = { width: "100%", border: "1px solid #cbd5e1", borderRadius: 14, padding: "11px 14px", background: "#fff", color: "#0f172a", fontWeight: 800, fontSize: 14, marginTop: 10 } as const;
 const dangerBtn = { width: "100%", border: "1px solid #fecaca", borderRadius: 14, padding: "11px 14px", background: "#fff1f2", color: "#b91c1c", fontWeight: 800, fontSize: 14 } as const;
 const callBtn = { display: "block", textAlign: "center", textDecoration: "none", borderRadius: 16, padding: "12px 14px", background: "#16a34a", color: "#fff", fontWeight: 900, fontSize: 15, marginTop: 12 } as const;
+  
