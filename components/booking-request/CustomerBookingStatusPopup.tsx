@@ -148,14 +148,14 @@ fetch("/api/push/send", {
   return (
     <div style={overlay}>
       <div style={card}>
-        <button type="button" aria-label="Close" style={closeBtn} onClick={closePopup}>Ã—</button>
+        <button type="button" aria-label="Close" style={closeBtn} onClick={closePopup}>x</button>
         <div style={handle} />
 
-        {loading && <StatusHeader icon="â³" title="Sending Booking Request..." subtitle="Please wait" />}
+        {loading && <StatusHeader icon="⏳" title="Sending Booking Request..." subtitle="Please wait" />}
 
         {error && (
           <>
-            <StatusHeader icon="âš ï¸" title="Request Failed" subtitle={error} />
+            <StatusHeader icon="⚠️" title="Request Failed" subtitle={error} />
             <button type="button" style={primaryBtn} onClick={sendRequest}>Try Again</button>
           </>
         )}
@@ -164,7 +164,7 @@ fetch("/api/push/send", {
           <>
             {isPending && (
               <>
-                <StatusHeader icon="ðŸ•˜" title="Waiting for Admin Confirmation" subtitle="Your booking request has been sent to the admin." />
+                <StatusHeader icon="🕘" title="Waiting for Admin Confirmation" subtitle="Your booking request has been sent to the admin." />
                 <TripDetails request={request} />
                 <div style={btnRow}>
                   <button type="button" style={ghostBtn} onClick={sendRequest}>Resend</button>
@@ -175,7 +175,7 @@ fetch("/api/push/send", {
 
             {isAccepted && (
               <>
-                <StatusHeader icon="âœ…" title="Admin has accepted your booking request" subtitle="Vehicle and driver details are being assigned. Please wait." />
+                <StatusHeader icon="✅" title="Admin has accepted your booking request" subtitle="Vehicle and driver details are being assigned. Please wait." />
                 <TripDetails request={request} />
                 <button type="button" style={ghostBtn} onClick={closePopup}>Close</button>
               </>
@@ -187,14 +187,14 @@ fetch("/api/push/send", {
                 <TripDetails request={request} compact />
                 <CustomerAssignedDriverDetails request={request} />
                 {callDriverHref ? (
-                  <a href={callDriverHref} style={callBtn}> Call Driver Now</a>
+                  <a href={callDriverHref} style={callBtn}> 📞 Call Driver Now</a>
                 ) : null}
               </>
             )}
 
             {request.status === "cancelled" && (
               <>
-                <StatusHeader icon="âŒ" title="Request Cancelled" subtitle="Your booking request has been cancelled." />
+                <StatusHeader icon="🚫" title="Request Cancelled" subtitle="Your booking request has been cancelled." />
                 <button type="button" style={ghostBtn} onClick={closePopup}>Close</button>
               </>
             )}
