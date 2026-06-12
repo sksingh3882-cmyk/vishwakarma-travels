@@ -171,16 +171,20 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   }
 
-  async function handleCopyDriverLink() {
+    async function handleCopyDriverLink() {
     if (!driverDutyLink) return;
 
-    await navigator.clipboard.writeText(driverDutyLink);
-    setCopyStatus("Driver duty link copied.");
-  }
+    await prepareFreshDriverAssignmentLink();
 
-  function handleSendDriverLink() {
+    await navigator.clipboard.writeText(driverDutyLink);
+    setCopyStatus("Fresh driver duty link copied.");
+    }
+
+    async function handleSendDriverLink() {
+    await prepareFreshDriverAssignmentLink();
+
     const message = [
-      "🚕 *Vishwakarma Travels Driver Duty Link*",
+      "Vishwakarma Travels Driver Duty Link",
       "",
       "Please open this link and submit your vehicle details:",
       driverDutyLink,
@@ -188,8 +192,35 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
 
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-  }
+    }
 
+   async function prepareFreshDriverAssignmentLink() {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+
+    if (!supabaseUrl || !supabaseKey) {
+      setCopyStatus("Supabase URL or key is missing.");
+      return;
+    }
+
+    try {
+      await clearBookingRequestDriverVehicle({
+        supabaseUrl,
+        supabaseKey,
+        requestId: bookingId,
+      });
+
+      setReceivedDriverDetails(null);
+      setSavedAssignment(null);
+      setDriverForm(emptyDriverSubmission);
+      window.localStorage.removeItem(getDriverStorageKey(bookingId));
+
+      setCopyStatus("Fresh assignment form is ready.");
+    } catch (error) {
+      console.log("Fresh driver assignment link prepare failed:", error);
+      setCopyStatus("Fresh assignment link could not be prepared.");
+    }
+   }
   async function handleDriverSubmit() {
   const cleanedDetails: DriverVehicleSubmission = {
     driverName: driverForm.driverName.trim(),
