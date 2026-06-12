@@ -166,7 +166,7 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     return () => {
       stopped = true;
     };
-  }, [bookingId, mockBooking, isDriverMode]);
+    }, [bookingId, mockBooking, forceDriverMode]);
 
     const driverDutyLink = useMemo(() => {
     if (typeof window === "undefined") return "";
