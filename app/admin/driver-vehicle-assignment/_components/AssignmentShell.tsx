@@ -93,56 +93,71 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
     let stopped = false;
+  useEffect(() => {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+
+    let stopped = false;
 
     async function loadBooking() {
       if (!supabaseUrl || !supabaseKey) {
-        setLoadStatus("Supabase env missing. Mock data showing.");
+        setLoadStatus("Booking details could not be loaded. Supabase env missing.");
         return;
       }
 
-      try {
-        const record = await fetchBookingRequestById({
-          supabaseUrl,
-          supabaseKey,
-          requestId: bookingId,
-        });
+      setLoadStatus("Loading booking details...");
 
-        if (stopped) return;
+      for (let attempt = 1; attempt <= 5; attempt += 1) {
+        try {
+          const record = await fetchBookingRequestById({
+            supabaseUrl,
+            supabaseKey,
+            requestId: bookingId,
+          });
 
-        if (!record) {
-          setLoadStatus("Booking not found. Mock data showing.");
-          return;
+          if (stopped) return;
+
+          if (record) {
+            const mappedBooking = mapRequestToAssignmentBooking(record, mockBooking);
+
+            setBooking(mappedBooking);
+            setDraft((previous) => ({
+              ...previous,
+              pickupArea: mappedBooking.pickupArea,
+              dropArea: mappedBooking.dropArea,
+              vehicleType: mappedBooking.vehicleType,
+              vehicleModel: mappedBooking.vehicleModel,
+            }));
+
+            if (record.driverName || record.driverMobile || record.vehicleNo) {
+              const receivedDetails: DriverVehicleSubmission = {
+                driverName: record.driverName || "",
+                driverMobile: record.driverMobile || "",
+                vehicleNumber: record.vehicleNo || "",
+                driverVehicleModel: "",
+              };
+
+              setReceivedDriverDetails(receivedDetails);
+
+              if (!isDriverMode) {
+                setShowDriverReceivedPopup(true);
+              }
+            } else {
+              setReceivedDriverDetails(null);
+            }
+
+            setLoadStatus("Real booking loaded.");
+            return;
+          }
+        } catch (error) {
+          console.log("Driver assignment booking load failed:", error);
         }
 
-        const mappedBooking = mapRequestToAssignmentBooking(record, mockBooking);
+        await new Promise((resolve) => window.setTimeout(resolve, 900));
+      }
 
-        setBooking(mappedBooking);
-        setDraft((previous) => ({
-          ...previous,
-          pickupArea: mappedBooking.pickupArea,
-          dropArea: mappedBooking.dropArea,
-          vehicleType: mappedBooking.vehicleType,
-          vehicleModel: mappedBooking.vehicleModel,
-        }));
-        setLoadStatus("Real booking loaded.");
-        if (record.driverName || record.driverMobile || record.vehicleNo) {
-  const receivedDetails: DriverVehicleSubmission = {
-    driverName: record.driverName || "",
-    driverMobile: record.driverMobile || "",
-    vehicleNumber: record.vehicleNo || "",
-    driverVehicleModel: "",
-  };
-
-  setReceivedDriverDetails(receivedDetails);
-
-  if (!driverMode) {
-    setShowDriverReceivedPopup(true);
-  }
-        }
-      } catch {
-        if (!stopped) {
-          setLoadStatus("Booking load failed. Mock data showing.");
-        }
+      if (!stopped) {
+        setLoadStatus("Booking details could not be loaded. Please try Supabase Sync.");
       }
     }
 
@@ -151,7 +166,7 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     return () => {
       stopped = true;
     };
-  }, [bookingId, mockBooking]);
+  }, [bookingId, mockBooking, isDriverMode]);
 
     const driverDutyLink = useMemo(() => {
     if (typeof window === "undefined") return "";
