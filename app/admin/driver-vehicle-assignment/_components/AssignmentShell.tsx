@@ -88,12 +88,7 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
   };
 }, [bookingId, forceDriverMode]);
 
-  useEffect(() => {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-
-    let stopped = false;
-  useEffect(() => {
+    useEffect(() => {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
@@ -166,7 +161,8 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     return () => {
       stopped = true;
     };
-    }, [bookingId, mockBooking, forceDriverMode]);
+  }, [bookingId, mockBooking, isDriverMode]);
+
 
     const driverDutyLink = useMemo(() => {
     if (typeof window === "undefined") return "";
