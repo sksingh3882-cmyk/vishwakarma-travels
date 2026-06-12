@@ -153,10 +153,13 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     };
   }, [bookingId, mockBooking]);
 
-  const driverDutyLink = useMemo(() => {
+    const driverDutyLink = useMemo(() => {
     if (typeof window === "undefined") return "";
 
-    return `${window.location.origin}/driver-vehicle-assignment/${encodeURIComponent(bookingId)}`;
+    const searchParams = new URLSearchParams(window.location.search);
+    const freshToken = searchParams.get("fresh") || Date.now().toString();
+
+    return `${window.location.origin}/driver-vehicle-assignment/${encodeURIComponent(bookingId)}?fresh=${encodeURIComponent(freshToken)}`;
   }, [bookingId]);
 
   const groupMessage = useMemo(() => {
@@ -751,7 +754,12 @@ async function saveAssignedVehicleToVehicleList(params: {
   }
 }
 function getDriverStorageKey(bookingId: string) {
-  return `v2-driver-vehicle-details-${bookingId}`;
+  if (typeof window === "undefined") return `vt-driver-details-${bookingId}`;
+
+  const searchParams = new URLSearchParams(window.location.search);
+  const freshToken = searchParams.get("fresh") || "default";
+
+  return `vt-driver-details-${bookingId}-${freshToken}`;
 }
 
 type InputBoxProps = {
