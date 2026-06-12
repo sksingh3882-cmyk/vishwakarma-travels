@@ -225,11 +225,12 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
       vehicleNo: cleanedDetails.vehicleNumber,
     });
 
-    window.localStorage.setItem(
+        window.localStorage.setItem(
       getDriverStorageKey(bookingId),
       JSON.stringify(cleanedDetails)
     );
 
+    setReceivedDriverDetails(cleanedDetails);
     setDriverForm(emptyDriverSubmission);
 
     alert(
@@ -314,80 +315,115 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
   }
   }
 
-  if (isDriverMode) {
-  return (
-    <>
-      <style>{hideAdminChromeCss}</style>
-      <main className="vt-driver-assignment-page" style={pageWrap}>
-        <section style={cardNarrow}>
-          <div style={centerBlock}>
-            <h1 style={smallTitle}>Vishwakarma Travels</h1>
-<p style={{ ...mutedText, fontWeight: 900, color: "#0b2d6b" }}>Vehicle Driver Assignment System</p>
-<p style={{ ...mutedText, fontSize: 12 }}>By Sanjay Singh</p>
-          </div>
+    const isBookingStillLoading = loadStatus === "Loading booking details...";
+  const isRealBookingLoaded = loadStatus === "Real booking loaded.";
+  const driverDetailsAlreadySubmitted = Boolean(
+    receivedDriverDetails?.driverName ||
+      receivedDriverDetails?.driverMobile ||
+      receivedDriverDetails?.vehicleNumber
+  );
+    if (isDriverMode) {
+    return (
+      <>
+        <style>{hideAdminChromeCss}</style>
+        <main className="vt-driver-assignment-page" style={pageWrap}>
+          <section style={cardNarrow}>
+            <div style={centerBlock}>
+              <h1 style={smallTitle}>Vishwakarma Travels</h1>
+              <p style={{ ...mutedText, fontWeight: 900, color: "#0b2d6b" }}>
+                Vehicle Driver Assignment System
+              </p>
+              <p style={{ ...mutedText, fontSize: 12 }}>By Sanjay Singh</p>
+            </div>
 
-          <div style={infoBox}>
-            <InfoLine label="Date" value={booking.date} />
-            <InfoLine label="Time" value={formatTimeForDisplay(booking.time)} />
-            <InfoLine label="Pickup" value={draft.pickupArea} />
-            <InfoLine label="Drop" value={draft.dropArea} />
-            <InfoLine label="Vehicle Required" value={draft.vehicleModel || draft.vehicleType} />
-          </div>
+            {isBookingStillLoading ? (
+              <div style={driverMessageBox}>
+                <h2 style={driverMessageTitle}>Loading booking details...</h2>
+                <p style={driverMessageText}>
+                  Please wait while we load your actual trip details.
+                </p>
+              </div>
+            ) : !isRealBookingLoaded ? (
+              <div style={driverMessageBox}>
+                <h2 style={driverMessageTitle}>Booking details could not be loaded.</h2>
+                <p style={driverMessageText}>
+                  Please ask admin for a new link.
+                </p>
+              </div>
+            ) : driverDetailsAlreadySubmitted ? (
+              <div style={driverMessageBox}>
+                <h2 style={driverMessageTitle}>
+                  You already submitted your vehicle details.
+                </h2>
+                <p style={driverMessageText}>
+                  Please ask admin for the new link to add another vehicle details.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div style={infoBox}>
+                  <InfoLine label="Date" value={booking.date} />
+                  <InfoLine label="Time" value={formatTimeForDisplay(booking.time)} />
+                  <InfoLine label="Pickup" value={draft.pickupArea} />
+                  <InfoLine label="Drop" value={draft.dropArea} />
+                  <InfoLine label="Vehicle Required" value={draft.vehicleModel || draft.vehicleType} />
+                </div>
 
-          <div style={formStack}>
-            <InputBox
-              label="Driver Name"
-              value={driverForm.driverName}
-              onChange={(value) =>
-                setDriverForm((previous) => ({ ...previous, driverName: value }))
-              }
-              placeholder="Driver name"
-            />
+                <div style={formStack}>
+                  <InputBox
+                    label="Driver Name"
+                    value={driverForm.driverName}
+                    onChange={(value) =>
+                      setDriverForm((previous) => ({ ...previous, driverName: value }))
+                    }
+                    placeholder="Driver name"
+                  />
 
-            <InputBox
-              label="Driver Mobile"
-              value={driverForm.driverMobile}
-              onChange={(value) =>
-                setDriverForm((previous) => ({ ...previous, driverMobile: value }))
-              }
-              placeholder="Driver mobile number"
-              inputMode="tel"
-            />
+                  <InputBox
+                    label="Driver Mobile"
+                    value={driverForm.driverMobile}
+                    onChange={(value) =>
+                      setDriverForm((previous) => ({ ...previous, driverMobile: value }))
+                    }
+                    placeholder="Driver mobile number"
+                    inputMode="tel"
+                  />
 
-            <InputBox
-              label="Vehicle Number"
-              value={driverForm.vehicleNumber}
-              onChange={(value) =>
-  setDriverForm((previous) => ({
-    ...previous,
-    vehicleNumber: normalizeVehicleNumber(value),
-  }))
-              }
-              placeholder="JH05AB1234"
-            />
+                  <InputBox
+                    label="Vehicle Number"
+                    value={driverForm.vehicleNumber}
+                    onChange={(value) =>
+                      setDriverForm((previous) => ({
+                        ...previous,
+                        vehicleNumber: normalizeVehicleNumber(value),
+                      }))
+                    }
+                    placeholder="JH05AB1234"
+                  />
 
-            <InputBox
-              label="Driver Vehicle Model"
-              value={driverForm.driverVehicleModel}
-              onChange={(value) =>
-  setDriverForm((previous) => ({
-    ...previous,
-    driverVehicleModel: value,
-  }))
-              }
-              placeholder="Dzire / Ertiga / Innova etc."
-            />
+                  <InputBox
+                    label="Driver Vehicle Model"
+                    value={driverForm.driverVehicleModel}
+                    onChange={(value) =>
+                      setDriverForm((previous) => ({
+                        ...previous,
+                        driverVehicleModel: value,
+                      }))
+                    }
+                    placeholder="Dzire / Ertiga / Innova etc."
+                  />
 
-            <button type="button" onClick={handleDriverSubmit} style={primaryBtn}>
-              Submit Vehicle Details
-            </button>
-          </div>
-        </section>
-      </main>
+                  <button type="button" onClick={handleDriverSubmit} style={primaryBtn}>
+                    Submit Vehicle Details
+                  </button>
+                </div>
+              </>
+            )}
+          </section>
+        </main>
       </>
     );
-  }
-
+    }
   return (
     <main style={pageWrap}>
       <section style={cardWide}>
@@ -820,6 +856,30 @@ const hideAdminChromeCss = `
     padding-top: 14px !important;
   }
 `;
+const driverMessageBox = {
+  marginTop: 18,
+  border: "1px solid #bfdbfe",
+  background: "#eff6ff",
+  borderRadius: 18,
+  padding: 16,
+  textAlign: "center",
+} as const;
+
+const driverMessageTitle = {
+  margin: 0,
+  color: "#0b2d6b",
+  fontSize: 18,
+  lineHeight: 1.25,
+  fontWeight: 900,
+} as const;
+
+const driverMessageText = {
+  margin: "8px 0 0",
+  color: "#475569",
+  fontSize: 14,
+  lineHeight: 1.45,
+  fontWeight: 800,
+} as const;
 const pageWrap = {
   minHeight: "100vh",
   background: "#eef5fb",
