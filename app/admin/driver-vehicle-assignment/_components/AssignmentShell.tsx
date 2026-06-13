@@ -364,7 +364,7 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
               <p style={{ ...mutedText, fontWeight: 900, color: "#0b2d6b" }}>
                 Vehicle Driver Assignment System
               </p>
-              <p style={{ ...mutedText, fontSize: 12 }}>By Sanjay Singh</p>
+              <p style={{ ...mutedText, fontSize: 12 }}>By Team Vehicle Assingment</p>
             </div>
 
             {isBookingStillLoading ? (
@@ -384,10 +384,10 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
             ) : driverDetailsAlreadySubmitted ? (
               <div style={driverMessageBox}>
                 <h2 style={driverMessageTitle}>
-                  You already submitted your vehicle details.
+                  You already submitted your.
                 </h2>
                 <p style={driverMessageText}>
-                  Please ask admin for the new link to add another vehicle details.
+                  Your Vehicle Details Has Been Submitted.
                 </p>
               </div>
             ) : (
@@ -511,7 +511,7 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
             onChange={(event) =>
               setDraft((previous) => ({ ...previous, note: event.target.value }))
             }
-            placeholder="Admin apne hisab se note likh sakta hai"
+            placeholder="If Customer has any Special demand Please write here"
             style={textAreaStyle}
           />
         </div>
