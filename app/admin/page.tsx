@@ -607,6 +607,9 @@ async function releaseDriverDetailsToCustomer() {
       vehicleModel: form.vehicleModel,
       driverName: form.driverName,
       driverMobile: form.driverMobile,
+      fare,
+      advance,
+      netPayable: net,
     });
       notifyCustomerBookingConfirmed().catch((err) =>
       console.log("Customer confirmed notification failed:", err)
