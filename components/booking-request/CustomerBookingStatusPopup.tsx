@@ -545,11 +545,13 @@ function PremiumConfirmedBooking({
       </div>
 
       <RatingDetailsPopup
-        kind={selectedPopup}
-        driverRating={rating.driver}
-        vehicleRating={rating.vehicle}
-        onClose={() => setSelectedPopup(null)}
-      />
+  kind={selectedPopup}
+  driverRating={rating.driver}
+  vehicleRating={rating.vehicle}
+  driverName={request.driverName || "Driver"}
+  vehicleNo={formatVehicleNumber(request.vehicleNo) || "Vehicle"}
+  onClose={() => setSelectedPopup(null)}
+/>
     </>
   );
 }
@@ -662,17 +664,21 @@ function RatingDetailsPopup({
   kind,
   driverRating,
   vehicleRating,
+  driverName,
+  vehicleNo,
   onClose,
 }: {
   kind: "driver" | "vehicle" | null;
   driverRating: RatingDetails | null;
   vehicleRating: RatingDetails | null;
+  driverName: string;
+  vehicleNo: string;
   onClose: () => void;
 }) {
   if (!kind) return null;
 
   const data = kind === "driver" ? driverRating : vehicleRating;
-  const title = kind === "driver" ? "Driver Real Rating" : "Vehicle Real Rating";
+  const title = kind === "driver" ? driverName || "Driver" : vehicleNo || "Vehicle";
 
   return (
     <div style={ratingOverlay}>
