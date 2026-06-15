@@ -531,20 +531,11 @@ function PremiumConfirmedBooking({
           />
         </div>
 
-        <div style={{ ...bottomGrid, gridTemplateColumns: fare ? "1.2fr .8fr" : "1fr" }}>
-          <div style={mobileRow}>
-            <span style={phoneIcon}>📞</span>
-            <span style={routeLabel}>Mobile:</span>
-            <b style={mobileValue}>{formatIndianPhone(request.driverMobile || "")}</b>
-          </div>
-
-          {fare ? (
-            <div style={fareMiniBox}>
-              <span style={fareMiniLabel}>Fare</span>
-              <b style={fareMiniValue}>{fare}</b>
-            </div>
-          ) : null}
-        </div>
+        <div style={fareChargesRow}>
+  <span style={fareIcon}>₹</span>
+  <span style={routeLabel}>Fare Charges:</span>
+  <b style={fareChargesValue}>{fare || "-"}</b>
+</div>
 
         {callDriverHref ? (
           <a href={callDriverHref} style={premiumCallBtn}>
@@ -1425,6 +1416,40 @@ const mobileValue = {
   whiteSpace: "nowrap",
 } as const;
 
+const fareChargesRow = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 8,
+  border: "1px solid #ead8bd",
+  borderRadius: 12,
+  padding: "11px 10px",
+  background: "#fffdf8",
+  color: "#071633",
+  fontSize: 14,
+  minHeight: 56,
+  marginTop: 12,
+} as const;
+
+const fareIcon = {
+  width: 30,
+  height: 30,
+  borderRadius: 999,
+  display: "inline-grid",
+  placeItems: "center",
+  background: "#071633",
+  color: "#f4c46f",
+  flexShrink: 0,
+  fontSize: 18,
+  fontWeight: 950,
+} as const;
+
+const fareChargesValue = {
+  color: "#071633",
+  fontSize: 17,
+  fontWeight: 950,
+  whiteSpace: "nowrap",
+} as const;
 const phoneIcon = {
   width: 28,
   height: 28,
