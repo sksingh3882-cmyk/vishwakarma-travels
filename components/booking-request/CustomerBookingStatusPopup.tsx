@@ -1495,12 +1495,13 @@ const callIcon = {
 const ratingOverlay = {
   position: "fixed",
   inset: 0,
-  background: "rgba(15,23,42,.50)",
+  background: "transparent",
   zIndex: 10000,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
   padding: 16,
+  pointerEvents: "none",
 } as const;
 
 const ratingCard = {
@@ -1510,8 +1511,9 @@ const ratingCard = {
   borderRadius: 18,
   padding: "16px 14px 14px",
   position: "relative",
-  boxShadow: "0 24px 80px rgba(0,0,0,.30)",
+  boxShadow: "0 8px 24px rgba(15,23,42,.16)",
   border: "1px solid #ead8bd",
+  pointerEvents: "auto",
 } as const;
 
 const ratingClose = {
