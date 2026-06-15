@@ -183,8 +183,7 @@ export default function RatingPage() {
         if (!data) {
           setErrorMessage("Booking details not found.");
           return;
-        }
-
+    }
         setBooking(data);
       } catch (error: any) {
         setErrorMessage(error?.message || "Something went wrong.");
@@ -608,9 +607,8 @@ export default function RatingPage() {
           to {
             stroke-dashoffset: 0;
           }
-        }
-
-        @keyframes confettiBurst {
+                }
+                @keyframes confettiBurst {
           0% {
             opacity: 1;
             transform: translate(-50%, -50%) rotate(0deg) scale(0.25);
@@ -934,4 +932,3 @@ const styles: Record<string, React.CSSProperties> = {
     boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
   },
 };
-      

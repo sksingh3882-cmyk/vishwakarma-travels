@@ -177,7 +177,6 @@ export default function CustomerBookingStatusPopup({
     setLoading(false);
     onClose();
   }
-
   if (!open) return null;
 
   return (

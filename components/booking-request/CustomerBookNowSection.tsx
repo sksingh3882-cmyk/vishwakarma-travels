@@ -280,7 +280,6 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
           My Booking
         </button>
       </div>
-
       {listOpen && (
         <div style={overlay}>
           <div style={listCard}>
@@ -449,7 +448,7 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
     setSuccessOpen(false);
     openYourBookings();
   }}
-/>
+  />
     </div>
   );
 }
@@ -712,3 +711,4 @@ const confirmSubmitBtn = {
   fontSize: 13,
   boxShadow: "0 12px 26px rgba(234,88,12,.22)",
 } as const;
+  
