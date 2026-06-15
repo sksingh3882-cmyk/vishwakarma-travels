@@ -106,7 +106,11 @@ export default function CustomerBookingStatusPopup({
     setError("");
 
     try {
-      const created = await createBookingRequest({ supabaseUrl, supabaseKey, input: bookingData });
+      const created = await createBookingRequest({
+        supabaseUrl,
+        supabaseKey,
+        input: bookingData,
+      });
 
       setRequest(created);
       onRequestSent?.(created);
@@ -241,6 +245,7 @@ export default function CustomerBookingStatusPopup({
                 </button>
               </>
             )}
+
             {isConfirmed && (
               <PremiumConfirmedBooking request={request} callDriverHref={callDriverHref} />
             )}
@@ -456,19 +461,14 @@ function PremiumConfirmedBooking({
   return (
     <>
       <div style={premiumBox}>
-        <div style={successBadge}>✓</div>
-
         <div style={brandStyle}>Vishwakarma Travels</div>
         <div style={greetingStyle}>Hii</div>
 
         <h1 style={premiumCustomerName}>{request.customerName || "Customer"}</h1>
 
-        <div style={premiumConfirmedTitle}>
-          <span style={wreath}>❧</span>
-          <span>Your Booking Is Confirmed</span>
-          <span style={wreath}>❧</span>
-        </div>
-                <div style={premiumRoute}>
+        <div style={premiumConfirmedTitle}>Your Booking Is Confirmed</div>
+
+        <div style={premiumRoute}>
           <span style={routeIcon}>📍</span>
           <span style={routeLabel}>Route:</span>
           <b style={routeValue}>
@@ -531,18 +531,20 @@ function PremiumConfirmedBooking({
           />
         </div>
 
-        <div style={mobileRow}>
-          <span style={phoneIcon}>📞</span>
-          <span style={routeLabel}>Mobile No:</span>
-          <b>{formatIndianPhone(request.driverMobile || "")}</b>
-        </div>
-
-        {fare ? (
-          <div style={fareBox}>
-            <div style={fareTitle}>Fare Charges</div>
-            <div style={fareAmount}>{fare}</div>
+        <div style={{ ...bottomGrid, gridTemplateColumns: fare ? "1.2fr .8fr" : "1fr" }}>
+          <div style={mobileRow}>
+            <span style={phoneIcon}>📞</span>
+            <span style={routeLabel}>Mobile:</span>
+            <b style={mobileValue}>{formatIndianPhone(request.driverMobile || "")}</b>
           </div>
-        ) : null}
+
+          {fare ? (
+            <div style={fareMiniBox}>
+              <span style={fareMiniLabel}>Fare</span>
+              <b style={fareMiniValue}>{fare}</b>
+            </div>
+          ) : null}
+        </div>
 
         {callDriverHref ? (
           <a href={callDriverHref} style={premiumCallBtn}>
@@ -706,7 +708,8 @@ function RatingDetailsPopup({
             Abhi iske liye koi real customer rating available nahi hai.
           </p>
         )}
-                <button type="button" style={closeTextBtn} onClick={onClose}>
+
+        <button type="button" style={closeTextBtn} onClick={onClose}>
           Close
         </button>
       </div>
@@ -847,6 +850,7 @@ function getVehicleImageSrc(request: BookingRequestRecord) {
   if (name.includes("ertiga")) return "/cars/ertiga2.png";
   if (name.includes("crysta")) return "/cars/crysta2.png";
   if (name.includes("innova")) return "/cars/innova2.png";
+
   if (
     name.includes("dzire") ||
     name.includes("desire") ||
@@ -872,13 +876,15 @@ function getDriverImageSrc(request: BookingRequestRecord) {
 
 function getFareValue(request: BookingRequestRecord) {
   const raw = getRequestString(request, [
+    "fare",
     "fareCharges",
     "fareCharge",
     "totalFare",
-    "fare",
+    "total_fare",
     "price",
     "amount",
     "bookingAmount",
+    "booking_amount",
   ]);
 
   if (!raw) return "";
@@ -915,55 +921,56 @@ function getInitials(value: string) {
 const overlay = {
   position: "fixed",
   inset: 0,
-  background: "rgba(15,23,42,.60)",
+  background: "rgba(15,23,42,.55)",
   zIndex: 9999,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  padding: "72px 10px 18px",
+  padding: "14px 8px",
 } as const;
 
 const card = {
   width: "100%",
-  maxWidth: 470,
-  maxHeight: "calc(100vh - 95px)",
+  maxWidth: 450,
+  maxHeight: "calc(100vh - 28px)",
   overflowY: "auto",
   background: "#fff",
-  borderRadius: 24,
-  padding: "12px 12px 14px",
-  boxShadow: "0 24px 80px rgba(0,0,0,.30)",
+  borderRadius: 22,
+  padding: "8px 8px 10px",
+  boxShadow: "0 18px 48px rgba(0,0,0,.24)",
   fontFamily: "Arial, sans-serif",
   position: "relative",
 } as const;
 
 const closeBtn = {
   position: "absolute",
-  top: 12,
-  right: 12,
-  width: 40,
-  height: 40,
-  borderRadius: 16,
+  top: 10,
+  right: 10,
+  width: 36,
+  height: 36,
+  borderRadius: 14,
   border: "1px solid #e2e8f0",
   background: "#fff",
   color: "#0f172a",
-  fontSize: 28,
+  fontSize: 24,
   lineHeight: 1,
   fontWeight: 900,
   zIndex: 3,
 } as const;
 
 const handle = {
-  width: 52,
+  width: 44,
   height: 5,
   borderRadius: 99,
   background: "#cbd5e1",
-  margin: "0 auto 10px",
+  margin: "0 auto 6px",
 } as const;
 
 const headerBox = {
   textAlign: "center",
   padding: "4px 44px 8px",
 } as const;
+
 const iconBox = {
   width: 52,
   height: 52,
@@ -1075,103 +1082,75 @@ const dangerBtn = {
 
 const premiumBox = {
   position: "relative",
-  borderRadius: 24,
-  padding: "44px 14px 14px",
-  background: "linear-gradient(180deg,#ffffff 0%,#fffdf9 100%)",
+  borderRadius: 20,
+  padding: "12px 10px 10px",
+  background: "#fffdf9",
   border: "1px solid #ead8bd",
-  boxShadow: "inset 0 1px 0 rgba(255,255,255,.9)",
   overflow: "hidden",
-} as const;
-
-const successBadge = {
-  position: "absolute",
-  top: 0,
-  left: "50%",
-  transform: "translate(-50%, -10%)",
-  width: 64,
-  height: 64,
-  borderRadius: 999,
-  display: "grid",
-  placeItems: "center",
-  background: "linear-gradient(145deg,#08204a,#061a3d)",
-  color: "#f4c46f",
-  border: "4px solid #f6d186",
-  boxShadow: "0 10px 25px rgba(8,32,74,.30)",
-  fontSize: 34,
-  fontWeight: 950,
-  zIndex: 2,
 } as const;
 
 const brandStyle = {
   textAlign: "center",
   color: "#a16b24",
   fontFamily: "Georgia, serif",
-  fontSize: 18,
+  fontSize: 14,
   fontWeight: 700,
-  marginTop: 10,
+  marginTop: 0,
+  lineHeight: 1.2,
 } as const;
 
 const greetingStyle = {
   textAlign: "center",
   color: "#0b1838",
-  fontSize: 18,
+  fontSize: 14,
   fontWeight: 800,
-  marginTop: 10,
+  marginTop: 4,
+  marginBottom: 2,
   textDecoration: "underline",
   textDecorationColor: "#b98235",
-  textUnderlineOffset: 8,
+  textUnderlineOffset: 5,
 } as const;
 
 const premiumCustomerName = {
-  margin: "18px 0 6px",
+  margin: "8px 0 4px",
   textAlign: "center",
   color: "#071633",
-  fontSize: 36,
+  fontSize: 28,
   lineHeight: 1.05,
   fontWeight: 950,
-  letterSpacing: "-1px",
+  letterSpacing: "-0.5px",
 } as const;
 
 const premiumConfirmedTitle = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: 10,
   color: "#071633",
-  fontSize: 20,
+  fontSize: 17,
   fontWeight: 900,
   textAlign: "center",
-  marginBottom: 16,
-} as const;
-
-const wreath = {
-  color: "#b98235",
-  fontSize: 34,
-  lineHeight: 1,
+  marginBottom: 10,
+  lineHeight: 1.2,
 } as const;
 
 const premiumRoute = {
   display: "flex",
   alignItems: "center",
-  gap: 8,
+  gap: 6,
   border: "1px solid #ead8bd",
-  borderRadius: 14,
-  padding: "12px 13px",
+  borderRadius: 12,
+  padding: "9px 9px",
   background: "#fffdf8",
-  boxShadow: "0 5px 16px rgba(15,23,42,.08)",
   color: "#071633",
-  fontSize: 14,
-  marginTop: 10,
+  fontSize: 13,
+  marginTop: 8,
 } as const;
 
 const routeIcon = {
-  width: 30,
-  height: 30,
+  width: 24,
+  height: 24,
   borderRadius: 999,
   display: "grid",
   placeItems: "center",
   color: "#a16b24",
-  fontSize: 19,
+  fontSize: 16,
   flexShrink: 0,
 } as const;
 
@@ -1179,33 +1158,35 @@ const routeLabel = {
   color: "#a16b24",
   fontWeight: 900,
   flexShrink: 0,
+  fontSize: 12,
 } as const;
 
 const routeValue = {
   color: "#071633",
   wordBreak: "break-word",
+  fontSize: 12,
 } as const;
 
 const premiumGrid = {
   display: "grid",
   gridTemplateColumns: "1fr 1fr",
-  gap: 10,
-  marginTop: 10,
+  gap: 8,
+  marginTop: 8,
 } as const;
 
 const miniInfoCard = {
   display: "flex",
   alignItems: "center",
-  gap: 9,
+  gap: 8,
   border: "1px solid #ead8bd",
-  borderRadius: 14,
-  padding: "11px 10px",
+  borderRadius: 12,
+  padding: "8px 9px",
   background: "#fffdf8",
-  boxShadow: "0 4px 14px rgba(15,23,42,.07)",
   minWidth: 0,
 } as const;
+
 const miniIcon = {
-  fontSize: 24,
+  fontSize: 19,
   color: "#a16b24",
   flexShrink: 0,
 } as const;
@@ -1213,39 +1194,38 @@ const miniIcon = {
 const miniLabel = {
   display: "block",
   color: "#a16b24",
-  fontSize: 13,
+  fontSize: 12,
   fontWeight: 900,
 } as const;
 
 const miniValue = {
   display: "block",
   color: "#071633",
-  fontSize: 14,
-  marginTop: 2,
+  fontSize: 13,
+  marginTop: 1,
 } as const;
 
 const premiumService = {
   display: "flex",
   alignItems: "center",
-  gap: 8,
+  gap: 6,
   border: "1px solid #ead8bd",
-  borderRadius: 14,
-  padding: "12px 13px",
+  borderRadius: 12,
+  padding: "9px 9px",
   background: "#fffdf8",
-  boxShadow: "0 5px 16px rgba(15,23,42,.08)",
   color: "#071633",
-  fontSize: 15,
-  marginTop: 10,
+  fontSize: 13,
+  marginTop: 8,
 } as const;
 
 const premiumSectionTitle = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  gap: 8,
+  gap: 6,
   color: "#071633",
-  fontSize: 15,
-  margin: "18px 0 10px",
+  fontSize: 13,
+  margin: "10px 0 8px",
   textAlign: "center",
 } as const;
 
@@ -1258,56 +1238,55 @@ const line = {
 
 const diamond = {
   color: "#a16b24",
-  fontSize: 11,
+  fontSize: 9,
 } as const;
 
 const detailGrid = {
   display: "grid",
   gridTemplateColumns: "1fr 1fr",
-  gap: 10,
+  gap: 8,
 } as const;
 
 const profileCard = {
   border: "1px solid #ead8bd",
-  borderRadius: 16,
-  padding: "12px 8px",
+  borderRadius: 14,
+  padding: "9px 7px",
   background: "#ffffff",
-  boxShadow: "0 5px 16px rgba(15,23,42,.08)",
   textAlign: "center",
   minWidth: 0,
 } as const;
 
 const profileTitle = {
   color: "#a16b24",
-  fontSize: 14,
+  fontSize: 12,
   fontWeight: 900,
-  marginBottom: 9,
+  marginBottom: 6,
   textDecoration: "underline",
   textDecorationColor: "#d8b06a",
-  textUnderlineOffset: 6,
+  textUnderlineOffset: 4,
 } as const;
 
 const imageFrame = {
   width: "100%",
-  height: 96,
-  borderRadius: 14,
+  height: 76,
+  borderRadius: 12,
   display: "grid",
   placeItems: "center",
   background: "#f8fafc",
   overflow: "hidden",
-  margin: "0 auto 10px",
+  margin: "0 auto 7px",
 } as const;
 
 const imageFrameCircle = {
-  width: 98,
-  height: 98,
+  width: 78,
+  height: 78,
   borderRadius: 999,
   display: "grid",
   placeItems: "center",
   background: "#f8fafc",
   border: "2px solid #c9953b",
   overflow: "hidden",
-  margin: "0 auto 10px",
+  margin: "0 auto 7px",
 } as const;
 
 const vehicleImg = {
@@ -1326,143 +1305,161 @@ const driverImg = {
 
 const avatarFallback = {
   color: "#071633",
-  fontSize: 30,
+  fontSize: 25,
   fontWeight: 950,
 } as const;
 
 const profileName = {
   color: "#071633",
-  fontSize: 17,
+  fontSize: 14,
   fontWeight: 950,
-  minHeight: 22,
+  minHeight: 18,
   wordBreak: "break-word",
 } as const;
 
 const ratingButton = {
   border: 0,
-  background: "transparent",
-  padding: "7px 0 0",
+  background: "#fffaf0",
+  borderRadius: 999,
+  padding: "5px 8px",
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
-  gap: 6,
+  gap: 5,
   cursor: "pointer",
+  marginTop: 6,
 } as const;
 
 const starsLine = {
   display: "inline-flex",
-  gap: 2,
+  gap: 1,
   lineHeight: 1,
 } as const;
 
 const starFilled = {
   color: "#c9953b",
-  fontSize: 18,
+  fontSize: 15,
   lineHeight: 1,
 } as const;
 
 const starEmpty = {
   color: "#d9d9d9",
-  fontSize: 18,
+  fontSize: 15,
   lineHeight: 1,
 } as const;
 
 const ratingNumber = {
   color: "#071633",
-  fontSize: 12,
+  fontSize: 11,
   fontWeight: 950,
 } as const;
 
 const noRating = {
-  marginTop: 8,
+  marginTop: 6,
   color: "#64748b",
-  fontSize: 12,
+  fontSize: 11,
   fontWeight: 900,
 } as const;
 
 const performance = {
   color: "#64748b",
-  fontSize: 12,
-  marginTop: 6,
+  fontSize: 10,
+  marginTop: 4,
   fontWeight: 700,
+} as const;
+
+const bottomGrid = {
+  display: "grid",
+  gap: 8,
+  marginTop: 10,
+  alignItems: "stretch",
 } as const;
 
 const mobileRow = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  gap: 8,
+  gap: 7,
   border: "1px solid #ead8bd",
-  borderRadius: 14,
-  padding: "12px 10px",
+  borderRadius: 12,
+  padding: "9px 8px",
   background: "#fffdf8",
   color: "#071633",
-  fontSize: 15,
-  marginTop: 14,
-  boxShadow: "0 5px 16px rgba(15,23,42,.08)",
+  fontSize: 13,
+  minHeight: 52,
+} as const;
+
+const mobileValue = {
+  color: "#071633",
+  fontSize: 13,
+  whiteSpace: "nowrap",
 } as const;
 
 const phoneIcon = {
-  width: 32,
-  height: 32,
+  width: 28,
+  height: 28,
   borderRadius: 999,
   display: "inline-grid",
   placeItems: "center",
   background: "#071633",
   color: "#f4c46f",
   flexShrink: 0,
+  fontSize: 14,
 } as const;
 
-const fareBox = {
-  marginTop: 14,
-  borderRadius: 18,
-  padding: "15px 12px",
+const fareMiniBox = {
+  border: "1px solid #ead8bd",
+  borderRadius: 12,
+  padding: "8px 8px",
+  background: "#071633",
+  color: "#fff",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
   textAlign: "center",
-  background: "linear-gradient(135deg,#071633,#092b61)",
-  color: "#ffffff",
-  border: "2px solid #c9953b",
-  boxShadow: "0 12px 28px rgba(8,32,74,.22)",
-} as const;
-const fareTitle = {
-  color: "#f4c46f",
-  fontFamily: "Georgia, serif",
-  fontSize: 18,
-  fontWeight: 900,
-  marginBottom: 4,
+  minHeight: 52,
 } as const;
 
-const fareAmount = {
-  fontSize: 42,
-  lineHeight: 1,
+const fareMiniLabel = {
+  fontSize: 10,
+  color: "#f4c46f",
+  fontWeight: 900,
+  lineHeight: 1.1,
+} as const;
+
+const fareMiniValue = {
+  fontSize: 18,
+  color: "#fff",
   fontWeight: 950,
-  letterSpacing: "1px",
+  lineHeight: 1.2,
+  marginTop: 2,
 } as const;
 
 const premiumCallBtn = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  gap: 12,
+  gap: 10,
   textDecoration: "none",
-  borderRadius: 16,
-  padding: "13px 14px",
+  borderRadius: 14,
+  padding: "10px 12px",
   background: "linear-gradient(135deg,#071633,#051126)",
   color: "#fff",
-  fontWeight: 950,
-  fontSize: 21,
-  marginTop: 14,
+  fontWeight: 900,
+  fontSize: 16,
+  marginTop: 10,
   border: "2px solid #c9953b",
-  boxShadow: "0 10px 24px rgba(8,32,74,.22)",
 } as const;
 
 const callIcon = {
-  width: 38,
-  height: 38,
+  width: 32,
+  height: 32,
   borderRadius: 999,
   display: "inline-grid",
   placeItems: "center",
   border: "1px solid #c9953b",
   color: "#f4c46f",
+  fontSize: 15,
 } as const;
 
 const ratingOverlay = {
@@ -1478,10 +1475,10 @@ const ratingOverlay = {
 
 const ratingCard = {
   width: "100%",
-  maxWidth: 380,
+  maxWidth: 360,
   background: "#ffffff",
-  borderRadius: 20,
-  padding: "18px 14px 14px",
+  borderRadius: 18,
+  padding: "16px 14px 14px",
   position: "relative",
   boxShadow: "0 24px 80px rgba(0,0,0,.30)",
   border: "1px solid #ead8bd",
@@ -1491,8 +1488,8 @@ const ratingClose = {
   position: "absolute",
   top: 10,
   right: 10,
-  width: 34,
-  height: 34,
+  width: 32,
+  height: 32,
   borderRadius: 999,
   border: "1px solid #e2e8f0",
   background: "#ffffff",
@@ -1503,31 +1500,31 @@ const ratingClose = {
 } as const;
 
 const ratingTitle = {
-  margin: "0 44px 12px 0",
+  margin: "0 42px 10px 0",
   color: "#071633",
-  fontSize: 18,
+  fontSize: 17,
   fontWeight: 950,
 } as const;
 
 const ratingAverage = {
   marginBottom: 10,
-  padding: 11,
-  borderRadius: 14,
+  padding: 10,
+  borderRadius: 13,
   background: "#fff7ed",
   color: "#9a5a12",
   fontWeight: 950,
   textAlign: "center",
-  fontSize: 14,
+  fontSize: 13,
 } as const;
 
 const ratingDetailRow = {
   display: "flex",
   justifyContent: "space-between",
   gap: 10,
-  padding: "9px 0",
+  padding: "8px 0",
   borderTop: "1px dashed #e2e8f0",
   color: "#334155",
-  fontSize: 13,
+  fontSize: 12,
 } as const;
 
 const ratingDetailLabel = {
@@ -1557,7 +1554,7 @@ const closeTextBtn = {
   background: "#071633",
   color: "#ffffff",
   borderRadius: 14,
-  padding: "11px 14px",
+  padding: "10px 14px",
   fontSize: 14,
   fontWeight: 950,
 } as const;
