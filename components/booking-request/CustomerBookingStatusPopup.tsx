@@ -1268,13 +1268,15 @@ const profileTitle = {
 
 const imageFrame = {
   width: "100%",
-  height: 76,
+  height: 88,
   borderRadius: 12,
-  display: "grid",
-  placeItems: "center",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
   background: "#f8fafc",
-  overflow: "hidden",
+  overflow: "visible",
   margin: "0 auto 7px",
+  padding: "4px 6px",
 } as const;
 
 const imageFrameCircle = {
@@ -1290,8 +1292,8 @@ const imageFrameCircle = {
 } as const;
 
 const vehicleImg = {
-  width: "100%",
-  height: "100%",
+  width: "84%",
+  height: "84%",
   objectFit: "contain",
   display: "block",
 } as const;
