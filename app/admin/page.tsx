@@ -912,7 +912,7 @@ function editCustomer(c: Customer){setForm((p)=>({...p,customerName:c.name||"",c
     Send to Driver
   </button>
 </div>
-<div style={finalActionRow}><button type="button" onClick={sendConfirmationLinkToCustomer} style={sendConfirmLinkBtn}>Send Booking Confirmation Link</button><button type="submit" disabled={loading} style={finalSavePdfBtn}>{loading ? "Saving..." : "Save + PDF"}</button></div>{downloadNotice && <div style={downloadOk}>✓ Booking copy downloaded successfully!</div>}
+<div style={finalActionRow}><button type="button" onClick={sendConfirmationLinkToCustomer} style={sendConfirmLinkBtn}>Send Booking Confirmation Link</button><button type="submit" disabled={loading} style={finalSavePdfBtn}>{loading ? "Saving..." : "Save + PDF"}</button></div>{downloadNotice && <div style={downloadOk}>✓ Booking copy downloaded successfully!</div>}</form>
       <section style={panel}>
       <div style={recentBookingHeader}>
         <h2 style={{ margin: 0 }}>Recent Bookings</h2>
