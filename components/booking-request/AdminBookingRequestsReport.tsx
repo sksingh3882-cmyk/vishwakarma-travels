@@ -192,8 +192,10 @@ export default function AdminBookingRequestsReport({ onAcceptRequest }: Props) {
     onClick={() => {
       if (!selected?.id) return;
 
+            const freshToken = Date.now().toString();
+
       window.open(
-        `/admin/driver-vehicle-assignment/${encodeURIComponent(selected.id)}`,
+        `/admin/driver-vehicle-assignment/${encodeURIComponent(selected.id)}?fresh=${freshToken}`,
         "_blank"
       );
     }}

@@ -88,7 +88,7 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
   };
 }, [bookingId, forceDriverMode]);
 
-  useEffect(() => {
+    useEffect(() => {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
@@ -96,53 +96,63 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
 
     async function loadBooking() {
       if (!supabaseUrl || !supabaseKey) {
-        setLoadStatus("Supabase env missing. Mock data showing.");
+        setLoadStatus("Booking details could not be loaded. Supabase env missing.");
         return;
       }
 
-      try {
-        const record = await fetchBookingRequestById({
-          supabaseUrl,
-          supabaseKey,
-          requestId: bookingId,
-        });
+      setLoadStatus("Loading booking details...");
 
-        if (stopped) return;
+      for (let attempt = 1; attempt <= 5; attempt += 1) {
+        try {
+          const record = await fetchBookingRequestById({
+            supabaseUrl,
+            supabaseKey,
+            requestId: bookingId,
+          });
 
-        if (!record) {
-          setLoadStatus("Booking not found. Mock data showing.");
-          return;
+          if (stopped) return;
+
+          if (record) {
+            const mappedBooking = mapRequestToAssignmentBooking(record, mockBooking);
+
+            setBooking(mappedBooking);
+            setDraft((previous) => ({
+              ...previous,
+              pickupArea: mappedBooking.pickupArea,
+              dropArea: mappedBooking.dropArea,
+              vehicleType: mappedBooking.vehicleType,
+              vehicleModel: mappedBooking.vehicleModel,
+            }));
+
+            if (record.driverName || record.driverMobile || record.vehicleNo) {
+              const receivedDetails: DriverVehicleSubmission = {
+                driverName: record.driverName || "",
+                driverMobile: record.driverMobile || "",
+                vehicleNumber: record.vehicleNo || "",
+                driverVehicleModel: "",
+              };
+
+              setReceivedDriverDetails(receivedDetails);
+
+              if (!isDriverMode) {
+                setShowDriverReceivedPopup(true);
+              }
+            } else {
+              setReceivedDriverDetails(null);
+            }
+
+            setLoadStatus("Real booking loaded.");
+            return;
+          }
+        } catch (error) {
+          console.log("Driver assignment booking load failed:", error);
         }
 
-        const mappedBooking = mapRequestToAssignmentBooking(record, mockBooking);
+        await new Promise((resolve) => window.setTimeout(resolve, 900));
+      }
 
-        setBooking(mappedBooking);
-        setDraft((previous) => ({
-          ...previous,
-          pickupArea: mappedBooking.pickupArea,
-          dropArea: mappedBooking.dropArea,
-          vehicleType: mappedBooking.vehicleType,
-          vehicleModel: mappedBooking.vehicleModel,
-        }));
-        setLoadStatus("Real booking loaded.");
-        if (record.driverName || record.driverMobile || record.vehicleNo) {
-  const receivedDetails: DriverVehicleSubmission = {
-    driverName: record.driverName || "",
-    driverMobile: record.driverMobile || "",
-    vehicleNumber: record.vehicleNo || "",
-    driverVehicleModel: "",
-  };
-
-  setReceivedDriverDetails(receivedDetails);
-
-  if (!driverMode) {
-    setShowDriverReceivedPopup(true);
-  }
-        }
-      } catch {
-        if (!stopped) {
-          setLoadStatus("Booking load failed. Mock data showing.");
-        }
+      if (!stopped) {
+        setLoadStatus("Booking details could not be loaded. Please try Supabase Sync.");
       }
     }
 
@@ -151,12 +161,16 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     return () => {
       stopped = true;
     };
-  }, [bookingId, mockBooking]);
+  }, [bookingId, mockBooking, isDriverMode]);
 
-  const driverDutyLink = useMemo(() => {
+
+    const driverDutyLink = useMemo(() => {
     if (typeof window === "undefined") return "";
 
-    return `${window.location.origin}/driver-vehicle-assignment/${encodeURIComponent(bookingId)}`;
+    const searchParams = new URLSearchParams(window.location.search);
+    const freshToken = searchParams.get("fresh") || Date.now().toString();
+
+    return `${window.location.origin}/driver-vehicle-assignment/${encodeURIComponent(bookingId)}?fresh=${encodeURIComponent(freshToken)}`;
   }, [bookingId]);
 
   const groupMessage = useMemo(() => {
@@ -265,7 +279,7 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     setDriverForm(emptyDriverSubmission);
 
     alert(
-  "Your vehicle details have been submitted successfully. Confirmation Massage will Send you On your Whatsapp Shortly."
+  "Your vehicle details have been submitted successfully. Confirmation Massage Will Send You On Your Whatsapp."
 );
   
   } catch {
@@ -364,7 +378,7 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
               <p style={{ ...mutedText, fontWeight: 900, color: "#0b2d6b" }}>
                 Vehicle Driver Assignment System
               </p>
-              <p style={{ ...mutedText, fontSize: 12 }}>By Team Vehicle Assingment</p>
+              <p style={{ ...mutedText, fontSize: 12 }}>By Sanjay Singh</p>
             </div>
 
             {isBookingStillLoading ? (
@@ -384,10 +398,10 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
             ) : driverDetailsAlreadySubmitted ? (
               <div style={driverMessageBox}>
                 <h2 style={driverMessageTitle}>
-                  You already submitted your.
+                  You already submitted your vehicle details.
                 </h2>
                 <p style={driverMessageText}>
-                  Your Vehicle Details Has Been Submitted.
+                  Please ask admin for the new link to add another vehicle details.
                 </p>
               </div>
             ) : (
@@ -782,7 +796,12 @@ async function saveAssignedVehicleToVehicleList(params: {
   }
 }
 function getDriverStorageKey(bookingId: string) {
-  return `v2-driver-vehicle-details-${bookingId}`;
+  if (typeof window === "undefined") return `vt-driver-details-${bookingId}`;
+
+  const searchParams = new URLSearchParams(window.location.search);
+  const freshToken = searchParams.get("fresh") || "default";
+
+  return `vt-driver-details-${bookingId}-${freshToken}`;
 }
 
 type InputBoxProps = {

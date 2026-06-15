@@ -19,7 +19,11 @@ export type BookingRequestRecord = BookingRequestInput & {
   vehicleModel?: string;
   driverName?: string;
   driverMobile?: string;
-  createdAt?: string;
+confirmationCode?: string;
+fare?: string;
+advance?: string;
+netPayable?: string;
+createdAt?: string;
   acceptedAt?: string;
   confirmedAt?: string;
 };
@@ -72,7 +76,11 @@ export function fromDb(row: any): BookingRequestRecord {
     vehicleModel: row.vehicle_model || "",
     driverName: row.driver_name || "",
     driverMobile: cleanPhone(row.driver_mobile || ""),
-    createdAt: row.created_at || "",
+confirmationCode: row.confirmation_code || "",
+fare: String(row.fare ?? row.total_fare ?? row.fare_charge ?? ""),
+advance: String(row.advance ?? row.advance_paid ?? ""),
+netPayable: String(row.net_payable ?? row.netPayable ?? ""),
+createdAt: row.created_at || "",
     acceptedAt: row.accepted_at || "",
     confirmedAt: row.confirmed_at || "",
   };
@@ -101,6 +109,26 @@ export async function fetchBookingRequestById(params: { supabaseUrl: string; sup
   );
   if (!res.ok) throw new Error("Booking request status fetch nahi ho paya.");
   const rows = await res.json();
+  return rows?.[0] ? fromDb(rows[0]) : null;
+}
+export async function fetchBookingRequestByConfirmationCode(params: {
+  supabaseUrl: string;
+  supabaseKey: string;
+  confirmationCode: string;
+}) {
+  const code = String(params.confirmationCode || "").trim().toUpperCase();
+
+  if (!code) return null;
+
+  const res = await fetch(
+    `${params.supabaseUrl}/rest/v1/booking_requests?select=*&confirmation_code=eq.${encodeURIComponent(code)}&limit=1`,
+    { headers: headers(params.supabaseKey, "return=minimal") }
+  );
+
+  if (!res.ok) throw new Error("Booking confirmation code fetch nahi ho paya.");
+
+  const rows = await res.json();
+
   return rows?.[0] ? fromDb(rows[0]) : null;
 }
 
@@ -157,7 +185,11 @@ export async function confirmBookingRequestAfterDownload(params: {
   vehicleType?: string;
   vehicleModel?: string;
   driverName: string;
-  driverMobile: string;
+driverMobile: string;
+confirmationCode?: string;
+fare?: string | number;
+advance?: string | number;
+netPayable?: string | number;
 }) {
   const res = await fetch(`${params.supabaseUrl}/rest/v1/booking_requests?id=eq.${params.requestId}`, {
     method: "PATCH",
@@ -168,8 +200,12 @@ export async function confirmBookingRequestAfterDownload(params: {
       vehicle_type: params.vehicleType || "",
       vehicle_model: params.vehicleModel || "",
       driver_name: params.driverName,
-      driver_mobile: cleanPhone(params.driverMobile),
-      confirmed_at: new Date().toISOString(),
+driver_mobile: cleanPhone(params.driverMobile),
+confirmation_code: params.confirmationCode || null,
+fare: Number(params.fare || 0),
+advance: Number(params.advance || 0),
+net_payable: Number(params.netPayable || 0),
+confirmed_at: new Date().toISOString(),
     }),
   });
   if (!res.ok) throw new Error("Booking request final confirm nahi ho paya.");
