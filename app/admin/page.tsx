@@ -451,6 +451,7 @@ x.textAlign = "left";
 function openDriverWhatsAppFromForm() {
   window.location.href = `https://api.whatsapp.com/send?phone=91${cleanPhone(form.driverMobile)}&text=${encodeURIComponent(driverDutyMessage())}`;
 }
+  function customerConfirmationLink(){if(!activeBookingRequest?.id)return "";return `${window.location.origin}/?bookingRequestId=${encodeURIComponent(activeBookingRequest.id)}`;} function customerConfirmationLinkMessage(){const link=customerConfirmationLink();return `✅ *Booking Confirmed - Vishwakarma Travels*\n\n${form.gender} *${form.customerName||"Customer"}*\n\nYour booking is confirmed.\n\n📍 *Route:* ${form.pickup||"-"} to ${form.drop||"-"}\n📅 *Date:* ${formatDate(form.journeyDate)||"-"}\n🕒 *Time:* ${formatTime(form.journeyTime)||"-"}\n🚖 *Vehicle:* ${form.vehicleType||"-"} ${form.vehicleModel||"-"}\n🔢 *Vehicle No:* ${vehicleNo(form.vehicleNumber)||"-"}\n👨‍✈️ *Driver:* ${form.driverName||"-"}\n💵 *Fare Charges:* Rs ${fare||0}\n\n👇 Tap this link to view your confirmed booking details:\n${link}\n\n- Vishwakarma Travels`;} async function sendConfirmationLinkToCustomer(){if(!activeBookingRequest?.id){alert("Pehle customer booking request accept/select karo.");return;}const customerPhone=cleanPhone(form.customerPhone);if(customerPhone.length!==10){alert("Customer WhatsApp number invalid hai.");return;}if(!vehicleNo(form.vehicleNumber)){alert("Vehicle number fill/select karo.");return;}if(!form.driverName.trim()||cleanPhone(form.driverMobile).length!==10){alert("Driver name aur driver mobile fill karo.");return;}try{await confirmBookingRequestAfterDownload({supabaseUrl,supabaseKey,requestId:activeBookingRequest.id,vehicleNo:vehicleNo(form.vehicleNumber),vehicleType:form.vehicleType,vehicleModel:form.vehicleModel,driverName:form.driverName,driverMobile:form.driverMobile,fare,advance,netPayable:net});notifyCustomerBookingConfirmed().catch((err)=>console.log("Customer confirmed notification failed:",err));window.location.href=`https://api.whatsapp.com/send?phone=91${customerPhone}&text=${encodeURIComponent(customerConfirmationLinkMessage())}`;}catch(err){console.log("Customer confirmation link send failed:",err);alert("Booking confirmation link send nahi ho paya.");}}
   
   function validate() {
     if (!supabaseUrl || !supabaseKey) return alert("Supabase URL/KEY missing hai."), false;
@@ -911,8 +912,8 @@ function editCustomer(c: Customer){setForm((p)=>({...p,customerName:c.name||"",c
     Send to Driver
   </button>
 </div>
-<div style={buttonRow}><button type="button" onClick={downloadBookingCopy} style={smallDownloadBtn}>Download</button><button disabled={loading} style={smallSaveBtn}>{loading ? "Saving..." : "Save + PDF"}</button><button type="button" onClick={sendWhatsApp} style={smallWaBtn}>WhatsApp</button></div>{downloadNotice && <div style={downloadOk}>✓ Booking copy downloaded successfully!</div>}</form>
-        <section style={panel}>
+<div style={finalActionRow}><button type="button" onClick={sendConfirmationLinkToCustomer} style={sendConfirmLinkBtn}>Send Booking Confirmation Link</button><button type="submit" disabled={loading} style={finalSavePdfBtn}>{loading ? "Saving..." : "Save + PDF"}</button></div>{downloadNotice && <div style={downloadOk}>✓ Booking copy downloaded successfully!</div>}
+      <section style={panel}>
       <div style={recentBookingHeader}>
         <h2 style={{ margin: 0 }}>Recent Bookings</h2>
         <button
@@ -1016,6 +1017,7 @@ const masterButtonRow: CSSProperties = { display: "grid", gridTemplateColumns: "
 const masterBaseBtn: CSSProperties = { minWidth: 0, padding: "13px 8px", color: "white", border: 0, borderRadius: 14, fontWeight: 950, fontSize: 14, lineHeight: 1.15 };
 const sendCustomerBtn: CSSProperties = { ...masterBaseBtn, background: "#16a34a" };
 const sendDriverBtn: CSSProperties = { ...masterBaseBtn, background: "#0b2d6b" };
+const finalActionRow: CSSProperties = { display: "grid", gridTemplateColumns: "1.35fr .65fr", gap: 10, marginTop: 14 }; const sendConfirmLinkBtn: CSSProperties = { minWidth: 0, padding: "13px 8px", borderRadius: 14, border: 0, background: "#7c3aed", color: "white", fontWeight: 950, fontSize: 13, lineHeight: 1.15 }; const finalSavePdfBtn: CSSProperties = { minWidth: 0, padding: "13px 8px", borderRadius: 14, border: 0, background: "#15803d", color: "white", fontWeight: 950, fontSize: 14, lineHeight: 1.15 };
 const smallBaseBtn: CSSProperties = { minWidth: 0, padding: "11px 6px", color: "white", border: 0, borderRadius: 12, fontWeight: 900, fontSize: 13, lineHeight: 1.1 };
 const smallDownloadBtn: CSSProperties = { ...smallBaseBtn, background: "#f97316" };
 const smallSaveBtn: CSSProperties = { ...smallBaseBtn, background: "#15803d" };
