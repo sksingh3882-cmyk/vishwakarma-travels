@@ -510,15 +510,15 @@ function PremiumConfirmedBooking({
 
         <div style={detailGrid}>
           <PremiumDetailCard
-            title="Vehicle Type"
-            imageSrc={vehicleImageSrc}
-            imageAlt={vehicleName}
-            fallback="🚗"
-            name={vehicleName}
-            rating={rating.vehicle}
-            onViewRating={() => setSelectedPopup("vehicle")}
-          />
-
+  title="Vehicle Type"
+  imageSrc={vehicleImageSrc}
+  imageAlt={vehicleName}
+  fallback="🚗"
+  name={vehicleName}
+  vehicleNo={request.vehicleNo}
+  rating={rating.vehicle}
+  onViewRating={() => setSelectedPopup("vehicle")}
+/>
           <PremiumDetailCard
             title="Driver Name"
             imageSrc={driverImageSrc}
@@ -570,6 +570,7 @@ function PremiumDetailCard({
   imageAlt,
   fallback,
   name,
+  vehicleNo,
   rating,
   onViewRating,
   circle = false,
@@ -579,6 +580,7 @@ function PremiumDetailCard({
   imageAlt: string;
   fallback: string;
   name: string;
+  vehicleNo?: string;
   rating: RatingDetails | null;
   onViewRating: () => void;
   circle?: boolean;
@@ -587,14 +589,20 @@ function PremiumDetailCard({
     <div style={profileCard}>
       <div style={profileTitle}>{title}</div>
 
-      <PremiumImage
-        src={imageSrc}
-        alt={imageAlt}
-        fallback={fallback}
-        circle={circle}
-      />
+    <PremiumImage
+  src={imageSrc}
+  alt={imageAlt}
+  fallback={fallback}
+  circle={circle}
+/>
 
-      <div style={profileName}>{name || "-"}</div>
+{vehicleNo ? (
+  <div style={vehicleNoBadge}>
+    Vehicle No: <b>{formatVehicleNumber(vehicleNo)}</b>
+  </div>
+) : null}
+
+<div style={profileName}>{name || "-"}</div>
 
       <RealStarRating rating={rating} onView={onViewRating} />
 
@@ -898,6 +906,11 @@ function getFareValue(request: BookingRequestRecord) {
   return raw;
 }
 
+function formatVehicleNumber(value?: string) {
+  return String(value || "")
+    .replace(/[^a-zA-Z0-9]/g, "")
+    .toUpperCase();
+}
 function formatIndianPhone(value: string) {
   const phone = cleanPhone(value);
 
@@ -1311,6 +1324,21 @@ const avatarFallback = {
   fontWeight: 950,
 } as const;
 
+const vehicleNoBadge = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 3,
+  margin: "0 auto 6px",
+  padding: "4px 7px",
+  borderRadius: 999,
+  background: "#fffaf0",
+  color: "#a16b24",
+  fontSize: 10,
+  fontWeight: 900,
+  border: "1px solid #ead8bd",
+  whiteSpace: "nowrap",
+} as const;
 const profileName = {
   color: "#071633",
   fontSize: 14,
