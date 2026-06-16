@@ -136,11 +136,13 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
 
             if (record.driverName || record.driverMobile || record.vehicleNo) {
               const receivedDetails: DriverVehicleSubmission = {
-                driverName: record.driverName || "",
-                driverMobile: record.driverMobile || "",
-                vehicleNumber: record.vehicleNo || "",
-                driverVehicleModel: "",
-              };
+  driverName: record.driverName || "",
+  driverMobile: record.driverMobile || "",
+  vehicleNumber: record.vehicleNo || "",
+  driverVehicleModel: "",
+  driverImageUrl: record.driverImageUrl || "",
+  driverSelfieUrl: record.driverSelfieUrl || "",
+};
 
               setReceivedDriverDetails(receivedDetails);
 
@@ -881,14 +883,16 @@ async function saveAssignedVehicleToVehicleList(params: {
   }
 
   const payload = {
-    vehicle_number: vehicleNumber,
-    vehicle_type: params.booking.vehicleType,
-    vehicle_model: params.booking.vehicleModel,
-    driver_name: params.details.driverName,
-    phone: cleanPhoneForAssignment(params.details.driverMobile),
-    route: `${params.booking.pickupArea} to ${params.booking.dropArea}`,
-    status: "Active",
-  };
+  vehicle_number: vehicleNumber,
+  vehicle_type: params.booking.vehicleType,
+  vehicle_model: params.booking.vehicleModel,
+  driver_name: params.details.driverName,
+  phone: cleanPhoneForAssignment(params.details.driverMobile),
+  driver_image_url: params.details.driverImageUrl || null,
+  driver_selfie_url: params.details.driverSelfieUrl || null,
+  route: `${params.booking.pickupArea} to ${params.booking.dropArea}`,
+  status: "Active",
+};
 
   const res = await fetch(`${params.supabaseUrl}/rest/v1/vehicles`, {
     method: "POST",
