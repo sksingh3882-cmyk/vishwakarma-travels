@@ -22,32 +22,7 @@ function cleanPhone(value: string) {
   return phone.slice(-10);
 }
 
-const LAST_CUSTOMER_BOOKING_REQUEST_KEY = "vt-last-customer-booking-request-id";
 
-function playBookingConfirmedNotice(customerName?: string) {
-  if (typeof window === "undefined") return;
-
-  try {
-    if (!("speechSynthesis" in window)) return;
-
-    const name = String(customerName || "Customer").trim() || "Customer";
-
-    window.speechSynthesis.cancel();
-
-    const message = new SpeechSynthesisUtterance(
-      `Hi ${name}. Your booking is confirmed. Please tap to see the vehicle and driver details.`
-    );
-
-    message.lang = "en-IN";
-    message.rate = 0.9;
-    message.pitch = 1;
-    message.volume = 1;
-
-    window.speechSynthesis.speak(message);
-  } catch (error) {
-    console.log("Booking confirmed audio failed:", error);
-  }
-}
 
 export default function CustomerBookNowSection({ bookingData, onDownloadCopy, onWhatsAppRequest, onRequestSentSuccess }: Props) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -62,10 +37,7 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
   const [searched, setSearched] = useState(false);
   const [autoOpenDone, setAutoOpenDone] = useState(false);
     const [successOpen, setSuccessOpen] = useState(false);
-  const [watchRequest, setWatchRequest] = useState<BookingRequestRecord | null>(null);
-  const [confirmToast, setConfirmToast] = useState<BookingRequestRecord | null>(null);
-  const [notifiedConfirmedId, setNotifiedConfirmedId] = useState("");
-  const [confirmOpen, setConfirmOpen] = useState(false);
+const [confirmOpen, setConfirmOpen] = useState(false);
   const [submittedSignature, setSubmittedSignature] = useState("");
   const [alreadySubmittedAlert, setAlreadySubmittedAlert] = useState("");
   const currentSignature = [
@@ -95,101 +67,14 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
         if (!latest) return;
 
         setSelectedRequest(latest);
-        setWatchRequest(latest);
+        
         setListOpen(false);
         setOpen(true);
       })
       .catch((err) => console.log("Auto open booking status failed:", err));
   }, [autoOpenDone, supabaseUrl, supabaseKey]);
 
-  useEffect(() => {
-    if (!supabaseUrl || !supabaseKey) return;
-    if (typeof window === "undefined") return;
-
-    const savedRequestId = window.localStorage.getItem(LAST_CUSTOMER_BOOKING_REQUEST_KEY);
-
-    if (!savedRequestId) return;
-    if (watchRequest?.id === savedRequestId) return;
-
-    let stopped = false;
-
-    fetchBookingRequestById({
-      supabaseUrl,
-      supabaseKey,
-      requestId: savedRequestId,
-    })
-      .then((latest) => {
-        if (stopped || !latest) return;
-
-        setWatchRequest(latest);
-
-        if (latest.status === "cancelled") {
-          window.localStorage.removeItem(LAST_CUSTOMER_BOOKING_REQUEST_KEY);
-        }
-      })
-      .catch((error) => {
-        console.log("Saved booking request recovery failed:", error);
-      });
-
-    return () => {
-      stopped = true;
-    };
-  }, [supabaseUrl, supabaseKey, watchRequest?.id]);
-
-  useEffect(() => {
-    if (!watchRequest?.id || !supabaseUrl || !supabaseKey) return;
-
-    let stopped = false;
-
-    async function checkConfirmedStatus() {
-      try {
-        const latest = await fetchBookingRequestById({
-          supabaseUrl,
-          supabaseKey,
-          requestId: watchRequest.id,
-        });
-
-        if (stopped || !latest) return;
-
-        setWatchRequest(latest);
-
-        if (latest.status === "cancelled") {
-          window.localStorage.removeItem(LAST_CUSTOMER_BOOKING_REQUEST_KEY);
-          return;
-        }
-
-        if (latest.status === "confirmed" && latest.id !== notifiedConfirmedId) {
-          setNotifiedConfirmedId(latest.id);
-          setSelectedRequest(latest);
-          setConfirmToast(latest);
-          playBookingConfirmedNotice(latest.customerName);
-        }
-      } catch (error) {
-        console.log("Booking confirmed watcher failed:", error);
-      }
-    }
-
-    checkConfirmedStatus();
-
-    const intervalId = window.setInterval(checkConfirmedStatus, 5000);
-
-    return () => {
-      stopped = true;
-      window.clearInterval(intervalId);
-    };
-  }, [watchRequest?.id, supabaseUrl, supabaseKey, notifiedConfirmedId]);
-
-  function openConfirmedToast() {
-    if (!confirmToast) return;
-
-    window.localStorage.removeItem(LAST_CUSTOMER_BOOKING_REQUEST_KEY);
-
-    setSelectedRequest(confirmToast);
-    setListOpen(false);
-    setSuccessOpen(false);
-    setConfirmToast(null);
-    setOpen(true);
-  }
+  
 
   function openYourBookings() {
     setListOpen(true);
@@ -242,23 +127,13 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
 
   function openExistingRequest(request: BookingRequestRecord) {
     setSelectedRequest(request);
-    setWatchRequest(request);
+    
     setListOpen(false);
     setOpen(true);
   }
     return (
     <div style={wrap}>
-  {confirmToast && (
-    <button type="button" style={confirmToastBox} onClick={openConfirmedToast}>
-      <div style={confirmToastTop}>Trip Details</div>
-      <div style={confirmToastTitle}>Booking Confirmed</div>
-      <div style={confirmToastRoute}>
-        {(confirmToast.pickup || "Pickup")} to {(confirmToast.drop || "Drop")}
-      </div>
-      <div style={confirmToastHint}>Tap to see the Details</div>
-      <span style={confirmToastButton}>Tap to See</span>
-    </button>
-  )}
+
 
   {alreadySubmittedAlert && (
     <div style={alreadySubmittedBox}>
@@ -421,11 +296,7 @@ export default function CustomerBookNowSection({ bookingData, onDownloadCopy, on
   setOpen(false);
   setSelectedRequest(null);
 
-    if (createdRequest?.id) {
-    window.localStorage.setItem(LAST_CUSTOMER_BOOKING_REQUEST_KEY, createdRequest.id);
-    setWatchRequest(createdRequest);
-    setNotifiedConfirmedId("");
-    }
+    
 
   setSubmittedSignature(currentSignature);
   setAlreadySubmittedAlert("");
@@ -494,63 +365,7 @@ function statusLabel(status: string) {
   return "Waiting";
 }
 const wrap = { width: "100%", display: "grid", gap: 8, marginTop: 10 } as const;
-const confirmToastBox = {
-  position: "fixed",
-  top: 14,
-  left: "50%",
-  transform: "translateX(-50%)",
-  width: "min(90vw, 340px)",
-  zIndex: 10000,
-  border: "1px solid #bfdbfe",
-  background: "#ffffff",
-  color: "#0f172a",
-  borderRadius: 20,
-  padding: "13px 14px",
-  boxShadow: "0 20px 48px rgba(15,23,42,.26)",
-  display: "grid",
-  gap: 6,
-  textAlign: "left",
-  cursor: "pointer",
-} as const;
 
-const confirmToastTop = {
-  color: "#64748b",
-  fontSize: 11,
-  fontWeight: 950,
-  textTransform: "uppercase",
-  letterSpacing: ".4px",
-} as const;
-
-const confirmToastTitle = {
-  color: "#0b2d6b",
-  fontSize: 18,
-  fontWeight: 1000,
-  lineHeight: 1.15,
-} as const;
-
-const confirmToastRoute = {
-  color: "#111827",
-  fontSize: 14,
-  fontWeight: 900,
-  lineHeight: 1.25,
-} as const;
-
-const confirmToastHint = {
-  color: "#64748b",
-  fontSize: 12,
-  fontWeight: 800,
-} as const;
-
-const confirmToastButton = {
-  marginTop: 5,
-  justifySelf: "start",
-  borderRadius: 999,
-  background: "#0b2d6b",
-  color: "#ffffff",
-  padding: "7px 14px",
-  fontSize: 12,
-  fontWeight: 950,
-} as const;
 const alreadySubmittedBox = {
   width: "min(92vw, 330px)",
   justifySelf: "center",
