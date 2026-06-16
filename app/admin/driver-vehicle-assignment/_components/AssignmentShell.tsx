@@ -193,7 +193,17 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   }
 
-      async function handleSendDriverLink() {
+        async function handleCopyDriverLink() {
+    const freshLink = await prepareFreshDriverAssignmentLink();
+    const linkToCopy = freshLink || driverDutyLink;
+
+    if (!linkToCopy) return;
+
+    await navigator.clipboard.writeText(linkToCopy);
+    setCopyStatus("Fresh short driver duty link copied.");
+  }
+
+  async function handleSendDriverLink() {
     const freshLink = await prepareFreshDriverAssignmentLink();
     const linkToSend = freshLink || driverDutyLink;
 
@@ -206,21 +216,7 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
 
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-      }
-
-    async function handleSendDriverLink() {
-    await prepareFreshDriverAssignmentLink();
-
-    const message = [
-      "Vishwakarma Travels Driver Duty Link",
-      "",
-      "Please open this link and submit your vehicle details:",
-      driverDutyLink,
-    ].join("\n");
-
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-    }
+  }
 
      async function prepareFreshDriverAssignmentLink(): Promise<string> {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
