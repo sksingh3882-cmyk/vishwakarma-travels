@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ChangeEvent, type ReactNode } from "react";
 import {
   fetchBookingRequestById,
   updateBookingRequestDriverVehicle,
   clearBookingRequestDriverVehicle,
+  ensureBookingRequestDriverAssignmentCode,
   type BookingRequestRecord,
 } from "@/lib/bookingRequestService";
 import { buildGroupMessage } from "../_lib/buildGroupMessage";
@@ -22,6 +23,8 @@ const emptyDriverSubmission: DriverVehicleSubmission = {
   driverMobile: "",
   vehicleNumber: "",
   driverVehicleModel: "",
+  driverImageUrl: "",
+  driverSelfieUrl: "",
 };
 
 export default function AssignmentShell({ bookingId, forceDriverMode = false }: AssignmentShellProps) {
@@ -30,8 +33,9 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
   const [booking, setBooking] = useState<AssignmentBookingDetails>(mockBooking);
   const [isDriverMode, setIsDriverMode] = useState(false);
   const [showTripPopup, setShowTripPopup] = useState(false);
-  const [showDriverReceivedPopup, setShowDriverReceivedPopup] = useState(false);
+    const [showDriverReceivedPopup, setShowDriverReceivedPopup] = useState(false);
   const [copyStatus, setCopyStatus] = useState("");
+  const [driverAssignmentCode, setDriverAssignmentCode] = useState("");
   const [loadStatus, setLoadStatus] = useState("Loading booking details...");
 
   const [draft, setDraft] = useState<AdminAssignmentDraft>({
@@ -44,6 +48,11 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
 
   const [driverForm, setDriverForm] =
     useState<DriverVehicleSubmission>(emptyDriverSubmission);
+    const [driverPhotoFile, setDriverPhotoFile] = useState<File | null>(null);
+  const [driverSelfieFile, setDriverSelfieFile] = useState<File | null>(null);
+  const [driverPhotoPreview, setDriverPhotoPreview] = useState("");
+  const [driverSelfiePreview, setDriverSelfiePreview] = useState("");
+  const [uploadStatus, setUploadStatus] = useState("");
 
   const [receivedDriverDetails, setReceivedDriverDetails] =
     useState<DriverVehicleSubmission | null>(null);
@@ -113,9 +122,10 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
           if (stopped) return;
 
           if (record) {
-            const mappedBooking = mapRequestToAssignmentBooking(record, mockBooking);
+                        const mappedBooking = mapRequestToAssignmentBooking(record, mockBooking);
 
             setBooking(mappedBooking);
+            setDriverAssignmentCode(record.driverAssignmentCode || "");
             setDraft((previous) => ({
               ...previous,
               pickupArea: mappedBooking.pickupArea,
@@ -126,11 +136,13 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
 
             if (record.driverName || record.driverMobile || record.vehicleNo) {
               const receivedDetails: DriverVehicleSubmission = {
-                driverName: record.driverName || "",
-                driverMobile: record.driverMobile || "",
-                vehicleNumber: record.vehicleNo || "",
-                driverVehicleModel: "",
-              };
+  driverName: record.driverName || "",
+  driverMobile: record.driverMobile || "",
+  vehicleNumber: record.vehicleNo || "",
+  driverVehicleModel: "",
+  driverImageUrl: record.driverImageUrl || "",
+  driverSelfieUrl: record.driverSelfieUrl || "",
+};
 
               setReceivedDriverDetails(receivedDetails);
 
@@ -164,14 +176,19 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
   }, [bookingId, mockBooking, isDriverMode]);
 
 
-    const driverDutyLink = useMemo(() => {
+      const driverDutyLink = useMemo(() => {
     if (typeof window === "undefined") return "";
 
     const searchParams = new URLSearchParams(window.location.search);
     const freshToken = searchParams.get("fresh") || Date.now().toString();
 
-    return `${window.location.origin}/driver-vehicle-assignment/${encodeURIComponent(bookingId)}?fresh=${encodeURIComponent(freshToken)}`;
-  }, [bookingId]);
+    return buildDriverDutyUrl({
+      origin: window.location.origin,
+      bookingId,
+      driverAssignmentCode,
+      freshToken,
+    });
+  }, [bookingId, driverAssignmentCode]);
 
   const groupMessage = useMemo(() => {
     return buildGroupMessage({
@@ -185,36 +202,38 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   }
 
-    async function handleCopyDriverLink() {
-    if (!driverDutyLink) return;
+        async function handleCopyDriverLink() {
+    const freshLink = await prepareFreshDriverAssignmentLink();
+    const linkToCopy = freshLink || driverDutyLink;
 
-    await prepareFreshDriverAssignmentLink();
+    if (!linkToCopy) return;
 
-    await navigator.clipboard.writeText(driverDutyLink);
-    setCopyStatus("Fresh driver duty link copied.");
-    }
+    await navigator.clipboard.writeText(linkToCopy);
+    setCopyStatus("Fresh short driver duty link copied.");
+  }
 
-    async function handleSendDriverLink() {
-    await prepareFreshDriverAssignmentLink();
+  async function handleSendDriverLink() {
+    const freshLink = await prepareFreshDriverAssignmentLink();
+    const linkToSend = freshLink || driverDutyLink;
 
     const message = [
       "Vishwakarma Travels Driver Duty Link",
       "",
-      "Please open this link and submit your vehicle details:",
-      driverDutyLink,
+      "Please open this short link and submit your vehicle details:",
+      linkToSend,
     ].join("\n");
 
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-    }
+  }
 
-   async function prepareFreshDriverAssignmentLink() {
+     async function prepareFreshDriverAssignmentLink(): Promise<string> {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
     if (!supabaseUrl || !supabaseKey) {
       setCopyStatus("Supabase URL or key is missing.");
-      return;
+      return driverDutyLink;
     }
 
     try {
@@ -224,68 +243,125 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
         requestId: bookingId,
       });
 
+      const freshRecord = await ensureBookingRequestDriverAssignmentCode({
+        supabaseUrl,
+        supabaseKey,
+        requestId: bookingId,
+      });
+
+      const nextDriverAssignmentCode = freshRecord.driverAssignmentCode || "";
+      const nextFreshToken = Date.now().toString();
+
+      setDriverAssignmentCode(nextDriverAssignmentCode);
       setReceivedDriverDetails(null);
       setSavedAssignment(null);
       setDriverForm(emptyDriverSubmission);
       window.localStorage.removeItem(getDriverStorageKey(bookingId));
 
-      setCopyStatus("Fresh assignment form is ready.");
+      const shortLink = buildDriverDutyUrl({
+        origin: window.location.origin,
+        bookingId,
+        driverAssignmentCode: nextDriverAssignmentCode,
+        freshToken: nextFreshToken,
+      });
+
+      setCopyStatus("Fresh short assignment form is ready.");
+      return shortLink;
     } catch (error) {
       console.log("Fresh driver assignment link prepare failed:", error);
       setCopyStatus("Fresh assignment link could not be prepared.");
+      return driverDutyLink;
     }
-   }
-  async function handleDriverSubmit() {
-  const cleanedDetails: DriverVehicleSubmission = {
-    driverName: driverForm.driverName.trim(),
-    driverMobile: cleanPhoneForAssignment(driverForm.driverMobile),
-    vehicleNumber: normalizeVehicleNumber(driverForm.vehicleNumber),
-    driverVehicleModel: driverForm.driverVehicleModel.trim(),
-  };
+     }
+    async function handleDriverSubmit() {
+    const cleanedDetails: DriverVehicleSubmission = {
+      driverName: driverForm.driverName.trim(),
+      driverMobile: cleanPhoneForAssignment(driverForm.driverMobile),
+      vehicleNumber: normalizeVehicleNumber(driverForm.vehicleNumber),
+      driverVehicleModel: driverForm.driverVehicleModel.trim(),
+      driverImageUrl: driverForm.driverImageUrl || "",
+      driverSelfieUrl: driverForm.driverSelfieUrl || "",
+    };
 
-  if (
-    !cleanedDetails.driverName ||
-    !cleanedDetails.driverMobile ||
-    !cleanedDetails.vehicleNumber
-  ) {
-    alert("Driver name, driver mobile number, and Vehicle number are Required..");
-    return;
-  }
+    if (
+      !cleanedDetails.driverName ||
+      !cleanedDetails.driverMobile ||
+      !cleanedDetails.vehicleNumber
+    ) {
+      alert("Driver name, driver mobile number, and Vehicle number are Required..");
+      return;
+    }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
-  if (!supabaseUrl || !supabaseKey) {
-    alert("Supbase and Missing: Driver details could not be saved..");
-    return;
-  }
+    if (!supabaseUrl || !supabaseKey) {
+      alert("Supbase and Missing: Driver details could not be saved..");
+      return;
+    }
 
-  try {
-    await updateBookingRequestDriverVehicle({
-      supabaseUrl,
-      supabaseKey,
-      requestId: bookingId,
-      driverName: cleanedDetails.driverName,
-      driverMobile: cleanedDetails.driverMobile,
-      vehicleNo: cleanedDetails.vehicleNumber,
-    });
+    try {
+      setUploadStatus("Compressing and uploading driver photo...");
 
-        window.localStorage.setItem(
-      getDriverStorageKey(bookingId),
-      JSON.stringify(cleanedDetails)
-    );
+      const driverImageUrl = driverPhotoFile
+        ? await uploadDriverFileToStorage({
+            supabaseUrl,
+            supabaseKey,
+            bookingId,
+            kind: "driver-photo",
+            file: driverPhotoFile,
+          })
+        : cleanedDetails.driverImageUrl || "";
 
-    setReceivedDriverDetails(cleanedDetails);
-    setDriverForm(emptyDriverSubmission);
+      const driverSelfieUrl = driverSelfieFile
+        ? await uploadDriverFileToStorage({
+            supabaseUrl,
+            supabaseKey,
+            bookingId,
+            kind: "driver-selfie",
+            file: driverSelfieFile,
+          })
+        : cleanedDetails.driverSelfieUrl || "";
 
-    alert(
-  "Your vehicle details have been submitted successfully. Confirmation Massage Will Send You On Your Whatsapp."
-);
-  
-  } catch {
-    alert("Driver and vehicle details could not be saved in the database. Please try again..");
-  }
-  }
+      const finalDetails: DriverVehicleSubmission = {
+        ...cleanedDetails,
+        driverImageUrl,
+        driverSelfieUrl,
+      };
+
+      await updateBookingRequestDriverVehicle({
+        supabaseUrl,
+        supabaseKey,
+        requestId: bookingId,
+        driverName: finalDetails.driverName,
+        driverMobile: finalDetails.driverMobile,
+        vehicleNo: finalDetails.vehicleNumber,
+        driverImageUrl: finalDetails.driverImageUrl,
+        driverSelfieUrl: finalDetails.driverSelfieUrl,
+      });
+
+      window.localStorage.setItem(
+        getDriverStorageKey(bookingId),
+        JSON.stringify(finalDetails)
+      );
+
+      setReceivedDriverDetails(finalDetails);
+      setDriverForm(emptyDriverSubmission);
+      setDriverPhotoFile(null);
+      setDriverSelfieFile(null);
+      setDriverPhotoPreview("");
+      setDriverSelfiePreview("");
+      setUploadStatus("");
+
+      alert(
+        "Your vehicle details have been submitted successfully. Confirmation Massage Will Send You On Your Whatsapp."
+      );
+    } catch (error) {
+      console.log("Driver photo upload/save failed:", error);
+      setUploadStatus("");
+      alert("Driver and vehicle details could not be saved in the database. Please try again..");
+    }
+    }
 
   async function handleUseVehicleDetails() {
   if (!receivedDriverDetails) return;
@@ -360,7 +436,20 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
   }
   }
 
-    const isBookingStillLoading = loadStatus === "Loading booking details...";
+      function handleDriverPhotoChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0] || null;
+
+    setDriverPhotoFile(file);
+    setDriverPhotoPreview(file ? URL.createObjectURL(file) : "");
+  }
+
+  function handleDriverSelfieChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0] || null;
+
+    setDriverSelfieFile(file);
+    setDriverSelfiePreview(file ? URL.createObjectURL(file) : "");
+  }
+  const isBookingStillLoading = loadStatus === "Loading booking details...";
   const isRealBookingLoaded = loadStatus === "Real booking loaded.";
   const driverDetailsAlreadySubmitted = Boolean(
     receivedDriverDetails?.driverName ||
@@ -458,6 +547,24 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
                     placeholder="Dzire / Ertiga / Innova etc."
                   />
 
+                                    <FileCaptureBox
+                    label="Upload Driver Photo"
+                    helper="Gallery se driver ka clear photo select karein."
+                    previewSrc={driverPhotoPreview}
+                    fileName={driverPhotoFile?.name || ""}
+                    onChange={handleDriverPhotoChange}
+                  />
+
+                  <FileCaptureBox
+                    label="Take Driver Selfie"
+                    helper="Mobile camera se live selfie capture karein."
+                    previewSrc={driverSelfiePreview}
+                    fileName={driverSelfieFile?.name || ""}
+                    capture="user"
+                    onChange={handleDriverSelfieChange}
+                  />
+
+                  {uploadStatus ? <p style={successText}>{uploadStatus}</p> : null}
                   <button type="button" onClick={handleDriverSubmit} style={primaryBtn}>
                     Submit Vehicle Details
                   </button>
@@ -776,14 +883,16 @@ async function saveAssignedVehicleToVehicleList(params: {
   }
 
   const payload = {
-    vehicle_number: vehicleNumber,
-    vehicle_type: params.booking.vehicleType,
-    vehicle_model: params.booking.vehicleModel,
-    driver_name: params.details.driverName,
-    phone: cleanPhoneForAssignment(params.details.driverMobile),
-    route: `${params.booking.pickupArea} to ${params.booking.dropArea}`,
-    status: "Active",
-  };
+  vehicle_number: vehicleNumber,
+  vehicle_type: params.booking.vehicleType,
+  vehicle_model: params.booking.vehicleModel,
+  driver_name: params.details.driverName,
+  phone: cleanPhoneForAssignment(params.details.driverMobile),
+  driver_image_url: params.details.driverImageUrl || null,
+  driver_selfie_url: params.details.driverSelfieUrl || null,
+  route: `${params.booking.pickupArea} to ${params.booking.dropArea}`,
+  status: "Active",
+};
 
   const res = await fetch(`${params.supabaseUrl}/rest/v1/vehicles`, {
     method: "POST",
@@ -794,6 +903,163 @@ async function saveAssignedVehicleToVehicleList(params: {
   if (!res.ok) {
     throw new Error("Assigned vehicle could not be saved to vehicle list.");
   }
+}
+async function uploadDriverFileToStorage(params: {
+  supabaseUrl: string;
+  supabaseKey: string;
+  bookingId: string;
+  kind: "driver-photo" | "driver-selfie";
+  file: File;
+}) {
+  const bucket = "driver-uploads";
+  const uploadFile = await compressDriverImageFile(params.file);
+  const extension = getFileExtension(uploadFile);
+  const filePath = `${normalizeStorageSegment(params.bookingId)}/${params.kind}-${Date.now()}-${Math.random()
+    .toString(36)
+    .slice(2)}.${extension}`;
+
+  const uploadUrl = `${params.supabaseUrl}/storage/v1/object/${bucket}/${encodeStoragePath(
+    filePath
+  )}`;
+
+  const uploadRes = await fetch(uploadUrl, {
+    method: "POST",
+    headers: {
+      apikey: params.supabaseKey,
+      Authorization: `Bearer ${params.supabaseKey}`,
+      "Content-Type": uploadFile.type || "image/jpeg",
+    },
+    body: uploadFile,
+  });
+
+  if (!uploadRes.ok) {
+    const message = await uploadRes.text();
+    throw new Error(message || "Driver image upload failed.");
+  }
+
+  return `${params.supabaseUrl}/storage/v1/object/public/${bucket}/${encodeStoragePath(
+    filePath
+  )}`;
+}
+
+async function compressDriverImageFile(file: File) {
+  const type = String(file.type || "").toLowerCase();
+
+  if (
+    !type.startsWith("image/") ||
+    type.includes("gif") ||
+    type.includes("heic") ||
+    type.includes("heif")
+  ) {
+    return file;
+  }
+
+  try {
+    const image = await loadImageElementFromFile(file);
+    const maxSide = 900;
+    const originalWidth = image.naturalWidth || image.width;
+    const originalHeight = image.naturalHeight || image.height;
+
+    if (!originalWidth || !originalHeight) {
+      return file;
+    }
+
+    const scale = Math.min(1, maxSide / Math.max(originalWidth, originalHeight));
+    const width = Math.max(1, Math.round(originalWidth * scale));
+    const height = Math.max(1, Math.round(originalHeight * scale));
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    const context = canvas.getContext("2d");
+
+    if (!context) {
+      return file;
+    }
+
+    context.drawImage(image, 0, 0, width, height);
+
+    const blob = await canvasToJpegBlob(canvas, 0.72);
+
+    if (!blob || blob.size >= file.size) {
+      return file;
+    }
+
+    const baseName = file.name.replace(/\.[^.]+$/, "") || "driver-image";
+
+    return new File([blob], `${baseName}.jpg`, {
+      type: "image/jpeg",
+      lastModified: Date.now(),
+    });
+  } catch (error) {
+    console.log("Driver image compression skipped:", error);
+    return file;
+  }
+}
+
+function loadImageElementFromFile(file: File) {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image();
+    const url = URL.createObjectURL(file);
+
+    image.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(image);
+    };
+
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Image preview load failed."));
+    };
+
+    image.src = url;
+  });
+}
+
+function canvasToJpegBlob(canvas: HTMLCanvasElement, quality: number) {
+  return new Promise<Blob | null>((resolve) => {
+    canvas.toBlob(resolve, "image/jpeg", quality);
+  });
+}
+
+function getFileExtension(file: File) {
+  const nameExtension = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+  if (nameExtension) return nameExtension;
+  if (file.type.includes("png")) return "png";
+  if (file.type.includes("webp")) return "webp";
+  if (file.type.includes("gif")) return "gif";
+  if (file.type.includes("heic")) return "heic";
+
+  return "jpg";
+}
+
+function normalizeStorageSegment(value: string) {
+  return String(value || "booking")
+    .trim()
+    .replace(/[^a-zA-Z0-9_-]/g, "-")
+    .slice(0, 80);
+}
+
+function encodeStoragePath(path: string) {
+  return path
+    .split("/")
+    .map((part) => encodeURIComponent(part))
+    .join("/");
+}
+function buildDriverDutyUrl(params: {
+  origin: string;
+  bookingId: string;
+  driverAssignmentCode: string;
+  freshToken: string;
+}) {
+  const shortCode = String(params.driverAssignmentCode || "").trim();
+  const path = shortCode
+    ? `/d/${encodeURIComponent(shortCode)}`
+    : `/driver-vehicle-assignment/${encodeURIComponent(params.bookingId)}`;
+
+  return `${params.origin}${path}?fresh=${encodeURIComponent(params.freshToken)}`;
 }
 function getDriverStorageKey(bookingId: string) {
   if (typeof window === "undefined") return `vt-driver-details-${bookingId}`;
@@ -849,6 +1115,45 @@ onKeyDown={(event) => {
   );
 }
 
+type FileCaptureBoxProps = {
+  label: string;
+  helper: string;
+  previewSrc: string;
+  fileName: string;
+  capture?: "user" | "environment";
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+};
+
+function FileCaptureBox({
+  label,
+  helper,
+  previewSrc,
+  fileName,
+  capture,
+  onChange,
+}: FileCaptureBoxProps) {
+  return (
+    <div style={fileCaptureBox}>
+      <label style={fieldLabel}>{label}</label>
+
+      <input
+        type="file"
+        accept="image/*"
+        capture={capture}
+        onChange={onChange}
+        style={fileInputStyle}
+      />
+
+      <p style={fileHelperText}>
+        {fileName ? `Selected: ${fileName}` : helper}
+      </p>
+
+      {previewSrc ? (
+        <img src={previewSrc} alt={label} style={driverUploadPreviewImg} />
+      ) : null}
+    </div>
+  );
+}
 function InfoLine({ label, value }: { label: string; value: string }) {
   return (
     <p style={infoLine}>
@@ -1042,6 +1347,40 @@ const fieldLabel = {
   color: "#334155",
 } as const;
 
+const fileCaptureBox = {
+  border: "1px solid #dbe7f3",
+  borderRadius: 18,
+  padding: 12,
+  background: "#f8fafc",
+} as const;
+
+const fileInputStyle = {
+  width: "100%",
+  border: "1px solid #cbd5e1",
+  borderRadius: 14,
+  padding: "12px",
+  background: "#ffffff",
+  color: "#0f172a",
+  fontSize: 14,
+  fontWeight: 800,
+} as const;
+
+const fileHelperText = {
+  margin: "8px 0 0",
+  color: "#64748b",
+  fontSize: 12,
+  fontWeight: 800,
+} as const;
+
+const driverUploadPreviewImg = {
+  display: "block",
+  width: "100%",
+  maxHeight: 180,
+  marginTop: 10,
+  borderRadius: 16,
+  objectFit: "cover",
+  border: "1px solid #dbe7f3",
+} as const;
 const inputStyle = {
   width: "100%",
   minHeight: 46,

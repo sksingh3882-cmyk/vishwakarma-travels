@@ -21,7 +21,43 @@ export type AssignmentShellProps = {
   bookingId: string;
   forceDriverMode?: boolean;
 };
-export type AssignmentShellProps = {
+
+export type AdminAssignmentDraft = {
+  pickupArea: string;
+  dropArea: string;
+  note: string;
+  vehicleType: string;
+  vehicleModel: string;
+};
+
+export type AssignmentBookingDetails = {
   bookingId: string;
-  forceDriverMode?: boolean;
+  customerName: string;
+  customerMobile: string;
+  adminContact: string;
+  serviceType: string;
+  date: string;
+  time: string;
+  pickupArea: string;
+  dropArea: string;
+  pickupFullAddress: string;
+  dropFullAddress: string;
+  vehicleType: string;
+  vehicleModel: string;
+};
+
+export type DriverVehicleSubmission = {
+  driverName: string;
+  driverMobile: string;
+  vehicleNumber: string;
+  driverVehicleModel: string;
+  driverImageUrl?: string;
+  driverSelfieUrl?: string;
+};
+
+export type SavedAssignmentPayload = {
+  bookingId: string;
+  driver_name: string;
+  driver_mobile: string;
+  vehicle_number: string;
 };
