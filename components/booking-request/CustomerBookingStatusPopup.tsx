@@ -873,8 +873,11 @@ function getDriverImageSrc(request: BookingRequestRecord) {
     "driverPhotoUrl",
     "driverImage",
     "driverPhoto",
+    "driver_image_url",
+    "driver_photo_url",
     "driverSelfieUrl",
     "driverSelfie",
+    "driver_selfie_url",
   ]);
 }
 
