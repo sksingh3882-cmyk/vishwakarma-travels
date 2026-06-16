@@ -19,11 +19,14 @@ export type BookingRequestRecord = BookingRequestInput & {
   vehicleModel?: string;
   driverName?: string;
   driverMobile?: string;
-confirmationCode?: string;
-fare?: string;
-advance?: string;
-netPayable?: string;
-createdAt?: string;
+  driverAssignmentCode?: string;
+  driverImageUrl?: string;
+  driverSelfieUrl?: string;
+  confirmationCode?: string;
+  fare?: string;
+  advance?: string;
+  netPayable?: string;
+  createdAt?: string;
   acceptedAt?: string;
   confirmedAt?: string;
 };
@@ -74,8 +77,11 @@ export function fromDb(row: any): BookingRequestRecord {
     vehicleNo: row.vehicle_no || row.vehicle_number || "",
     vehicleType: row.vehicle_type || "",
     vehicleModel: row.vehicle_model || "",
-    driverName: row.driver_name || "",
+        driverName: row.driver_name || "",
     driverMobile: cleanPhone(row.driver_mobile || ""),
+    driverAssignmentCode: row.driver_assignment_code || "",
+    driverImageUrl: row.driver_image_url || row.driverImageUrl || "",
+    driverSelfieUrl: row.driver_selfie_url || row.driverSelfieUrl || "",
 confirmationCode: row.confirmation_code || "",
 fare: String(row.fare ?? row.total_fare ?? row.fare_charge ?? ""),
 advance: String(row.advance ?? row.advance_paid ?? ""),
@@ -132,6 +138,78 @@ export async function fetchBookingRequestByConfirmationCode(params: {
   return rows?.[0] ? fromDb(rows[0]) : null;
 }
 
+export async function fetchBookingRequestByDriverAssignmentCode(params: {
+  supabaseUrl: string;
+  supabaseKey: string;
+  driverAssignmentCode: string;
+}) {
+  const code = String(params.driverAssignmentCode || "").trim().toUpperCase();
+
+  if (!code) return null;
+
+  const res = await fetch(
+    `${params.supabaseUrl}/rest/v1/booking_requests?select=*&driver_assignment_code=eq.${encodeURIComponent(code)}&limit=1`,
+    { headers: headers(params.supabaseKey, "return=minimal") }
+  );
+
+  if (!res.ok) throw new Error("Driver short assignment code fetch nahi ho paya.");
+
+  const rows = await res.json();
+
+  return rows?.[0] ? fromDb(rows[0]) : null;
+}
+
+export async function ensureBookingRequestDriverAssignmentCode(params: {
+  supabaseUrl: string;
+  supabaseKey: string;
+  requestId: string;
+}) {
+  const existing = await fetchBookingRequestById(params);
+
+  if (!existing?.id) {
+    throw new Error("Booking request nahi mila.");
+  }
+
+  if (existing.driverAssignmentCode) {
+    return existing;
+  }
+
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    const candidate =
+      attempt === 0
+        ? makeDriverAssignmentCode(params.requestId)
+        : makeDriverAssignmentCode(`${params.requestId}-${Date.now()}-${attempt}`);
+
+    const res = await fetch(
+      `${params.supabaseUrl}/rest/v1/booking_requests?id=eq.${params.requestId}`,
+      {
+        method: "PATCH",
+        headers: headers(params.supabaseKey, "return=representation"),
+        body: JSON.stringify({
+          driver_assignment_code: candidate,
+        }),
+      }
+    );
+
+    if (res.ok) {
+      const rows = await res.json();
+      return fromDb(rows?.[0] || rows);
+    }
+  }
+
+  throw new Error("Driver short assignment code create nahi ho paya.");
+}
+
+function makeDriverAssignmentCode(value: string) {
+  const source = String(value || `${Date.now()}`);
+  let hash = 0;
+
+  for (let i = 0; i < source.length; i += 1) {
+    hash = (hash * 31 + source.charCodeAt(i)) % 100000;
+  }
+
+  return `DVT${String(hash).padStart(5, "0")}`;
+}
 export async function fetchBookingRequestsByPhone(params: { supabaseUrl: string; supabaseKey: string; customerPhone: string }) {
   const phone = cleanPhone(params.customerPhone);
   if (!phone) return [];
@@ -255,6 +333,8 @@ export async function clearBookingRequestDriverVehicle(params: {
         driver_name: "",
         driver_mobile: "",
         vehicle_no: "",
+        driver_image_url: null,
+        driver_selfie_url: null,
       }),
     }
   );
