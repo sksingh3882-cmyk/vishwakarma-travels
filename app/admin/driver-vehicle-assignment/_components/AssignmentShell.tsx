@@ -301,7 +301,7 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     }
 
     try {
-      setUploadStatus("Uploading driver photo...");
+      setUploadStatus("Compressing and uploading driver photo...");
 
       const driverImageUrl = driverPhotoFile
         ? await uploadDriverFileToStorage({
@@ -912,7 +912,8 @@ async function uploadDriverFileToStorage(params: {
   file: File;
 }) {
   const bucket = "driver-uploads";
-  const extension = getFileExtension(params.file);
+  const uploadFile = await compressDriverImageFile(params.file);
+  const extension = getFileExtension(uploadFile);
   const filePath = `${normalizeStorageSegment(params.bookingId)}/${params.kind}-${Date.now()}-${Math.random()
     .toString(36)
     .slice(2)}.${extension}`;
@@ -926,10 +927,9 @@ async function uploadDriverFileToStorage(params: {
     headers: {
       apikey: params.supabaseKey,
       Authorization: `Bearer ${params.supabaseKey}`,
-      "Content-Type": params.file.type || "application/octet-stream",
-      "x-upsert": "true",
+      "Content-Type": uploadFile.type || "image/jpeg",
     },
-    body: params.file,
+    body: uploadFile,
   });
 
   if (!uploadRes.ok) {
@@ -940,6 +940,87 @@ async function uploadDriverFileToStorage(params: {
   return `${params.supabaseUrl}/storage/v1/object/public/${bucket}/${encodeStoragePath(
     filePath
   )}`;
+}
+
+async function compressDriverImageFile(file: File) {
+  const type = String(file.type || "").toLowerCase();
+
+  if (
+    !type.startsWith("image/") ||
+    type.includes("gif") ||
+    type.includes("heic") ||
+    type.includes("heif")
+  ) {
+    return file;
+  }
+
+  try {
+    const image = await loadImageElementFromFile(file);
+    const maxSide = 900;
+    const originalWidth = image.naturalWidth || image.width;
+    const originalHeight = image.naturalHeight || image.height;
+
+    if (!originalWidth || !originalHeight) {
+      return file;
+    }
+
+    const scale = Math.min(1, maxSide / Math.max(originalWidth, originalHeight));
+    const width = Math.max(1, Math.round(originalWidth * scale));
+    const height = Math.max(1, Math.round(originalHeight * scale));
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    const context = canvas.getContext("2d");
+
+    if (!context) {
+      return file;
+    }
+
+    context.drawImage(image, 0, 0, width, height);
+
+    const blob = await canvasToJpegBlob(canvas, 0.72);
+
+    if (!blob || blob.size >= file.size) {
+      return file;
+    }
+
+    const baseName = file.name.replace(/\.[^.]+$/, "") || "driver-image";
+
+    return new File([blob], `${baseName}.jpg`, {
+      type: "image/jpeg",
+      lastModified: Date.now(),
+    });
+  } catch (error) {
+    console.log("Driver image compression skipped:", error);
+    return file;
+  }
+}
+
+function loadImageElementFromFile(file: File) {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image();
+    const url = URL.createObjectURL(file);
+
+    image.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(image);
+    };
+
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Image preview load failed."));
+    };
+
+    image.src = url;
+  });
+}
+
+function canvasToJpegBlob(canvas: HTMLCanvasElement, quality: number) {
+  return new Promise<Blob | null>((resolve) => {
+    canvas.toBlob(resolve, "image/jpeg", quality);
+  });
 }
 
 function getFileExtension(file: File) {
