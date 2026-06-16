@@ -297,17 +297,29 @@ export async function updateBookingRequestDriverVehicle(params: {
   driverName: string;
   driverMobile: string;
   vehicleNo: string;
+  driverImageUrl?: string;
+  driverSelfieUrl?: string;
 }) {
+  const payload: Record<string, string | null> = {
+    driver_name: params.driverName,
+    driver_mobile: cleanPhone(params.driverMobile),
+    vehicle_no: params.vehicleNo,
+  };
+
+  if (params.driverImageUrl !== undefined) {
+    payload.driver_image_url = params.driverImageUrl || null;
+  }
+
+  if (params.driverSelfieUrl !== undefined) {
+    payload.driver_selfie_url = params.driverSelfieUrl || null;
+  }
+
   const res = await fetch(
     `${params.supabaseUrl}/rest/v1/booking_requests?id=eq.${params.requestId}`,
     {
       method: "PATCH",
       headers: headers(params.supabaseKey, "return=representation"),
-      body: JSON.stringify({
-        driver_name: params.driverName,
-        driver_mobile: cleanPhone(params.driverMobile),
-        vehicle_no: params.vehicleNo,
-      }),
+      body: JSON.stringify(payload),
     }
   );
 
