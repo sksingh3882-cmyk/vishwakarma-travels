@@ -5,6 +5,7 @@ import {
   fetchBookingRequestById,
   updateBookingRequestDriverVehicle,
   clearBookingRequestDriverVehicle,
+  ensureBookingRequestDriverAssignmentCode,
   type BookingRequestRecord,
 } from "@/lib/bookingRequestService";
 import { buildGroupMessage } from "../_lib/buildGroupMessage";
@@ -30,8 +31,9 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
   const [booking, setBooking] = useState<AssignmentBookingDetails>(mockBooking);
   const [isDriverMode, setIsDriverMode] = useState(false);
   const [showTripPopup, setShowTripPopup] = useState(false);
-  const [showDriverReceivedPopup, setShowDriverReceivedPopup] = useState(false);
+    const [showDriverReceivedPopup, setShowDriverReceivedPopup] = useState(false);
   const [copyStatus, setCopyStatus] = useState("");
+  const [driverAssignmentCode, setDriverAssignmentCode] = useState("");
   const [loadStatus, setLoadStatus] = useState("Loading booking details...");
 
   const [draft, setDraft] = useState<AdminAssignmentDraft>({
@@ -113,9 +115,10 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
           if (stopped) return;
 
           if (record) {
-            const mappedBooking = mapRequestToAssignmentBooking(record, mockBooking);
+                        const mappedBooking = mapRequestToAssignmentBooking(record, mockBooking);
 
             setBooking(mappedBooking);
+            setDriverAssignmentCode(record.driverAssignmentCode || "");
             setDraft((previous) => ({
               ...previous,
               pickupArea: mappedBooking.pickupArea,
@@ -164,14 +167,19 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
   }, [bookingId, mockBooking, isDriverMode]);
 
 
-    const driverDutyLink = useMemo(() => {
+      const driverDutyLink = useMemo(() => {
     if (typeof window === "undefined") return "";
 
     const searchParams = new URLSearchParams(window.location.search);
     const freshToken = searchParams.get("fresh") || Date.now().toString();
 
-    return `${window.location.origin}/driver-vehicle-assignment/${encodeURIComponent(bookingId)}?fresh=${encodeURIComponent(freshToken)}`;
-  }, [bookingId]);
+    return buildDriverDutyUrl({
+      origin: window.location.origin,
+      bookingId,
+      driverAssignmentCode,
+      freshToken,
+    });
+  }, [bookingId, driverAssignmentCode]);
 
   const groupMessage = useMemo(() => {
     return buildGroupMessage({
@@ -185,14 +193,20 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   }
 
-    async function handleCopyDriverLink() {
-    if (!driverDutyLink) return;
+      async function handleSendDriverLink() {
+    const freshLink = await prepareFreshDriverAssignmentLink();
+    const linkToSend = freshLink || driverDutyLink;
 
-    await prepareFreshDriverAssignmentLink();
+    const message = [
+      "Vishwakarma Travels Driver Duty Link",
+      "",
+      "Please open this short link and submit your vehicle details:",
+      linkToSend,
+    ].join("\n");
 
-    await navigator.clipboard.writeText(driverDutyLink);
-    setCopyStatus("Fresh driver duty link copied.");
-    }
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+      }
 
     async function handleSendDriverLink() {
     await prepareFreshDriverAssignmentLink();
@@ -208,13 +222,13 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
     }
 
-   async function prepareFreshDriverAssignmentLink() {
+     async function prepareFreshDriverAssignmentLink(): Promise<string> {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
     if (!supabaseUrl || !supabaseKey) {
       setCopyStatus("Supabase URL or key is missing.");
-      return;
+      return driverDutyLink;
     }
 
     try {
@@ -224,17 +238,36 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
         requestId: bookingId,
       });
 
+      const freshRecord = await ensureBookingRequestDriverAssignmentCode({
+        supabaseUrl,
+        supabaseKey,
+        requestId: bookingId,
+      });
+
+      const nextDriverAssignmentCode = freshRecord.driverAssignmentCode || "";
+      const nextFreshToken = Date.now().toString();
+
+      setDriverAssignmentCode(nextDriverAssignmentCode);
       setReceivedDriverDetails(null);
       setSavedAssignment(null);
       setDriverForm(emptyDriverSubmission);
       window.localStorage.removeItem(getDriverStorageKey(bookingId));
 
-      setCopyStatus("Fresh assignment form is ready.");
+      const shortLink = buildDriverDutyUrl({
+        origin: window.location.origin,
+        bookingId,
+        driverAssignmentCode: nextDriverAssignmentCode,
+        freshToken: nextFreshToken,
+      });
+
+      setCopyStatus("Fresh short assignment form is ready.");
+      return shortLink;
     } catch (error) {
       console.log("Fresh driver assignment link prepare failed:", error);
       setCopyStatus("Fresh assignment link could not be prepared.");
+      return driverDutyLink;
     }
-   }
+     }
   async function handleDriverSubmit() {
   const cleanedDetails: DriverVehicleSubmission = {
     driverName: driverForm.driverName.trim(),
@@ -794,6 +827,19 @@ async function saveAssignedVehicleToVehicleList(params: {
   if (!res.ok) {
     throw new Error("Assigned vehicle could not be saved to vehicle list.");
   }
+}
+function buildDriverDutyUrl(params: {
+  origin: string;
+  bookingId: string;
+  driverAssignmentCode: string;
+  freshToken: string;
+}) {
+  const shortCode = String(params.driverAssignmentCode || "").trim();
+  const path = shortCode
+    ? `/d/${encodeURIComponent(shortCode)}`
+    : `/driver-vehicle-assignment/${encodeURIComponent(params.bookingId)}`;
+
+  return `${params.origin}${path}?fresh=${encodeURIComponent(params.freshToken)}`;
 }
 function getDriverStorageKey(bookingId: string) {
   if (typeof window === "undefined") return `vt-driver-details-${bookingId}`;
