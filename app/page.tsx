@@ -46,11 +46,7 @@ function downloadBookingCopy(){if(!form.name||!form.mobile||!form.pickup||!form.
 <SecureBookingPopup />
   <header style={head}><a href="/" style={{display:"flex",gap:6,textDecoration:"none",alignItems:"center"}}><img src="/cars/vt-logo.png" style={{width:42,height:42,objectFit:"contain"}} alt="Vishwakarma Travels" /><div><h1 style={logo1}>VISHWAKARMA</h1><p style={logo2}>TRAVELS</p></div></a></header><section style={hero}>
   <div style={textHeroBanner}>
-    <h2 style={textHeroTitle}>
-      <span style={textHeroBlue}>Reliable and</span>
-      <span style={textHeroOrange}>Comfortable</span>
-      <span style={textHeroBlue}>Journey</span>
-    </h2>
+   
 
     <div style={textHeroFeatures}>
       <div style={textHeroFeature}>
