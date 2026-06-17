@@ -74,7 +74,8 @@ section:has(> #booking-form) {
   font-size: clamp(24px, 6.4vw, 32px) !important;
   line-height: 1 !important;
   font-weight: 950 !important;
-  color: #0b2d6b !important;
+  color: #ffffff !important;
+  text-shadow: 0 2px 12px rgba(0,0,0,.5) !important;
 }
 
 #booking-form > p {
