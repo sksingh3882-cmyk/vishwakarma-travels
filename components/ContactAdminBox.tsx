@@ -54,11 +54,12 @@ const section: CSSProperties = {
 };
 
 const card: CSSProperties = {
-  border: "1px solid #dbeafe",
+  border: "1px solid rgba(255,255,255,.18)",
   borderRadius: 20,
   padding: 16,
-  background: "#ffffff",
-  boxShadow: "0 10px 28px rgba(15,23,42,.08)",
+  background: "rgba(255,255,255,.10)",
+  backdropFilter: "blur(8px)",
+  boxShadow: "0 16px 36px rgba(0,0,0,.22)",
   fontFamily: "Arial, sans-serif",
   textAlign: "center",
 };
