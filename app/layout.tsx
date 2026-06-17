@@ -54,8 +54,7 @@ export default function RootLayout({
         <AppMenu />
         <PublicBookingValidation />
         {children}
-        <DriverDutyFloatingActions />
-        <style dangerouslySetInnerHTML={{ __html: `#booking-form > div:first-of-type > div{display:none!important;visibility:hidden!important;pointer-events:none!important;}` }} />
+                <DriverDutyFloatingActions />
       </body>
     </html>
   );
