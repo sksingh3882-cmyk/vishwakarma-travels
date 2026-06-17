@@ -323,6 +323,7 @@ function PremiumConfirmedBooking({
   });
 
   const [selectedPopup, setSelectedPopup] = useState<"driver" | "vehicle" | null>(null);
+const [completedTrips, setCompletedTrips] = useState<number | null>(null);
 
   const vehicleName = getVehicleName(request);
   const vehicleImageSrc = getVehicleImageSrc(request);
@@ -347,6 +348,17 @@ function PremiumConfirmedBooking({
       try {
         const driverMobile = cleanPhone(request.driverMobile || "");
         const vehicleNumber = String(request.vehicleNo || "").trim();
+        if (driverMobile) {
+  const tripResponse = await fetch(
+    `${ratingSupabaseUrl}/rest/v1/booking_requests?select=id&driver_mobile=eq.${encodeURIComponent(driverMobile)}&status=eq.confirmed`,
+    { headers }
+  );
+
+  if (tripResponse.ok) {
+    const rows = await tripResponse.json();
+    if (active) setCompletedTrips(Array.isArray(rows) ? rows.length : 0);
+  }
+        }
 
         let driverRating: RatingDetails | null = null;
         let vehicleRating: RatingDetails | null = null;
@@ -519,15 +531,17 @@ function PremiumConfirmedBooking({
   onViewRating={() => setSelectedPopup("vehicle")}
 />
           <PremiumDetailCard
-            title="Driver Name"
-            imageSrc={driverImageSrc}
-            imageAlt={request.driverName || "Driver"}
-            fallback={getInitials(request.driverName || "Driver")}
-            name={request.driverName || "-"}
-            rating={rating.driver}
-            onViewRating={() => setSelectedPopup("driver")}
-            circle
-          />
+  title="Driver Name"
+  imageSrc={driverImageSrc}
+  imageAlt={request.driverName || "Driver"}
+  fallback={getInitials(request.driverName || "Driver")}
+  name={request.driverName || "-"}
+  rating={rating.driver}
+  onViewRating={() => setSelectedPopup("driver")}
+  completedTrips={completedTrips}
+  verified
+  circle
+/>
         </div>
 
         <div style={fareChargesRow}>
@@ -565,7 +579,9 @@ function PremiumDetailCard({
   vehicleNo,
   rating,
   onViewRating,
-  circle = false,
+    circle = false,
+  verified = false,
+  completedTrips = null,
 }: {
   title: string;
   imageSrc: string;
@@ -575,7 +591,9 @@ function PremiumDetailCard({
   vehicleNo?: string;
   rating: RatingDetails | null;
   onViewRating: () => void;
-  circle?: boolean;
+    circle?: boolean;
+  verified?: boolean;
+  completedTrips?: number | null;
 }) {
   return (
     <div style={profileCard}>
@@ -598,7 +616,16 @@ function PremiumDetailCard({
 
       <RealStarRating rating={rating} onView={onViewRating} />
 
-      <div style={performance}>Recent Performance</div>
+      {verified ? (
+  <>
+    <div style={verifiedDriver}>✓ Verified Driver</div>
+    <div style={completedTripsStyle}>
+      {completedTrips !== null ? `${completedTrips} Completed Trips` : "Completed Trips"}
+    </div>
+  </>
+) : (
+  <div style={performance}>Recent Performance</div>
+)}
     </div>
   );
 }
@@ -1622,4 +1649,17 @@ const closeTextBtn = {
   padding: "10px 14px",
   fontSize: 14,
   fontWeight: 950,
+} as const;
+const verifiedDriver = {
+  color: "#16a34a",
+  fontSize: 11,
+  fontWeight: 900,
+  marginTop: 6,
+} as const;
+
+const completedTripsStyle = {
+  color: "#64748b",
+  fontSize: 10,
+  fontWeight: 800,
+  marginTop: 2,
 } as const;
