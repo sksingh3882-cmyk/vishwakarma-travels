@@ -15,6 +15,8 @@ type Props = {
   onDownloadCopy?: () => void;
   onWhatsAppRequest?: () => void;
   onRequestSentSuccess?: () => void;
+  onValidateBeforeOpen?: () => boolean;
+  isBookNowReady?: boolean;
 };
 function cleanPhone(value: string) {
   let phone = String(value || "").replace(/\D/g, "");
@@ -24,7 +26,7 @@ function cleanPhone(value: string) {
 
 
 
-export default function CustomerBookNowSection({ bookingData, onDownloadCopy, onWhatsAppRequest, onRequestSentSuccess }: Props) {
+export default function CustomerBookNowSection({ bookingData, onDownloadCopy, onWhatsAppRequest, onRequestSentSuccess, onValidateBeforeOpen, isBookNowReady=true }: Props) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
   const [open, setOpen] = useState(false);
@@ -114,7 +116,9 @@ const [confirmOpen, setConfirmOpen] = useState(false);
     }
   }
 
-  function openNewRequest() {
+    function openNewRequest() {
+    if (onValidateBeforeOpen && !onValidateBeforeOpen()) return;
+
     if (submittedSignature && currentSignature === submittedSignature) {
       setAlreadySubmittedAlert("Your booking request is already submitted. Please check My Booking section.");
       return;
@@ -141,8 +145,8 @@ const [confirmOpen, setConfirmOpen] = useState(false);
     </div>
   )}
 
-  <button type="button" style={bookNowBtn} onClick={openNewRequest}>
-    Book Now
+  <button type="button" style={{...bookNowBtn,...(!isBookNowReady?bookNowBtnDisabled:{})}} onClick={openNewRequest}>
+    {isBookNowReady ? "Book Now" : "Complete Required Details"}
   </button>
       <div style={smallRow}>
         <button type="button" style={smallBtn} onClick={onDownloadCopy}>
@@ -389,6 +393,10 @@ const bookNowBtn = {
   fontWeight: 900,
   letterSpacing: ".2px",
   boxShadow: "0 12px 26px rgba(234,88,12,.28)",
+} as const;
+const bookNowBtnDisabled = {
+  opacity: .65,
+  filter: "grayscale(.15)",
 } as const;
 const smallRow = { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 7, width: "min(92vw, 330px)", justifySelf: "center" } as const;
 const smallBtn = { minHeight: 32, border: "1px solid #cbd5e1", borderRadius: 12, background: "#fff", color: "#0f172a", fontWeight: 800, fontSize: 11 } as const;
