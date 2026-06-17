@@ -354,3 +354,18 @@ footer,
 footer * {
   color: #ffffff !important;
 }
+section:has(a[href^="tel:"]),
+section:has(a[href*="wa.me"]) {
+  background: rgba(255,255,255,.10) !important;
+  backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  box-shadow: 0 16px 36px rgba(0,0,0,.22) !important;
+}
+
+section:has(a[href^="tel:"]) h2,
+section:has(a[href*="wa.me"]) h2,
+section:has(a[href^="tel:"]) p,
+section:has(a[href*="wa.me"]) p {
+  color: #ffffff !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,.45) !important;
+}
