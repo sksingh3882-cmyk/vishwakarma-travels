@@ -1741,14 +1741,4 @@ const bookingIdValue = {
   fontSize: 14,
   fontWeight: 950,
 } as const;
-const bookingIdLabel = {
-  color: "#a66a1f",
-  fontSize: 12,
-  fontWeight: 900,
-} as const;
 
-const bookingIdValue = {
-  color: "#061638",
-  fontSize: 14,
-  fontWeight: 950,
-} as const;
