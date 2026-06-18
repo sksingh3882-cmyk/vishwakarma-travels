@@ -487,10 +487,10 @@ export default function AssignmentShell({ bookingId, forceDriverMode = false }: 
             ) : driverDetailsAlreadySubmitted ? (
               <div style={driverMessageBox}>
                 <h2 style={driverMessageTitle}>
-                  You already submitted your vehicle details.
+                  Your Vehicle Details are Submitted Successfully.
                 </h2>
                 <p style={driverMessageText}>
-                  Please ask admin for the new link to add another vehicle details.
+                  Want To Add another Vehicle Details Please Ask Admin for a New Link.
                 </p>
               </div>
             ) : (
