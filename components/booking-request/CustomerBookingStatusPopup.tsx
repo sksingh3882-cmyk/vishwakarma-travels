@@ -323,7 +323,8 @@ function PremiumConfirmedBooking({
   });
 
   const [selectedPopup, setSelectedPopup] = useState<"driver" | "vehicle" | null>(null);
-
+const [completedTrips, setCompletedTrips] = useState<number | null>(null);
+const [vehicleCompletedTrips, setVehicleCompletedTrips] = useState<number | null>(null);
   const vehicleName = getVehicleName(request);
   const vehicleImageSrc = getVehicleImageSrc(request);
   const driverImageSrc = getDriverImageSrc(request);
@@ -347,6 +348,17 @@ function PremiumConfirmedBooking({
       try {
         const driverMobile = cleanPhone(request.driverMobile || "");
         const vehicleNumber = String(request.vehicleNo || "").trim();
+        if (driverMobile) {
+  const tripResponse = await fetch(
+    `${ratingSupabaseUrl}/rest/v1/booking_requests?select=id&driver_mobile=eq.${encodeURIComponent(driverMobile)}&status=eq.confirmed`,
+    { headers }
+  );
+
+  if (tripResponse.ok) {
+    const rows = await tripResponse.json();
+    if (active) setCompletedTrips(Array.isArray(rows) ? rows.length : 0);
+  }
+        }
 
         let driverRating: RatingDetails | null = null;
         let vehicleRating: RatingDetails | null = null;
@@ -395,6 +407,17 @@ function PremiumConfirmedBooking({
           }
         }
 
+       if (vehicleNumber) {
+  const vehicleTripResponse = await fetch(
+    `${ratingSupabaseUrl}/rest/v1/booking_requests?select=id&vehicle_no=eq.${encodeURIComponent(vehicleNumber)}&status=eq.confirmed`,
+    { headers }
+  );
+
+  if (vehicleTripResponse.ok) {
+    const rows = await vehicleTripResponse.json();
+    if (active) setVehicleCompletedTrips(Array.isArray(rows) ? rows.length : 0);
+  }
+       }
         if (vehicleNumber) {
           const vehicleResponse = await fetch(
             `${ratingSupabaseUrl}/rest/v1/trip_ratings?select=vehicle_cleanliness_rating,vehicle_comfort_rating,ac_cooling_rating,seat_condition_rating,overall_vehicle_rating,vehicle_average_rating&vehicle_number=eq.${encodeURIComponent(vehicleNumber)}`,
@@ -466,6 +489,10 @@ function PremiumConfirmedBooking({
         <h1 style={premiumCustomerName}>{request.customerName || "Customer"}</h1>
 
         <div style={premiumConfirmedTitle}>Your Booking Is Confirmed</div>
+        <div style={bookingIdCard}>
+  <span style={bookingIdLabel}>Booking ID</span>
+  <b style={bookingIdValue}>{getBookingId(request.id)}</b>
+</div>
 
         <div style={premiumRoute}>
           <span style={routeIcon}>📍</span>
@@ -517,17 +544,21 @@ function PremiumConfirmedBooking({
   vehicleNo={request.vehicleNo}
   rating={rating.vehicle}
   onViewRating={() => setSelectedPopup("vehicle")}
+  completedTrips={vehicleCompletedTrips}
+  verified
 />
           <PremiumDetailCard
-            title="Driver Name"
-            imageSrc={driverImageSrc}
-            imageAlt={request.driverName || "Driver"}
-            fallback={getInitials(request.driverName || "Driver")}
-            name={request.driverName || "-"}
-            rating={rating.driver}
-            onViewRating={() => setSelectedPopup("driver")}
-            circle
-          />
+  title="Driver Name"
+  imageSrc={driverImageSrc}
+  imageAlt={request.driverName || "Driver"}
+  fallback={getInitials(request.driverName || "Driver")}
+  name={request.driverName || "-"}
+  rating={rating.driver}
+  onViewRating={() => setSelectedPopup("driver")}
+  completedTrips={completedTrips}
+  verified
+  circle
+/>
         </div>
 
         <div style={fareChargesRow}>
@@ -565,7 +596,9 @@ function PremiumDetailCard({
   vehicleNo,
   rating,
   onViewRating,
-  circle = false,
+    circle = false,
+  verified = false,
+  completedTrips = null,
 }: {
   title: string;
   imageSrc: string;
@@ -575,7 +608,9 @@ function PremiumDetailCard({
   vehicleNo?: string;
   rating: RatingDetails | null;
   onViewRating: () => void;
-  circle?: boolean;
+    circle?: boolean;
+  verified?: boolean;
+  completedTrips?: number | null;
 }) {
   return (
     <div style={profileCard}>
@@ -588,21 +623,40 @@ function PremiumDetailCard({
   circle={circle}
 />
 
+<div style={profileName}>{name || "-"}</div>
+
 {vehicleNo ? (
   <div style={vehicleNoBadge}>
     Vehicle No: <b>{formatVehicleNumber(vehicleNo)}</b>
   </div>
 ) : null}
 
-<div style={profileName}>{name || "-"}</div>
-
       <RealStarRating rating={rating} onView={onViewRating} />
 
-      <div style={performance}>Recent Performance</div>
+      {verified ? (
+  <>
+    <div style={verifiedDriver}>✓ {circle ? "Verified Driver" : "Verified Vehicle"}</div>
+    <div style={completedTripsStyle}>
+      {completedTrips !== null ? `${completedTrips} Completed Trips` : "Completed Trips"}
+    </div>
+  </>
+) : (
+  <div style={performance}>Recent Performance</div>
+)}
     </div>
   );
 }
 
+function getBookingId(id?: string) {
+  if (!id) return "-";
+
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash * 31 + id.charCodeAt(i)) % 10000;
+  }
+
+  return `VT-${String(hash).padStart(4, "0")}`;
+}
 function PremiumImage({
   src,
   alt,
@@ -933,7 +987,10 @@ function getInitials(value: string) {
 const overlay = {
   position: "fixed",
   inset: 0,
-  background: "rgba(15,23,42,.55)",
+  background:
+    "linear-gradient(rgba(2,6,23,.22),rgba(2,6,23,.30)),url('/cars/customer-bg.png')",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
   zIndex: 9999,
   display: "flex",
   alignItems: "center",
@@ -946,10 +1003,14 @@ const card = {
   maxWidth: 450,
   maxHeight: "calc(100vh - 28px)",
   overflowY: "auto",
-  background: "#fff",
+  background: "rgba(15, 23, 42, .16)",
+  backdropFilter: "blur(18px)",
+  WebkitBackdropFilter: "blur(18px)",
+  border: "1px solid rgba(255,255,255,.18)",
+  boxShadow: "0 24px 70px rgba(0,0,0,.45)",
+  color: "#ffffff",
   borderRadius: 22,
   padding: "8px 8px 10px",
-  boxShadow: "0 18px 48px rgba(0,0,0,.24)",
   fontFamily: "Arial, sans-serif",
   position: "relative",
 } as const;
@@ -1096,14 +1157,17 @@ const premiumBox = {
   position: "relative",
   borderRadius: 20,
   padding: "12px 10px 10px",
-  background: "#fffdf9",
-  border: "1px solid #ead8bd",
+  background: "rgba(255,255,255,.025)",
+  backdropFilter: "blur(18px)",
+  WebkitBackdropFilter: "blur(18px)",
+  border: "1px solid rgba(255,255,255,.18)",
   overflow: "hidden",
 } as const;
 
 const brandStyle = {
   textAlign: "center",
-  color: "#a16b24",
+  color: "#f97316",
+  textShadow: "0 2px 10px rgba(0,0,0,.45)",
   fontFamily: "Georgia, serif",
   fontSize: 14,
   fontWeight: 700,
@@ -1113,20 +1177,22 @@ const brandStyle = {
 
 const greetingStyle = {
   textAlign: "center",
-  color: "#0b1838",
+  color: "#ffffff",
   fontSize: 14,
   fontWeight: 800,
   marginTop: 4,
   marginBottom: 2,
   textDecoration: "underline",
-  textDecorationColor: "#b98235",
+  textDecorationColor: "#fdba74",
+  textShadow: "0 2px 10px rgba(0,0,0,.45)",
   textUnderlineOffset: 5,
 } as const;
 
 const premiumCustomerName = {
   margin: "8px 0 4px",
   textAlign: "center",
-  color: "#071633",
+  color: "#ffffff",
+  textShadow: "0 2px 12px rgba(0,0,0,.55)",
   fontSize: 28,
   lineHeight: 1.05,
   fontWeight: 950,
@@ -1134,7 +1200,8 @@ const premiumCustomerName = {
 } as const;
 
 const premiumConfirmedTitle = {
-  color: "#071633",
+  color: "#ffffff",
+  textShadow: "0 2px 12px rgba(0,0,0,.55)",
   fontSize: 17,
   fontWeight: 900,
   textAlign: "center",
@@ -1146,11 +1213,13 @@ const premiumRoute = {
   display: "flex",
   alignItems: "center",
   gap: 6,
-  border: "1px solid #ead8bd",
+  border: "1px solid rgba(255,255,255,.18)",
   borderRadius: 12,
   padding: "9px 9px",
-  background: "#fffdf8",
-  color: "#071633",
+  background: "rgba(255,255,255,.035)",
+  backdropFilter: "blur(16px)",
+  WebkitBackdropFilter: "blur(16px)",
+  color: "#ffffff",
   fontSize: 13,
   marginTop: 8,
 } as const;
@@ -1174,7 +1243,7 @@ const routeLabel = {
 } as const;
 
 const routeValue = {
-  color: "#071633",
+  color: "#ffffff",
   wordBreak: "break-word",
   fontSize: 12,
 } as const;
@@ -1190,10 +1259,13 @@ const miniInfoCard = {
   display: "flex",
   alignItems: "center",
   gap: 8,
-  border: "1px solid #ead8bd",
+  border: "1px solid rgba(255,255,255,.18)",
+  color: "#ffffff",
   borderRadius: 12,
   padding: "8px 9px",
-  background: "#fffdf8",
+  background: "rgba(255,255,255,.035)",
+  backdropFilter: "blur(16px)",
+  WebkitBackdropFilter: "blur(16px)",
   minWidth: 0,
 } as const;
 
@@ -1212,7 +1284,7 @@ const miniLabel = {
 
 const miniValue = {
   display: "block",
-  color: "#071633",
+  color: "#ffffff",
   fontSize: 13,
   marginTop: 1,
 } as const;
@@ -1221,11 +1293,13 @@ const premiumService = {
   display: "flex",
   alignItems: "center",
   gap: 6,
-  border: "1px solid #ead8bd",
+  border: "1px solid rgba(255,255,255,.18)",
   borderRadius: 12,
   padding: "9px 9px",
-  background: "#fffdf8",
-  color: "#071633",
+  background: "rgba(255,255,255,.035)",
+  backdropFilter: "blur(16px)",
+  WebkitBackdropFilter: "blur(16px)",
+  color: "#ffffff",
   fontSize: 13,
   marginTop: 8,
 } as const;
@@ -1235,7 +1309,8 @@ const premiumSectionTitle = {
   alignItems: "center",
   justifyContent: "center",
   gap: 6,
-  color: "#071633",
+  color: "#ffffff",
+  textShadow: "0 2px 10px rgba(0,0,0,.45)",
   fontSize: 13,
   margin: "10px 0 8px",
   textAlign: "center",
@@ -1260,10 +1335,13 @@ const detailGrid = {
 } as const;
 
 const profileCard = {
-  border: "1px solid #ead8bd",
+  border: "1px solid rgba(255,255,255,.18)",
+  color: "#ffffff",
   borderRadius: 14,
   padding: "9px 7px",
-  background: "#ffffff",
+  background: "rgba(255,255,255,.035)",
+  backdropFilter: "blur(16px)",
+  WebkitBackdropFilter: "blur(16px)",
   textAlign: "center",
   minWidth: 0,
 } as const;
@@ -1329,18 +1407,18 @@ const vehicleNoBadge = {
   justifyContent: "center",
   gap: 3,
   margin: "0 auto 6px",
-  padding: "4px 7px",
+  padding: "4px 6px",
   borderRadius: 999,
   background: "#fffaf0",
   color: "#a16b24",
-  fontSize: 10,
+  fontSize: 12,
   fontWeight: 900,
   border: "1px solid #ead8bd",
   whiteSpace: "nowrap",
 } as const;
 const profileName = {
-  color: "#071633",
-  fontSize: 14,
+  color: "#ffffff",
+  fontSize: 10,
   fontWeight: 950,
   minHeight: 18,
   wordBreak: "break-word",
@@ -1429,11 +1507,13 @@ const fareChargesRow = {
   alignItems: "center",
   justifyContent: "center",
   gap: 8,
-  border: "1px solid #ead8bd",
+  border: "1px solid rgba(255,255,255,.18)",
   borderRadius: 12,
   padding: "11px 10px",
-  background: "#fffdf8",
-  color: "#071633",
+  background: "rgba(255,255,255,.035)",
+  backdropFilter: "blur(16px)",
+  WebkitBackdropFilter: "blur(16px)",
+  color: "#ffffff",
   fontSize: 14,
   minHeight: 56,
   marginTop: 12,
@@ -1453,7 +1533,7 @@ const fareIcon = {
 } as const;
 
 const fareChargesValue = {
-  color: "#071633",
+  color: "#ffffff",
   fontSize: 17,
   fontWeight: 950,
   whiteSpace: "nowrap",
@@ -1623,3 +1703,42 @@ const closeTextBtn = {
   fontSize: 14,
   fontWeight: 950,
 } as const;
+const verifiedDriver = {
+  color: "#16a34a",
+  fontSize: 11,
+  fontWeight: 900,
+  marginTop: 6,
+} as const;
+
+const completedTripsStyle = {
+  color: "#64748b",
+  fontSize: 10,
+  fontWeight: 800,
+  marginTop: 2,
+} as const;
+const bookingIdCard = {
+  margin: "12px auto 14px",
+  padding: "8px 12px",
+  borderRadius: 16,
+  border: "1px solid rgba(255,255,255,.20)",
+  background: "rgba(255,255,255,.14)",
+  backdropFilter: "blur(16px)",
+  WebkitBackdropFilter: "blur(16px)",
+  display: "grid",
+  gap: 3,
+  textAlign: "center",
+  maxWidth: 220,
+} as const;
+
+const bookingIdLabel = {
+  color: "#ffffff",
+  fontSize: 12,
+  fontWeight: 900,
+} as const;
+
+const bookingIdValue = {
+  color: "#ffffff",
+  fontSize: 14,
+  fontWeight: 950,
+} as const;
+
