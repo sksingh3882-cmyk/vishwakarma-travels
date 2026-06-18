@@ -988,7 +988,7 @@ const overlay = {
   position: "fixed",
   inset: 0,
   background:
-"linear-gradient(rgba(2,6,23,.22),rgba(2,6,23,.30)),url('/cars/customer-bg.png')"
+    "linear-gradient(rgba(2,6,23,.22),rgba(2,6,23,.30)),url('/cars/customer-bg.png')",
   backgroundSize: "cover",
   backgroundPosition: "center",
   zIndex: 9999,
