@@ -489,6 +489,10 @@ const [vehicleCompletedTrips, setVehicleCompletedTrips] = useState<number | null
         <h1 style={premiumCustomerName}>{request.customerName || "Customer"}</h1>
 
         <div style={premiumConfirmedTitle}>Your Booking Is Confirmed</div>
+        <div style={bookingIdCard}>
+  <span style={bookingIdLabel}>Booking ID</span>
+  <b style={bookingIdValue}>{getBookingId(request.id)}</b>
+</div>
 
         <div style={premiumRoute}>
           <span style={routeIcon}>📍</span>
@@ -643,6 +647,16 @@ function PremiumDetailCard({
   );
 }
 
+function getBookingId(id?: string) {
+  if (!id) return "-";
+
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash * 31 + id.charCodeAt(i)) % 10000;
+  }
+
+  return `VT-${String(hash).padStart(4, "0")}`;
+}
 function PremiumImage({
   src,
   alt,
@@ -986,10 +1000,13 @@ const card = {
   maxWidth: 450,
   maxHeight: "calc(100vh - 28px)",
   overflowY: "auto",
-  background: "#fff",
+  background: "rgba(15, 23, 42, .72)",
+  border: "1px solid rgba(255,255,255,.18)",
+  backdropFilter: "blur(14px)",
+  boxShadow: "0 24px 70px rgba(0,0,0,.45)",
+  color: "#ffffff",
   borderRadius: 22,
   padding: "8px 8px 10px",
-  boxShadow: "0 18px 48px rgba(0,0,0,.24)",
   fontFamily: "Arial, sans-serif",
   position: "relative",
 } as const;
@@ -1136,14 +1153,16 @@ const premiumBox = {
   position: "relative",
   borderRadius: 20,
   padding: "12px 10px 10px",
-  background: "#fffdf9",
-  border: "1px solid #ead8bd",
+  background: "rgba(255,255,255,.10)",
+  border: "1px solid rgba(255,255,255,.18)",
+  backdropFilter: "blur(12px)",
   overflow: "hidden",
 } as const;
 
 const brandStyle = {
   textAlign: "center",
-  color: "#a16b24",
+  color: "#f97316",
+  textShadow: "0 2px 10px rgba(0,0,0,.45)",
   fontFamily: "Georgia, serif",
   fontSize: 14,
   fontWeight: 700,
@@ -1153,20 +1172,22 @@ const brandStyle = {
 
 const greetingStyle = {
   textAlign: "center",
-  color: "#0b1838",
+  color: "#ffffff",
   fontSize: 14,
   fontWeight: 800,
   marginTop: 4,
   marginBottom: 2,
   textDecoration: "underline",
-  textDecorationColor: "#b98235",
+  textDecorationColor: "#fdba74",
+  textShadow: "0 2px 10px rgba(0,0,0,.45)",
   textUnderlineOffset: 5,
 } as const;
 
 const premiumCustomerName = {
   margin: "8px 0 4px",
   textAlign: "center",
-  color: "#071633",
+  color: "#ffffff",
+  textShadow: "0 2px 12px rgba(0,0,0,.55)",
   fontSize: 28,
   lineHeight: 1.05,
   fontWeight: 950,
@@ -1174,7 +1195,8 @@ const premiumCustomerName = {
 } as const;
 
 const premiumConfirmedTitle = {
-  color: "#071633",
+  color: "#ffffff",
+  textShadow: "0 2px 12px rgba(0,0,0,.55)",
   fontSize: 17,
   fontWeight: 900,
   textAlign: "center",
@@ -1186,11 +1208,11 @@ const premiumRoute = {
   display: "flex",
   alignItems: "center",
   gap: 6,
-  border: "1px solid #ead8bd",
+  border: "1px solid rgba(255,255,255,.18)",
   borderRadius: 12,
   padding: "9px 9px",
-  background: "#fffdf8",
-  color: "#071633",
+  background: "rgba(255,255,255,.10)",
+  color: "#ffffff",
   fontSize: 13,
   marginTop: 8,
 } as const;
@@ -1214,7 +1236,7 @@ const routeLabel = {
 } as const;
 
 const routeValue = {
-  color: "#071633",
+  color: "#ffffff",
   wordBreak: "break-word",
   fontSize: 12,
 } as const;
@@ -1230,10 +1252,11 @@ const miniInfoCard = {
   display: "flex",
   alignItems: "center",
   gap: 8,
-  border: "1px solid #ead8bd",
+  border: "1px solid rgba(255,255,255,.18)",
+  color: "#ffffff",
   borderRadius: 12,
   padding: "8px 9px",
-  background: "#fffdf8",
+  background: "rgba(255,255,255,.10)",
   minWidth: 0,
 } as const;
 
@@ -1252,7 +1275,7 @@ const miniLabel = {
 
 const miniValue = {
   display: "block",
-  color: "#071633",
+  color: "#ffffff",
   fontSize: 13,
   marginTop: 1,
 } as const;
@@ -1261,11 +1284,11 @@ const premiumService = {
   display: "flex",
   alignItems: "center",
   gap: 6,
-  border: "1px solid #ead8bd",
+  border: "1px solid rgba(255,255,255,.18)",
   borderRadius: 12,
   padding: "9px 9px",
-  background: "#fffdf8",
-  color: "#071633",
+  background: "rgba(255,255,255,.10)",
+  color: "#ffffff",
   fontSize: 13,
   marginTop: 8,
 } as const;
@@ -1275,7 +1298,8 @@ const premiumSectionTitle = {
   alignItems: "center",
   justifyContent: "center",
   gap: 6,
-  color: "#071633",
+  color: "#ffffff",
+  textShadow: "0 2px 10px rgba(0,0,0,.45)",
   fontSize: 13,
   margin: "10px 0 8px",
   textAlign: "center",
@@ -1300,10 +1324,11 @@ const detailGrid = {
 } as const;
 
 const profileCard = {
-  border: "1px solid #ead8bd",
+  border: "1px solid rgba(255,255,255,.18)",
+  color: "#ffffff",
   borderRadius: 14,
   padding: "9px 7px",
-  background: "#ffffff",
+  background: "rgba(255,255,255,.10)",
   textAlign: "center",
   minWidth: 0,
 } as const;
@@ -1379,7 +1404,7 @@ const vehicleNoBadge = {
   whiteSpace: "nowrap",
 } as const;
 const profileName = {
-  color: "#071633",
+  color: "#ffffff",
   fontSize: 10,
   fontWeight: 950,
   minHeight: 18,
@@ -1469,11 +1494,11 @@ const fareChargesRow = {
   alignItems: "center",
   justifyContent: "center",
   gap: 8,
-  border: "1px solid #ead8bd",
+  border: "1px solid rgba(255,255,255,.18)",
   borderRadius: 12,
   padding: "11px 10px",
-  background: "#fffdf8",
-  color: "#071633",
+  background: "rgba(255,255,255,.10)",
+  color: "#ffffff",
   fontSize: 14,
   minHeight: 56,
   marginTop: 12,
@@ -1493,7 +1518,7 @@ const fareIcon = {
 } as const;
 
 const fareChargesValue = {
-  color: "#071633",
+  color: "#ffffff",
   fontSize: 17,
   fontWeight: 950,
   whiteSpace: "nowrap",
@@ -1675,4 +1700,27 @@ const completedTripsStyle = {
   fontSize: 10,
   fontWeight: 800,
   marginTop: 2,
+} as const;
+const bookingIdCard = {
+  margin: "12px auto 14px",
+  padding: "10px 14px",
+  borderRadius: 16,
+  border: "1px solid rgba(172, 112, 36, .28)",
+  background: "rgba(255, 250, 240, .75)",
+  display: "grid",
+  gap: 3,
+  textAlign: "center",
+  maxWidth: 260,
+} as const;
+
+const bookingIdLabel = {
+  color: "#a66a1f",
+  fontSize: 12,
+  fontWeight: 900,
+} as const;
+
+const bookingIdValue = {
+  color: "#061638",
+  fontSize: 18,
+  fontWeight: 950,
 } as const;
