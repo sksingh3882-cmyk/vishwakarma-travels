@@ -987,7 +987,10 @@ function getInitials(value: string) {
 const overlay = {
   position: "fixed",
   inset: 0,
-  background: "rgba(15,23,42,.55)",
+  background:
+  "linear-gradient(rgba(2,6,23,.72),rgba(2,6,23,.78)),url('/cars/customer-bg.png')",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
   zIndex: 9999,
   display: "flex",
   alignItems: "center",
