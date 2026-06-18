@@ -1706,14 +1706,14 @@ const completedTripsStyle = {
 } as const;
 const bookingIdCard = {
   margin: "12px auto 14px",
-  padding: "10px 14px",
+  padding: "8px 12px",
   borderRadius: 16,
   border: "1px solid rgba(172, 112, 36, .28)",
   background: "rgba(255, 250, 240, .75)",
   display: "grid",
   gap: 3,
   textAlign: "center",
-  maxWidth: 260,
+  maxWidth: 220,
 } as const;
 
 const bookingIdLabel = {
@@ -1724,6 +1724,6 @@ const bookingIdLabel = {
 
 const bookingIdValue = {
   color: "#061638",
-  fontSize: 18,
+  fontSize: 14,
   fontWeight: 950,
 } as const;
