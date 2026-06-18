@@ -324,7 +324,7 @@ function PremiumConfirmedBooking({
 
   const [selectedPopup, setSelectedPopup] = useState<"driver" | "vehicle" | null>(null);
 const [completedTrips, setCompletedTrips] = useState<number | null>(null);
-
+const [vehicleCompletedTrips, setVehicleCompletedTrips] = useState<number | null>(null);
   const vehicleName = getVehicleName(request);
   const vehicleImageSrc = getVehicleImageSrc(request);
   const driverImageSrc = getDriverImageSrc(request);
@@ -407,6 +407,17 @@ const [completedTrips, setCompletedTrips] = useState<number | null>(null);
           }
         }
 
+       if (vehicleNumber) {
+  const vehicleTripResponse = await fetch(
+    `${ratingSupabaseUrl}/rest/v1/booking_requests?select=id&vehicle_no=eq.${encodeURIComponent(vehicleNumber)}&status=eq.confirmed`,
+    { headers }
+  );
+
+  if (vehicleTripResponse.ok) {
+    const rows = await vehicleTripResponse.json();
+    if (active) setVehicleCompletedTrips(Array.isArray(rows) ? rows.length : 0);
+  }
+       }
         if (vehicleNumber) {
           const vehicleResponse = await fetch(
             `${ratingSupabaseUrl}/rest/v1/trip_ratings?select=vehicle_cleanliness_rating,vehicle_comfort_rating,ac_cooling_rating,seat_condition_rating,overall_vehicle_rating,vehicle_average_rating&vehicle_number=eq.${encodeURIComponent(vehicleNumber)}`,
@@ -529,6 +540,8 @@ const [completedTrips, setCompletedTrips] = useState<number | null>(null);
   vehicleNo={request.vehicleNo}
   rating={rating.vehicle}
   onViewRating={() => setSelectedPopup("vehicle")}
+  completedTrips={vehicleCompletedTrips}
+  verified
 />
           <PremiumDetailCard
   title="Driver Name"
@@ -606,19 +619,19 @@ function PremiumDetailCard({
   circle={circle}
 />
 
+<div style={profileName}>{name || "-"}</div>
+
 {vehicleNo ? (
   <div style={vehicleNoBadge}>
     Vehicle No: <b>{formatVehicleNumber(vehicleNo)}</b>
   </div>
 ) : null}
 
-<div style={profileName}>{name || "-"}</div>
-
       <RealStarRating rating={rating} onView={onViewRating} />
 
       {verified ? (
   <>
-    <div style={verifiedDriver}>✓ Verified Driver</div>
+    <div style={verifiedDriver}>✓ {circle ? "Verified Driver" : "Verified Vehicle"}</div>
     <div style={completedTripsStyle}>
       {completedTrips !== null ? `${completedTrips} Completed Trips` : "Completed Trips"}
     </div>
@@ -1360,14 +1373,14 @@ const vehicleNoBadge = {
   borderRadius: 999,
   background: "#fffaf0",
   color: "#a16b24",
-  fontSize: 10,
+  fontSize: 14,
   fontWeight: 900,
   border: "1px solid #ead8bd",
   whiteSpace: "nowrap",
 } as const;
 const profileName = {
   color: "#071633",
-  fontSize: 14,
+  fontSize: 10,
   fontWeight: 950,
   minHeight: 18,
   wordBreak: "break-word",
