@@ -470,16 +470,12 @@ function openDriverWhatsAppFromForm(){if(!activeBookingRequest?.id)return alert(
   async function runSendToCustomer() {
   if (!validate()) return;
 
-  const id = lastBookingId || `VT-${Date.now()}`;
-
   setCustomerSendLoading(true);
 
   try {
     downloadBookingCopy(false);
-
     setShowCustomerSendPopup(false);
-
-    window.location.href = `https://api.whatsapp.com/send?phone=91${cleanPhone(form.customerPhone)}&text=${encodeURIComponent(msg(id))}`;
+    await sendConfirmationLinkToCustomer();
   } finally {
     setCustomerSendLoading(false);
   }
