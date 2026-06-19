@@ -369,4 +369,25 @@ section:has(a[href*="wa.me"]) p {
   color: #ffffff !important;
   text-shadow: 0 2px 8px rgba(0,0,0,.45) !important;
 }
+#booking-form select {
+  background: rgba(255,255,255,.06) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255,255,255,.22) !important;
+}
 
+#booking-form option {
+  background: #08111f !important;
+  color: #ffffff !important;
+}
+
+#booking-form button[type="button"] {
+  background: rgba(255,255,255,.06) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255,255,255,.22) !important;
+}
+
+#booking-form button[type="submit"] {
+  background: linear-gradient(135deg,#a96b1f,#d4af37,#a96b1f) !important;
+  color: #111 !important;
+  font-weight: 900 !important;
+}
