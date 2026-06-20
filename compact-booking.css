@@ -428,3 +428,23 @@ section:has(a[href*="wa.me"]) p {
     border-radius: 4px !important;
   }
 }
+/* VT form card compact transparent override */
+#booking-form {
+  margin-top: -18px !important;
+  padding-top: 8px !important;
+  background: rgba(3, 8, 14, .16) !important;
+  border: 1px solid rgba(212, 175, 55, .26) !important;
+  box-shadow: 0 18px 45px rgba(0,0,0,.22) !important;
+}
+
+#booking-form input:not([type="hidden"]),
+#booking-form select {
+  min-height: 38px !important;
+  background: rgba(5, 12, 20, .34) !important;
+  border-radius: 3px !important;
+}
+
+#booking-form button {
+  min-height: 40px !important;
+  border-radius: 3px !important;
+}
