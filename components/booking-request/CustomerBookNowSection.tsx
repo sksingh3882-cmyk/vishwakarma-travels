@@ -399,14 +399,16 @@ const bookNowBtnDisabled = {
   filter: "grayscale(.15)",
 } as const;
 const smallRow = { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 7, width: "min(92vw, 330px)", justifySelf: "center" } as const;
-const smallBtn = { minHeight: 32, border: "1px solid #cbd5e1", borderRadius: 12, background: "#fff", color: "#0f172a", fontWeight: 800, fontSize: 11 } as const;
-const whatsBtn = { minHeight: 32, border: "1px solid #bbf7d0", borderRadius: 12, background: "#ecfdf5", color: "#047857", fontWeight: 800, fontSize: 11 } as const;
+const smallBtn = { minHeight: 32, border: "1px solid rgba(255,255,255,.20)", borderRadius: 6, background: "rgba(255,255,255,.08)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", color: "#ffffff", fontWeight: 900, fontSize: 11 } as const;
+const whatsBtn = { minHeight: 32, border: "1px solid rgba(34,197,94,.35)", borderRadius: 6, background: "rgba(34,197,94,.14)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", color: "#ffffff", fontWeight: 900, fontSize: 11 } as const;
 const bookingBtn = {
   minHeight: 32,
-  border: "1px solid #93c5fd",
-  borderRadius: 12,
-  background: "#eff6ff",
-  color: "#0b2d6b",
+  border: "1px solid rgba(255,255,255,.20)",
+  borderRadius: 6,
+  background: "rgba(255,255,255,.08)",
+  backdropFilter: "blur(14px)",
+  WebkitBackdropFilter: "blur(14px)",
+  color: "#ffffff",
   fontWeight: 900,
   fontSize: 11,
 } as const;
