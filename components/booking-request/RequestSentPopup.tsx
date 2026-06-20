@@ -63,7 +63,9 @@ export default function RequestSentPopup({ open, onClose, onMyBooking }: Props) 
 const overlay: CSSProperties = {
   position: "fixed",
   inset: 0,
-  background: "rgba(15,23,42,.55)",
+  background: "rgba(0,0,0,.62)",
+  backdropFilter: "blur(3px)",
+  WebkitBackdropFilter: "blur(3px)",
   zIndex: 10000,
   display: "flex",
   alignItems: "center",
@@ -75,11 +77,14 @@ const overlay: CSSProperties = {
 const card: CSSProperties = {
   width: "100%",
   maxWidth: 340,
-  background: "#fff",
-  borderRadius: 30,
+  background: "linear-gradient(145deg, rgba(4,8,13,.96), rgba(15,23,42,.90))",
+  backdropFilter: "blur(20px)",
+  WebkitBackdropFilter: "blur(20px)",
+  border: "1px solid rgba(212,175,55,.55)",
+  borderRadius: 26,
   padding: "30px 22px 24px",
   textAlign: "center",
-  boxShadow: "0 25px 70px rgba(0,0,0,.28)",
+  boxShadow: "0 28px 90px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.08)",
   position: "relative",
   animation: "vtRequestPopIn .34s ease-out",
 };
@@ -92,7 +97,8 @@ const handle: CSSProperties = {
   width: 52,
   height: 6,
   borderRadius: 999,
-  background: "#dbe5f0",
+  background: "linear-gradient(90deg,#8a5a16,#f6d56f,#8a5a16)",
+  boxShadow: "0 0 14px rgba(246,213,111,.45)",
 };
 
 const tickWrap: CSSProperties = {
@@ -137,15 +143,15 @@ const tickPath: CSSProperties = {
 
 const title: CSSProperties = {
   margin: 0,
-  color: "#07122b",
+  color: "#ffffff",
   fontSize: 28,
   lineHeight: 1.1,
-  fontWeight: 900,
+  fontWeight: 950,
 };
 
 const text: CSSProperties = {
   margin: "14px 0 0",
-  color: "#64748b",
+  color: "rgba(255,255,255,.78)",
   fontSize: 17,
   lineHeight: 1.45,
   fontWeight: 700,
@@ -155,22 +161,23 @@ const myBookingBtn: CSSProperties = {
   width: "100%",
   marginTop: 22,
   minHeight: 54,
-  border: 0,
-  borderRadius: 17,
-  background: "#16a34a",
-  color: "#fff",
+  border: "1px solid rgba(212,175,55,.48)",
+  borderRadius: 12,
+  background: "linear-gradient(135deg, rgba(22,163,74,.78), rgba(5,80,42,.90))",
+  color: "#ffffff",
   fontSize: 17,
-  fontWeight: 900,
+  fontWeight: 950,
+  boxShadow: "0 14px 30px rgba(22,163,74,.22)",
 };
 
 const closeBtn: CSSProperties = {
   width: "100%",
   marginTop: 10,
   minHeight: 50,
-  border: "1px solid #d7e2ef",
-  borderRadius: 16,
-  background: "#fff",
-  color: "#07122b",
+  border: "1px solid rgba(212,175,55,.45)",
+  borderRadius: 12,
+  background: "rgba(255,255,255,.04)",
+  color: "#f6d56f",
   fontSize: 16,
-  fontWeight: 900,
+  fontWeight: 950,
 };
