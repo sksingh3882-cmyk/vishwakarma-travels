@@ -483,3 +483,26 @@ section:has(a[href*="wa.me"]) p {
   font-size: 14px !important;
   margin: 0 !important;
 }
+/* VT premium black-gold feature strip */
+main > section:nth-of-type(1) > div,
+.vt-premium-feature-strip {
+  background: rgba(3, 8, 14, .72) !important;
+  border: 1px solid rgba(212, 175, 55, .42) !important;
+  box-shadow: 0 18px 45px rgba(0,0,0,.32) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+main > section:nth-of-type(1) > div span:first-child {
+  color: #d4af37 !important;
+  filter: drop-shadow(0 0 10px rgba(212,175,55,.35)) !important;
+}
+
+main > section:nth-of-type(1) > div span:last-child {
+  color: #ffffff !important;
+  text-shadow: 0 2px 10px rgba(0,0,0,.55) !important;
+}
+
+main > section:nth-of-type(1) > div > div:not(:last-child) {
+  border-right: 1px solid rgba(212, 175, 55, .22) !important;
+}
