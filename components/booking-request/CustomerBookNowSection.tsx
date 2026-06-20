@@ -411,14 +411,14 @@ const bookingBtn = {
   fontSize: 11,
 } as const;
 const overlay = { position: "fixed", inset: 0, background: "rgba(15,23,42,.55)", zIndex: 9999, display: "flex", alignItems: "flex-end", justifyContent: "center", padding: 12 } as const;
-const listCard = { width: "100%", maxWidth: 460, maxHeight: "82vh", overflowY: "auto", background: "#fff", borderRadius: "24px 24px 16px 16px", padding: 16, boxShadow: "0 24px 80px rgba(0,0,0,.28)", fontFamily: "Arial, sans-serif" } as const;
+const listCard = { width: "100%", maxWidth: 460, maxHeight: "82vh", overflowY: "auto", background: "rgba(15,23,42,.82)", backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)", border: "1px solid rgba(255,255,255,.18)", borderRadius: "24px 24px 16px 16px", padding: 16, boxShadow: "0 24px 80px rgba(0,0,0,.45)", fontFamily: "Arial, sans-serif" } as const;
 const handle = { width: 52, height: 5, borderRadius: 99, background: "#cbd5e1", margin: "0 auto 14px" } as const;
 const listHead = { display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start", marginBottom: 12 } as const;
-const listTitle = { margin: 0, color: "#0f172a", fontSize: 20 } as const;
-const listSub = { margin: "6px 0 0", color: "#64748b", fontSize: 13, lineHeight: 1.35 } as const;
+const listTitle = { margin: 0, color: "#ffffff", fontSize: 20 } as const;
+const listSub = { margin: "6px 0 0", color: "rgba(255,255,255,.72)", fontSize: 13, lineHeight: 1.35 } as const;
 const xBtn = { border: "1px solid #e2e8f0", background: "#fff", borderRadius: 12, width: 38, height: 38, fontSize: 24, lineHeight: 1, color: "#0f172a" } as const;
 const lookupBox = { display: "grid", gridTemplateColumns: "1fr", gap: 9, margin: "12px 0 10px" } as const;
-const phoneInput = { width: "100%", minHeight: 44, border: "1px solid #cbd5e1", borderRadius: 14, padding: "0 12px", fontSize: 15, fontWeight: 800, outline: "none", color: "#0f172a" } as const;
+const phoneInput = { width: "100%", minHeight: 44, border: "1px solid rgba(255,255,255,.18)", borderRadius: 14, padding: "0 12px", fontSize: 15, fontWeight: 800, outline: "none", color: "#ffffff", background: "rgba(255,255,255,.08)" } as const;
 const viewBtn = { width: "100%", minHeight: 42, border: 0, borderRadius: 14, background: "#0b2d6b", color: "#fff", fontWeight: 900, fontSize: 14 } as const;
 const message = { margin: "18px 0", color: "#64748b", textAlign: "center", fontSize: 14 } as const;
 const errorText = { margin: "12px 0", color: "#b91c1c", textAlign: "center", fontSize: 14, fontWeight: 800 } as const;
