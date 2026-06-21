@@ -1213,25 +1213,27 @@ const hideAdminChromeCss = `
 `;
 const driverMessageBox = {
   marginTop: 18,
-  border: "1px solid #bfdbfe",
-  background: "#eff6ff",
+  border: "1px solid rgba(212,175,55,.55)",
+  background: "radial-gradient(circle at top, rgba(21,128,61,.36), rgba(5,12,20,.96) 62%)",
   borderRadius: 18,
-  padding: 16,
+  padding: "30px 16px",
   textAlign: "center",
+  boxShadow: "0 22px 60px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08)",
 } as const;
 
 const driverMessageTitle = {
   margin: 0,
-  color: "#0b2d6b",
-  fontSize: 18,
-  lineHeight: 1.25,
-  fontWeight: 900,
+  color: "#f6d56f",
+  fontSize: 24,
+  lineHeight: 1.18,
+  fontWeight: 950,
+  textShadow: "0 2px 14px rgba(0,0,0,.55)",
 } as const;
 
 const driverMessageText = {
-  margin: "8px 0 0",
-  color: "#475569",
-  fontSize: 14,
+  margin: "14px 0 0",
+  color: "rgba(255,255,255,.84)",
+  fontSize: 15,
   lineHeight: 1.45,
   fontWeight: 800,
 } as const;
