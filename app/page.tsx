@@ -160,8 +160,8 @@ const textHeroOrange:CSSProperties={
 
 const textHeroFeatures:CSSProperties={
   marginTop:14,
-  height:118,
-  padding:"8px 10px",
+  height:84,
+  padding:"6px 10px",
   backgroundImage:`url("/cars/premium-strip.png")`,
   backgroundSize:"cover",
   backgroundPosition:"center",
