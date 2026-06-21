@@ -51,7 +51,12 @@ function downloadBookingCopy(){if(!form.name||!form.mobile||!form.pickup||!form.
   <a href="/" style={{display:"flex",textDecoration:"none",alignItems:"center"}}>
     <img
       src="/cars/vt-logo-new.png"
-      style={{width:220,height:58,objectFit:"contain"}}
+      style={{
+  width:"clamp(190px,62vw,280px)",
+  height:72,
+  objectFit:"contain",
+  objectPosition:"left center"
+}}
       alt="Vishwakarma Travels"
     />
   </a>
