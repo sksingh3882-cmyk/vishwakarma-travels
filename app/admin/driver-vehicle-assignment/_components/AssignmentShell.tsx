@@ -1418,11 +1418,11 @@ const messagePreview = {
   whiteSpace: "pre-wrap",
   wordBreak: "break-word",
   margin: 0,
-  padding: 12,
-  borderRadius: 16,
-  background: "#f8fafc",
-  border: "1px solid #e2e8f0",
-  color: "#0f172a",
+  padding: 14,
+  borderRadius: 14,
+  background: "rgba(255,255,255,.06)",
+  border: "1px solid rgba(212,175,55,.32)",
+  color: "#ffffff",
   fontSize: 14,
   lineHeight: 1.55,
   fontFamily: "Arial, sans-serif",
@@ -1432,11 +1432,11 @@ const linkBox = {
   wordBreak: "break-all",
   margin: 0,
   padding: 12,
-  borderRadius: 16,
-  background: "#f8fafc",
-  border: "1px solid #e2e8f0",
+  borderRadius: 12,
+  background: "rgba(255,255,255,.06)",
+  border: "1px solid rgba(212,175,55,.32)",
   fontSize: 12,
-  color: "#334155",
+  color: "rgba(255,255,255,.82)",
 } as const;
 
 const twoBtnGrid = {
@@ -1449,11 +1449,11 @@ const twoBtnGrid = {
 const primaryBtn = {
   width: "100%",
   minHeight: 46,
-  border: 0,
-  borderRadius: 14,
-  background: "#0b2d6b",
-  color: "#ffffff",
-  fontWeight: 900,
+  border: "1px solid rgba(246,213,111,.45)",
+  borderRadius: 10,
+  background: "linear-gradient(135deg,#8a5a16,#f6d56f,#b7791f)",
+  color: "#111827",
+  fontWeight: 950,
   fontSize: 15,
   cursor: "pointer",
   marginTop: 12,
@@ -1461,17 +1461,18 @@ const primaryBtn = {
 
 const greenBtn = {
   ...primaryBtn,
-  background: "#16a34a",
+  background: "linear-gradient(135deg,#15803d,#22c55e)",
+  color: "#ffffff",
 } as const;
 
 const outlineBtn = {
   width: "100%",
   minHeight: 46,
-  border: "1px solid #cbd5e1",
-  borderRadius: 14,
-  background: "#ffffff",
-  color: "#0b2d6b",
-  fontWeight: 900,
+  border: "1px solid rgba(246,213,111,.45)",
+  borderRadius: 10,
+  background: "rgba(255,255,255,.045)",
+  color: "#f6d56f",
+  fontWeight: 950,
   fontSize: 15,
   cursor: "pointer",
   marginTop: 12,
@@ -1479,9 +1480,9 @@ const outlineBtn = {
 
 const dangerBtn = {
   ...outlineBtn,
-  color: "#dc2626",
-  border: "1px solid #fecaca",
-  background: "#fff1f2",
+  color: "#fecaca",
+  border: "1px solid rgba(248,113,113,.55)",
+  background: "rgba(127,29,29,.18)",
 } as const;
 
 const infoBox = {
