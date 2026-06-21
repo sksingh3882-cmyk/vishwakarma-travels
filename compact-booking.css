@@ -263,9 +263,9 @@ main > section:nth-of-type(3) > div > div span {
 
   #booking-form {
     grid-template-columns: 1fr !important;
-    padding: 10px !important;
+    padding: 9px !important;
     border-radius: 24px !important;
-    gap: 7px !important;
+    gap: 5px !important;
   }
 
   #booking-form > div {
