@@ -147,26 +147,17 @@ const textHeroOrange:CSSProperties={
 
 const textHeroFeatures:CSSProperties={
   marginTop:14,
-  display:"grid",
-  gridTemplateColumns:"repeat(4,1fr)",
-  gap:6,
-  background:"rgba(255,255,255,.08)",
-backdropFilter:"blur(4px)",
-  border:"1px solid #dbeafe",
+  height:118,
+  backgroundImage:`url("/cars/premium-strip.png")`,
+  backgroundSize:"cover",
+  backgroundPosition:"center",
+  border:"1px solid rgba(246,213,111,.45)",
   borderRadius:18,
-  padding:8
+  boxShadow:"0 12px 32px rgba(0,0,0,.35)",
+  overflow:"hidden"
 };
-
 const textHeroFeature:CSSProperties={
-  display:"grid",
-  justifyItems:"center",
-  alignItems:"center",
-  gap:4,
-  color:"#0B3D91",
-  fontSize:"clamp(9px,2.6vw,14px)",
-  fontWeight:900,
-  lineHeight:1.15,
-  minWidth:0
+  display:"none"
 };
 
 const textHeroIcon:CSSProperties={
