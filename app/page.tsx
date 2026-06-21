@@ -127,6 +127,7 @@ function downloadBookingCopy(){if(!form.name||!form.mobile||!form.pickup||!form.
   }}
 ><h3>{s}</h3><div style={{display:"flex",alignItems:"center",gap:8,color:"#64748b",marginTop:10}}><span style={{fontSize:16}}>{s==="One Way Drop Pickup"?"✈️":s==="Local Movement"?"🚖":s==="Outstation Movement"?"🛣️":"⏱️"}</span><p style={{margin:0}}>{s==="One Way Drop Pickup"?"Airport & city drop service":s==="Local Movement"?"Local cab for daily travel":s==="Outstation Movement"?"Outstation taxi booking":"Short trip & hourly booking"}</p></div></div>)}</div></section><ContactAdminBox /><footer style={{textAlign:"center",padding:30}}>Vishwakarma Travels</footer></main>}
 const textHeroBanner:CSSProperties={
+  marginTop: 0,
   position:"relative",
   overflow:"hidden",
   background:"linear-gradient(135deg,#ffffff 0%,#f8fbff 52%,#fff7ed 100%)",
@@ -159,7 +160,7 @@ const textHeroOrange:CSSProperties={
 };
 
 const textHeroFeatures:CSSProperties={
-  marginTop:14,
+  marginTop:-8,
   height:84,
   padding:"6px 10px",
   backgroundImage:`url("/cars/premium-strip.png")`,
