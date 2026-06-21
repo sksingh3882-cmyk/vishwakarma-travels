@@ -47,7 +47,15 @@ function downloadBookingCopy(){if(!form.name||!form.mobile||!form.pickup||!form.
  function formatTime(t:string){if(!t)return "";const [h,m]=t.split(":");const hour=Number(h);return `${hour%12||12}:${m} ${hour>=12?"PM":"AM"}`;}
  return <main style={page} onClick={()=>openDrop&&setOpenDrop(null)}>{showCover&&<CustomerCover onContinue={(profile)=>{setForm(p=>({...p,name:profile.name||p.name,mobile:cleanPhone(profile.mobile||p.mobile),pickup:profile.address||p.pickup}));setShowCover(false)}}/>}{pending&&<div style={overlay}><div style={modal}><button onClick={()=>setPending(null)} style={close}>❎</button><img src="/cars/popup_banner.png" style={banner}/><div style={{padding:14}}><h2 style={{color:"#0b2d6b",margin:0}}>Confirm Your Ride Details</h2><p>Please check details before WhatsApp submit.</p><div style={grid}>{["name","mobile","service","vehicle","bookingDate","bookingTime"].map(k=><div style={info} key={k}><b>{k}</b><span>{pending[k]}</span></div>)}</div><div style={route}><b>Pickup</b><span>{pending.pickup}</span><b>Drop</b><span>{pending.drop}</span></div><div style={actions}><button onClick={()=>setPending(null)} style={cancel}>Cancel</button><button onClick={send} style={confirm}>Confirm & Submit</button></div></div></div></div>}
 <SecureBookingPopup />
-  <header style={head}><a href="/" style={{display:"flex",gap:6,textDecoration:"none",alignItems:"center"}}><img src="/cars/vt-logo.png" style={{width:42,height:42,objectFit:"contain"}} alt="Vishwakarma Travels" /><div><h1 style={logo1}>VISHWAKARMA</h1><p style={logo2}>TRAVELS</p></div></a></header><section style={hero}>
+  <header style={head}>
+  <a href="/" style={{display:"flex",textDecoration:"none",alignItems:"center"}}>
+    <img
+      src="/cars/vt-logo-new.png"
+      style={{width:220,height:58,objectFit:"contain"}}
+      alt="Vishwakarma Travels"
+    />
+  </a>
+</header><section style={hero}>
   <div style={textHeroBanner}>
    
 
