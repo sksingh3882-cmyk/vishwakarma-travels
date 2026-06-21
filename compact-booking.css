@@ -234,6 +234,8 @@ main > section:nth-of-type(3) > div > div span {
     height: 82px !important;
     object-fit: contain !important;
     object-position: left center !important;
+    transform: scale(1.25) !important;
+    transform-origin: left center !important;
   }
 
   main > header h1 {
