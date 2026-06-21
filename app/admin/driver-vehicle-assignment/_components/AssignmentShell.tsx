@@ -1239,43 +1239,43 @@ const driverMessageText = {
 } as const;
 const pageWrap = {
   minHeight: "100vh",
-  background: "#eef5fb",
+  background: "linear-gradient(180deg,#eef6ff 0%,#dfeaf5 100%)",
   padding: "14px",
   fontFamily: "Arial, sans-serif",
-  color: "#0f172a",
+  color: "#ffffff",
 } as const;
 
 const cardWide = {
   width: "100%",
   maxWidth: 760,
   margin: "0 auto",
-  background: "#ffffff",
-  border: "1px solid #dbe7f3",
-  borderRadius: 24,
+  background: "linear-gradient(145deg, rgba(4,8,13,.96), rgba(15,23,42,.92))",
+  border: "1px solid rgba(212,175,55,.45)",
+  borderRadius: 22,
   overflow: "hidden",
-  boxShadow: "0 18px 50px rgba(15, 23, 42, 0.08)",
+  boxShadow: "0 22px 70px rgba(0,0,0,.28)",
 } as const;
 
 const cardNarrow = {
   width: "100%",
   maxWidth: 430,
   margin: "0 auto",
-  background: "#ffffff",
-  border: "1px solid #dbe7f3",
+  background: "linear-gradient(145deg, rgba(4,8,13,.96), rgba(15,23,42,.92))",
+  border: "1px solid rgba(212,175,55,.45)",
   borderRadius: 22,
   padding: 16,
-  boxShadow: "0 18px 50px rgba(15, 23, 42, 0.08)",
+  boxShadow: "0 22px 70px rgba(0,0,0,.28)",
 } as const;
 
 const headerBox = {
-  padding: "22px 16px",
+  padding: "24px 16px",
   textAlign: "center",
-  borderBottom: "1px solid #e2e8f0",
+  borderBottom: "1px solid rgba(212,175,55,.35)",
 } as const;
 
 const sectionBox = {
   padding: "18px 14px",
-  borderBottom: "1px solid #e2e8f0",
+  borderBottom: "1px solid rgba(212,175,55,.25)",
 } as const;
 
 const centerBlock = {
@@ -1285,25 +1285,26 @@ const centerBlock = {
 
 const mainTitle = {
   margin: 0,
-  fontSize: 30,
-  lineHeight: 1.15,
-  fontWeight: 900,
-  color: "#0b2d6b",
+  fontSize: 32,
+  lineHeight: 1.12,
+  fontWeight: 950,
+  color: "#f6d56f",
+  textShadow: "0 2px 18px rgba(246,213,111,.28)",
 } as const;
 
 const smallTitle = {
   margin: 0,
   fontSize: 22,
-  fontWeight: 900,
-  color: "#0b2d6b",
+  fontWeight: 950,
+  color: "#f6d56f",
 } as const;
 
 const sectionTitle = {
   margin: "0 0 14px",
   textAlign: "center",
   fontSize: 24,
-  fontWeight: 900,
-  color: "#0b2d6b",
+  fontWeight: 950,
+  color: "#f6d56f",
 } as const;
 
 const popupTitle = {
@@ -1316,7 +1317,7 @@ const popupTitle = {
 const mutedText = {
   margin: "6px 0 0",
   fontSize: 14,
-  color: "#475569",
+  color: "rgba(255,255,255,.72)",
 } as const;
 
 const statusText = {
@@ -1346,7 +1347,7 @@ const inputWrap = {
 const fieldLabel = {
   fontSize: 13,
   fontWeight: 900,
-  color: "#334155",
+  color: "rgba(255,255,255,.74)",
 } as const;
 
 const fileCaptureBox = {
@@ -1383,31 +1384,33 @@ const driverUploadPreviewImg = {
   objectFit: "cover",
   border: "1px solid #dbe7f3",
 } as const;
-const inputStyle = {
-  width: "100%",
-  minHeight: 46,
-  border: "1px solid #cbd5e1",
-  borderRadius: 14,
-  padding: "0 12px",
-  fontSize: 15,
-  fontWeight: 800,
-  color: "#0f172a",
-  background: "#f8fafc",
-  outline: "none",
-  boxSizing: "border-box",
-} as const;
+
 
 const textAreaStyle = {
   width: "100%",
   minHeight: 82,
-  border: "1px solid #cbd5e1",
-  borderRadius: 14,
+  border: "1px solid rgba(212,175,55,.45)",
+  borderRadius: 10,
   padding: 12,
   fontSize: 15,
-  color: "#0f172a",
-  background: "#f8fafc",
+  color: "#ffffff",
+  background: "rgba(255,255,255,.055)",
   outline: "none",
   resize: "vertical",
+  boxSizing: "border-box",
+} as const;
+
+const inputStyle = {
+  width: "100%",
+  minHeight: 46,
+  border: "1px solid rgba(212,175,55,.45)",
+  borderRadius: 10,
+  padding: "0 12px",
+  fontSize: 15,
+  fontWeight: 850,
+  color: "#ffffff",
+  background: "rgba(255,255,255,.055)",
+  outline: "none",
   boxSizing: "border-box",
 } as const;
 
