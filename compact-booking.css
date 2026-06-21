@@ -230,8 +230,8 @@ main > section:nth-of-type(3) > div > div span {
 
 @media (max-width: 640px) {
   main > header img {
-    width: 230px !important;
-    height: 64px !important;
+    width: 270px !important;
+    height: 82px !important;
     object-fit: contain !important;
     object-position: left center !important;
   }
