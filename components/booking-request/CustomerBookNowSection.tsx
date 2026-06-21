@@ -421,14 +421,14 @@ const listSub = { margin: "6px 0 0", color: "rgba(255,255,255,.72)", fontSize: 1
 const xBtn = { border: "1px solid rgba(212,175,55,.45)", background: "rgba(5,12,20,.72)", borderRadius: 10, width: 38, height: 38, fontSize: 24, lineHeight: 1, color: "#f6d56f", boxShadow: "0 0 18px rgba(212,175,55,.18)" } as const;
 const lookupBox = { display: "grid", gridTemplateColumns: "1fr", gap: 9, margin: "12px 0 10px" } as const;
 const phoneInput = { width: "100%", minHeight: 44, border: "1px solid rgba(255,255,255,.18)", borderRadius: 14, padding: "0 12px", fontSize: 15, fontWeight: 800, outline: "none", color: "#ffffff", background: "rgba(255,255,255,.08)" } as const;
-const viewBtn = { width: "100%", minHeight: 42, border: 0, borderRadius: 14, background: "#0b2d6b", color: "#fff", fontWeight: 900, fontSize: 14 } as const;
+const viewBtn = { width: "100%", minHeight: 46, border: "1px solid rgba(246,213,111,.45)", borderRadius: 10, background: "linear-gradient(135deg,#8a5a16,#f6d56f,#b7791f)", color: "#111827", fontWeight: 950, fontSize: 14, boxShadow: "0 14px 30px rgba(212,175,55,.24)" } as const;
 const message = { margin: "18px 0", color: "#64748b", textAlign: "center", fontSize: 14 } as const;
 const errorText = { margin: "12px 0", color: "#b91c1c", textAlign: "center", fontSize: 14, fontWeight: 800 } as const;
 const bookingList = { display: "grid", gap: 9, marginTop: 12 } as const;
-const bookingItem = { width: "100%", textAlign: "left", border: "1px solid #e2e8f0", borderRadius: 14, background: "#f8fafc", padding: 12, display: "grid", gap: 6 } as const;
-const routeText = { color: "#0f172a", fontWeight: 900, fontSize: 14, lineHeight: 1.3 } as const;
-const dateText = { color: "#475569", fontWeight: 700, fontSize: 13 } as const;
-const statusText = { justifySelf: "start", borderRadius: 999, background: "#eff6ff", color: "#1d4ed8", padding: "4px 9px", fontSize: 11, fontWeight: 900 } as const;
+const bookingItem = { width: "100%", textAlign: "left", border: "1px solid rgba(212,175,55,.32)", borderRadius: 12, background: "rgba(255,255,255,.055)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", padding: 12, display: "grid", gap: 6, boxShadow: "inset 0 1px 0 rgba(255,255,255,.06)" } as const;
+const routeText = { color: "#ffffff", fontWeight: 950, fontSize: 14, lineHeight: 1.3 } as const;
+const dateText = { color: "rgba(255,255,255,.76)", fontWeight: 800, fontSize: 13 } as const;
+const statusText = { justifySelf: "start", borderRadius: 999, background: "rgba(212,175,55,.16)", color: "#f6d56f", border: "1px solid rgba(212,175,55,.38)", padding: "4px 9px", fontSize: 11, fontWeight: 950 } as const;
 const confirmCard = {
   width: "100%",
   maxWidth: 460,
