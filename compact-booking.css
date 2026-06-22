@@ -257,7 +257,7 @@ main > section:nth-of-type(3) > div > div span {
 
   section:has(> #booking-form) {
     max-width: 100% !important;
-    margin-top: -65px !important;
+    margin-top: -35px !important;
     padding: 0 10px !important;
   }
 
@@ -434,7 +434,7 @@ section:has(a[href*="wa.me"]) p {
 }
 /* VT form card compact transparent override */
 #booking-form {
-  margin-top: -18px !important;
+  margin-top: -0 !important;
   padding-top: 8px !important;
   background: rgba(3, 8, 14, .16) !important;
   border: 1px solid rgba(212, 175, 55, .26) !important;
