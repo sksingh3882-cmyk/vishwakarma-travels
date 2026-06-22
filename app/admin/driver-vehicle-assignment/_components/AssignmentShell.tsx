@@ -1260,11 +1260,12 @@ const cardNarrow = {
   width: "100%",
   maxWidth: 430,
   margin: "0 auto",
-  background: "linear-gradient(145deg, rgba(4,8,13,.96), rgba(15,23,42,.92))",
-  border: "1px solid rgba(212,175,55,.45)",
+  background:
+    "radial-gradient(circle at 85% 12%, rgba(246,213,111,.18), transparent 30%), radial-gradient(circle at 15% 0%, rgba(59,130,246,.18), transparent 32%), linear-gradient(145deg, rgba(5,12,24,.98), rgba(12,24,48,.96) 48%, rgba(8,16,32,.98))",
+  border: "1px solid rgba(246,213,111,.55)",
   borderRadius: 22,
   padding: 16,
-  boxShadow: "0 22px 70px rgba(0,0,0,.28)",
+  boxShadow: "0 24px 70px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.08)",
 } as const;
 
 const headerBox = {
@@ -1528,10 +1529,11 @@ const infoLine = {
   margin: "0 0 10px",
   fontSize: 16,
   lineHeight: 1.45,
-  color: "#334155",
+  color: "#f6d56f",
   textAlign: "left",
+  fontWeight: 800,
+  textShadow: "0 1px 8px rgba(0,0,0,.45)",
 } as const;
-
 const detailRow = {
   display: "grid",
   gridTemplateColumns: "112px 1fr",
