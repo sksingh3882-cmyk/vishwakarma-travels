@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type CSSProperties, type FormEvent } from "react";
 import AdminIncomingBookingRequests from "@/components/booking-request/AdminIncomingBookingRequests";
-import { confirmBookingRequestAfterDownload, fetchBookingRequestById, type BookingRequestRecord } from "@/lib/bookingRequestService";
+import { confirmBookingRequestAfterDownload, fetchBookingRequestById, makeTripShortCode, type BookingRequestRecord } from "@/lib/bookingRequestService";
 import AdminBookingRequestsReport from "@/components/booking-request/AdminBookingRequestsReport";
 import AdminPushSetup from "@/components/admin/AdminPushSetup";
 import AdminNotificationWatcher from "@/components/admin/AdminNotificationWatcher";
@@ -450,7 +450,7 @@ x.textAlign = "left";
 
 function driverTripLink() {
   return activeBookingRequest?.id
-    ? `${window.location.origin}/driver-trip?id=${encodeURIComponent(activeBookingRequest.id)}`
+    ? `${window.location.origin}/trip/${encodeURIComponent(makeTripShortCode(activeBookingRequest.id))}`
     : "";
 }
 function openDriverWhatsAppFromForm() {
