@@ -1213,67 +1213,70 @@ const hideAdminChromeCss = `
 `;
 const driverMessageBox = {
   marginTop: 18,
-  border: "1px solid #bfdbfe",
-  background: "#eff6ff",
+  border: "1px solid rgba(212,175,55,.55)",
+  background: "radial-gradient(circle at top, rgba(21,128,61,.36), rgba(5,12,20,.96) 62%)",
   borderRadius: 18,
-  padding: 16,
+  padding: "30px 16px",
   textAlign: "center",
+  boxShadow: "0 22px 60px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08)",
 } as const;
 
 const driverMessageTitle = {
   margin: 0,
-  color: "#0b2d6b",
-  fontSize: 18,
-  lineHeight: 1.25,
-  fontWeight: 900,
+  color: "#f6d56f",
+  fontSize: 24,
+  lineHeight: 1.18,
+  fontWeight: 950,
+  textShadow: "0 2px 14px rgba(0,0,0,.55)",
 } as const;
 
 const driverMessageText = {
-  margin: "8px 0 0",
-  color: "#475569",
-  fontSize: 14,
+  margin: "14px 0 0",
+  color: "rgba(255,255,255,.84)",
+  fontSize: 15,
   lineHeight: 1.45,
   fontWeight: 800,
 } as const;
 const pageWrap = {
   minHeight: "100vh",
-  background: "#eef5fb",
+  background: "linear-gradient(180deg,#eef6ff 0%,#dfeaf5 100%)",
   padding: "14px",
   fontFamily: "Arial, sans-serif",
-  color: "#0f172a",
+  color: "#ffffff",
 } as const;
 
 const cardWide = {
   width: "100%",
   maxWidth: 760,
   margin: "0 auto",
-  background: "#ffffff",
-  border: "1px solid #dbe7f3",
-  borderRadius: 24,
+  background: "linear-gradient(145deg, rgba(4,8,13,.96), rgba(15,23,42,.92))",
+  border: "1px solid rgba(212,175,55,.45)",
+  borderRadius: 22,
   overflow: "hidden",
-  boxShadow: "0 18px 50px rgba(15, 23, 42, 0.08)",
+  boxShadow: "0 22px 70px rgba(0,0,0,.28)",
 } as const;
 
 const cardNarrow = {
   width: "100%",
   maxWidth: 430,
   margin: "0 auto",
-  background: "#ffffff",
-  border: "1px solid #dbe7f3",
+  background:
+    "radial-gradient(circle at 85% 12%, rgba(246,213,111,.18), transparent 30%), radial-gradient(circle at 15% 0%, rgba(59,130,246,.18), transparent 32%), linear-gradient(145deg, rgba(5,12,24,.98), rgba(12,24,48,.96) 48%, rgba(8,16,32,.98))",
+  border: "1px solid rgba(246,213,111,.55)",
   borderRadius: 22,
   padding: 16,
-  boxShadow: "0 18px 50px rgba(15, 23, 42, 0.08)",
+  boxShadow: "0 24px 70px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.08)",
 } as const;
 
 const headerBox = {
-  padding: "22px 16px",
+  padding: "24px 16px",
   textAlign: "center",
-  borderBottom: "1px solid #e2e8f0",
+  borderBottom: "1px solid rgba(212,175,55,.35)",
 } as const;
 
 const sectionBox = {
   padding: "18px 14px",
-  borderBottom: "1px solid #e2e8f0",
+  borderBottom: "1px solid rgba(212,175,55,.25)",
 } as const;
 
 const centerBlock = {
@@ -1283,25 +1286,26 @@ const centerBlock = {
 
 const mainTitle = {
   margin: 0,
-  fontSize: 30,
-  lineHeight: 1.15,
-  fontWeight: 900,
-  color: "#0b2d6b",
+  fontSize: 32,
+  lineHeight: 1.12,
+  fontWeight: 950,
+  color: "#f6d56f",
+  textShadow: "0 2px 18px rgba(246,213,111,.28)",
 } as const;
 
 const smallTitle = {
   margin: 0,
   fontSize: 22,
-  fontWeight: 900,
-  color: "#0b2d6b",
+  fontWeight: 950,
+  color: "#f6d56f",
 } as const;
 
 const sectionTitle = {
   margin: "0 0 14px",
   textAlign: "center",
   fontSize: 24,
-  fontWeight: 900,
-  color: "#0b2d6b",
+  fontWeight: 950,
+  color: "#f6d56f",
 } as const;
 
 const popupTitle = {
@@ -1314,7 +1318,7 @@ const popupTitle = {
 const mutedText = {
   margin: "6px 0 0",
   fontSize: 14,
-  color: "#475569",
+  color: "rgba(255,255,255,.72)",
 } as const;
 
 const statusText = {
@@ -1344,7 +1348,7 @@ const inputWrap = {
 const fieldLabel = {
   fontSize: 13,
   fontWeight: 900,
-  color: "#334155",
+  color: "rgba(255,255,255,.74)",
 } as const;
 
 const fileCaptureBox = {
@@ -1381,31 +1385,33 @@ const driverUploadPreviewImg = {
   objectFit: "cover",
   border: "1px solid #dbe7f3",
 } as const;
-const inputStyle = {
-  width: "100%",
-  minHeight: 46,
-  border: "1px solid #cbd5e1",
-  borderRadius: 14,
-  padding: "0 12px",
-  fontSize: 15,
-  fontWeight: 800,
-  color: "#0f172a",
-  background: "#f8fafc",
-  outline: "none",
-  boxSizing: "border-box",
-} as const;
+
 
 const textAreaStyle = {
   width: "100%",
   minHeight: 82,
-  border: "1px solid #cbd5e1",
-  borderRadius: 14,
+  border: "1px solid rgba(212,175,55,.45)",
+  borderRadius: 10,
   padding: 12,
   fontSize: 15,
-  color: "#0f172a",
-  background: "#f8fafc",
+  color: "#ffffff",
+  background: "rgba(255,255,255,.055)",
   outline: "none",
   resize: "vertical",
+  boxSizing: "border-box",
+} as const;
+
+const inputStyle = {
+  width: "100%",
+  minHeight: 46,
+  border: "1px solid rgba(212,175,55,.45)",
+  borderRadius: 10,
+  padding: "0 12px",
+  fontSize: 15,
+  fontWeight: 850,
+  color: "#ffffff",
+  background: "rgba(255,255,255,.055)",
+  outline: "none",
   boxSizing: "border-box",
 } as const;
 
@@ -1413,11 +1419,11 @@ const messagePreview = {
   whiteSpace: "pre-wrap",
   wordBreak: "break-word",
   margin: 0,
-  padding: 12,
-  borderRadius: 16,
-  background: "#f8fafc",
-  border: "1px solid #e2e8f0",
-  color: "#0f172a",
+  padding: 14,
+  borderRadius: 14,
+  background: "rgba(255,255,255,.06)",
+  border: "1px solid rgba(212,175,55,.32)",
+  color: "#ffffff",
   fontSize: 14,
   lineHeight: 1.55,
   fontFamily: "Arial, sans-serif",
@@ -1427,11 +1433,11 @@ const linkBox = {
   wordBreak: "break-all",
   margin: 0,
   padding: 12,
-  borderRadius: 16,
-  background: "#f8fafc",
-  border: "1px solid #e2e8f0",
+  borderRadius: 12,
+  background: "rgba(255,255,255,.06)",
+  border: "1px solid rgba(212,175,55,.32)",
   fontSize: 12,
-  color: "#334155",
+  color: "rgba(255,255,255,.82)",
 } as const;
 
 const twoBtnGrid = {
@@ -1444,11 +1450,11 @@ const twoBtnGrid = {
 const primaryBtn = {
   width: "100%",
   minHeight: 46,
-  border: 0,
-  borderRadius: 14,
-  background: "#0b2d6b",
-  color: "#ffffff",
-  fontWeight: 900,
+  border: "1px solid rgba(246,213,111,.45)",
+  borderRadius: 10,
+  background: "linear-gradient(135deg,#8a5a16,#f6d56f,#b7791f)",
+  color: "#111827",
+  fontWeight: 950,
   fontSize: 15,
   cursor: "pointer",
   marginTop: 12,
@@ -1456,17 +1462,18 @@ const primaryBtn = {
 
 const greenBtn = {
   ...primaryBtn,
-  background: "#16a34a",
+  background: "linear-gradient(135deg,#15803d,#22c55e)",
+  color: "#ffffff",
 } as const;
 
 const outlineBtn = {
   width: "100%",
   minHeight: 46,
-  border: "1px solid #cbd5e1",
-  borderRadius: 14,
-  background: "#ffffff",
-  color: "#0b2d6b",
-  fontWeight: 900,
+  border: "1px solid rgba(246,213,111,.45)",
+  borderRadius: 10,
+  background: "rgba(255,255,255,.045)",
+  color: "#f6d56f",
+  fontWeight: 950,
   fontSize: 15,
   cursor: "pointer",
   marginTop: 12,
@@ -1474,9 +1481,9 @@ const outlineBtn = {
 
 const dangerBtn = {
   ...outlineBtn,
-  color: "#dc2626",
-  border: "1px solid #fecaca",
-  background: "#fff1f2",
+  color: "#fecaca",
+  border: "1px solid rgba(248,113,113,.55)",
+  background: "rgba(127,29,29,.18)",
 } as const;
 
 const infoBox = {
@@ -1522,10 +1529,11 @@ const infoLine = {
   margin: "0 0 10px",
   fontSize: 16,
   lineHeight: 1.45,
-  color: "#334155",
+  color: "#f6d56f",
   textAlign: "left",
+  fontWeight: 800,
+  textShadow: "0 1px 8px rgba(0,0,0,.45)",
 } as const;
-
 const detailRow = {
   display: "grid",
   gridTemplateColumns: "112px 1fr",

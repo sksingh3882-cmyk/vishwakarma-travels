@@ -4,6 +4,8 @@ body {
   width: 100% !important;
   max-width: 100% !important;
   overflow-x: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
   background: linear-gradient(180deg, #f8fbff 0%, #eef5ff 48%, #f8fafc 100%) !important;
 }
 
@@ -15,17 +17,18 @@ main {
   width: 100% !important;
   max-width: 100vw !important;
   overflow-x: hidden !important;
+  margin: 0 !important;
 }
 
 main > header {
-  padding: 8px 12px 6px !important;
+  padding: 0 12px 0 !important;
   background: transparent !important;
   backdrop-filter: blur(10px) !important;
   border-radius: 0 0 20px 20px !important;
 }
 
 main > section:nth-of-type(1) {
-  padding: 0 10px 58px !important;
+  padding: 0 10px 35px !important;
 }
 
 main > section:nth-of-type(1) img {
@@ -230,8 +233,12 @@ main > section:nth-of-type(3) > div > div span {
 
 @media (max-width: 640px) {
   main > header img {
-    width: 38px !important;
-    height: 38px !important;
+    width: 270px !important;
+    height: 82px !important;
+    object-fit: contain !important;
+    object-position: left center !important;
+    transform: scale(1.80) !important;
+    transform-origin: left center !important;
   }
 
   main > header h1 {
@@ -243,7 +250,7 @@ main > section:nth-of-type(3) > div > div span {
   }
 
   main > section:nth-of-type(1) {
-    padding-bottom: 52px !important;
+    padding-bottom: 55px !important;
   }
 
   main > section:nth-of-type(1) img {
@@ -253,15 +260,15 @@ main > section:nth-of-type(3) > div > div span {
 
   section:has(> #booking-form) {
     max-width: 100% !important;
-    margin-top: -50px !important;
+    margin-top: -35px !important;
     padding: 0 10px !important;
   }
 
   #booking-form {
     grid-template-columns: 1fr !important;
-    padding: 12px !important;
+    padding: 9px !important;
     border-radius: 24px !important;
-    gap: 8px !important;
+    gap: 6px !important;
   }
 
   #booking-form > div {
@@ -368,4 +375,141 @@ section:has(a[href^="tel:"]) p,
 section:has(a[href*="wa.me"]) p {
   color: #ffffff !important;
   text-shadow: 0 2px 8px rgba(0,0,0,.45) !important;
+}
+/* VT premium black-gold form field override */
+#booking-form {
+  max-width: 94% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding: 12px !important;
+  border-radius: 10px !important;
+  background: rgba(3, 8, 14, .34) !important;
+  border: 1px solid rgba(212, 175, 55, .34) !important;
+  box-shadow: 0 22px 55px rgba(0,0,0,.32) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+#booking-form input:not([type="hidden"]),
+#booking-form select {
+  min-height: 43px !important;
+  border-radius: 4px !important;
+  border: 1px solid rgba(212, 175, 55, .38) !important;
+  background: rgba(5, 12, 20, .56) !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  padding: 11px 12px !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+#booking-form input:not([type="hidden"])::placeholder {
+  color: rgba(255,255,255,.82) !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+#booking-form input:not([type="hidden"]):focus,
+#booking-form select:focus {
+  border-color: rgba(246, 213, 111, .95) !important;
+  box-shadow: 0 0 0 2px rgba(212,175,55,.18), inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+
+#booking-form button {
+  border-radius: 4px !important;
+}
+
+@media (max-width: 640px) {
+  #booking-form {
+    max-width: 94% !important;
+    padding: 10px !important;
+    border-radius: 10px !important;
+  }
+
+  #booking-form input:not([type="hidden"]),
+  #booking-form select,
+  #booking-form button {
+    border-radius: 4px !important;
+  }
+}
+/* VT form card compact transparent override */
+#booking-form {
+  margin-top: -0 !important;
+  padding-top: 8px !important;
+  background: rgba(3, 8, 14, .16) !important;
+  border: 1px solid rgba(212, 175, 55, .26) !important;
+  box-shadow: 0 18px 45px rgba(0,0,0,.22) !important;
+}
+
+#booking-form input:not([type="hidden"]),
+#booking-form select {
+  min-height: 38px !important;
+  background: rgba(5, 12, 20, .34) !important;
+  border-radius: 3px !important;
+}
+
+#booking-form button {
+  min-height: 40px !important;
+  border-radius: 3px !important;
+}
+.vt-premium-booking-hero{
+  grid-column: 1 / -1 !important;
+  min-height: 165px !important;
+  padding: 16px !important;
+  margin-bottom: 10px !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.88) 0%, rgba(0,0,0,.62) 44%, rgba(0,0,0,.18) 100%),
+    url('/cars/hero-bg.png') !important;
+  background-size: cover !important;
+  background-position: right center !important;
+  border: 1px solid rgba(212,175,55,.35) !important;
+}
+
+.vt-premium-hero-copy span{
+  color: #d4af37 !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1.4px !important;
+}
+
+.vt-premium-hero-copy h2{
+  color: #ffffff !important;
+  font-size: 38px !important;
+  line-height: .95 !important;
+  margin: 8px 0 !important;
+  font-weight: 900 !important;
+}
+
+.vt-premium-hero-copy p{
+  color: rgba(255,255,255,.86) !important;
+  font-size: 14px !important;
+  margin: 0 !important;
+}
+/* VT premium black-gold feature strip */
+main > section:nth-of-type(1) > div,
+.vt-premium-feature-strip {
+  background: rgba(3, 8, 14, .72) !important;
+  border: 1px solid rgba(212, 175, 55, .42) !important;
+  box-shadow: 0 18px 45px rgba(0,0,0,.32) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+main > section:nth-of-type(1) > div span:first-child {
+  color: #d4af37 !important;
+  filter: drop-shadow(0 0 10px rgba(212,175,55,.35)) !important;
+}
+
+main > section:nth-of-type(1) > div span:last-child {
+  color: #ffffff !important;
+  text-shadow: 0 2px 10px rgba(0,0,0,.55) !important;
+}
+
+main > section:nth-of-type(1) > div > div:not(:last-child) {
+  border-right: 1px solid rgba(212, 175, 55, .22) !important;
 }

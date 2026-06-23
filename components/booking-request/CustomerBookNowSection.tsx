@@ -399,43 +399,48 @@ const bookNowBtnDisabled = {
   filter: "grayscale(.15)",
 } as const;
 const smallRow = { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 7, width: "min(92vw, 330px)", justifySelf: "center" } as const;
-const smallBtn = { minHeight: 32, border: "1px solid #cbd5e1", borderRadius: 12, background: "#fff", color: "#0f172a", fontWeight: 800, fontSize: 11 } as const;
-const whatsBtn = { minHeight: 32, border: "1px solid #bbf7d0", borderRadius: 12, background: "#ecfdf5", color: "#047857", fontWeight: 800, fontSize: 11 } as const;
+const smallBtn = { minHeight: 32, border: "1px solid rgba(255,255,255,.20)", borderRadius: 6, background: "rgba(255,255,255,.08)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", color: "#ffffff", fontWeight: 900, fontSize: 11 } as const;
+const whatsBtn = { minHeight: 32, border: "1px solid rgba(34,197,94,.35)", borderRadius: 6, background: "rgba(34,197,94,.14)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", color: "#ffffff", fontWeight: 900, fontSize: 11 } as const;
 const bookingBtn = {
   minHeight: 32,
-  border: "1px solid #93c5fd",
-  borderRadius: 12,
-  background: "#eff6ff",
-  color: "#0b2d6b",
+  border: "1px solid rgba(255,255,255,.20)",
+  borderRadius: 6,
+  background: "rgba(255,255,255,.08)",
+  backdropFilter: "blur(14px)",
+  WebkitBackdropFilter: "blur(14px)",
+  color: "#ffffff",
   fontWeight: 900,
   fontSize: 11,
 } as const;
 const overlay = { position: "fixed", inset: 0, background: "rgba(15,23,42,.55)", zIndex: 9999, display: "flex", alignItems: "flex-end", justifyContent: "center", padding: 12 } as const;
-const listCard = { width: "100%", maxWidth: 460, maxHeight: "82vh", overflowY: "auto", background: "#fff", borderRadius: "24px 24px 16px 16px", padding: 16, boxShadow: "0 24px 80px rgba(0,0,0,.28)", fontFamily: "Arial, sans-serif" } as const;
-const handle = { width: 52, height: 5, borderRadius: 99, background: "#cbd5e1", margin: "0 auto 14px" } as const;
+const listCard = { width: "100%", maxWidth: 460, maxHeight: "82vh", overflowY: "auto", background: "rgba(15,23,42,.82)", backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)", border: "1px solid rgba(255,255,255,.18)", borderRadius: "24px 24px 16px 16px", padding: 16, boxShadow: "0 24px 80px rgba(0,0,0,.45)", fontFamily: "Arial, sans-serif" } as const;
+const handle = { width: 52, height: 5, borderRadius: 99, background: "linear-gradient(90deg,#8a5a16,#f6d56f,#8a5a16)", margin: "0 auto 14px", boxShadow: "0 0 14px rgba(246,213,111,.45)" } as const;
 const listHead = { display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start", marginBottom: 12 } as const;
-const listTitle = { margin: 0, color: "#0f172a", fontSize: 20 } as const;
-const listSub = { margin: "6px 0 0", color: "#64748b", fontSize: 13, lineHeight: 1.35 } as const;
-const xBtn = { border: "1px solid #e2e8f0", background: "#fff", borderRadius: 12, width: 38, height: 38, fontSize: 24, lineHeight: 1, color: "#0f172a" } as const;
+const listTitle = { margin: 0, color: "#ffffff", fontSize: 20 } as const;
+const listSub = { margin: "6px 0 0", color: "rgba(255,255,255,.72)", fontSize: 13, lineHeight: 1.35 } as const;
+const xBtn = { border: "1px solid rgba(212,175,55,.45)", background: "rgba(5,12,20,.72)", borderRadius: 10, width: 38, height: 38, fontSize: 24, lineHeight: 1, color: "#f6d56f", boxShadow: "0 0 18px rgba(212,175,55,.18)" } as const;
 const lookupBox = { display: "grid", gridTemplateColumns: "1fr", gap: 9, margin: "12px 0 10px" } as const;
-const phoneInput = { width: "100%", minHeight: 44, border: "1px solid #cbd5e1", borderRadius: 14, padding: "0 12px", fontSize: 15, fontWeight: 800, outline: "none", color: "#0f172a" } as const;
-const viewBtn = { width: "100%", minHeight: 42, border: 0, borderRadius: 14, background: "#0b2d6b", color: "#fff", fontWeight: 900, fontSize: 14 } as const;
+const phoneInput = { width: "100%", minHeight: 44, border: "1px solid rgba(255,255,255,.18)", borderRadius: 14, padding: "0 12px", fontSize: 15, fontWeight: 800, outline: "none", color: "#ffffff", background: "rgba(255,255,255,.08)" } as const;
+const viewBtn = { width: "100%", minHeight: 46, border: "1px solid rgba(246,213,111,.45)", borderRadius: 10, background: "linear-gradient(135deg,#8a5a16,#f6d56f,#b7791f)", color: "#111827", fontWeight: 950, fontSize: 14, boxShadow: "0 14px 30px rgba(212,175,55,.24)" } as const;
 const message = { margin: "18px 0", color: "#64748b", textAlign: "center", fontSize: 14 } as const;
 const errorText = { margin: "12px 0", color: "#b91c1c", textAlign: "center", fontSize: 14, fontWeight: 800 } as const;
 const bookingList = { display: "grid", gap: 9, marginTop: 12 } as const;
-const bookingItem = { width: "100%", textAlign: "left", border: "1px solid #e2e8f0", borderRadius: 14, background: "#f8fafc", padding: 12, display: "grid", gap: 6 } as const;
-const routeText = { color: "#0f172a", fontWeight: 900, fontSize: 14, lineHeight: 1.3 } as const;
-const dateText = { color: "#475569", fontWeight: 700, fontSize: 13 } as const;
-const statusText = { justifySelf: "start", borderRadius: 999, background: "#eff6ff", color: "#1d4ed8", padding: "4px 9px", fontSize: 11, fontWeight: 900 } as const;
+const bookingItem = { width: "100%", textAlign: "left", border: "1px solid rgba(212,175,55,.32)", borderRadius: 12, background: "rgba(255,255,255,.055)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", padding: 12, display: "grid", gap: 6, boxShadow: "inset 0 1px 0 rgba(255,255,255,.06)" } as const;
+const routeText = { color: "#ffffff", fontWeight: 950, fontSize: 14, lineHeight: 1.3 } as const;
+const dateText = { color: "rgba(255,255,255,.76)", fontWeight: 800, fontSize: 13 } as const;
+const statusText = { justifySelf: "start", borderRadius: 999, background: "rgba(212,175,55,.16)", color: "#f6d56f", border: "1px solid rgba(212,175,55,.38)", padding: "4px 9px", fontSize: 11, fontWeight: 950 } as const;
 const confirmCard = {
   width: "100%",
   maxWidth: 460,
   maxHeight: "86vh",
   overflowY: "auto",
-  background: "#fff",
+  background: "linear-gradient(145deg, rgba(4,8,13,.94), rgba(15,23,42,.88))",
+  backdropFilter: "blur(20px)",
+  WebkitBackdropFilter: "blur(20px)",
+  border: "1px solid rgba(212,175,55,.55)",
   borderRadius: "24px 24px 16px 16px",
   padding: 16,
-  boxShadow: "0 24px 80px rgba(0,0,0,.28)",
+  boxShadow: "0 28px 90px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.08)",
   fontFamily: "Arial, sans-serif",
 } as const;
 const confirmHead = {
@@ -448,14 +453,14 @@ const confirmHead = {
 
 const confirmTitle = {
   margin: 0,
-  color: "#0f172a",
-  fontSize: 20,
-  fontWeight: 900,
+  color: "#f6d56f",
+  fontSize: 22,
+  fontWeight: 950,
 } as const;
 
 const confirmSub = {
   margin: "6px 0 0",
-  color: "#64748b",
+  color: "rgba(255,255,255,.76)",
   fontSize: 13,
   lineHeight: 1.35,
   fontWeight: 700,
@@ -469,22 +474,23 @@ const confirmDetails = {
 const confirmRow = {
   display: "grid",
   gap: 4,
-  border: "1px solid #e2e8f0",
-  background: "#f8fafc",
-  borderRadius: 14,
+  border: "1px solid rgba(212,175,55,.35)",
+  background: "rgba(255,255,255,.055)",
+  borderRadius: 10,
   padding: "10px 12px",
+  boxShadow: "inset 0 1px 0 rgba(255,255,255,.06)",
 } as const;
 
 const confirmLabel = {
-  color: "#64748b",
+  color: "#d4af37",
   fontSize: 11,
   fontWeight: 900,
   textTransform: "uppercase",
-  letterSpacing: ".3px",
+  letterSpacing: ".45px",
 } as const;
 
 const confirmValue = {
-  color: "#0f172a",
+  color: "#ffffff",
   fontSize: 14,
   fontWeight: 900,
   lineHeight: 1.35,
@@ -499,10 +505,11 @@ const confirmTwoCol = {
 const confirmMiniBox = {
   display: "grid",
   gap: 4,
-  border: "1px solid #e2e8f0",
-  background: "#f8fafc",
-  borderRadius: 14,
+  border: "1px solid rgba(212,175,55,.35)",
+  background: "rgba(255,255,255,.055)",
+  borderRadius: 10,
   padding: "10px 12px",
+  boxShadow: "inset 0 1px 0 rgba(255,255,255,.06)",
 } as const;
 
 const confirmActions = {
@@ -514,10 +521,10 @@ const confirmActions = {
 
 const cancelBtn = {
   minHeight: 44,
-  border: "1px solid #cbd5e1",
-  borderRadius: 14,
-  background: "#fff",
-  color: "#0f172a",
+  border: "1px solid rgba(212,175,55,.55)",
+  borderRadius: 10,
+  background: "rgba(255,255,255,.04)",
+  color: "#f6d56f",
   fontWeight: 900,
   fontSize: 13,
 } as const;
@@ -525,12 +532,12 @@ const cancelBtn = {
 const confirmSubmitBtn = {
   minHeight: 44,
   border: 0,
-  borderRadius: 14,
-  background: "linear-gradient(135deg,#f97316,#ea580c)",
-  color: "#fff",
-  fontWeight: 900,
+  borderRadius: 10,
+  background: "linear-gradient(135deg,#8a5a16,#f6d56f,#b7791f)",
+  color: "#111827",
+  fontWeight: 950,
   fontSize: 13,
-  boxShadow: "0 12px 26px rgba(234,88,12,.22)",
+  boxShadow: "0 14px 30px rgba(212,175,55,.28)",
 } as const;
 
   

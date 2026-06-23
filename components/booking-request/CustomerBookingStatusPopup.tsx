@@ -1021,60 +1021,70 @@ const closeBtn = {
   right: 10,
   width: 36,
   height: 36,
-  borderRadius: 14,
-  border: "1px solid #e2e8f0",
-  background: "#fff",
-  color: "#0f172a",
+  borderRadius: 10,
+  border: "1px solid rgba(246,213,111,.45)",
+  background: "rgba(5,12,20,.80)",
+  color: "#f6d56f",
   fontSize: 24,
   lineHeight: 1,
   fontWeight: 900,
   zIndex: 3,
+  boxShadow: "0 0 18px rgba(212,175,55,.18)",
 } as const;
 
 const handle = {
-  width: 44,
+  width: 52,
   height: 5,
   borderRadius: 99,
-  background: "#cbd5e1",
-  margin: "0 auto 6px",
+  background: "linear-gradient(90deg,#8a5a16,#f6d56f,#8a5a16)",
+  margin: "0 auto 10px",
+  boxShadow: "0 0 14px rgba(246,213,111,.45)",
 } as const;
 
 const headerBox = {
   textAlign: "center",
-  padding: "4px 44px 8px",
+  padding: "8px 44px 12px",
 } as const;
 
 const iconBox = {
-  width: 52,
-  height: 52,
+  width: 56,
+  height: 56,
   borderRadius: 16,
-  background: "#eff6ff",
+  background: "rgba(246,213,111,.12)",
+  border: "1px solid rgba(246,213,111,.42)",
   display: "grid",
   placeItems: "center",
-  fontSize: 28,
-  margin: "0 auto 8px",
+  fontSize: 30,
+  margin: "0 auto 10px",
+  boxShadow: "0 0 24px rgba(212,175,55,.18)",
 } as const;
 
 const titleStyle = {
   margin: 0,
-  color: "#0f172a",
-  fontSize: 18,
+  color: "#f6d56f",
+  fontSize: 20,
   lineHeight: 1.2,
+  fontWeight: 950,
+  textShadow: "0 2px 12px rgba(0,0,0,.55)",
 } as const;
 
 const subStyle = {
-  margin: "6px 0 0",
-  color: "#64748b",
+  margin: "7px 0 0",
+  color: "rgba(255,255,255,.78)",
   fontSize: 13,
-  lineHeight: 1.3,
+  lineHeight: 1.35,
+  fontWeight: 700,
 } as const;
 
 const section = {
-  border: "1px solid #e2e8f0",
-  background: "#f8fafc",
-  borderRadius: 16,
-  padding: 10,
-  marginTop: 10,
+  border: "1px solid rgba(212,175,55,.35)",
+  background: "rgba(255,255,255,.055)",
+  backdropFilter: "blur(14px)",
+  WebkitBackdropFilter: "blur(14px)",
+  borderRadius: 14,
+  padding: 12,
+  marginTop: 12,
+  boxShadow: "inset 0 1px 0 rgba(255,255,255,.06)",
 } as const;
 
 const compactSection = {
@@ -1086,30 +1096,33 @@ const compactSection = {
 } as const;
 
 const sectionTitle = {
-  margin: "0 0 8px",
-  fontSize: 14,
-  color: "#0f172a",
+  margin: "0 0 10px",
+  fontSize: 15,
+  color: "#f6d56f",
+  fontWeight: 950,
 } as const;
 
 const infoRow = {
   display: "flex",
   justifyContent: "space-between",
   gap: 10,
-  padding: "6px 0",
-  borderTop: "1px dashed #dbe3ee",
+  padding: "7px 0",
+  borderTop: "1px dashed rgba(212,175,55,.22)",
 } as const;
 
 const infoLabel = {
-  color: "#64748b",
+  color: "rgba(255,255,255,.68)",
   fontSize: 12,
   minWidth: 92,
+  fontWeight: 800,
 } as const;
 
 const infoValue = {
-  color: "#0f172a",
+  color: "#ffffff",
   fontSize: 12,
   textAlign: "right",
   wordBreak: "break-word",
+  fontWeight: 950,
 } as const;
 
 const btnRow = {
@@ -1132,24 +1145,24 @@ const primaryBtn = {
 
 const ghostBtn = {
   width: "100%",
-  border: "1px solid #cbd5e1",
-  borderRadius: 14,
+  border: "1px solid rgba(246,213,111,.48)",
+  borderRadius: 10,
   padding: "11px 14px",
-  background: "#fff",
-  color: "#0f172a",
-  fontWeight: 800,
+  background: "rgba(255,255,255,.04)",
+  color: "#f6d56f",
+  fontWeight: 950,
   fontSize: 14,
   marginTop: 10,
 } as const;
 
 const dangerBtn = {
   width: "100%",
-  border: "1px solid #fecaca",
-  borderRadius: 14,
+  border: "1px solid rgba(248,113,113,.52)",
+  borderRadius: 10,
   padding: "11px 14px",
-  background: "#fff1f2",
-  color: "#b91c1c",
-  fontWeight: 800,
+  background: "rgba(127,29,29,.18)",
+  color: "#fecaca",
+  fontWeight: 950,
   fontSize: 14,
 } as const;
 
@@ -1704,17 +1717,19 @@ const closeTextBtn = {
   fontWeight: 950,
 } as const;
 const verifiedDriver = {
-  color: "#16a34a",
+  color: "#f4c46f",
   fontSize: 11,
-  fontWeight: 900,
+  fontWeight: 950,
   marginTop: 6,
+  textShadow: "0 2px 10px rgba(244,196,111,.28)",
 } as const;
 
 const completedTripsStyle = {
-  color: "#64748b",
+  color: "#f6d56f",
   fontSize: 10,
-  fontWeight: 800,
+  fontWeight: 900,
   marginTop: 2,
+  textShadow: "0 2px 8px rgba(246,213,111,.22)",
 } as const;
 const bookingIdCard = {
   margin: "12px auto 14px",

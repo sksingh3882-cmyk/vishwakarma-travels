@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type CSSProperties, type FormEvent } from "react";
 import AdminIncomingBookingRequests from "@/components/booking-request/AdminIncomingBookingRequests";
-import { confirmBookingRequestAfterDownload, fetchBookingRequestById, type BookingRequestRecord } from "@/lib/bookingRequestService";
+import { confirmBookingRequestAfterDownload, fetchBookingRequestById, makeTripShortCode, type BookingRequestRecord } from "@/lib/bookingRequestService";
 import AdminBookingRequestsReport from "@/components/booking-request/AdminBookingRequestsReport";
 import AdminPushSetup from "@/components/admin/AdminPushSetup";
 import AdminNotificationWatcher from "@/components/admin/AdminNotificationWatcher";
@@ -448,8 +448,41 @@ x.textAlign = "left";
   img.src = "/cars/popup_banner.png";
 }
 
-function driverTripLink(){return activeBookingRequest?.id?`${window.location.origin}/driver-trip?id=${encodeURIComponent(activeBookingRequest.id)}`:""}
-function openDriverWhatsAppFromForm(){if(!activeBookingRequest?.id)return alert("Pehle customer booking request accept/select karo.");window.location.href=`https://api.whatsapp.com/send?phone=91${cleanPhone(form.driverMobile)}&text=${encodeURIComponent(`🚕 *Vishwakarma Travels - Trip Assigned*\n\nHello *${form.driverName||"Driver"}*,\n\nYour trip has been assigned.\n\n👤 *Customer:* ${form.customerName||"-"}\n📞 *Customer Mobile:* +91 ${cleanPhone(form.customerPhone)||"-"}\n📍 *Pickup:* ${form.pickup||"-"}\n📍 *Drop:* ${form.drop||"-"}\n📅 *Date:* ${formatDate(form.journeyDate)||"-"}\n🕒 *Time:* ${formatTime(form.journeyTime)||"-"}\n🚖 *Vehicle:* ${form.vehicleType||"-"} ${form.vehicleModel||"-"}\n🔢 *Vehicle No:* ${vehicleNo(form.vehicleNumber)||"-"}\n\n👇 Tap this link to view trip details:\n${driverTripLink()}\n\nPlease call the customer before starting the trip.\n\n- Vishwakarma Travels`)}`}
+function driverTripLink() {
+  return activeBookingRequest?.id
+    ? `${window.location.origin}/trip/${encodeURIComponent(makeTripShortCode(activeBookingRequest.id))}`
+    : "";
+}
+function openDriverWhatsAppFromForm() {
+  if (!activeBookingRequest?.id) {
+    return alert("Pehle customer booking request accept/select karo.");
+  }
+
+  const driverPhone = cleanPhone(form.driverMobile);
+
+  const message = `🚕 *Vishwakarma Travels - Trip Assigned*
+
+Hello *${form.driverName || "Driver"}*,
+
+Your trip has been assigned.
+
+👤 *Customer:* ${form.customerName || "-"}
+📍 *Pickup:* ${form.pickup || "-"}
+📍 *Drop:* ${form.drop || "-"}
+📅 *Date:* ${formatDate(form.journeyDate) || "-"}
+🕒 *Time:* ${formatTime(form.journeyTime) || "-"}
+🚖 *Vehicle:* ${form.vehicleType || "-"} ${form.vehicleModel || "-"}
+🔢 *Vehicle No:* ${vehicleNo(form.vehicleNumber) || "-"}
+
+👇 Tap this link to view trip details:
+${driverTripLink()}
+
+Please call the customer from trip details page before starting the trip.
+
+- Vishwakarma Travels`;
+
+  window.location.href = `https://api.whatsapp.com/send?phone=91${driverPhone}&text=${encodeURIComponent(message)}`;
+}
   function makeCustomerConfirmationCode(){const source=activeBookingRequest?.confirmationCode||activeBookingRequest?.id||`${Date.now()}`;let hash=0;for(let i=0;i<source.length;i+=1){hash=(hash*31+source.charCodeAt(i))%100000;}return `VT${String(hash).padStart(5,"0")}`;}function customerConfirmationLink(){if(!activeBookingRequest?.id)return "";return `${window.location.origin}/c/${encodeURIComponent(makeCustomerConfirmationCode())}`;}function customerConfirmationLinkMessage(){const link=customerConfirmationLink();return `✅ *Booking Confirmed - Vishwakarma Travels*\n\n${form.gender} *${form.customerName||"Customer"}*\n\nYour booking is confirmed.\n\n📍 *Route:* ${form.pickup||"-"} to ${form.drop||"-"}\n📅 *Date:* ${formatDate(form.journeyDate)||"-"}\n🕒 *Time:* ${formatTime(form.journeyTime)||"-"}\n🚖 *Vehicle:* ${form.vehicleType||"-"} ${form.vehicleModel||"-"}\n🔢 *Vehicle No:* ${vehicleNo(form.vehicleNumber)||"-"}\n👨‍✈️ *Driver:* ${form.driverName||"-"}\n💵 *Fare Charges:* Rs ${fare||0}\n\n👇 Tap this link to view your confirmed booking details:\n${link}\n\n- Vishwakarma Travels`;}async function sendConfirmationLinkToCustomer(){if(!activeBookingRequest?.id){alert("Pehle customer booking request accept/select karo.");return;}const customerPhone=cleanPhone(form.customerPhone);if(customerPhone.length!==10){alert("Customer WhatsApp number invalid hai.");return;}if(!vehicleNo(form.vehicleNumber)){alert("Vehicle number fill/select karo.");return;}if(!form.driverName.trim()||cleanPhone(form.driverMobile).length!==10){alert("Driver name aur driver mobile fill karo.");return;}const confirmationCode=makeCustomerConfirmationCode();const finalBookingId=confirmationCode||activeBookingRequest.id;try{const saved=await saveBooking(finalBookingId);if(!saved){alert("Final booking Supabase me save nahi hua.");return;}await Promise.all([saveCustomer(),saveVehicle()]);await confirmBookingRequestAfterDownload({supabaseUrl,supabaseKey,requestId:activeBookingRequest.id,vehicleNo:vehicleNo(form.vehicleNumber),vehicleType:form.vehicleType,vehicleModel:form.vehicleModel,driverName:form.driverName,driverMobile:form.driverMobile,confirmationCode,fare,advance,netPayable:net});setLastBookingId(finalBookingId);notifyCustomerBookingConfirmed().catch((err)=>console.log("Customer confirmed notification failed:",err));window.location.href=`https://api.whatsapp.com/send?phone=91${customerPhone}&text=${encodeURIComponent(customerConfirmationLinkMessage())}`;}catch(err){console.log("Customer confirmation link send failed:",err);alert("Booking confirmation link send nahi ho paya.");}}
   
   function validate() {
@@ -1029,4 +1062,3 @@ const actions: CSSProperties = { position: "sticky", bottom: 0, display: "grid",
 const cancelBtn: CSSProperties = { padding: 11, borderRadius: 12, border: "2px solid #ef4444", background: "white", color: "#ef4444", fontWeight: 950 };
 const greenBtn: CSSProperties = { padding: 11, borderRadius: 12, border: 0, background: "#16a34a", color: "white", fontWeight: 950 };
 
-// Stable backup version

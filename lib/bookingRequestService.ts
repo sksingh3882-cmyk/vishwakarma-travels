@@ -358,3 +358,35 @@ export async function clearBookingRequestDriverVehicle(params: {
   const rows = await res.json();
   return fromDb(rows?.[0] || rows);
 }
+export function makeTripShortCode(value: string) {
+  return (
+    "VT" +
+    String(value || "")
+      .replace(/[^0-9]/g, "")
+      .slice(-5)
+      .padStart(5, "0")
+  );
+}
+
+export async function fetchBookingRequestByTripShortCode(params: {
+  supabaseUrl: string;
+  supabaseKey: string;
+  tripShortCode: string;
+}) {
+  const code = String(params.tripShortCode || "").trim().toUpperCase();
+
+  const res = await fetch(
+    `${params.supabaseUrl}/rest/v1/booking_requests?select=*`,
+    { headers: headers(params.supabaseKey, "return=minimal") }
+  );
+
+  if (!res.ok) throw new Error("Trip short code fetch nahi ho paya.");
+
+  const rows = await res.json();
+
+  const found = Array.isArray(rows)
+    ? rows.find((row) => makeTripShortCode(String(row.id || "")) === code)
+    : null;
+
+  return found ? fromDb(found) : null;
+}
