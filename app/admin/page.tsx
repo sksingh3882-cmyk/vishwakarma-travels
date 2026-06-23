@@ -448,14 +448,11 @@ x.textAlign = "left";
   img.src = "/cars/popup_banner.png";
 }
 
-function driverTripLink(){const shortTripCode =
-  "VT" +
-  String(activeBookingRequest.id)
-    .replace(/[^0-9]/g, "")
-    .slice(-5)
-    .padStart(5, "0");
-
-return `${window.location.origin}/t/${shortTripCode}`;
+function driverTripLink() {
+  return activeBookingRequest?.id
+    ? `${window.location.origin}/driver-trip?id=${encodeURIComponent(activeBookingRequest.id)}`
+    : "";
+}
 function openDriverWhatsAppFromForm() {
   if (!activeBookingRequest?.id) {
     return alert("Pehle customer booking request accept/select karo.");
