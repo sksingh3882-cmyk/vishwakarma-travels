@@ -1065,4 +1065,3 @@ const actions: CSSProperties = { position: "sticky", bottom: 0, display: "grid",
 const cancelBtn: CSSProperties = { padding: 11, borderRadius: 12, border: "2px solid #ef4444", background: "white", color: "#ef4444", fontWeight: 950 };
 const greenBtn: CSSProperties = { padding: 11, borderRadius: 12, border: 0, background: "#16a34a", color: "white", fontWeight: 950 };
 
-// Stable backup version
