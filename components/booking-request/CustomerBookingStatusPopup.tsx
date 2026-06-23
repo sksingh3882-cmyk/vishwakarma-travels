@@ -1717,17 +1717,19 @@ const closeTextBtn = {
   fontWeight: 950,
 } as const;
 const verifiedDriver = {
-  color: "#16a34a",
+  color: "#f4c46f",
   fontSize: 11,
-  fontWeight: 900,
+  fontWeight: 950,
   marginTop: 6,
+  textShadow: "0 2px 10px rgba(244,196,111,.28)",
 } as const;
 
 const completedTripsStyle = {
-  color: "#64748b",
+  color: "#f6d56f",
   fontSize: 10,
-  fontWeight: 800,
+  fontWeight: 900,
   marginTop: 2,
+  textShadow: "0 2px 8px rgba(246,213,111,.22)",
 } as const;
 const bookingIdCard = {
   margin: "12px auto 14px",
