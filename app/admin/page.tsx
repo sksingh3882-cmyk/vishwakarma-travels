@@ -464,17 +464,14 @@ function openDriverWhatsAppFromForm() {
 
 Hello *${form.driverName || "Driver"}*,
 
-Your trip has been assigned.
+Your Upcoming Duty has been assigned.
 
 👤 *Customer:* ${form.customerName || "-"}
-📍 *Pickup:* ${form.pickup || "-"}
-📍 *Drop:* ${form.drop || "-"}
-📅 *Date:* ${formatDate(form.journeyDate) || "-"}
-🕒 *Time:* ${formatTime(form.journeyTime) || "-"}
+
 🚖 *Vehicle:* ${form.vehicleType || "-"} ${form.vehicleModel || "-"}
 🔢 *Vehicle No:* ${vehicleNo(form.vehicleNumber) || "-"}
 
-👇 Tap this link to view trip details:
+👇 Tap this link to see the Trip details & Customer Contact Details:
 ${driverTripLink()}
 
 Please call the customer from trip details page before starting the trip.
