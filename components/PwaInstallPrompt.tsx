@@ -77,8 +77,12 @@ export default function PwaInstallPrompt() {
 
         {unsupported ? (
           <p style={note}>
-            If install option is not available, open this link in Chrome and tap menu ⋮ → Install app.
-          </p>
+           Install option is not available in this browser.<br /><br />
+           Please open this link in Google Chrome:<br />
+        1. Tap the menu ⋮<br />
+        2. Tap “Open in Chrome”<br />
+        3. Then tap “Install app”
+        </p>
         ) : (
           <button type="button" onClick={install} style={btn}>Install App</button>
         )}
