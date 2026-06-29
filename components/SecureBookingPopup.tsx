@@ -20,6 +20,7 @@ export default function SecureBookingPopup() {
       window.localStorage.setItem(STORAGE_KEY, "yes");
     } catch {}
     setShowPopup(false);
+    window.dispatchEvent(new Event("vt_privacy_popup_closed"));
   };
 
   if (!showPopup) return null;
