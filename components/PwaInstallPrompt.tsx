@@ -37,11 +37,7 @@ export default function PwaInstallPrompt() {
     window.addEventListener("beforeinstallprompt", beforeInstall);
     window.addEventListener("vt_privacy_popup_closed", showAfterPrivacy);
 
-    if (window.localStorage.getItem("vt_safety_note_seen")) {
-      setTimeout(() => {
-        if (!deferredPrompt) setUnsupported(true);
-      }, 1800);
-    }
+  
 
     return () => {
       window.removeEventListener("beforeinstallprompt", beforeInstall);
