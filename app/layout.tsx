@@ -5,6 +5,7 @@ import DriverDutyFloatingActions from "@/components/admin/DriverDutyFloatingActi
 import "../compact-booking.css";
 import "../ui-banner-override.css";
 import RegisterServiceWorker from "./RegisterServiceWorker";
+import PwaInstallPrompt from "@/components/PwaInstallPrompt";
 
 const siteUrl = "https://vishwakarma-travels-nine.vercel.app";
 const previewImage = `${siteUrl}/Vishwakarma.jpg`;
@@ -56,6 +57,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <RegisterServiceWorker />
+        <PwaInstallPrompt />
         <AppMenu />
         <PublicBookingValidation />
         {children}
