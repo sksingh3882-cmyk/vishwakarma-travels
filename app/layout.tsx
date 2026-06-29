@@ -19,15 +19,15 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: "Vishwakarma Travels | Cab Booking Service Jamshedpur",
   description:
-      manifest: "/manifest.webmanifest",
+    "Book Desire, Ertiga and Innova Crysta for one way drop, airport drop and local travel in Jamshedpur.",
+  siteName: "Vishwakarma Travels",
+    manifest: "/manifest.webmanifest",
   applicationName: "Vishwakarma Travels",
   themeColor: "#071b2d",
-    "Book Desire, Ertiga and Innova Crysta for one way drop, airport drop and local travel in Jamshedpur.",
   openGraph: {
     title: "Vishwakarma Travels",
     description: "Travel Made Easy | Cab Booking Service in Jamshedpur",
     url: siteUrl,
-    siteName: "Vishwakarma Travels",
     images: [
       {
         url: previewImage,
