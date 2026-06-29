@@ -4,6 +4,7 @@ import PublicBookingValidation from "./components/PublicBookingValidation";
 import DriverDutyFloatingActions from "@/components/admin/DriverDutyFloatingActions";
 import "../compact-booking.css";
 import "../ui-banner-override.css";
+import RegisterServiceWorker from "./RegisterServiceWorker";
 
 const siteUrl = "https://vishwakarma-travels-nine.vercel.app";
 const previewImage = `${siteUrl}/Vishwakarma.jpg`;
@@ -18,6 +19,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: "Vishwakarma Travels | Cab Booking Service Jamshedpur",
   description:
+      manifest: "/manifest.webmanifest",
+  applicationName: "Vishwakarma Travels",
+  themeColor: "#071b2d",
     "Book Desire, Ertiga and Innova Crysta for one way drop, airport drop and local travel in Jamshedpur.",
   openGraph: {
     title: "Vishwakarma Travels",
@@ -51,6 +55,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+       <RegisterServiceWorker />
         <AppMenu />
         <PublicBookingValidation />
         {children}
