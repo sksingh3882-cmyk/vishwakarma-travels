@@ -25,7 +25,7 @@ export default function ContactAdminBox() {
             href={`tel:${ADMIN_CONTACT.phoneCall}`}
             style={{ ...button, background: "#2563eb" }}
           >
-            Call Admin
+            Call
           </a>
 
           <a
@@ -34,7 +34,7 @@ export default function ContactAdminBox() {
             rel="noopener noreferrer"
             style={{ ...button, background: "#16a34a" }}
           >
-            WhatsApp Admin
+            WhatsApp
           </a>
         </div>
 
